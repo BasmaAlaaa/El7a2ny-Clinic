@@ -1,4 +1,4 @@
-const guestDoctorModel = require('../Models/GuestDoctor');
+const guestDoctorModel = require('../Models/GuestDoctor.js');
 const { default: mongoose } = require('mongoose');
 
 // register Doctor
