@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
+const patient = require('../../../Models/Patient.js');
 
 const doctorSchema = new Schema({
   Username: {
@@ -38,6 +39,14 @@ const doctorSchema = new Schema({
   EDB:{
     type:String,
     required: true
+  },
+  patients: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Patient', // This should match the model name you defined for Patient
+  }],
+  Speciality:{
+    type: String,
+      required: true
   }
 
   
@@ -55,7 +64,9 @@ const doctorSchema = new Schema({
     DateOfBirth,
     HourlyRate,
     Affilation,
-    EDB
+    EDB,
+    patients,
+    Speciality
     
   ) {
 
@@ -67,7 +78,9 @@ const doctorSchema = new Schema({
       !DateOfBirth ||
       !HourlyRate ||
       !Affilation ||
-      !EDB ) { 
+      !EDB ||
+      !patients||
+      !Speciality) { 
     throw Error('All fields must be filled.');
 }
 
@@ -92,13 +105,18 @@ const doctorSchema = new Schema({
       Name,
       Email,
       Password,
+      DateOfBirth,
       HourlyRate,
       Affilation,
-      EDB
+      EDB,
+      patients,
+      Speciality
     });
   
     return doctor;
   };
+
+  
   
   const Doctor = mongoose.model('Doctor', doctorSchema);
   module.exports = Doctor;
