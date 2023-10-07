@@ -1,6 +1,8 @@
 const Admin = require("../Models/Admin");
 const Doctor = require("../Models/Doctor");
 const Patient = require("../Models/Patient");
+const HealthPackage = require("../Models/HealthPackage");
+const GuestDoctor = require("../Models/GuestDoctor");
 
 // exports.deleteUser = async (req, res) => {
 //   try {
@@ -105,12 +107,28 @@ exports.deleteEntity2 = async (req, res) => {
     }
 
     // If an entity was found and deleted, respond with a 200 status code and a success message.
-    res
-      .status(200)
-      .json({
-        message: `${modelUsed} deleted successfully`,
-        data: deletedEntity,
-      });
+    res.status(200).json({
+      message: `${modelUsed} deleted successfully`,
+      data: deletedEntity,
+    });
+  } catch (error) {
+    // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+exports.viewUnapprovedDoctors = async (req, res) => {
+  try {
+    // Find all doctors where IsApproved is false.
+    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false });
+
+    // Check if there are any unapproved doctors; if not, respond with a 404 status code and an error message.
+    if (!unapprovedDoctors.length) {
+      return res.status(404).json({ error: "No unapproved doctors found" });
+    }
+
+    // If there are unapproved doctors, respond with a 200 status code and the array of doctors.
+    res.status(200).json({ doctors: unapprovedDoctors });
   } catch (error) {
     // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
     res.status(500).json({ error: "Server error" });

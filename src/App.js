@@ -6,7 +6,7 @@ require("dotenv").config();
 const patientRoutes = require("./Routes/Patient"); // Require Patient
 const adminRoutes = require('./Routes/Admin'); //require admin
 const healthPackageRoutes = require('./Routes/HealthPackage'); //require health package
-
+const guestDoctorRoutes = require('./Routes/GuestDoctor'); //require guest doctor
 const MongoURI = process.env.MONGO_URI ;
 
 
@@ -42,4 +42,6 @@ app.use("/Patient", patientRoutes);
 //const adminRoutes = require('./Routes/Admin');
 app.use('/admin', adminRoutes);
 app.use('/healthPackage', healthPackageRoutes);
+app.use('/guestDoctor', guestDoctorRoutes);
+
 ;

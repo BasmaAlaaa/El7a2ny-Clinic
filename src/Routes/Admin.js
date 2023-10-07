@@ -15,5 +15,6 @@ router.post("/createAdmin", adminController.createAdmin);
 //app.put("/updateUser", updateUser);
 router.delete("/deleteEntity/:entityType/:Username", adminController.deleteEntity);
 router.delete("/deleteEntity2/:Username", adminController.deleteEntity2);
+router.get("/viewUnapprovedDoctors", adminController.viewUnapprovedDoctors);
 
 module.exports = router;
