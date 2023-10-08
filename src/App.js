@@ -10,11 +10,20 @@ const guestDoctorRoutes = require('./Routes/GuestDoctor'); //require guest docto
 const MongoURI = process.env.MONGO_URI ;
 
 
+const doctorSchema = require('./Models/Doctor.js'); // 
+const patientSchema = require('./Models/Patient.js'); //
+const appointmentSchema = require('./Models/Appointment.js');
+const { addDoctor,updateDoctor,filterApps ,viewInfoAndRecords,MyPatients,PatientByName,PatientsUpcoming,selectPatientWithHisName} = require('./Controllers/doctorController'); // 
+const doctorController = require('./Controllers/doctorController');//
+
+
 //App variables
 const app = express();
 app.use(express.json()); 
 const port = process.env.PORT || "8000";
 const patient = require('./Models/Patient');
+
+const doctorRoutes = require("./Routes/Doctor"); //
 
 // configurations
 // Mongo DB
@@ -38,6 +47,10 @@ app.get("/home", (req, res) => {
 // Registering Routes
 
 app.use("/Patient", patientRoutes);
+
+app.use("/Doctor", doctorRoutes);//
+
+
 // server.js or app.js
 //const adminRoutes = require('./Routes/Admin');
 app.use('/admin', adminRoutes);
