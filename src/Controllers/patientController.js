@@ -231,11 +231,121 @@ const searchDocByNameAndSpec = async (req, res) => {
 }
 
 
+
+//app.post('/addPresToPatient/:Username/:id')
+const addPresToPatient = async (req, res) => {
+  const { Username, id } = req.params;
+  try {
+    const patient = await patientSchema.findOne(Username);
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    patient.PatientPrescriptions.push(id);
+
+    await patient.save();
+
+    res.status(200).send({ message: 'Prescription added to patient' });
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+
+//app.get('/viewMyPres/:Username')
+const viewMyPres = async (req, res) => {
+  const { Username } = req.params;
+  try {
+    const patient = await patientSchema.findOne(Username);
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const allPrescriptions = patient.PatientPrescriptions;
+
+    if (allPrescriptions.length === 0) {
+      return res.status(404).send('No prescriptions found for this patient');
+    }
+
+    const prescriptions = await prescriptionSchema.find({ _id: { $in: allPrescriptions } });
+
+    if (prescriptions.length === 0) {
+      return res.status(404).send('No prescriptions found for this patient2');
+    }
+
+    const result = prescriptions.map(prescription => ({
+      prescriptionID: prescription.prescriptionID,
+      Appointment_ID: prescription.Appointment_ID,
+      Date: prescription.Date
+    }));
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+//app.get('/filterMyPres/:Username')
+
+const filterMyPres = async (req, res) => {
+  const { Username } = req.params;
+  const { Date, DoctorUsername, Filled } = req.body;
+
+  try {
+    const patient = await patientSchema.findOne({ Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const query = { _id: { $in: patient.PatientPrescriptions } };
+
+    if (Date) {
+      query.Date = Date;
+    }
+
+    if (DoctorUsername) {
+      query.DoctorUsername = DoctorUsername;
+    }
+
+    if (Filled !== undefined) {
+      query.Filled = Filled;
+    }
+
+    const prescriptions = await prescriptionSchema.find(query);
+
+    if (prescriptions.length === 0) {
+      return res.status(404).send('No prescriptions found for the specified criteria');
+    }
+
+    const result = prescriptions.map((prescription) => ({
+      prescriptionID: prescription.prescriptionID,
+      Appointment_ID: prescription.Appointment_ID,
+      Date: prescription.Date,
+      Filled: prescription.Filled,
+    }));
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+
+
 module.exports = {
   registerPatient,
   addFamMember,
   getFamMembers,
   searchDocByNameAndSpec,
   findDocBySpecalityAndavail,
-  viewDoctorsWithSessionPrices
+  viewDoctorsWithSessionPrices,
+  addPresToPatient,
+  viewMyPres,
+  filterMyPres
 }
