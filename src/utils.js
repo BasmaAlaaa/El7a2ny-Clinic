@@ -15,4 +15,7 @@ async function isEmailUnique(email) {
   return !patientExists && !doctorExists;
 }
 
-module.exports = { isUsernameUnique, isEmailUnique };
+module.exports = {
+  isEmailUnique,
+  isUsernameUnique
+};

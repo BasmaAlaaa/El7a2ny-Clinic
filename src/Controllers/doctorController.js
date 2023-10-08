@@ -2,6 +2,7 @@ const doctorModel = require('../Models/Doctor.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
+const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 
 // register Doctor
 const registerDoctor = async (req, res) => {
@@ -20,6 +21,14 @@ const registerDoctor = async (req, res) => {
     } = req.body;
 
     try {
+
+      if (!(await isUsernameUnique(Username))) {
+        throw new Error('Username is already taken.');
+      }
+    
+      if (!(await isEmailUnique(Email))) {
+          throw new Error('Email is already in use.');
+      }
         const doctor = await doctorModel.register(
             Username,
             Name,

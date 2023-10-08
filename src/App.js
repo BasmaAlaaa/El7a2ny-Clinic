@@ -7,6 +7,7 @@ const patientRoutes = require("./Routes/Patient"); // Require Patient
 const adminRoutes = require('./Routes/Admin'); //require admin
 const healthPackageRoutes = require('./Routes/HealthPackage'); //require health package
 const guestDoctorRoutes = require('./Routes/GuestDoctor'); //require guest doctor
+const doctorRoutes = require('./Routes/Doctor'); //
 const MongoURI = process.env.MONGO_URI ;
 
 
@@ -23,7 +24,6 @@ app.use(express.json());
 const port = process.env.PORT || "8000";
 const patient = require('./Models/Patient');
 
-const doctorRoutes = require("./Routes/Doctor"); //
 
 // configurations
 // Mongo DB

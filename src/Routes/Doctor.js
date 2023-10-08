@@ -2,11 +2,18 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
+/*const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
 const patientSchema = require('../../../Models/Patient.js');
-const appointmentSchema = require('../../../Models/Appointment.js');
-const { registerDoctor,updateDoctor,filterApps ,viewInfoAndRecords,MyPatients,PatientByName,PatientsUpcoming,selectPatientWithHisName} = require('../../../Controllers/doctorController.js'); // Import the function
-const doctorController = require('../../../Controllers/doctorController.js');
+const appointmentSchema = require('../../../Models/Appointment.js');*/
+const { registerDoctor,
+    updateDoctor,
+    filterApps,
+    viewInfoAndRecords,
+    MyPatients,
+    PatientByName,
+    PatientsUpcoming,
+    selectPatientWithHisName} = require('../Controllers/doctorController'); // Import the function
+//const doctorController = require('../../../Controllers/doctorController.js');
 
 
 

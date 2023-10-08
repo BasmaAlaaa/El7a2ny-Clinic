@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
-const patient = require('../../../Models/Patient.js');
 
 const doctorSchema = new Schema({
   Username: {
@@ -82,7 +81,7 @@ const doctorSchema = new Schema({
       throw Error('Email must be in the form of johndoe@example.com');
     }
     
-    const existsUsername = await this.findOne({ Username });
+    /*const existsUsername = await this.findOne({ Username });
     const existsEmail = await this.findOne({ Email });
   
     if (existsUsername) {
@@ -91,7 +90,7 @@ const doctorSchema = new Schema({
   
     if (existsEmail) {
       throw new Error('Email is already in use.');
-    }
+    }*/
 
     const doctor = await this.create({
       Username,
