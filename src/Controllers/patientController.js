@@ -120,8 +120,122 @@ const getFamMembers = async (req, res) => {
   }
 };
 
+
+const viewDoctorsWithSessionPrices = async (req, res) => {
+  try {
+    const { Username } = req.params;
+    const patient = await patientSchema.findOne({ username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const doctors = await Doctor.find().exec();
+
+    const result = [];
+
+    for (const doctor of doctors) {
+      const doctorRate = doctor.HourlyRate;
+
+      const clinicMarkup = 0.10; // 10% markup
+
+      let sessionPrice = doctorRate;
+
+      const healthPackage = await HealthPackage.findOne({ patientID: req.user._id }).exec();
+
+      if (healthPackage) {
+        const discountPercentage = healthPackage.doctorSessionDiscount || 0;
+
+        const discountAmount = (doctorRate * discountPercentage) / 100;
+
+        sessionPrice -= discountAmount;
+      }
+
+      sessionPrice += sessionPrice * clinicMarkup;
+
+      result.push({
+        Name: doctor.Nameame,
+        Speciality: doctor.Speciality,
+        sessionPrice,
+      });
+    }
+
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+const findDocBySpecalityAndavail = async (req, res) => {
+
+  const { Speciality, date, time } = req.body;
+  //console.log(Speciality)
+
+  const filter = {}
+  try {
+
+    if (Speciality) {
+      filter.Speciality = Speciality;
+    }
+
+    if (date && time) {
+      filter.Schedule = {
+        $elemMatch: {
+          date: new Date(date),
+          time: time,
+        },
+      };
+    }
+    //console.log(filter)
+    const doctors = await doctorSchema.find(filter);
+    if (doctors.length == 0) {
+      res.status(404).send({ error: 'Doctor is not Found' });
+    }
+    res.send(doctors)
+
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while filtering doctors.' });
+  }
+}
+
+
+
+//app.get('/searchDocByNameAndSpec')
+const searchDocByNameAndSpec = async (req, res) => {
+  try {
+    const { Name, Speciality } = req.body
+    const filter = {}
+    if (Name)
+      filter.Name = Name
+    if (Speciality)
+      filter.Speciality = Speciality
+    console.log(filter)
+    if (filter.length == 0)
+      res.status(404).send({ error: 'Doctor is not Found' });
+
+    const doctors = await doctorSchema.find(filter)
+    if (doctors.length == 0) {
+      res.status(404).send({ error: 'Doctor is not Found' });
+    }
+    res.send(doctors)
+
+  }
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'An error occurred while filtering doctors.' });
+  }
+}
+
+
 module.exports = {
   registerPatient,
   addFamMember,
-  getFamMembers
+  getFamMembers,
+  searchDocByNameAndSpec,
+  findDocBySpecalityAndavail,
+  viewDoctorsWithSessionPrices
 }
