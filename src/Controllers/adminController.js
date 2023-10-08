@@ -3,6 +3,7 @@ const Doctor = require("../Models/Doctor");
 const Patient = require("../Models/Patient");
 const HealthPackage = require("../Models/HealthPackage");
 const GuestDoctor = require("../Models/GuestDoctor");
+const isUsernameUnique = require('../utils');
 
 // exports.deleteUser = async (req, res) => {
 //   try {
@@ -22,6 +23,7 @@ const GuestDoctor = require("../Models/GuestDoctor");
 //   }
 // };
 
+// Task 8 : remove a patient, doctor, admin
 exports.deleteEntity = async (req, res) => {
   try {
     // Destructure 'username' and 'entityType' from request parameters.
@@ -61,6 +63,7 @@ exports.deleteEntity = async (req, res) => {
   }
 };
 
+// Task 7 : add admin to DB
 exports.createAdmin = async (req, res) => {
   try {
     const { Username, Password } = req.body;
@@ -68,9 +71,8 @@ exports.createAdmin = async (req, res) => {
     if (!Username || !Password) {
       throw Error("All fields must be filled.");
     }
-    const existsUsername = await Admin.findOne({ Username });
-    if (existsUsername) {
-      return res.status(409).json({ error: "Username is already taken." });
+    if (!(await isUsernameUnique(Username))) {
+      throw new Error('Username is already taken.');
     }
     const newAdmin = new Admin({ Username, Password });
     await newAdmin.save();
@@ -79,6 +81,8 @@ exports.createAdmin = async (req, res) => {
     res.status(500).json({ error: "Server error yalhwyy" });
   }
 };
+
+// Task 8 : remove a patient, doctor, admin
 exports.deleteEntity2 = async (req, res) => {
   try {
     // Destructure 'username' from request parameters.
@@ -117,6 +121,7 @@ exports.deleteEntity2 = async (req, res) => {
   }
 };
 
+// Task 9 : view all information of doctors who wants to join platform
 exports.viewUnapprovedDoctors = async (req, res) => {
   try {
     // Find all doctors where IsApproved is false.

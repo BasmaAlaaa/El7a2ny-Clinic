@@ -1,7 +1,7 @@
 const guestDoctorModel = require('../Models/GuestDoctor');
 const { default: mongoose } = require('mongoose');
 
-// register Doctor
+// Task 3 : register Doctor
 const registerGuestDoctor = async (req, res) => {
 
     const { 

@@ -28,8 +28,6 @@ const doctorSchema = new Schema({
   HourlyRate:{
       type: Number,
       required: true,
-
-
   },
   Affilation:{
       type:String,
@@ -39,11 +37,6 @@ const doctorSchema = new Schema({
     type:String,
     required: true
   }
-
-  
-
-
-
 }, { timestamps: true });
 
   // static register method

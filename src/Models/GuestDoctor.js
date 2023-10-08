@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const validator = require("validator");
+const {isEmailUnique, isUsernameUnique} = require('../utils');
 
 const guestDoctorSchema = new Schema(
   {
@@ -74,15 +75,12 @@ guestDoctorSchema.statics.register = async function (
     throw Error("Email must be in the form of johndoe@example.com");
   }
 
-  const existsUsername = await this.findOne({ Username });
-  const existsEmail = await this.findOne({ Email });
-
-  if (existsUsername) {
-    throw new Error("Username is already taken.");
+  if (!(await isUsernameUnique(Username))) {
+    throw new Error('Username is already taken.');
   }
 
-  if (existsEmail) {
-    throw new Error("Email is already in use.");
+  if (!(await isEmailUnique(Email))) {
+      throw new Error('Email is already in use.');
   }
 
   const guestDoctor = await this.create({

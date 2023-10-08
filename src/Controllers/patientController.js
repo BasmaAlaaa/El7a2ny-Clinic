@@ -1,7 +1,7 @@
 const patientModel = require("../Models/Patient.js");
 const { default: mongoose } = require("mongoose");
 
-// register patient
+// Task 1 : register patient
 const registerPatient = async (req, res) => {
   const {
     Username,
