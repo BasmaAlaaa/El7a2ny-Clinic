@@ -30,6 +30,10 @@ const HealthPackageSchema = new mongoose.Schema({
     min: 0, // Minimum percentage
     max: 100, // Maximum percentage
   },
+  PatientsIDs:[{
+    type: Schema.Types.ObjectId,
+    ref: 'Patient', // This should match the model name you defined for Patient
+  }],
 });
 
 module.exports = mongoose.model("HealthPackage", HealthPackageSchema);

@@ -1,6 +1,4 @@
 const express = require('express');
-
-// controller functions
 const registerFamilyMember = require('../Controllers/FamilyMemberController')
 
 const router = express.Router();

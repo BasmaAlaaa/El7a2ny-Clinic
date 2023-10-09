@@ -18,9 +18,11 @@ const {
     addPresToPatient,
     viewMyPres,
     filterMyPres,
-    viewDoctorsWithSessionPrices
-
-} = require('../Controllers/patientController')
+    viewDoctorsWithSessionPrices,
+    viewDoctorInfo,
+    viewAllMyPres
+} = require('../Controllers/patientController');
+const { filterApps } = require('../Controllers/doctorController.js');
 
 const router = express.Router();
 
@@ -44,7 +46,10 @@ router.get('/filterMyPres/:Username', filterMyPres)
 
 router.get('/viewAllDoctors', viewDoctorsWithSessionPrices)
 
+router.get('/viewDoctorInfo', viewDoctorInfo);
 
+router.get('/viewAllMyPres', viewAllMyPres);
 
+router.get('/filterAppointments',filterApps)
 
 module.exports = router

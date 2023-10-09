@@ -1,7 +1,7 @@
 // controllers/healthPackageController.js
 const HealthPackage = require("../Models/HealthPackage");
 
-exports.getAllPackages = async (req, res) => {
+const getAllPackages = async (req, res) => {
   try {
     const packages = await HealthPackage.find();
     res.status(200).json(packages);
@@ -10,7 +10,7 @@ exports.getAllPackages = async (req, res) => {
   }
 };
 
-exports.subscribeToPackage = async (req, res) => {
+const subscribeToPackage = async (req, res) => {
   try {
     // Logic for a patient subscribing to a package, e.g., creating a subscription in the database, payment logic, etc.
     res.status(200).json({ message: "Subscription successful" });
@@ -28,7 +28,9 @@ exports.subscribeToPackage = async (req, res) => {
 //   }
 // };
 // Define an asynchronous function named 'createPackage'.
-exports.createPackage = async (req, res) => {
+
+//Task 11 : Add health package
+const createPackage = async (req, res) => {
   try {
     // Destructure fields from request body.
     const {
@@ -74,7 +76,8 @@ exports.createPackage = async (req, res) => {
   }
 };
 
-exports.updatePackage = async (req, res) => {
+// Task 11: update a health package
+const updatePackage = async (req, res) => {
   try {
     const updatedPackage = await HealthPackage.findOneAndUpdate(
       { type: req.params.type }, // filter
@@ -98,7 +101,9 @@ exports.updatePackage = async (req, res) => {
 //         res.status(500).json({ error: 'Server error' });
 //     }
 // };
-exports.deletePackage = async (req, res) => {
+
+// Task 11: delete a health package
+const deletePackage = async (req, res) => {
   try {
     const deletedPackage = await HealthPackage.findOneAndDelete(
       { type: req.params.type } // filter
@@ -111,3 +116,11 @@ exports.deletePackage = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+module.exports = {
+  subscribeToPackage,
+  getAllPackages,
+  deletePackage,
+  updatePackage,
+  createPackage,
+}

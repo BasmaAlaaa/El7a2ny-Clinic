@@ -1,25 +1,24 @@
 const appointmentModel = require('../Models/Appointment.js');
 const { default: mongoose } = require('mongoose');
+const ObjectID = require('mongodb').ObjectID;
 
 // register appointment
 const registerAppointment = async (req, res) => {
-
     const { 
-        date,
-        doctorID,
-        patientID,
-        status,
-        
+        Date,
+        DoctorID,
+        PatientID,
+        Status
     } = req.body;
 
     try {
+        
         const appointment = await appointmentModel.register(
-            date,
-            doctorID,
-            patientID,
-            status,
-          );
-          
+            Date,
+            DoctorID,
+            PatientID,
+            Status
+          ); 
         await appointment.save();
         res.status(200).json({appointment})
     } catch(error) {
@@ -27,4 +26,4 @@ const registerAppointment = async (req, res) => {
     }
 }
 
-module.exports = registerAppointment
+module.exports = registerAppointment;

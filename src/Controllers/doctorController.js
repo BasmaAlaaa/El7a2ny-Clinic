@@ -17,7 +17,6 @@ const registerDoctor = async (req, res) => {
         EDB,
         patients,
         Speciality
-
     } = req.body;
 
     try {
@@ -51,28 +50,32 @@ const registerDoctor = async (req, res) => {
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 const updateDoctor = async (req, res) => {
-    const { id } = req.params; // Assuming you want to find the doctor by name
-    const {
-        Email,
-        HourlyRate,
-        Affilation 
-    } = req.body;
-
+    const {Username} = req.params;
     try {
         // Find the doctor by their name and update their information
-        const result = await doctorModel.updateOne({ _id: id }, {
+        /*const result = await doctorModel.updateOne({ Username: Username }, {
             $set: {
                 Email: Email ,
                 HourlyRate: HourlyRate ,
                 Affilation: Affilation 
             }
-        });
-
-        if (result.nModified === 0) {
-            return res.status(404).json({ error: 'Doctor not found or no updates provided' });
+        });*/
+        
+        const doctor = await doctorModel.findOne({Username: Username});
+        if(!doctor){
+            return res.status(404).json({error : "This doctor doesn't exist!"})
         }
 
-        res.status(200).json({ message: 'Doctor information updated successfully' });
+        const updatedDoc = {
+          $set: {
+              Email: req.body.Email,
+              HourlyRate: req.body.HourlyRate,
+              Affilation: req.body.Affilation,
+          },
+      };
+        const updated = await doctorModel.updateOne({Username: Username},updatedDoc);
+        const doc = await doctorModel.findOne({Username: Username});
+        res.status(200).json({doc});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -80,23 +83,24 @@ const updateDoctor = async (req, res) => {
 //Req 23 (filter appointments by date/status)
 const filterApps = async (req,res) => {
     try {
-        const { date, status } = req.params;
+        const { Date, Status } = req.params;
 
         // Create a filter object to match appointments based on date and status
         const filter = {};
 
-        if (date) {
+        if (Date) {
             // If a date parameter is provided, add it to the filter
-            filter.date = date;
+            filter.Date = Date;
         }
 
-        if (status) {
+        if (Status) {
             // If a status parameter is provided, add it to the filter
-            filter.status = status;
+            filter.Status = Status;
         }
 
         // Use the filter object to query the appointment collection
-        const filteredAppointments = await appointmentSchema.find(filter);
+        const filteredAppointments = await appointmentSchema.find({Date: Date, Status: Status});
+
 
         if (filteredAppointments.length === 0) {
             return res.status(404).send('No matching appointments found');
@@ -113,7 +117,7 @@ const filterApps = async (req,res) => {
 //Req 25 (view information and health records of patient registered with me)
 const viewInfoAndRecords = async (req,res)=>{
     try {
-        const { id } = req.params;
+        const { id, Username } = req.params;
     
         // Find the doctor by ID
         const doctor = await doctorSchema.findById(id);
@@ -125,14 +129,14 @@ const viewInfoAndRecords = async (req,res)=>{
         const patientIds = doctor.patients; // Assuming it's an array of patient IDs
     
         // Find all patients whose IDs are in the patientIds array
-        const patients = await patientSchema.find({ _id: { $in: patientIds } });
+        const patients = await patientSchema.findOne({Username: Username, _id: { $in: patientIds } });
     
-        if (patients.length === 0) {
+        if (!patients) {
           return res.status(404).send('No patients found for this doctor');
         }
     
         // You can send the list of patients and their health records as a response
-        res.send(patients);
+        res.status(200).send(patients);
       } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -161,8 +165,10 @@ const MyPatients = async (req,res) =>{
         }
     
         // Extract patient names and send them as an array
-        const patientNames = patients.map((patient) => patient.Name);
-        res.send(patientNames);
+        const patientNames = 
+        patients.map(({Name, Email}) => 
+        ({Name, Email}));
+        res.status(200).send(patientNames);
       } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -171,17 +177,17 @@ const MyPatients = async (req,res) =>{
 //Req 34 (search for a patient by name)
 const PatientByName = async (req,res)=>{
     try {
-        const { name } = req.params;
+        const { Name } = req.params;
     
         // Find patients with the given name
-        const patients = await patientSchema.find({ Name: name });
+        const patients = await patientSchema.findOne({ Name: Name });
     
-        if (patients.length === 0) {
+        if (!patients) {
           return res.status(404).send('No patients found with this name');
         }
     
         // Send the list of patients with matching names as a response
-        res.send(patients);
+        res.status(200).send(patients);
       } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -204,26 +210,31 @@ const PatientsUpcoming = async (req,res) =>{
     
         // Find upcoming appointments for the doctor
         const upcomingAppointments = await appointmentSchema.find({
-          doctorID: id,
-          status: { $in: ['upcoming', 'following'] }, // Adjust this condition based on your schema
-        });
+          DoctorID: id,
+          Status: { $in: ['Upcoming', 'Following'] }, // Adjust this condition based on your schema
+          PatientID: {$in: patientIds}
+        },{PatientID: 1, _id:0});
     
         if (upcomingAppointments.length === 0) {
           return res.status(404).send('No upcoming appointments found for this doctor');
         }
     
-        // Extract patient IDs from the upcoming appointments
-        const patientIdsFromAppointments = upcomingAppointments.map((appointment) => appointment.patientID);
-    
         // Find the patients based on the patient IDs from appointments
-        const patients = await patientSchema.find({ _id: { $in: patientIdsFromAppointments } });
-    
-        if (patients.length === 0) {
-          return res.status(404).send('No patients found for upcoming appointments');
-        }
-    
+        const patients = await patientSchema.find(
+          { _id: { $in: upcomingAppointments.PatientID}}
+          );
+
+          //Types.ObjectId[] patientIdsWithAppointments = {};
+
+          for (const patient of upcomingAppointments){
+
+          }
+        
+
         // Extract patient names and send them as an array
-        const patientNames = patients.map((patient) => patient.Name);
+        const patientNames = patients.map(
+          (Name, Email) => 
+          (Name, Email));
         res.send(patientNames);
       } catch (err) {
         console.error(err);
@@ -233,24 +244,24 @@ const PatientsUpcoming = async (req,res) =>{
 //Req 36 (select a patient from the list of patients)
 const selectPatientWithHisName = async (req,res) =>{
     try {
-        const { doctorId, name } = req.params;
+        const { DoctorId, Username } = req.params;
     
         // Find the doctor by ID
-        const doctor = await doctorSchema.findById(doctorId);
+        const doctor = await doctorSchema.findById(DoctorId);
     
         if (!doctor) {
           return res.status(404).send('Doctor not found');
         }
     
         // Find patients with the given name
-        const patients = await patientSchema.find({ Name: name, _id: { $in: doctor.patients } });
+        const patient = await patientSchema.findOne({ Username: Username});
     
-        if (patients.length === 0) {
-          return res.status(404).send('No patients found with this name');
+        if (!patient) {
+          return res.status(404).send('No patient found with this username');
         }
     
         // Send the list of patients with matching names as a response
-        res.send(patients);
+        res.send(patient);
       } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -280,7 +291,6 @@ const addDoctor = async (req,res) =>{
 }
 
 module.exports = {
-    addDoctor,
     filterApps,
     viewInfoAndRecords,
     MyPatients,
@@ -288,8 +298,8 @@ module.exports = {
     PatientsUpcoming,
     registerDoctor,
     updateDoctor,
-    selectPatientWithHisName
-    
+    selectPatientWithHisName,
+    addDoctor
 };
 
 

@@ -11,7 +11,7 @@ const patientSchema = new Schema({
   Name: {
       type: String,
       required: true
-    },
+  },
   Email: {
     type: String,
     required: true,
@@ -41,7 +41,15 @@ const patientSchema = new Schema({
     type: String,
     required: true
   },
- 
+  FamilyMembers: [{
+    type: Schema.Types.ObjectId,
+    ref: 'FamilyMember', // This should match the model name you defined for Patient
+  }],
+  PatientPrescriptions: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Prescription', // This should match the model name you defined for Patient
+  }],
+
   }, { timestamps: true });
 
   // static register method

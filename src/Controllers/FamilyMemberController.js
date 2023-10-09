@@ -1,6 +1,6 @@
 
 // controller
-const FamilyMemberModel = require('../Models/FamilyMember.js');
+const FamilyMemberModel = require('../Models/FamilyMember');
 const { default: mongoose } = require('mongoose');
 
 const registerFamilyMember = async (req, res) => {
@@ -20,16 +20,13 @@ const registerFamilyMember = async (req, res) => {
             Age,
             Gender,
             RelationToPatient
-
         });
 
         await FamilyMember.save();
-        res.status(200).json({ FamilyMember })
+        res.status(200).json({FamilyMember});
     } catch (error) {
         res.status(400).json({ error: error.message })
     }
 }
 
-module.exports = {
-    registerFamilyMember
-}
+module.exports = registerFamilyMember;

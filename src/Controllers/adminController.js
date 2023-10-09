@@ -1,9 +1,17 @@
-const Admin = require("../Models/Admin");
+const Admin = require("../Models/Administrator");
 const Doctor = require("../Models/Doctor");
 const Patient = require("../Models/Patient");
 const HealthPackage = require("../Models/HealthPackage");
 const GuestDoctor = require("../Models/GuestDoctor");
-const isUsernameUnique = require('../utils');
+//const isUsernameUnique = require('../utils');
+
+async function isUsernameUnique(username) {
+  const patientExists = await Patient.findOne({ Username: username });
+  const doctorExists = await GuestDoctor.findOne({ Username: username });
+  const adminExists = await Admin.findOne({ Username: username });
+  return !patientExists && !doctorExists && !adminExists;
+}
+
 
 // exports.deleteUser = async (req, res) => {
 //   try {
@@ -24,7 +32,7 @@ const isUsernameUnique = require('../utils');
 // };
 
 // Task 8 : remove a patient, doctor, admin
-exports.deleteEntity = async (req, res) => {
+const deleteEntity = async (req, res) => {
   try {
     // Destructure 'username' and 'entityType' from request parameters.
     const { entityType, Username } = req.params;
@@ -64,7 +72,8 @@ exports.deleteEntity = async (req, res) => {
 };
 
 // Task 7 : add admin to DB
-exports.createAdmin = async (req, res) => {
+const createAdmin = async (req, res) => {
+
   try {
     const { Username, Password } = req.body;
     // Validate input, ensure admin does not already exist
@@ -76,14 +85,14 @@ exports.createAdmin = async (req, res) => {
     }
     const newAdmin = new Admin({ Username, Password });
     await newAdmin.save();
-    res.status(201).json({ message: "New admin created", admin: newAdmin });
+    res.status(200).json({ message: "New admin created", admin: newAdmin });
   } catch (error) {
-    res.status(500).json({ error: "Server error yalhwyy" });
+    res.status(500).json({ error: error.message});
   }
 };
 
 // Task 8 : remove a patient, doctor, admin
-exports.deleteEntity2 = async (req, res) => {
+const deleteEntity2 = async (req, res) => {
   try {
     // Destructure 'username' from request parameters.
     const { Username } = req.params;
@@ -122,7 +131,7 @@ exports.deleteEntity2 = async (req, res) => {
 };
 
 // Task 9 : view all information of doctors who wants to join platform
-exports.viewUnapprovedDoctors = async (req, res) => {
+const viewUnapprovedDoctors = async (req, res) => {
   try {
     // Find all doctors where IsApproved is false.
     const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false });
@@ -139,3 +148,10 @@ exports.viewUnapprovedDoctors = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+module.exports = {
+  viewUnapprovedDoctors,
+  deleteEntity2,
+  createAdmin,
+  deleteEntity
+}

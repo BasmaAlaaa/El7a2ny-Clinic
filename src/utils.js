@@ -1,6 +1,6 @@
 const Patient = require('./Models/Patient');
 const GuestDoctor = require('./Models/GuestDoctor');
-const Admin = require('./Models/Admin');
+const Admin = require('./Models/Administrator');
 
 async function isUsernameUnique(username) {
   const patientExists = await Patient.findOne({ Username: username });

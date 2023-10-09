@@ -19,7 +19,6 @@ const prescriptionSchema = new Schema({
     Description: {
         type: String,
         required: true,
-
     },
     Date: {
         type: Date,

@@ -6,6 +6,7 @@ const prescriptionSchema = require('../Models/Prescription.js');
 const FamilyMember = require('../Models/FamilyMember.js');
 const appointment = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
+const Appointment = require("../Models/Appointment.js");
 
 
 // Task 1 : register patient
@@ -52,7 +53,7 @@ const registerPatient = async (req, res) => {
 };
 
 
-//app.post('/addFamMember/:Username')
+// Req 18: app.post('/addFamMember/:Username')
 const addFamMember = async (req, res) => {
   const { Username } = req.params;
   const {
@@ -64,7 +65,7 @@ const addFamMember = async (req, res) => {
   } = req.body;
   try {
 
-    const patient = await patientSchema.findOne({ Username });
+    const patient = await patientSchema.findOne({ Username: Username });
 
     if (!patient) {
       return res.status(404).send({ error: 'Patient not found' });
@@ -85,16 +86,15 @@ const addFamMember = async (req, res) => {
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
-
 }
 
 
-//app.get('/getFamMembers/:Username')
+// Req 22 app.get('/getFamMembers/:Username')
 
 const getFamMembers = async (req, res) => {
   const { Username } = req.params;
   try {
-    const patient = await patientSchema.findOne({ Username });
+    const patient = await patientSchema.findOne({ Username: Username });
 
     if (!patient) {
       return res.status(404).send({ error: 'Patient not found' });
@@ -105,7 +105,7 @@ const getFamMembers = async (req, res) => {
     const members = await FamilyMember.find({ _id: { $in: familyMembers } });
 
     if (members.length === 0) {
-      return res.status(404).send('No patients found for this doctor');
+      return res.status(404).send('No family members linked to this patient');
     }
 
     const FamMembersInfo = members.map((member) => ({
@@ -113,14 +113,14 @@ const getFamMembers = async (req, res) => {
       RelationToPatient: member.RelationToPatient,
     }));
 
-    res.send(FamMembersInfo);
+    res.status(200).send(FamMembersInfo);
 
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
 };
 
-
+// Req 37: view a list of all doctors
 const viewDoctorsWithSessionPrices = async (req, res) => {
   try {
     const { Username } = req.params;
@@ -130,7 +130,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    const doctors = await Doctor.find().exec();
+    const doctors = await doctorSchema.find().exec();
 
     const result = [];
 
@@ -141,7 +141,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
 
       let sessionPrice = doctorRate;
 
-      const healthPackage = await HealthPackage.findOne({ patientID: req.user._id }).exec();
+      const healthPackage = await HealthPackage.findOne({ PatientsIDs: req.user._id }).exec();
 
       if (healthPackage) {
         const discountPercentage = healthPackage.doctorSessionDiscount || 0;
@@ -154,9 +154,9 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
       sessionPrice += sessionPrice * clinicMarkup;
 
       result.push({
-        Name: doctor.Nameame,
+        Name: doctor.Name,
         Speciality: doctor.Speciality,
-        sessionPrice,
+        sessionPrice
       });
     }
 
@@ -167,13 +167,13 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
   }
 };
 
-
+// Req 39: search for a doctor by name/speciality
 const findDocBySpecalityAndavail = async (req, res) => {
 
   const { Speciality, date, time } = req.body;
   //console.log(Speciality)
 
-  const filter = {}
+  const filter = {};
   try {
 
     if (Speciality) {
@@ -193,7 +193,7 @@ const findDocBySpecalityAndavail = async (req, res) => {
     if (doctors.length == 0) {
       res.status(404).send({ error: 'Doctor is not Found' });
     }
-    res.send(doctors)
+    res.status(200).send(doctors)
 
   }
   catch (err) {
@@ -204,7 +204,7 @@ const findDocBySpecalityAndavail = async (req, res) => {
 
 
 
-//app.get('/searchDocByNameAndSpec')
+// Req 38 : app.get('/searchDocByNameAndSpec')
 const searchDocByNameAndSpec = async (req, res) => {
   try {
     const { Name, Speciality } = req.body
@@ -221,8 +221,7 @@ const searchDocByNameAndSpec = async (req, res) => {
     if (doctors.length == 0) {
       res.status(404).send({ error: 'Doctor is not Found' });
     }
-    res.send(doctors)
-
+    res.status(200).send(doctors)
   }
   catch (err) {
     console.error(err);
@@ -230,7 +229,21 @@ const searchDocByNameAndSpec = async (req, res) => {
   }
 }
 
+//Req 40+41: Select a doctor from results and view all his info
+const viewDoctorInfo = async (req, res) => {
+  const {Username} = req.params;
+  try{
+    const doctor = await doctorSchema.findOne({Username: Username},{_id:0, Password:0, patients:0});
 
+    if(!doctor){
+      return res.status(404).send({ error: 'Doctor not found' });
+    }
+
+    res.status(200).json(doctor);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+}
 
 //app.post('/addPresToPatient/:Username/:id')
 const addPresToPatient = async (req, res) => {
@@ -254,8 +267,8 @@ const addPresToPatient = async (req, res) => {
 
 
 
-//app.get('/viewMyPres/:Username')
-const viewMyPres = async (req, res) => {
+// Req 54: app.get('/viewMyPres/:Username')
+const viewAllMyPres = async (req, res) => {
   const { Username } = req.params;
   try {
     const patient = await patientSchema.findOne(Username);
@@ -277,7 +290,7 @@ const viewMyPres = async (req, res) => {
     }
 
     const result = prescriptions.map(prescription => ({
-      prescriptionID: prescription.prescriptionID,
+      prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
       Date: prescription.Date
     }));
@@ -323,7 +336,7 @@ const filterMyPres = async (req, res) => {
     }
 
     const result = prescriptions.map((prescription) => ({
-      prescriptionID: prescription.prescriptionID,
+      prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
       Date: prescription.Date,
       Filled: prescription.Filled,
@@ -335,8 +348,35 @@ const filterMyPres = async (req, res) => {
   }
 };
 
+const viewMyPres = async (req,res) => {
+  const { id } = req.params;
+  try {
+    const prescription = await prescriptionSchema.findById();
 
+    if (!prescription) {
+      return res.status(404).send({ error: 'Prescription not found' });
+    }
 
+    const patient = await patientSchema.findOne({Username: prescription.PatientUsername});
+
+    const doctor = await doctorSchema.findOne({Username: prescription.DoctorUsername});
+
+    const appointment = await Appointment.findOne({_id: prescription.Appointment_ID});
+
+    const result = {
+      PatientName: patient.Name,
+      DoctorName: doctor.Name,
+      Description: prescription.Description,
+      Date: prescription.Date,
+      Filled: prescription.Filled,
+      AppointmentStatus: appointment.status
+    }
+
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+} 
 
 module.exports = {
   registerPatient,
@@ -345,7 +385,9 @@ module.exports = {
   searchDocByNameAndSpec,
   findDocBySpecalityAndavail,
   viewDoctorsWithSessionPrices,
+  viewDoctorInfo,
   addPresToPatient,
   viewMyPres,
+  viewAllMyPres,
   filterMyPres
 }

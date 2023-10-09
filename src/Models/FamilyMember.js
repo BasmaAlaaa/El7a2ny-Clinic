@@ -20,12 +20,12 @@ const FamilyMemberSchema = new Schema({
     Gender: {
         type: String,
         required: true,
-        enum: ['Male', 'Female']
+        enum: ["Male", "Female"]
     },
     RelationToPatient: {
         type: String,
         required: true,
-        enum: ['Wife', 'Husband', 'Son', 'Daughter', 'Father', 'Mother']
+        enum: ["Wife", "Husband", "Son", "Daughter", "Father", "Mother"]
     }
 
 },

@@ -58,8 +58,7 @@ const doctorSchema = new Schema({
     Affilation,
     EDB,
     patients,
-    Speciality
-    
+    Speciality    
   ) {
 
     // validation 
@@ -71,12 +70,9 @@ const doctorSchema = new Schema({
       !HourlyRate ||
       !Affilation ||
       !EDB ||
-      !patients||
       !Speciality) { 
     throw Error('All fields must be filled.');
 }
-
-
     if (!validator.isEmail(Email)) {
       throw Error('Email must be in the form of johndoe@example.com');
     }
