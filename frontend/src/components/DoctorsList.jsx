@@ -9,7 +9,7 @@ import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
 
 
-function MedicineList() {
+function DoctorsList() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
@@ -62,8 +62,8 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <Table tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TableDoctors tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
     </div>
   );
 }
-export default MedicineList;
+export default DoctorsList;

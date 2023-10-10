@@ -1,5 +1,5 @@
 
-import Table from '../components/Table.jsx';
+import TableRequests from '../components/TableRequests.jsx';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -75,7 +75,7 @@ let navigate = useNavigate()
         <div className="input-group w-50"></div> 
       </div>
     </div>
-      <Table tHead={tHeadRequests} data={resultRequest} filterText='' searchText=''/>
+      <TableRequests tHead={tHeadRequests} data={resultRequest} filterText='' searchText=''/>
 
     </div>
   );

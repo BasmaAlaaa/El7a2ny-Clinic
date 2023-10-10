@@ -2,28 +2,28 @@ import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
 import { useParams} from 'react-router-dom';
 import axios from "axios";
+import NavBar from "../components/NavBar";
+import MainBtn from "../components/Button";
+import { useNavigate } from 'react-router-dom';
 
 
 function DoctorView(){
 
-    const {username} = useParams();
+    const {id} = useParams();
     const[result, setResult] = useState([]);
     const[resultDelete, setResultDelete] = useState([]);
+    const [email, setEmail] = useState('');
+    const [hourlyrate, setHourlyRate] = useState(0);
+    const [affiliation, setAffiliation] = useState('');
+    let navigate = useNavigate()
 
 
 
-    useEffect(() => {
-  const response = axios.get(`http://localhost:8000/Admin/PatientInfo/${username}`)
-  .then(res =>setResult(res.data)).catch(err => console.log(err))
-    }, [])
-
-  console.log(result)
-
-  const handleRemove=() => {
-    const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
-  .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
-  }
-  console.log(resultDelete)
+  // const handleRemove=() => {
+  //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
+  // .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
+  // }
+  // console.log(resultDelete)
 
 //   result.map((e) => {
 //     console.log(e)
@@ -31,25 +31,33 @@ function DoctorView(){
 
     return (
         <div>
-        <NavBarAdministrator/>
-        <h1>Profile Info</h1>
-        <ul>
-            <h3>Name: {result.Name}</h3>
-            <h3>Username: {result.Username}</h3>
-            <h3>Email: {result.Email}</h3>
-            <h3>Date of Birth: {result.DateOfBirth}</h3>
-            <h3>Gender: {result.Gender}</h3>
-            <h3>Mobile Number: {result.MobileNumber}</h3>
-        </ul>
-        <ul>
-            <h2>Emergency Contact: </h2>
-            <h3>Name: {result.EmergencyContactName}</h3>
-            <h3>Mobile Number: {result.EmergencyContactMobile}</h3>
-            <h3>Relation: {result.EmergencyContactRelation}</h3>
-        </ul>
-        <button onClick={handleRemove}>
-            Remove Patient
-        </button>
+        <NavBar/>
+        <div>
+            <MainBtn
+              txt="View All Patients"
+              style="green-btn"
+              action={() => navigate(`/patientsList/${id}`)}
+              key="navBtn"
+            />
+          </div>
+          <div>
+            <MainBtn
+              txt="View All Appointments"
+              style="green-btn"
+              action={() => navigate(`/appointmentsList/${id}`)}
+              key="navBtn"
+            />
+            </div>
+              <form >
+  <h3><input  type= 'email'  placeholder= 'Enter New Email'  onChange={(e) => setEmail(e.target.value)} />
+  <button>Update Email</button></h3>
+  <h3><input type="number"  placeholder="Enter New Hourly Rate" onChange={(e) => setHourlyRate(e.target.value)}/>
+  <button >Update Hourly Rate</button></h3>
+  <h3><input type="text"  placeholder="Enter New Affiliation" onChange={(e) => setAffiliation(e.target.value)}/>
+  <button >Update Affiliation</button></h3>
+</form>
+          
+      
         </div>
     )
     }
