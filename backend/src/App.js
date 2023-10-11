@@ -11,6 +11,8 @@ const appointmentRoutes = require('../src/Routes/Appointment');
 const familyMemberRoutes = require('../src/Routes/FamilyMember');
 const prescriptionRoutes = require('../src/Routes/Prescription');
 const doctorRoutes = require('../src/Routes/Doctor'); //
+const Admin = require("../src/Models/Administrator");
+
 const MongoURI = process.env.MONGO_URI ;
 
 
@@ -18,13 +20,35 @@ const MongoURI = process.env.MONGO_URI ;
 const app = express();
 app.use(express.json()); 
 const port = process.env.PORT || "4000";
+/////////////////////////////////////////////////////////
+//A method to create an admin at the begginning of the server "3shan mainf3shanesh n-create admin "
+const createInitialAdmin = async () => {
+  try {
+    const adminExists = await Admin.findOne({ Username: "admin" });
 
+    if (!adminExists) {
+      // Createnew admin
+      const initialAdmin = new Admin({
+        Username: "admin",
+        Password: "basma" 
+      });
+      await initialAdmin.save();
+      console.log("Admin initialized with username: admin and password: basma");
+    } else {
+      console.log("Admin already exists");
+    }
+  } catch (error) {
+    console.error("Error initializing admin:", error);
+  }
+};
+////////////////////////////////////////////////////////
 
 // configurations
 // Mongo DB
 mongoose.connect(MongoURI)
 .then(()=>{
   console.log("MongoDB is now connected!")
+  createInitialAdmin();
 // Starting server
  app.listen(port, () => {
     console.log(`Listening to requests on http://localhost:${port}`);
