@@ -23,7 +23,7 @@ function RequestInfo(){
 return (
     <div>
         <NavBarAdministrator/>
-        <h1>Pharmacist Request Info</h1>
+        <h1>Doctor Request Info</h1>
         <ul>
             <h3>Name: {result.Name}</h3>
             <h3>UserName: {result.Username}</h3>

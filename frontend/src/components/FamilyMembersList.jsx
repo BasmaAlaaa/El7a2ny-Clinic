@@ -7,9 +7,9 @@ import search from '../assets/images/svg/search.svg';
 import filter from '../assets/images/svg/filter.svg';
 import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
+import TableFamilyMembers from './TableFamilyMembers.jsx'
 
-
-function MedicineList() {
+function FamilyMembersList() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
@@ -62,8 +62,8 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <Table tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TableFamilyMembers tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
     </div>
   );
 }
-export default MedicineList;
+export default FamilyMembersList;

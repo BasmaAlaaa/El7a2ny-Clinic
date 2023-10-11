@@ -9,14 +9,15 @@ import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
 
 
-function MedicineList() {
+function PatientsList() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
+  const {id} = useParams();
 
 
   useEffect(() => {
-const response = axios.get('http://localhost:8000/Pharmacist/AvailableMedicinesDetailsByPatient')
+const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${id}`)
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
 console.log(result)
@@ -30,13 +31,13 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Name', 'Active Ingredients', 'Price', 'Photo', 'Medical Use', 'View'];
+  let tHead = ['Name', 'Username', 'Email', 'Upcoming Appointments'];
 
   return (
     <div>
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
-      <p className="text-capitalize fs-4 w-25">Medicines</p>
+      <p className="text-capitalize fs-4 w-25">Patients</p>
       <div className="d-flex flex-row w-75 justify-content-end">
         <div className="input-group w-50">
           <span
@@ -62,8 +63,8 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <Table tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TablePatients tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
     </div>
   );
 }
-export default MedicineList;
+export default PatientsList;

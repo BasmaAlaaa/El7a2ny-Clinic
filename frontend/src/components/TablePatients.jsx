@@ -8,24 +8,19 @@ function CaseTableBody({ data }) {
     <>
       
     {data.Name && <th>{data.Name}</th>}
-
-    {data.ActiveIngredients && <td>{data.ActiveIngredients}</td>}
-    {data.Price && <td>{data.Price}</td>}
-    {data.Picture && <td> <img src = {data.Picture} alt='image' width={60} height={60}/> </td>}
-    {data.MedicalUse && <td>{data.MedicalUse}</td>}
-    {data.Quantity && <td>{data.Quantity}</td>}
-    {data.Sales && <td>{data.Sales}</td>}
-
-    {data.Gender&&<td>{data.Gender}</td>}
-    {data.Age&&<td>{data.Age}</td>}
-    {data.MobileNumber&&<td>{data.MobileNumber}</td>}
-
     {data.Username&&<td>{data.Username}</td>}
     {data.Email&&<td>{data.Email}</td>}
-    {data.Affiliation&&<td>{data.Affiliation}</td>}
-    {data.Affilation&&<td>{data.Affilation}</td>}
-    {data.HourlyRate&&<td>{data.HourlyRate}</td>}
-    {data.EDB&&<td>{data.EDB}</td>}
+
+    <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate(`/patientInfo/${data.Username}`)}
+      >
+        View
+      </button>
+      </div>
+      </td>
     
       
 
@@ -46,7 +41,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function Table({ tHead, data, searchText, filterText }) {
+function TablePatients({ tHead, data, searchText, filterText }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -78,4 +73,4 @@ function Table({ tHead, data, searchText, filterText }) {
   );
 }
 
-export default Table;
+export default TablePatients;

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
 import { useParams} from 'react-router-dom';
 import axios from "axios";
+import NavBar from "../components/NavBar";
 
 
 function PatientInfo(){
@@ -31,7 +32,7 @@ function PatientInfo(){
 
     return (
         <div>
-        <NavBarAdministrator/>
+        <NavBar/>
         <h1>Patient Info</h1>
         <ul>
             <h3>Name: {result.Name}</h3>
