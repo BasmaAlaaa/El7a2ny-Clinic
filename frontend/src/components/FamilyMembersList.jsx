@@ -8,6 +8,7 @@ import filter from '../assets/images/svg/filter.svg';
 import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
 import TableFamilyMembers from './TableFamilyMembers.jsx'
+import NavBarPatient from './NavBarPatient.jsx';
 
 function FamilyMembersList() {
   const {username} = useParams();
@@ -28,6 +29,7 @@ result.map((e) => {
 
   return (
     <div>
+      <NavBarPatient username={username}/>
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
       <p className="text-capitalize fs-4 w-25">Family Members</p>

@@ -8,6 +8,7 @@ import filter from '../assets/images/svg/filter.svg';
 import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
 import TablePrescriptions from './TablePrescriptions.jsx'
+import NavBarPatient from './NavBarPatient.jsx';
 
 
 
@@ -20,7 +21,7 @@ function PrescriptionsList() {
 
   useEffect(() => {
 const response = axios.get(`http://localhost:4000/Patient/viewAllMyPres/${username}`)
-.then(res =>setResult(res.data)).catch(err => console.log(err))
+.then(res =>setResult(res.data)).catch(err => console.log(err.request))
   }, [])
 console.log(result)
 result.map((e) => {
@@ -33,10 +34,11 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Prescription ID', 'Prescription Date'];
+  let tHead = ['Doctor Username', 'Prescription Date', 'Description'];
 
   return (
     <div>
+      <NavBarPatient username={username}/>
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
       <p className="text-capitalize fs-4 w-25">Prescriptions</p>

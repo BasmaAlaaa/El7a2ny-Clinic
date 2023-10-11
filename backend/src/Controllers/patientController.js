@@ -192,13 +192,13 @@ const allAppointments = async (req,res) => {
 
   try{
     const {Username} = req.params;
-    const user = await doctorSchema.findOne({Username: Username});
+    const user = await patientSchema.findOne({Username: Username});
     if(!user){  
-         return res.status(404).send('No doctor found');
+         return res.status(404).send('No patient found');
     }
 
       // Use the filter object to query the appointment collection
-      const filteredAppointments = await appointmentSchema.find({DoctorUsername: Username});
+      const filteredAppointments = await appointmentSchema.find({PatientUsername: Username});
 
       if (filteredAppointments.length === 0) {
           return res.status(404).send('No matching appointments found');

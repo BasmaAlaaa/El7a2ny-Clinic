@@ -36,7 +36,7 @@ function AddFamilyMember() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {name, nationalID, age, gender, relationToPatient}
+    const data = {Name:name, NationalID:nationalID, Age:age, Gender:gender, RelationToPatient:relationToPatient}
     console.log(data)
     const response = axios.post(`http://localhost:4000/Patient/addFamMember/${username}`, data)
 .then(res =>console.log(res.data)).catch(err => console.log(err))
@@ -47,13 +47,14 @@ function AddFamilyMember() {
       <NavBar/>
       {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
       <form onSubmit={handleSubmit}>
-        <input  required placeholder= 'enter Name' type= 'text' onChange={(e) => setName(e.target.value)} />
-        <input  required placeholder= 'enter National ID' type= 'text' onChange={(e) => setNationalID(e.target.value)} />
-        <input  required placeholder= 'enter Age' type= 'number' onChange={(e) => setAge(e.target.value)} />
-        <input  required placeholder= 'enter Gender' type= 'text' onChange={(e) => setGender(e.target.value)} />
-        <input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatient(e.target.value)} />
+        <h2>Add Family Member</h2>
+        <h3><input  required placeholder= 'enter Name' type= 'text' onChange={(e) => setName(e.target.value)} /></h3>
+        <h3><input  required placeholder= 'enter National ID' type= 'text' onChange={(e) => setNationalID(e.target.value)} /></h3>
+        <h3><input  required placeholder= 'enter Age' type= 'number' onChange={(e) => setAge(e.target.value)} /></h3>
+        <h3><input  required placeholder= 'enter Gender' type= 'text' onChange={(e) => setGender(e.target.value)} /></h3>
+        <h3><input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatient(e.target.value)} /></h3>
 
-        <button type="submit">Submit</button>
+        <h3><button type="submit">Submit</button></h3>
     </form>
 
     </div>

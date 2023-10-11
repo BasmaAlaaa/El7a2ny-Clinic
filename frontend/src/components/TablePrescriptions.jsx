@@ -7,8 +7,10 @@ function CaseTableBody({ data }) {
   return (
     <>
       
-    {data.prescriptionID && <th>{data.prescriptionID}</th>}
+    {data.DoctorUsername && <th>{data.DoctorUsername}</th>}
     {data.Date && <td>{data.Date}</td>}
+    {data.Description && <td>{data.Description}</td>}
+
 
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
