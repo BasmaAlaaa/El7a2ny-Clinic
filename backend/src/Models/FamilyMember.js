@@ -20,14 +20,13 @@ const FamilyMemberSchema = new Schema({
     Gender: {
         type: String,
         required: true,
-        enum: ["Male", "Female"]
+        enum: ["Male", "Female","female","male"]
     },
     RelationToPatient: {
         type: String,
         required: true,
-        enum: ["Wife", "Husband", "Son", "Daughter", "Father", "Mother"]
+        enum: ["Wife", "Husband", "Son", "Daughter", "Father", "Mother","wife", "husband", "son", "daughter", "father", "mother"]
     }
-
 },
     { timestamps: true });
 
@@ -38,12 +37,10 @@ FamilyMemberSchema.statics.register = async function (
     Age,
     Gender,
     RelationToPatient
-
 ) {
 
     // validation 
     if (
-
         !Name ||
         !NationalID ||
         !Age ||
@@ -52,13 +49,11 @@ FamilyMemberSchema.statics.register = async function (
         throw Error('All fields must be filled.');
     }
 
-
     const existsNationalID = await this.findOne({ NationalID });
 
     if (existsNationalID) {
         throw new Error('NationalID is already taken.');
     }
-
 
     const FamilyMember = await this.create({
         Name,
@@ -66,13 +61,10 @@ FamilyMemberSchema.statics.register = async function (
         Age,
         Gender,
         RelationToPatient
-
     });
 
     return FamilyMember;
 };
-
-
 
 module.exports = mongoose.model('FamilyMember', FamilyMemberSchema);
 

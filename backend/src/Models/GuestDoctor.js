@@ -40,7 +40,7 @@ const guestDoctorSchema = new Schema(
     IsApproved: {
       type: Boolean,
       default: false,
-    },
+    }
   },
   { timestamps: true }
 );
@@ -79,6 +79,7 @@ guestDoctorSchema.statics.register = async function (
     Name,
     Email,
     Password,
+    DateOfBirth,
     HourlyRate,
     Affiliation,
     EDB,

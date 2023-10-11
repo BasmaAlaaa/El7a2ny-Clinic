@@ -6,7 +6,12 @@ const router = express.Router();
 router.get("/packages", healthPackageController.getAllPackages);
 router.post("/subscribe", healthPackageController.subscribeToPackage);
 router.post("/create", healthPackageController.createPackage);
-router.put("/update/:type", healthPackageController.updatePackage);
-router.delete('/delete/:type', healthPackageController.deletePackage);
+
+router.put("/updateAnnualFee/:Type", healthPackageController.updatePackageByAnnualFee);
+router.put("/updateDoctorSessionDiscount/:Type", healthPackageController.updatePackageByDoctorSessionDiscount);
+router.put("/updateFamilySubscriptionDiscount/:Type", healthPackageController.updatePackageByFamilySubscriptionDiscount);
+router.put("/updateMedicineDiscount/:Type", healthPackageController.updatePackageByMedicineDiscount);
+
+router.delete("/delete/:Type", healthPackageController.deletePackage);
 
 module.exports = router;

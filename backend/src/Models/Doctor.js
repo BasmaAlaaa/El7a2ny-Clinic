@@ -37,14 +37,26 @@ const doctorSchema = new Schema({
     type:String,
     required: true
   },
-  patients: [{
-    type: Schema.Types.ObjectId,
+  PatientsUsernames: [{
+    type: String,
     ref: 'Patient', // This should match the model name you defined for Patient
   }],
   Speciality:{
     type: String,
       required: true
-  }
+  },
+  Schedule: [
+    {
+      Date:{
+        type: Date,
+        required: true
+      },
+      Time:{
+        type:String,
+        required:true
+      }
+    }
+  ]
 }, { timestamps: true });
 
   // static register method
@@ -57,8 +69,9 @@ const doctorSchema = new Schema({
     HourlyRate,
     Affiliation,
     EDB,
-    patients,
-    Speciality    
+    PatientsUsernames,
+    Speciality,
+    Schedule    
   ) {
 
     // validation 
@@ -70,23 +83,14 @@ const doctorSchema = new Schema({
       !HourlyRate ||
       !Affiliation ||
       !EDB ||
-      !Speciality) { 
+      !Speciality ||
+      !Schedule) 
+      { 
     throw Error('All fields must be filled.');
 }
     if (!validator.isEmail(Email)) {
       throw Error('Email must be in the form of johndoe@example.com');
     }
-    
-    /*const existsUsername = await this.findOne({ Username });
-    const existsEmail = await this.findOne({ Email });
-  
-    if (existsUsername) {
-      throw new Error('Username is already taken.');
-    }
-  
-    if (existsEmail) {
-      throw new Error('Email is already in use.');
-    }*/
 
     const doctor = await this.create({
       Username,
@@ -97,14 +101,13 @@ const doctorSchema = new Schema({
       HourlyRate,
       Affiliation,
       EDB,
-      patients,
-      Speciality
+      PatientsUsernames,
+      Speciality,
+      Schedule
     });
   
     return doctor;
   };
 
-  
-  
   const Doctor = mongoose.model('Doctor', doctorSchema);
   module.exports = Doctor;

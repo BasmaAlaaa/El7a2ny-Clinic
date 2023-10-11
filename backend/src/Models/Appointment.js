@@ -2,46 +2,44 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
 
-const doctorFile = require('./Doctor.js');
-const patientFile = require('./Patient.js');
-
 const appointmentSchema = new Schema({    
     Date:{
         type: Date,
         required: true
     },
-    DoctorID:{
-        type: mongoose.Schema.Types.ObjectId,
+    DoctorUsername:{
+        type: String,
         ref: 'Doctor'
     },
-    PatientID:{
-        type: mongoose.Schema.Types.ObjectId,
+    PatientUsername:{
+        type: String,
         ref: 'Patient'
     },
     Status: {
         type: String,
-        enum: ['Finished', 'Following', 'Upcoming'],
+        default:"Upcoming",
+        enum: ["Finished", "Following", "Upcoming","finished", "following", "upcoming"]
     }
 },{ timestamps: true })
 
 appointmentSchema.statics.register = async function (
     Date,
-    DoctorID,
-    PatientID,
+    DoctorUsername,
+    PatientUsername,
     Status
   ) {
 
     // validation 
     if (!Date ||
-      !DoctorID ||
-      !PatientID ||
+      !PatientUsername ||
+      !DoctorUsername ||
       !Status ) { 
     throw Error('All fields must be filled.');
 }
     const appointment = await this.create({
       Date,
-      DoctorID,
-      PatientID,
+      DoctorUsername,
+      PatientUsername,
       Status
     });
   

@@ -21,7 +21,6 @@ const registerFamilyMember = async (req, res) => {
             Gender,
             RelationToPatient
         });
-
         await FamilyMember.save();
         res.status(200).json({FamilyMember});
     } catch (error) {

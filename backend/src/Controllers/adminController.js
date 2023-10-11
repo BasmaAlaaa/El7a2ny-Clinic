@@ -12,27 +12,12 @@ async function isUsernameUnique(username) {
   return !patientExists && !doctorExists && !adminExists;
 }
 
-
-// exports.deleteUser = async (req, res) => {
-//   try {
-//     // Destructure 'username' from request parameters.
-//     const { username } = req.params;
-//     // Search and delete the user document where the username field equals the provided username.
-//     const deletedUser = await User.findOneAndDelete({ username: username });
-//     // Check if a user was actually deleted; if not, respond with a 404 status code and an error message.
-//     if (!deletedUser) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-//     // If a user was found and deleted, respond with a 200 status code and a success message.
-//     res.status(200).json({ message: "User deleted successfully" });
-//   } catch (error) {
-//     // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
-
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials',true);
+
   try {
     // Destructure 'username' and 'entityType' from request parameters.
     const { entityType, Username } = req.params;
@@ -53,7 +38,7 @@ const deleteEntity = async (req, res) => {
         // If the entity type is invalid/not supported, return a 400 status code and an error message.
         return res.status(400).json({ error: "Invalid entity type" });
     }
-    console.log(entityType, Username); // Log the received parameters
+    //console.log(entityType, Username); // Log the received parameters
 
     // Search and delete the document where the Username field equals the provided Username.
     const deletedEntity = await Model.findOneAndDelete({ Username: Username });
@@ -74,17 +59,24 @@ const deleteEntity = async (req, res) => {
 // Task 7 : add admin to DB
 const createAdmin = async (req, res) => {
 
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials',true);
+
   try {
     const { Username, Password } = req.body;
     // Validate input, ensure admin does not already exist
+    
     if (!Username || !Password) {
       throw Error("All fields must be filled.");
     }
+
     if (!(await isUsernameUnique(Username))) {
       throw new Error('Username is already taken.');
     }
+
     const newAdmin = new Admin({ Username, Password });
     await newAdmin.save();
+
     res.status(200).json({ message: "New admin created", admin: newAdmin });
   } catch (error) {
     res.status(500).json({ error: error.message});
@@ -93,6 +85,10 @@ const createAdmin = async (req, res) => {
 
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity2 = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials',true);
+
   try {
     // Destructure 'username' from request parameters.
     const { Username } = req.params;
@@ -136,7 +132,7 @@ const viewUnapprovedDoctors = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   try {
     // Find all doctors where IsApproved is false.
-    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false });
+    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false },{Password: 0, HourlyRate: 0, Affiliation: 0, EDB: 0, DateOfBirth: 0, _id: 0});
 
     // Check if there are any unapproved doctors; if not, respond with a 404 status code and an error message.
     if (!unapprovedDoctors.length) {
@@ -151,9 +147,31 @@ const viewUnapprovedDoctors = async (req, res) => {
   }
 };
 
+const viewDoctorInfo = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  try{
+
+    const {Username} = req.params;
+
+    const doc = await GuestDoctor.findOne({Username: Username},{_id: 0, Password: 0});
+    
+    if (!doc) {
+      return res.status(404).json({ error: "No unapproved doctor found by this username" });
+    }
+
+    res.status(200).json({ doctor: doc});
+
+  } catch (error){
+    res.status(500).json({ error: error.message });
+  }
+}
+
 module.exports = {
   viewUnapprovedDoctors,
   deleteEntity2,
   createAdmin,
-  deleteEntity
+  deleteEntity,
+  viewDoctorInfo
 }

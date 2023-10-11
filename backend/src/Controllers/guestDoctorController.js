@@ -5,6 +5,9 @@ const {isEmailUnique, isUsernameUnique}=require('../utils.js');
 // Task 3 : register Doctor
 const registerGuestDoctor = async (req, res) => {
 
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials',true);
+    
     const { 
         Username,
         Name,
@@ -14,7 +17,6 @@ const registerGuestDoctor = async (req, res) => {
         HourlyRate,
         Affiliation,
         EDB
-
     } = req.body;
 
     try {

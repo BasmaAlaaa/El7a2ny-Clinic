@@ -1,4 +1,4 @@
-const doctorModel = require('../Models/Doctor.js');
+const { StatusFile } = require('git');
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
@@ -6,7 +6,11 @@ const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 
 // register Doctor
 const registerDoctor = async (req, res) => {
-    const { 
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials',true);
+
+  const { 
         Username,
         Name,
         Email,
@@ -15,8 +19,9 @@ const registerDoctor = async (req, res) => {
         HourlyRate,
         Affiliation,
         EDB,
-        patients,
-        Speciality
+        PatientsUsernames,
+        Speciality,
+        Schedule
     } = req.body;
 
     try {
@@ -28,7 +33,7 @@ const registerDoctor = async (req, res) => {
       if (!(await isEmailUnique(Email))) {
           throw new Error('Email is already in use.');
       }
-        const doctor = await doctorModel.register(
+        const doctor = await doctorSchema.register(
             Username,
             Name,
             Email,
@@ -37,8 +42,9 @@ const registerDoctor = async (req, res) => {
             HourlyRate,
             Affiliation,
             EDB,
-            patients,
-            Speciality
+            PatientsUsernames,
+            Speciality,
+            Schedule
         );
           
         await doctor.save();
@@ -49,87 +55,187 @@ const registerDoctor = async (req, res) => {
 }
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
-const updateDoctor = async (req, res) => {
-    const {Username} = req.params;
-    try {
-        // Find the doctor by their name and update their information
-        /*const result = await doctorModel.updateOne({ Username: Username }, {
-            $set: {
-                Email: Email ,
-                HourlyRate: HourlyRate ,
-                Affilation: Affilation 
-            }
-        });*/
+const updateDoctorByEmail = async (req, res) => {
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  const {Username} = req.params;
+    try { 
+        const doctor = await doctorSchema.findOne({Username: Username});
         
-        const doctor = await doctorModel.findOne({Username: Username});
         if(!doctor){
             return res.status(404).json({error : "This doctor doesn't exist!"})
         }
 
         const updatedDoc = {
           $set: {
-              Email: req.body.Email,
-              HourlyRate: req.body.HourlyRate,
-              Affiliation: req.body.Affilation,
+              Email: req.body.Email
           },
-      };
-        const updated = await doctorModel.updateOne({Username: Username},updatedDoc);
-        const doc = await doctorModel.findOne({Username: Username});
+        };
+      
+        const updated = await doctorSchema.updateOne({Username: Username},updatedDoc);
+        const doc = await doctorSchema.findOne({Username: Username});
         res.status(200).json({doc});
     } catch (error) {
         res.status(400).json({ error: error.message });
     }
 };
-//Req 23 (filter appointments by date/status)
-const filterApps = async (req,res) => {
+
+const updateDoctorByHourlyRate = async (req, res) => {
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  const {Username} = req.params;
     try {
-        const { Date, Status } = req.params;
 
-        // Create a filter object to match appointments based on date and status
-        const filter = {};
-
-        if (Date) {
-            // If a date parameter is provided, add it to the filter
-            filter.Date = Date;
+        const doctor = await doctorSchema.findOne({Username: Username});
+        
+        if(!doctor){
+            return res.status(404).json({error : "This doctor doesn't exist!"})
         }
 
-        if (Status) {
-            // If a status parameter is provided, add it to the filter
-            filter.Status = Status;
+        const updatedDoc = {
+          $set: {
+              HourlyRate: req.body.HourlyRate
+          },
+        };
+      
+        const updated = await doctorSchema.updateOne({Username: Username},updatedDoc);
+        const doc = await doctorSchema.findOne({Username: Username});
+        res.status(200).json({doc});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+const updateDoctorByAffiliation = async (req, res) => {
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  const {Username} = req.params;
+    try { 
+        const doctor = await doctorSchema.findOne({Username: Username});
+        
+        if(!doctor){
+            return res.status(404).json({error : "This doctor doesn't exist!"})
         }
 
+        const updatedDoc = {
+          $set: {
+              Affiliation: req.body.Affiliation
+          },
+        };
+      
+        const updated = await doctorSchema.updateOne({Username: Username},updatedDoc);
+        const doc = await doctorSchema.findOne({Username: Username});
+        res.status(200).json({doc});
+    } catch (error) {
+        res.status(400).json({ error: error.message });
+    }
+};
+
+//Req 23 (filter appointments by date/status)
+const docFilterAppsByDate = async (req,res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username, Date } = req.params;
+
+    try {
+        const doctor = await doctorSchema.findOne({Username:Username});
+
+        if(!doctor){
+          return res.status(404).json({error : "This doctor doesn't exist!"})
+      }
         // Use the filter object to query the appointment collection
-        const filteredAppointments = await appointmentSchema.find({Date: Date, Status: Status});
-
+        const filteredAppointments = await appointmentSchema.find({DoctorUsername: Username, Date: Date});
 
         if (filteredAppointments.length === 0) {
             return res.status(404).send('No matching appointments found');
         }
-
         // Send the list of matching appointments as a response
         res.send(filteredAppointments);
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+    } catch (error) {
+        res.status(500).send({error: error.message});
     }
+}
+
+const docFilterAppsByStatus = async (req,res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  const { Status, Username } = req.params;      
+
+  try {
+
+      const user = await doctorSchema.findOne({Username: Username});
+        if(!user){
+          return res.status(404).send('No doctor found');
+        }
+
+      // Use the filter object to query the appointment collection
+      const filteredAppointments = await appointmentSchema.find({DoctorUsername: Username, Status: Status});
+
+      if (filteredAppointments.length === 0) {
+          return res.status(404).send('No matching appointments found');
+      }
+
+      // Send the list of matching appointments as a response
+      res.status(200).send({filteredAppointments});
+  } catch (error) {
+      res.status(500).send({error: error.message});
+  }
+}
+
+const allAppointments = async (req,res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  try{
+    const {Username} = req.params;
+    const user = await doctorSchema.findOne({Username: Username});
+    if(!user){  
+         return res.status(404).send('No doctor found');
+    }
+
+      // Use the filter object to query the appointment collection
+      const filteredAppointments = await appointmentSchema.find({DoctorUsername: Username});
+
+      if (filteredAppointments.length === 0) {
+          return res.status(404).send('No matching appointments found');
+      }
+
+      // Send the list of matching appointments as a response
+      res.status(200).send({filteredAppointments});
+  } catch (error) {
+    res.status(500).send({error: error.message});
+}
 }
 
 //Req 25 (view information and health records of patient registered with me)
 const viewInfoAndRecords = async (req,res)=>{
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
     try {
-        const { id, Username } = req.params;
+        const { DoctorUsername, PatientUsername } = req.params;
     
         // Find the doctor by ID
-        const doctor = await doctorSchema.findById(id);
+        const doctor = await doctorSchema.findOne({Username: DoctorUsername});
     
         if (!doctor) {
           return res.status(404).send('Doctor not found');
         }
     
-        const patientIds = doctor.patients; // Assuming it's an array of patient IDs
+        const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
     
         // Find all patients whose IDs are in the patientIds array
-        const patients = await patientSchema.findOne({Username: Username, _id: { $in: patientIds } });
+        const patients = await patientSchema.findOne({ Username: PatientUsername, Username: { $in: patientsUsernames } });
     
         if (!patients) {
           return res.status(404).send('No patients found for this doctor');
@@ -137,49 +243,66 @@ const viewInfoAndRecords = async (req,res)=>{
     
         // You can send the list of patients and their health records as a response
         res.status(200).send(patients);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+      } catch (error) {
+        res.status(500).send({error: error.message});
       }
 }
 
 //Req 33 (view a list of all my patients)
 const MyPatients = async (req,res) =>{
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
     try {
-        const { id } = req.params;
+        const { Username } = req.params;
     
         // Find the doctor by ID
-        const doctor = await doctorSchema.findById(id);
+        const doctor = await doctorSchema.findOne({Username: Username});
     
         if (!doctor) {
           return res.status(404).send('Doctor not found');
         }
     
-        const patientIds = doctor.patients; // Assuming it's an array of patient IDs
+        const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
     
         // Find all patients whose IDs are in the patientIds array
-        const patients = await patientSchema.find({ _id: { $in: patientIds } });
+        const patients = await patientSchema.find({ Username: { $in: patientsUsernames } });
     
         if (patients.length === 0) {
           return res.status(404).send('No patients found for this doctor');
         }
+
+        //const appointments = await appointmentSchema.find({DoctorUsername: Username, PatientUsername: { $in: patientsUsernames}});
     
         // Extract patient names and send them as an array
         const patientNames = 
-        patients.map(({Name, Email}) => 
-        ({Name, Email}));
+        patients.map((patient) => 
+        ({Name: patient.Name,
+          Username: patient.Username,
+          Email: patient.Email,
+          DateOfBirth: patient.DateOfBirth,
+        }));
         res.status(200).send(patientNames);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+      } catch (error) {
+        res.status(500).send({error: error.message});
       }
 }
 //Req 34 (search for a patient by name)
 const PatientByName = async (req,res)=>{
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
     try {
-        const { Name } = req.params;
+        const { Username, Name } = req.params;
     
         // Find patients with the given name
+        const doc = await doctorSchema.findOne({Username: Username});
+        if(!doc){
+          return res.status(404).send("Doctor doesn't exist!");
+        }
+
         const patients = await patientSchema.findOne({ Name: Name });
     
         if (!patients) {
@@ -188,54 +311,51 @@ const PatientByName = async (req,res)=>{
     
         // Send the list of patients with matching names as a response
         res.status(200).send(patients);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
+      } catch (error) {
+        res.status(500).send({eror: error.message});
       }
 }
 
 //Req 35 (filter patients based on upcoming appointments)
 const PatientsUpcoming = async (req,res) =>{
-    try {
-        const { id } = req.params;
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  try {
+        const { Username } = req.params;
     
         // Find the doctor by ID
-        const doctor = await doctorSchema.findById(id);
+        const doctor = await doctorSchema.findOne({Username:Username});
     
         if (!doctor) {
           return res.status(404).send('Doctor not found');
         }
     
-        const patientIds = doctor.patients; // Assuming it's an array of patient IDs
+        const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
     
         // Find upcoming appointments for the doctor
         const upcomingAppointments = await appointmentSchema.find({
-          DoctorID: id,
-          Status: { $in: ['Upcoming', 'Following'] }, // Adjust this condition based on your schema
-          PatientID: {$in: patientIds}
-        },{PatientID: 1, _id:0});
+          DoctorUsername: Username,
+          Status: { $in: ["Upcoming", "Following","upcoming","following"]}, // Adjust this condition based on your schema
+          PatientUsername: {$in: patientsUsernames}
+        },{PatientUsername: 1, Date:1, Status:1, _id:0});
     
         if (upcomingAppointments.length === 0) {
           return res.status(404).send('No upcoming appointments found for this doctor');
         }
     
         // Find the patients based on the patient IDs from appointments
-        const patients = await patientSchema.find(
-          { _id: { $in: upcomingAppointments.PatientID}}
+        /*const patients = await patientSchema.find(
+          { Username: { $in: upcomingAppointments.PatientUsername}}
           );
 
-          //Types.ObjectId[] patientIdsWithAppointments = {};
-
-          for (const patient of upcomingAppointments){
-
-          }
-        
-
         // Extract patient names and send them as an array
-        const patientNames = patients.map(
-          (Name, Email) => 
-          (Name, Email));
-        res.send(patientNames);
+        const patientNames = upcomingAppointments.map(
+          (PatientUsername) => 
+          (PatientUsername));*/
+          
+        res.send(upcomingAppointments);
       } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
@@ -291,15 +411,19 @@ const addDoctor = async (req,res) =>{
 }
 
 module.exports = {
-    filterApps,
+    docFilterAppsByDate,
+    docFilterAppsByStatus,
     viewInfoAndRecords,
     MyPatients,
     PatientByName,
     PatientsUpcoming,
     registerDoctor,
-    updateDoctor,
+    updateDoctorByAffiliation,
+    updateDoctorByEmail,
+    updateDoctorByHourlyRate,
     selectPatientWithHisName,
-    addDoctor
+    addDoctor,
+    allAppointments
 };
 
 

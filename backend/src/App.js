@@ -14,18 +14,10 @@ const doctorRoutes = require('../src/Routes/Doctor'); //
 const MongoURI = process.env.MONGO_URI ;
 
 
-const doctorSchema = require('../src/Models/Doctor.js'); // 
-const patientSchema = require('../src/Models/Patient.js'); //
-const appointmentSchema = require('../src/Models/Appointment.js');
-const { addDoctor,updateDoctor,filterApps ,viewInfoAndRecords,MyPatients,PatientByName,PatientsUpcoming,selectPatientWithHisName} = require('../src/Controllers/doctorController'); // 
-const doctorController = require('../src/Controllers/doctorController');//
-
-
 //App variables
 const app = express();
 app.use(express.json()); 
 const port = process.env.PORT || "4000";
-const patient = require('../src/Models/Patient');
 
 
 // configurations

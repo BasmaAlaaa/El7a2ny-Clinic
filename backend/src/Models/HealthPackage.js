@@ -3,36 +3,36 @@ const Schema = mongoose.Schema;
 const validator = require("validator");
 
 const HealthPackageSchema = new mongoose.Schema({
-  type: {
+  Type: {
     type: String,
     required: true,
-    unique: true,
+    unique: true
   },
-  annualFee: {
+  AnnualFee: {
     type: Number,
-    required: true,
+    required: true
   },
-  doctorSessionDiscount: {
-    type: Number,
-    required: true,
-    min: 0, // Minimum percentage
-    max: 100, // Maximum percentage
-  },
-  medicineDiscount: {
+  DoctorSessionDiscount: {
     type: Number,
     required: true,
     min: 0, // Minimum percentage
-    max: 100, // Maximum percentage
+    max: 100 // Maximum percentage
   },
-  familySubscriptionDiscount: {
+  MedicineDiscount: {
     type: Number,
     required: true,
     min: 0, // Minimum percentage
-    max: 100, // Maximum percentage
+    max: 100 // Maximum percentage
   },
-  PatientsIDs:[{
-    type: Schema.Types.ObjectId,
-    ref: 'Patient', // This should match the model name you defined for Patient
+  FamilySubscriptionDiscount: {
+    type: Number,
+    required: true,
+    min: 0, // Minimum percentage
+    max: 100 // Maximum percentage
+  },
+  PatientsUsernames:[{
+    type: String,
+    ref: 'Patient' // This should match the model name you defined for Patient
   }],
 });
 

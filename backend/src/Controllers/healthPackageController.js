@@ -2,6 +2,10 @@
 const HealthPackage = require("../Models/HealthPackage");
 
 const getAllPackages = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   try {
     const packages = await HealthPackage.find();
     res.status(200).json(packages);
@@ -11,6 +15,10 @@ const getAllPackages = async (req, res) => {
 };
 
 const subscribeToPackage = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   try {
     // Logic for a patient subscribing to a package, e.g., creating a subscription in the database, payment logic, etc.
     res.status(200).json({ message: "Subscription successful" });
@@ -18,102 +26,220 @@ const subscribeToPackage = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-// exports.createPackage = async (req, res) => {
-//   try {
-//     const newPackage = new HealthPackage(req.body);
-//     await newPackage.save();
-//     res.status(201).json(newPackage);
-//   } catch (error) {
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
-// Define an asynchronous function named 'createPackage'.
 
 //Task 11 : Add health package
 const createPackage = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
   try {
     // Destructure fields from request body.
     const {
-      type, // Type of the package: Silver, Gold, Platinum
-      annualFee, // Price per year
-      doctorSessionDiscount, // Discount on doctor's session price
-      medicineDiscount, // Discount on medicine ordered from pharmacy platform
-      familySubscriptionDiscount, // Discount on the subscription for family members
+      Type, // Type of the package: Silver, Gold, Platinum
+      AnnualFee, // Price per year
+      DoctorSessionDiscount, // Discount on doctor's session price
+      MedicineDiscount, // Discount on medicine ordered from pharmacy platform
+      FamilySubscriptionDiscount, // Discount on the subscription for family members
     } = req.body;
 
     // Check if all fields are provided; if not, respond with a 400 status code and an error message.
     if (
-      !type ||
-      !annualFee ||
-      !doctorSessionDiscount ||
-      !medicineDiscount ||
-      !familySubscriptionDiscount
+      !Type ||
+      !AnnualFee ||
+      !DoctorSessionDiscount ||
+      !MedicineDiscount ||
+      !FamilySubscriptionDiscount
     ) {
       return res.status(400).json({ error: "All fields must be provided" });
     }
-    const existsName = await HealthPackage.findOne({ type });
+    const existsName = await HealthPackage.findOne({ Type: Type });
     if (existsName) {
-      return res.status(409).json({ error: "Package already Exists." });
+      return res.status(400).json({ error: "Package already Exists." });
     }    
 
     // Create a new health package instance with the provided data.
     const newPackage = new HealthPackage({
-      type,
-      annualFee,
-      doctorSessionDiscount,
-      medicineDiscount,
-      familySubscriptionDiscount,
+      Type,
+      AnnualFee,
+      DoctorSessionDiscount,
+      MedicineDiscount,
+      FamilySubscriptionDiscount
     });
 
     // Save the new package to the database.
     await newPackage.save();
 
     // If successful, respond with a 201 status code and the data of the new package.
-    res.status(201).json({ message: "New package created", HealthPackage: newPackage});
+    res.status(200).json({ message: "New package created", HealthPackage: newPackage});
   } catch (error) {
     // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: error.message });
   }
 };
 
 // Task 11: update a health package
-const updatePackage = async (req, res) => {
+const updatePackageByAnnualFee = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
   try {
-    const updatedPackage = await HealthPackage.findOneAndUpdate(
-      { type: req.params.type }, // filter
-      req.body, // update
-      { new: true } // options
+    const {Type} = req.params;
+
+    const pack = await HealthPackage.findOne({Type:Type});
+
+    if (!pack) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const updatedPack = {
+      $set: {
+          AnnualFee: req.body.AnnualFee
+      }
+  };
+    const updatedPackage = await HealthPackage.updateOne(
+      {Type: Type}, // filter
+      updatedPack // update
     );
+
     if (!updatedPackage) {
       return res.status(404).json({ error: "Package not found" });
     }
-    res.status(200).json(updatedPackage);
+    const newPack = await HealthPackage.findOne({Type:Type});
+    res.status(200).json(newPack);
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: error.message});
   }
 };
 
-// exports.deletePackage = async (req, res) => {
-//     try {
-//         await HealthPackage.findByIdAndDelete(req.params.id);
-//         res.status(200).json({ message: 'Package deleted' });
-//     } catch (error) {
-//         res.status(500).json({ error: 'Server error' });
-//     }
-// };
+const updatePackageByDoctorSessionDiscount = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  try {
+    const {Type} = req.params;
+
+    const pack = await HealthPackage.findOne({Type:Type});
+
+    if (!pack) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const updatedPack = {
+      $set: {
+          DoctorSessionDiscount: req.body.DoctorSessionDiscount
+      }
+  };
+    const updatedPackage = await HealthPackage.updateOne(
+      {Type: Type}, // filter
+      updatedPack // update
+    );
+
+    if (!updatedPackage) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const newPack = await HealthPackage.findOne({Type:Type});
+
+    res.status(200).json(newPack);
+  } catch (error) {
+    res.status(500).json({ error: error.message});
+  }
+};
+
+const updatePackageByMedicineDiscount = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  try {
+    const {Type} = req.params;
+
+    const pack = await HealthPackage.findOne({Type:Type});
+
+    if (!pack) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const updatedPack = {
+      $set: {
+          MedicineDiscount: req.body.MedicineDiscount
+      }
+  };
+    const updatedPackage = await HealthPackage.updateOne(
+      {Type: Type}, // filter
+      updatedPack // update
+    );
+
+    if (!updatedPackage) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const newPack = await HealthPackage.findOne({Type:Type});
+
+    res.status(200).json(newPack);
+  } catch (error) {
+    res.status(500).json({ error: error.message});
+  }
+};
+
+const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  try {
+    const {Type} = req.params;
+
+    const pack = await HealthPackage.findOne({Type:Type});
+
+    if (!pack) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const updatedPack = {
+      $set: {
+          FamilySubscriptionDiscount: req.body.FamilySubscriptionDiscount
+      }
+  };
+    const updatedPackage = await HealthPackage.updateOne(
+      {Type: Type}, // filter
+      updatedPack // update
+    );
+
+    if (!updatedPackage) {
+      return res.status(404).json({ error: "Package not found" });
+    }
+
+    const newPack = await HealthPackage.findOne({Type:Type});
+
+    res.status(200).json(newPack);
+  } catch (error) {
+    res.status(500).json({ error: error.message});
+  }
+};
+
 
 // Task 11: delete a health package
 const deletePackage = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
   try {
+
+    const { Type } = req.params;
     const deletedPackage = await HealthPackage.findOneAndDelete(
-      { type: req.params.type } // filter
+      { Type: Type } // filter
     );
     if (!deletedPackage) {
       return res.status(404).json({ error: "Package not found" });
     }
     res.status(200).json({ message: "Package deleted", data: deletedPackage });
   } catch (error) {
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: error.message });
   }
 };
 
@@ -121,6 +247,9 @@ module.exports = {
   subscribeToPackage,
   getAllPackages,
   deletePackage,
-  updatePackage,
+  updatePackageByAnnualFee,
+  updatePackageByDoctorSessionDiscount,
+  updatePackageByFamilySubscriptionDiscount, 
+  updatePackageByMedicineDiscount,
   createPackage,
 }

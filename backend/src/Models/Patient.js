@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const validator = require('validator');
+const Appointment = require('./Appointment');
 
 const patientSchema = new Schema({
   Username: {
@@ -27,7 +28,8 @@ const patientSchema = new Schema({
   },
   Gender: {
     type: String,
-    required: true
+    required: true,
+    enum: ["Male", "Female", "female", "male"]
   },
   MobileNumber: {
     type: String,
@@ -42,13 +44,13 @@ const patientSchema = new Schema({
     required: true
   },
   FamilyMembers: [{
-    type: Schema.Types.ObjectId,
+    type: String,
     ref: 'FamilyMember', // This should match the model name you defined for Patient
   }],
   PatientPrescriptions: [{
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Patient
-  }],
+  }]
 
   }, { timestamps: true });
 

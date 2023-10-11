@@ -13,16 +13,22 @@ const {
     registerPatient,
     addFamMember,
     getFamMembers,
-    searchDocByNameAndSpec,
-    findDocBySpecalityAndavail,
+    searchDocByName,
+    searchDocBySpec,
+    findDocBySpecality,
+    findDocByAvailability,
     addPresToPatient,
     viewMyPres,
-    filterMyPres,
+    filterMyPresBasedOnDate,
+    filterMyPresBasedOnDoctor,
+    filterMyPresBasedOnFilled,
     viewDoctorsWithSessionPrices,
     viewDoctorInfo,
-    viewAllMyPres
+    viewAllMyPres,
+    patientFilterAppsByDate,
+    patientFilterAppsByStatus,
+    allAppointments
 } = require('../Controllers/patientController');
-const { filterApps } = require('../Controllers/doctorController.js');
 
 const router = express.Router();
 
@@ -34,22 +40,28 @@ router.post('/addFamMember/:Username', addFamMember)
 
 router.get('/getFamMembers/:Username', getFamMembers)
 
-router.get('/findDocBySpecalityAndavail', findDocBySpecalityAndavail)
+router.get('/findDocBySpeciality/:Username/:Speciality', findDocBySpecality)
+router.get('/findDocByAvailability/:Username/:Date/:Time', findDocByAvailability)
 
-router.get('/searchDocByNameAndSpec', searchDocByNameAndSpec)
+router.get('/searchDocByName/:Username/:Name', searchDocByName)
+router.get('/searchDocBySpec/:Username/:Speciality', searchDocBySpec)
 
 router.post('/addPresToPatient/:Username/:prescriptionID', addPresToPatient)
 
-router.get('/viewMyPres/:Username', viewMyPres)
+router.get('/viewMyPres/:id', viewMyPres);
 
-router.get('/filterMyPres/:Username', filterMyPres)
+router.get('/filterMyPresBasedOnDoctor/:Username/:Date', filterMyPresBasedOnDate)
+router.get('/filterMyPresBasedOnDoctor/:Username/:Doctor', filterMyPresBasedOnDoctor)
+router.get('/filterMyPresBasedOnDoctor/:Username/:Filled', filterMyPresBasedOnFilled)
 
-router.get('/viewAllDoctors', viewDoctorsWithSessionPrices)
+router.get('/viewAllDoctors/:Username', viewDoctorsWithSessionPrices)
 
-router.get('/viewDoctorInfo', viewDoctorInfo);
+router.get('/viewDoctorInfo/:DoctorUsername/:PatientUsername', viewDoctorInfo);
 
-router.get('/viewAllMyPres', viewAllMyPres);
+router.get('/viewAllMyPres/:Username', viewAllMyPres);
 
-router.get('/filterAppointments',filterApps)
+router.get('/patientFilterAppsByDate/:Username/:Date',patientFilterAppsByDate)
+router.get('/patientFilterAppsByStatus/:Username/:Status',patientFilterAppsByStatus)
+ router.get('/allAppointments/:Username', allAppointments);
 
 module.exports = router

@@ -23,7 +23,6 @@ const prescriptionSchema = new Schema({
     Date: {
         type: Date,
         required: true,
-
     },
     Appointment_ID: {
         type: Schema.Types.ObjectId,
@@ -34,7 +33,6 @@ const prescriptionSchema = new Schema({
     Filled: {
         type: Boolean,
         required: true,
-
     }
 
 }, { timestamps: true });
