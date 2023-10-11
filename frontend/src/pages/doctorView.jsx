@@ -19,17 +19,17 @@ function DoctorView(){
 
 
   const updateEmail=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, email)
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email})
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
   const updateHourlyRate=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, hourlyrate)
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate})
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
   const updateAffiliation=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, affiliation)
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation})
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
