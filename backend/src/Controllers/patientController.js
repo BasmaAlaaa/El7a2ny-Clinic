@@ -281,11 +281,10 @@ const findDocBySpecality = async (req, res) => {
       return res.status(404).send("NO patient found");
     }
 
-
     //console.log(filter)
     const doctors = await doctorSchema.find({Speciality: Speciality});
-    if (doctors.length == 0) {
-      res.status(404).send({ error: 'Doctor is not Found' });
+    if (doctors.length === 0) {
+      return res.status(404).send({ error: 'Doctor is not Found' });
     }
     res.status(200).send(doctors)
 
@@ -294,7 +293,7 @@ const findDocBySpecality = async (req, res) => {
     res.status(500).json({ error: error.message
      });
   }
-}
+};
 
 const findDocByAvailability = async (req, res) => {
 
@@ -302,8 +301,6 @@ const findDocByAvailability = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   //console.log(Speciality)
-  const filter = {};
-
   const { Username, Date, Time} = req.params;
   try {
 
@@ -313,17 +310,27 @@ const findDocByAvailability = async (req, res) => {
       return res.status(404).send("NO patient found");
     }
 
-    const doctors = await doctorSchema.Schedule.find({Date: Date, Time: Time});
-    if (doctors.length == 0) {
-      res.status(404).send({ error: 'Doctor is not Found' });
+    const doctors = await doctorSchema.find();
+    //const result = doctors.flatMap(({Schedule}) => Schedule.map(({Date,Time}) => ({Date,Time})));
+
+    for (const doc of doctors){
+      if(doc.Schedule.map((Date,Time)=>(Date, Time))){
+        result.push(doc);
     }
-    res.status(200).send(doctors)
+  }
+
+    console.log(result);
+
+    if (result.length === 0) {
+      return res.status(404).send({ error: 'Doctor is not Found' });
+    }
+    res.status(200).send(result)
 
   }
   catch (error) {
     res.status(500).json({ error: error.message});
     }
-}
+};
 
 // Req 38 : app.get('/searchDocByNameAndSpec')
 const searchDocByName = async (req, res) => {
@@ -341,22 +348,21 @@ const searchDocByName = async (req, res) => {
     }
 
     const doctors = await doctorSchema.find({Name: Name})
-    if (doctors.length == 0) {
-      res.status(404).send({ error: 'Doctor is not Found' });
+    if (doctors.length === 0) {
+      return res.status(404).send({ error: 'Doctor is not Found' });
     }
     res.status(200).send(doctors)
   }
   catch (error) {
     res.status(500).json({ error: error.message});
     }
-}
+};
 
 const searchDocBySpec = async (req, res) => {
   
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  
   try {
     const { Speciality, Username } = req.params
 
@@ -365,17 +371,18 @@ const searchDocBySpec = async (req, res) => {
     if(!patient){
       return res.status(404).send("NO patient found");
     }
-
+    
     const doctors = await doctorSchema.find({Speciality: Speciality})
-    if (doctors.length == 0) {
-      res.status(404).send({ error: 'Doctor is not Found' });
+    if (doctors.length === 0) {
+      return res.status(404).send({ error: 'Doctor is not Found' });
     }
+
     res.status(200).send(doctors)
   }
   catch (error) {
     res.status(500).json({ error: error.message});
   }
-}
+};
 
 //Req 40+41: Select a doctor from results and view all his info
 const viewDoctorInfo = async (req, res) => {
@@ -402,7 +409,7 @@ const viewDoctorInfo = async (req, res) => {
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
-}
+};
 
 //app.post('/addPresToPatient/:Username/:id')
 const addPresToPatient = async (req, res) => {
@@ -422,7 +429,7 @@ const addPresToPatient = async (req, res) => {
 
     await patient.save();
 
-    res.status(200).send({ message: 'Prescription added to patient' });
+    res.status(200).send({ message: patient});
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
@@ -459,7 +466,10 @@ const viewAllMyPres = async (req, res) => {
     const result = prescriptions.map(prescription => ({
       prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
-      Date: prescription.Date
+      Date: prescription.Date,
+      DoctorUsername: prescription.DoctorUsername,
+      Description: prescription.Description,
+      Filled: prescription.Filled
     }));
 
     res.status(200).send(result);
@@ -498,7 +508,9 @@ const filterMyPresBasedOnDate = async (req, res) => {
       prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
       Date: prescription.Date,
-      Filled: prescription.Filled,
+      DoctorUsername: prescription.DoctorUsername,
+      Description: prescription.Description,
+      Filled: prescription.Filled
     }));
 
     res.status(200).send(result);
@@ -533,7 +545,9 @@ const filterMyPresBasedOnFilled = async (req, res) => {
       prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
       Date: prescription.Date,
-      Filled: prescription.Filled,
+      DoctorUsername: prescription.DoctorUsername,
+      Description: prescription.Description,
+      Filled: prescription.Filled
     }));
 
     res.status(200).send(result);
@@ -568,7 +582,9 @@ const filterMyPresBasedOnDoctor = async (req, res) => {
       prescriptionID: prescription._id,
       Appointment_ID: prescription.Appointment_ID,
       Date: prescription.Date,
-      Filled: prescription.Filled,
+      DoctorUsername: prescription.DoctorUsername,
+      Description: prescription.Description,
+      Filled: prescription.Filled
     }));
 
     res.status(200).send(result);
@@ -609,7 +625,7 @@ const viewMyPres = async (req,res) => {
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
-} 
+}; 
 
 module.exports = {
   registerPatient,
