@@ -10,6 +10,8 @@ function CaseTableBody({ data }) {
     {data.Name && <th>{data.Name}</th>}
     {data.Username&&<td>{data.Username}</td>}
     {data.Email&&<td>{data.Email}</td>}
+    {data.DateofBirth&&<td>{data.DateofBirth}</td>}
+
 
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">

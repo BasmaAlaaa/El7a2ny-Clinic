@@ -1,0 +1,62 @@
+import { useNavigate, useParams } from 'react-router-dom';
+import Form from '../components/Form.jsx';
+import { useDispatch } from 'react-redux';
+import { loggedIn } from '../features/login.js';
+import Validation from '../validate/validate';
+import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
+import { useState } from 'react';
+import axios from 'axios'
+import NavBar from '../components/NavBar.jsx';
+
+function AddFamilyMember() {
+  // let { errors, handleSubmit, register } = Validation('username')
+  // let c = (data) => {
+  //   console.log(data);
+  // }
+  // let inputArr = [
+  //   { title: 'username', placeholder: 'enter username', type: 'username', showErr: errors.username?.message, register: register("username"),  },
+  //   { title: 'password', placeholder: 'enter password', type: 'password', showErr: errors.password?.message, register: register("password") },
+  // ];
+  // let btnArr = [
+  //   {
+  //     title: 'Add Administrator',
+  //     style: 'green-btn',
+  //     action: handleSubmit(),
+  //   },
+  // ];
+
+  const {username} = useParams()
+
+  const [name, setName] = useState('');
+  const [nationalID, setNationalID] = useState('');
+  const [age, setAge] = useState(0)
+  const [gender, setGender] = useState('')
+  const [relationToPatient, setRelationToPatient] = useState('')
+
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {name, nationalID, age, gender, relationToPatient}
+    console.log(data)
+    const response = axios.post(`http://localhost:4000/Patient/addFamMember/${username}`, data)
+.then(res =>console.log(res.data)).catch(err => console.log(err))
+  }
+
+  return (
+    <div>
+      <NavBar/>
+      {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
+      <form onSubmit={handleSubmit}>
+        <input  required placeholder= 'enter Name' type= 'text' onChange={(e) => setName(e.target.value)} />
+        <input  required placeholder= 'enter National ID' type= 'text' onChange={(e) => setNationalID(e.target.value)} />
+        <input  required placeholder= 'enter Age' type= 'number' onChange={(e) => setAge(e.target.value)} />
+        <input  required placeholder= 'enter Gender' type= 'text' onChange={(e) => setGender(e.target.value)} />
+        <input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatient(e.target.value)} />
+
+        <button type="submit">Submit</button>
+    </form>
+
+    </div>
+  );
+}
+export default AddFamilyMember;

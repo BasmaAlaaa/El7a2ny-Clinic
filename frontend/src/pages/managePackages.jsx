@@ -23,13 +23,32 @@ function ManagePackages(){
         const response = axios.delete(`http://localhost:4000//HealthPackage/delete/${typeDelete}`)
     .then(res =>console.log(res.data)).catch(err => console.log(err))
       }
-      const handleUpdate = (e) => {
-        e.preventDefault();
-        const data = {type, annualFee, doctorSessionDiscount, medicineDiscount, familySubscriptionDiscount}
-        console.log(data)
-        const response = axios.put(`http://localhost:4000//HealthPackage/update/${typeUpdate}`, data)
-    .then(res =>console.log(res.data)).catch(err => console.log(err))
+    //   const handleUpdate = (e) => {
+    //     e.preventDefault();
+    //     const data = {type, annualFee, doctorSessionDiscount, medicineDiscount, familySubscriptionDiscount}
+    //     console.log(data)
+    //     const response = axios.put(`http://localhost:4000//HealthPackage/update/${typeUpdate}`, data)
+    // .then(res =>console.log(res.data)).catch(err => console.log(err))
+    //   }
+    const handleUpdate = (e) => {
+      e.preventDefault();
+      if(annualFee){
+      const response = axios.put(`http://localhost:4000//HealthPackage/updateAnnualFee/${typeUpdate}`, annualFee)
+      .then(res =>console.log(res.data)).catch(err => console.log(err))
       }
+      if(doctorSessionDiscount){
+        const response = axios.put(`http://localhost:4000//HealthPackage/updateDoctorSessionDiscount/${typeUpdate}`, doctorSessionDiscount)
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+      if(medicineDiscount){
+        const response = axios.put(`http://localhost:4000//HealthPackage/updateMedicineDiscount/${typeUpdate}`, medicineDiscount)
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+      if(familySubscriptionDiscount){
+        const response = axios.put(`http://localhost:4000//HealthPackage/updateFamilySubscriptionDiscount/${typeUpdate}`, familySubscriptionDiscount)
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+    }
     
     
 return(

@@ -26,6 +26,7 @@ import AppointmentsList from './components/AppointmentsList';
 import PrescriptionsList from './components/PrescriptionsList';
 import FamilyMembersList from './components/FamilyMembersList';
 import PatientsList from './components/PatientsList';
+import AddFamilyMember from './pages/addFamilyMember';
 
 
 
@@ -39,23 +40,21 @@ function App() {
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/registerPatient" element={<RegisterPatient />} />
           <Route exact path="/registerDoctor" element={<RegisterDoctor />} />
-          <Route exact path="/patientView" element={<PatientView />} />
-          <Route exact path="/pharmacistView" element={<PharmacistView />} />
+          <Route exact path="/patientView/:username" element={<PatientView />} />
           <Route exact path="/administratorView" element={<AdministratorView />} />
-          <Route exact path="/medicineView/:name" element={<MedicineView />} />
           <Route exact path="/addAdministrator" element={<AddAdministrator />} />
-          <Route exact path="/addMedicine" element={<AddMedicine />} />
+          <Route exact path="/addFamilyMember/:username" element={<AddFamilyMember />} />
           <Route exact path="/editMedicine/:name" element={<EditMedicine />} />
           <Route exact path="/patientInfo/:username" element={<PatientInfo />} />
           <Route exact path="/pharmacistInfo/:username" element={<PharmacistInfo />} />
           <Route exact path="/requestInfo/:username" element={<RequestInfo />} />
-          <Route exact path="/doctorView/:id" element={<DoctorView />} />
+          <Route exact path="/doctorView/:username" element={<DoctorView />} />
           <Route exact path="/managePackages" element={<ManagePackages />} />
           <Route exact path="/removeUser" element={<RemoveUser />} />
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
-          <Route exact path="/patientsList/:id" element={<PatientsList />} />
-          <Route exact path="/appointmentsList/:id" element={<AppointmentsList />} />
+          <Route exact path="/patientsList/:username" element={<PatientsList />} />
+          <Route exact path="/appointmentsList/:username" element={<AppointmentsList />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
 

@@ -1,10 +1,13 @@
 import FamilyMembersList from "../components/FamilyMembersList";
 import NavBar from "../components/NavBar";
-import DoctorsList from "../components/doctorsList";
-import PrescriptionsList from "../components/prescriptionsList";
+import DoctorsList from "../components/DoctorsList";
+import PrescriptionsList from "../components/PrescriptionsList";
+import MainBtn from "../components/Button";
+import { Navigate, useParams } from "react-router-dom";
 
 
 function PatientView(){
+  const {username} = useParams();
 return (
     <div>
     <NavBar/>
@@ -12,13 +15,31 @@ return (
             <MainBtn
               txt="View All Appointments"
               style="green-btn"
-              action={() => navigate(`/appointmentsList/${id}`)}
+              action={() => Navigate(`/appointmentsList/${username}`)}
               key="navBtn"
             />
-            </div>
-    <FamilyMembersList/>
+            
+            <MainBtn
+              txt="View All Registered Family Members"
+              style="green-btn"
+              action={() => Navigate(`/familyMembersList/${username}`)}
+              key="navBtn"
+            />
+            
+            <MainBtn
+            txt="View All of my Prescriptions"
+            style="green-btn"
+            action={() => Navigate(`/prescriptionsList/${username}`)}
+            key="navBtn"
+          />
+            <MainBtn
+            txt="Add Family Member"
+            style="green-btn"
+            action={() => Navigate(`/addFamilyMember/${username}`)}
+            key="navBtn"
+          />
+          </div>
     <DoctorsList/>
-    <PrescriptionsList/>
 
     </div>
 )

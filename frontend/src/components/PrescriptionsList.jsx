@@ -7,6 +7,8 @@ import search from '../assets/images/svg/search.svg';
 import filter from '../assets/images/svg/filter.svg';
 import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
+import TablePrescriptions from './TablePrescriptions.jsx'
+
 
 
 function PrescriptionsList() {
