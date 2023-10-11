@@ -35,7 +35,7 @@ const registerPatient = async (req, res) => {
     if (!(await isEmailUnique(Email))) {
       throw new Error('Email is already in use.');
     }
-
+console.log("username",Username)
     const patient = await patientSchema.register(
       Username,
       Name,

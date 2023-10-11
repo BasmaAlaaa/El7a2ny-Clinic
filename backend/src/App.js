@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 require("dotenv").config();
+const cors = require("cors")
 const patientRoutes = require("../src/Routes/Patient"); // Require Patient
 const adminRoutes = require('../src/Routes/Administrator'); //require admin
 const healthPackageRoutes = require('../src/Routes/HealthPackage'); //require health package
@@ -17,6 +18,7 @@ const MongoURI = process.env.MONGO_URI ;
 //App variables
 const app = express();
 app.use(express.json()); 
+app.use(cors());
 const port = process.env.PORT || "4000";
 
 
