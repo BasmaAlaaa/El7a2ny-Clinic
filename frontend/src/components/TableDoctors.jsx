@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data , user}) {
   let navigate = useNavigate()
 
   return (
@@ -11,6 +11,18 @@ function CaseTableBody({ data }) {
     {data.Email&&<td>{data.Email}</td>}
     {data.Speciality&&<td>{data.Speciality}</td>}
     {data.sessionPrice&&<td>{data.sessionPrice}</td>}
+    {data.ActiveIngredients &&
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate(`/doctorInfo/${data.Username}/${user}`)}
+      >
+        View
+      </button>
+      </div>
+      </td>
+      }
   
     </>
   );
@@ -29,7 +41,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableDoctors({ tHead, data, searchText, filterText }) {
+function TableDoctors({ tHead, data, searchText, filterText, user }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -48,7 +60,7 @@ function TableDoctors({ tHead, data, searchText, filterText }) {
           })
           .filter((e) => {
             return searchText.toLowerCase() === '' ? 
-            e: e.Name.toLowerCase().includes(searchText.toLowerCase())
+            e: (e.Name.toLowerCase().includes(searchText.toLowerCase()) || e.Speciality.toLowerCase().includes(searchText.toLowerCase()))
           })
           .map((e) => (
             <tr className="text-capitalize">

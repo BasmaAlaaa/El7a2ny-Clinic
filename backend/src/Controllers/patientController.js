@@ -251,6 +251,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
 
       result.push({
         Name: doctor.Name,
+        Username:doctor.Username,
         Email: doctor.Email,
         Speciality: doctor.Speciality,
         sessionPrice

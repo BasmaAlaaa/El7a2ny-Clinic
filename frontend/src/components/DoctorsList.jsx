@@ -64,7 +64,7 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <TableDoctors tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TableDoctors tHead={tHead} data={result} searchText={searchText} filterText={filterText} user={username}/>
     </div>
   );
 }

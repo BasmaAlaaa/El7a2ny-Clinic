@@ -1,5 +1,5 @@
 import FamilyMembersList from "../components/FamilyMembersList";
-import NavBar from "../components/NavBar";
+import NavBarPatient from "../components/NavBarPatient";
 import DoctorsList from "../components/DoctorsList";
 import PrescriptionsList from "../components/PrescriptionsList";
 import MainBtn from "../components/Button";
@@ -10,7 +10,7 @@ function PatientView(){
   const {username} = useParams();
 return (
     <div>
-    <NavBar/>
+    <NavBarPatient username={username}/>
     <div>
             <MainBtn
               txt="View All Appointments"

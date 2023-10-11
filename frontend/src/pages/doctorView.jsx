@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
 import { useParams} from 'react-router-dom';
 import axios from "axios";
-import NavBar from "../components/NavBar";
+import NavBarDoctor from "../components/NavBarDoctor";
 import MainBtn from "../components/Button";
 import { useNavigate } from 'react-router-dom';
 
@@ -37,7 +37,7 @@ function DoctorView(){
 
     return (
         <div>
-        <NavBar/>
+        <NavBarDoctor username={username}/>
         <div>
             <MainBtn
               txt="View All Patients"
