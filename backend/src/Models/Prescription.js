@@ -26,13 +26,13 @@ const prescriptionSchema = new Schema({
     },
     Appointment_ID: {
         type: Schema.Types.ObjectId,
-        required: true,
-        unique: true,
+        //required: true,
         ref: 'Appointment'
     },
     Filled: {
         type: Boolean,
-        required: true,
+        default: false
+        //required: true,
     }
 
 }, { timestamps: true });
@@ -57,9 +57,8 @@ prescriptionSchema.statics.register = async function (
     if (!DoctorUsername ||
         !PatientUsername ||
         !Date ||
-        !Description ||
-        !Appointment_ID ||
-        !Filled) {
+        !Description
+        ) {
         throw Error('All fields must be filled.');
     }
 

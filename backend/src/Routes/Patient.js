@@ -2,11 +2,6 @@
 
 
 const express = require('express');
-const doctorSchema = require('../Models/Doctor.js');
-const patientSchema = require('../Models/Patient.js');
-const appointmentSchema = require('../Models/Appointment.js');
-const prescriptionSchema = require('../Models/Prescription.js');
-const HealthPackage = require("../Models/HealthPackage");
 const mongoose = require('mongoose');
 // controller functions
 const {
@@ -46,13 +41,13 @@ router.get('/findDocByAvailability/:Username/:Date/:Time', findDocByAvailability
 router.get('/searchDocByName/:Username/:Name', searchDocByName)
 router.get('/searchDocBySpec/:Username/:Speciality', searchDocBySpec)
 
-router.post('/addPresToPatient/:Username/:prescriptionID', addPresToPatient)
+router.post('/addPresToPatient/:Username/:id', addPresToPatient)
 
 router.get('/viewMyPres/:id', viewMyPres);
 
-router.get('/filterMyPresBasedOnDoctor/:Username/:Date', filterMyPresBasedOnDate)
-router.get('/filterMyPresBasedOnDoctor/:Username/:Doctor', filterMyPresBasedOnDoctor)
-router.get('/filterMyPresBasedOnDoctor/:Username/:Filled', filterMyPresBasedOnFilled)
+router.get('/filterMyPresBasedOnDate/:Username/:Date', filterMyPresBasedOnDate)
+router.get('/filterMyPresBasedOnDoctor/:Username/:DoctorUsername', filterMyPresBasedOnDoctor)
+router.get('/filterMyPresBasedOnFilled/:Username/:Filled', filterMyPresBasedOnFilled)
 
 router.get('/viewAllDoctors/:Username', viewDoctorsWithSessionPrices)
 
