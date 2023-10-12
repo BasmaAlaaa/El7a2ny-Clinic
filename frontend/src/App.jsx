@@ -27,6 +27,7 @@ import PrescriptionsList from './components/PrescriptionsList';
 import FamilyMembersList from './components/FamilyMembersList';
 import PatientsList from './components/PatientsList';
 import AddFamilyMember from './pages/addFamilyMember';
+import AppointmentsListDoctor from './components/AppointmentsListDoctor';
 
 
 
@@ -55,6 +56,7 @@ function App() {
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />
           <Route exact path="/appointmentsList/:username" element={<AppointmentsList />} />
+          <Route exact path="/appointmentsListDoctor/:username" element={<AppointmentsListDoctor />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
 

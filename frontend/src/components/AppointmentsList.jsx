@@ -12,7 +12,6 @@ import NavBarPatient from './NavBarPatient.jsx';
 
 
 function AppointmentsList() {
-  const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
   const {username} = useParams();
@@ -21,7 +20,7 @@ function AppointmentsList() {
 
   useEffect(() => {
 const response = axios.get(`http://localhost:4000/Patient/allAppointments/${username}`)
-.then(res =>setResult(res.data)).catch(err => console.log(err))
+.then(res =>setResult(res.data.filteredAppointments)).catch(err => console.log(err))
   }, [])
 console.log(result)
 result.map((e) => {
@@ -31,7 +30,7 @@ result.map((e) => {
 const onFilterValueChanged=(event)=>{
   setFilterText(event.target.value);
 }
-console.log(filterText)
+console.log("filter",filterText)
 let navigate = useNavigate()
 
   let tHead = ['Date', 'Doctor Username', 'Status'];
@@ -44,24 +43,15 @@ let navigate = useNavigate()
       <p className="text-capitalize fs-4 w-25">Appointments</p>
       <div className="d-flex flex-row w-75 justify-content-end">
         <div className="input-group w-50">
-          <span
-            className="input-group-text bg-white border-end-0 search"
-          >
-            <img src={search} alt="search" />
-          </span>
-          <input
-            type="text"
-            className="form-control border-start-0 search ps-0"
-            placeholder="Search"
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </div>
+        
         <input
             type="date"
             className="form-control border-start-0 search ps-0"
             placeholder="Filter by date"
             onChange={(e) => setSearchDate(e.target.value)}
           />
+        </div>
+
         
         {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
           <img src={filter} className="me-2" alt="filter" />
@@ -69,12 +59,12 @@ let navigate = useNavigate()
         </button> */}
         <select name='medicalUse' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
-        <option value='pain Killer'>Following</option>
-        <option value='antiinflammatory'>Finished</option>
+        <option value='upcoming'>Upcoming</option>
+        <option value='finished'>Finished</option>
         </select>
       </div>
     </div>
-      <TableAppointments tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
+      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText}/>
     </div>
   );
 }

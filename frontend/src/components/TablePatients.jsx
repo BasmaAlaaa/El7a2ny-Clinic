@@ -58,7 +58,7 @@ function TablePatients({ tHead, data, searchText, filterText, username }) {
           {data
           .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
-            e : e.Status.toLowerCase() === filterText.toLowerCase()
+            e : e.Appointment_Status.toLowerCase() === filterText.toLowerCase()
           })
           .filter((e) => {
             return searchText.toLowerCase() === '' ? 

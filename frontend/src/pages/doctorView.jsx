@@ -50,7 +50,7 @@ function DoctorView(){
             <MainBtn
               txt="View All Appointments"
               style="green-btn"
-              action={() => navigate(`/appointmentsList/${username}`)}
+              action={() => navigate(`/appointmentsListDoctor/${username}`)}
               key="navBtn"
             />
             </div>

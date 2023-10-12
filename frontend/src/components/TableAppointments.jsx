@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import moment from 'moment';
 
 
 function CaseTableBody({ data }) {
@@ -31,6 +32,7 @@ function CaseTableBody({ data }) {
 // }
 
 function TableAppointments({ tHead, data, searchText, searchDate, filterText }) {
+
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -48,12 +50,8 @@ function TableAppointments({ tHead, data, searchText, searchDate, filterText }) 
             e : e.Status.toLowerCase() === filterText.toLowerCase()
           })
           .filter((e) => {
-            return filterText.toLowerCase() === ''?
-            e : e.Date === searchDate
-          })
-          .filter((e) => {
-            return searchText.toLowerCase() === '' ? 
-            e: e.Name.toLowerCase().includes(searchText.toLowerCase())
+            return searchDate=== ''?
+            e: e.Date.substring(0,10) === searchDate
           })
           .map((e) => (
             <tr className="text-capitalize">
