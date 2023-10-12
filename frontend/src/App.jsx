@@ -45,7 +45,7 @@ function App() {
           <Route exact path="/addAdministrator" element={<AddAdministrator />} />
           <Route exact path="/addFamilyMember/:username" element={<AddFamilyMember />} />
           <Route exact path="/editMedicine/:name" element={<EditMedicine />} />
-          <Route exact path="/patientInfo/:username" element={<PatientInfo />} />
+          <Route exact path="/patientInfo/:usernameDoctor/:usernamePatient" element={<PatientInfo />} />
           <Route exact path="/doctorInfo/:usernameDoctor/:usernamePatient" element={<DoctorInfo />} />
           <Route exact path="/requestInfo/:username" element={<RequestInfo />} />
           <Route exact path="/doctorView/:username" element={<DoctorView />} />

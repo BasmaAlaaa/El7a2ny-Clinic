@@ -58,14 +58,15 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='medicalUse' onChange={onFilterValueChanged}>
+        <select name='upcomingAppointments' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
-        <option value='pain Killer'>Pain killer</option>
-        <option value='antiinflammatory'>Antiinflammatory</option>
+        <option value='upcoming'>Upcoming</option> 
+        <option value='upcoming'>Finished</option> 
+
         </select>
       </div>
     </div>
-      <TablePatients tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TablePatients username={username} tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
     </div>
   );
 }

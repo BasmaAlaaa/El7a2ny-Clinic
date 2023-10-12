@@ -16,6 +16,7 @@ function AppointmentsList() {
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
   const {username} = useParams();
+  const[searchDate, setSearchDate] = useState('');
 
 
   useEffect(() => {
@@ -55,18 +56,25 @@ let navigate = useNavigate()
             onChange={(e) => setSearchText(e.target.value)}
           />
         </div>
+        <input
+            type="date"
+            className="form-control border-start-0 search ps-0"
+            placeholder="Filter by date"
+            onChange={(e) => setSearchDate(e.target.value)}
+          />
+        
         {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
         <select name='medicalUse' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
-        <option value='pain Killer'>Pain killer</option>
-        <option value='antiinflammatory'>Antiinflammatory</option>
+        <option value='pain Killer'>Following</option>
+        <option value='antiinflammatory'>Finished</option>
         </select>
       </div>
     </div>
-      <TableAppointments tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TableAppointments tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
     </div>
   );
 }

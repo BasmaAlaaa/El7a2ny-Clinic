@@ -32,7 +32,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Name', 'Email', 'Speciality', 'Session Price'];
+  let tHead = ['Name', 'Email', 'Speciality', 'Session Price', 'View'];
 
   return (
     <div>
@@ -57,10 +57,14 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='medicalUse' onChange={onFilterValueChanged}>
+        <select name='speciality' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
-        <option value='pain Killer'>Pain killer</option>
-        <option value='antiinflammatory'>Antiinflammatory</option>
+        <option value='dermatology'>Dermatology</option>
+        <option value='dentistry'>Dentistry</option>
+        <option value='psychiatry'>Psychiatry</option>
+        <option value='neurology'>Neurology</option>
+        <option value='orthopedics'>Orthopedics</option>
+
         </select>
       </div>
     </div>

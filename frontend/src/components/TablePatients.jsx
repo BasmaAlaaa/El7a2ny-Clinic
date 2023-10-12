@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data, username }) {
   let navigate = useNavigate()
-
+  console.log("username doctor:", username)
   return (
     <>
       
@@ -17,7 +17,7 @@ function CaseTableBody({ data }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/patientInfo/${data.Username}`)}
+        onClick={()=>navigate(`/patientInfo/${username}/${data.Username}`)}
       >
         View
       </button>
@@ -43,7 +43,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TablePatients({ tHead, data, searchText, filterText }) {
+function TablePatients({ tHead, data, searchText, filterText, username }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -58,7 +58,7 @@ function TablePatients({ tHead, data, searchText, filterText }) {
           {data
           .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
-            e : e.MedicalUse.toLowerCase() === filterText.toLowerCase()
+            e : e.Status.toLowerCase() === filterText.toLowerCase()
           })
           .filter((e) => {
             return searchText.toLowerCase() === '' ? 
@@ -66,7 +66,7 @@ function TablePatients({ tHead, data, searchText, filterText }) {
           })
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} username={username}/>
             </tr>
           ))}
         </tbody>

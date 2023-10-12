@@ -7,14 +7,14 @@ import NavBar from "../components/NavBar";
 
 function PatientInfo(){
 
-    const {username} = useParams();
+    const {usernameDoctor, usernamePatient} = useParams();
     const[result, setResult] = useState([]);
     const[resultDelete, setResultDelete] = useState([]);
 
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${username}`)
+  const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
@@ -46,7 +46,6 @@ function PatientInfo(){
             <h2>Emergency Contact: </h2>
             <h3>Name: {result.EmergencyContactName}</h3>
             <h3>Mobile Number: {result.EmergencyContactMobile}</h3>
-            <h3>Relation: {result.EmergencyContactRelation}</h3>
         </ul>
         {/* <button onClick={handleRemove}>
             Remove Patient
