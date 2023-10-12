@@ -264,7 +264,9 @@ const MyPatients = async (req,res) =>{
           return res.status(404).send('Doctor not found');
         }
     
-        const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
+        const patientsUsernames = doctor.PatientsUsernames;
+        // console.log(doctor.PatientsUsernames) 
+        // Assuming it's an array of patient IDs
     
         // Find all patients whose IDs are in the patientIds array
         const patients = await patientSchema.find({ Username: { $in: patientsUsernames } });

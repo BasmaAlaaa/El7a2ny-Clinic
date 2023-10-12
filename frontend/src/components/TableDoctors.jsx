@@ -11,7 +11,7 @@ function CaseTableBody({ data , user}) {
     {data.Email&&<td>{data.Email}</td>}
     {data.Speciality&&<td>{data.Speciality}</td>}
     {data.sessionPrice&&<td>{data.sessionPrice}</td>}
-    {data.ActiveIngredients &&
+    
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
@@ -22,7 +22,7 @@ function CaseTableBody({ data , user}) {
       </button>
       </div>
       </td>
-      }
+      
   
     </>
   );
@@ -42,6 +42,7 @@ function CaseTableBody({ data , user}) {
 // }
 
 function TableDoctors({ tHead, data, searchText, filterText, user }) {
+  console.log("use patient", user)
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -56,7 +57,7 @@ function TableDoctors({ tHead, data, searchText, filterText, user }) {
           {data
           .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
-            e : e.MedicalUse.toLowerCase() === filterText.toLowerCase()
+            e : e.Speciality.toLowerCase() === filterText.toLowerCase()
           })
           .filter((e) => {
             return searchText.toLowerCase() === '' ? 
@@ -64,7 +65,7 @@ function TableDoctors({ tHead, data, searchText, filterText, user }) {
           })
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} user={user}/>
             </tr>
           ))}
         </tbody>

@@ -33,14 +33,14 @@ function DoctorInfo(){
 
     return (
         <div>
-        <NavBarPatient/>
+        <NavBarPatient username={usernamePatient}/>
         <h1>Doctor Info</h1>
         <ul>
             <h3>Name: {result.Name}</h3>
             <h3>Username: {result.Username}</h3>
             <h3>Email: {result.Email}</h3>
             <h3>Date of Birth: {result.DateOfBirth}</h3>
-            <h3>Hourly Rate: {result.Hourlyrate}</h3>
+            <h3>Hourly Rate: {result.HourlyRate}</h3>
             <h3>Affiliation: {result.Affiliation}</h3>
             <h3>Educational Background: {result.EDB}</h3>
 

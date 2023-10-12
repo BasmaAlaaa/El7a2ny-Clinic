@@ -30,7 +30,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableAppointments({ tHead, data, searchText, filterText }) {
+function TableAppointments({ tHead, data, searchText, searchDate, filterText }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -45,7 +45,11 @@ function TableAppointments({ tHead, data, searchText, filterText }) {
           {data
           .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
-            e : e.MedicalUse.toLowerCase() === filterText.toLowerCase()
+            e : e.Status.toLowerCase() === filterText.toLowerCase()
+          })
+          .filter((e) => {
+            return filterText.toLowerCase() === ''?
+            e : e.Date === searchDate
           })
           .filter((e) => {
             return searchText.toLowerCase() === '' ? 
