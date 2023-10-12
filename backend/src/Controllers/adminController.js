@@ -3,6 +3,9 @@ const Doctor = require("../Models/Doctor");
 const Patient = require("../Models/Patient");
 const HealthPackage = require("../Models/HealthPackage");
 const GuestDoctor = require("../Models/GuestDoctor");
+const Appointment = require("../Models/Appointment");
+const Prescription = require("../Models/Prescription");
+const FamilyMember = require("../Models/FamilyMember");
 //const isUsernameUnique = require('../utils');
 
 async function isUsernameUnique(username) {
@@ -38,10 +41,40 @@ const deleteEntity = async (req, res) => {
         // If the entity type is invalid/not supported, return a 400 status code and an error message.
         return res.status(400).json({ error: "Invalid entity type" });
     }
-    //console.log(entityType, Username); // Log the received parameters
+
+    const deletedEntity = await Model.findOneAndDelete({ Username: Username });
 
     // Search and delete the document where the Username field equals the provided Username.
-    const deletedEntity = await Model.findOneAndDelete({ Username: Username });
+    switch(entityType.toLowerCase()){
+      case "doctor":
+        const deletedAp1 = await Appointment.findOneAndDelete({DoctorUsername: Username});
+        break;
+      case "patient":
+        
+        const patient = await Patient.findOne()
+        const deletedAp2 = await Appointment.findOneAndDelete({PatientUsername: Username});
+        const deletedPres = await Prescription.findOneAndDelete({PatientUsername: Username});
+        
+        const famMembersIds = patient.FamilyMembers;
+        for(const member of famMembersIds){
+          const deletedFam = await FamilyMember.findOneAndDelete({NationalID: member});
+        }
+
+        const HPPatients = await HealthPackage.PatientsUsernames;
+        for( let i = 0; i < HPPatients; i++){
+          if(HPPatients[i] === Username){
+            let deletedHP = HPPatients.splice(i,1);
+          }
+        }
+
+        const docPatients = Doctor.PatientsUsernames;
+        for( let i = 0; i < docPatients; i++){
+          if(docPatients[i] === Username){
+            let deletedHP = docPatients.splice(i,1);
+          }
+        }
+        break;
+    }
 
     // Check if an entity was actually deleted; if not, respond with a 404 status code and an error message.
     if (!deletedEntity) {
@@ -52,7 +85,7 @@ const deleteEntity = async (req, res) => {
     res.status(200).json({ message: `${entityType} deleted successfully` });
   } catch (error) {
     // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ error: error.message });
   }
 };
 

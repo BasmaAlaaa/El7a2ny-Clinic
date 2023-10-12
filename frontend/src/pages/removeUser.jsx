@@ -26,20 +26,20 @@ function RemoveUser() {
 
   const handleSubmitAdmin = (e) => {
     e.preventDefault();
-    const response = axios.delete(`http://localhost:4000/Admin//deleteEntity/admin/${usernameAdmin}`)
+    const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/admin/${usernameAdmin}`)
 .then(res =>console.log(res.data)).catch(err => console.log(err))
   }
 
   const handleSubmitPatient = (e) => {
     e.preventDefault();
 
-    const response = axios.delete(`http://localhost:4000/Admin//deleteEntity/patient/${usernamePatient}`).then(res =>console.log(res.data)).catch(err => console.log(err))
+    const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/patient/${usernamePatient}`).then(res =>console.log(res.data)).catch(err => console.log(err))
   }
 
   const handleSubmitDoctor = (e) => {
     e.preventDefault();
 
-    const response = axios.delete(`http://localhost:4000/Admin//deleteEntity/doctor/${usernameDoctor}`).then(res =>console.log(res.data)).catch(err => console.log(err))
+    const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/doctor/${usernameDoctor}`).then(res =>console.log(res.data)).catch(err => console.log(err))
   }
 
   return (

@@ -276,14 +276,29 @@ const MyPatients = async (req,res) =>{
         //const appointments = await appointmentSchema.find({DoctorUsername: Username, PatientUsername: { $in: patientsUsernames}});
     
         // Extract patient names and send them as an array
-        const patientNames = 
+        /*const patientNames = 
         patients.map((patient) => 
         ({Name: patient.Name,
           Username: patient.Username,
           Email: patient.Email,
           DateOfBirth: patient.DateOfBirth,
-        }));
-        res.status(200).send(patientNames);
+        }));*/
+
+        const appointments = await appointmentSchema.find({PatientUsername: { $in: patientsUsernames}});
+
+        const result = [];
+        for(const patient of patients){
+          for(const app of appointments){
+            result.push({
+              Name: patient.Name,
+              Username: patient.Username,
+              Email: patient.Email,
+              DateOfBirth: patient.DateOfBirth,
+              Appointment_Status: app.Status
+            });
+          }
+        }
+        res.status(200).send(result);
       } catch (error) {
         res.status(500).send({error: error.message});
       }
