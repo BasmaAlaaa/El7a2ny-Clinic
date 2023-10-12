@@ -257,8 +257,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
         sessionPrice
       });
     }
-
-
+    
     res.status(200).json(result);
   } catch (error) {
     res.status(400).send({ error: error.message });
@@ -314,8 +313,11 @@ const findDocByAvailability = async (req, res) => {
     const doctors = await doctorSchema.find();
     //const result = doctors.flatMap(({Schedule}) => Schedule.map(({Date,Time}) => ({Date,Time})));
 
+    const result = {};
     for (const doc of doctors){
-      if(doc.Schedule.map((Date,Time)=>(Date, Time))){
+      const sch = doc.Schedule.map(({Date,Time})=>({Date, Time}));
+      if(sch.Date == Date && sch.Time == Time){
+        console.log(doc);
         result.push(doc);
     }
   }
