@@ -48,9 +48,9 @@ function RegisterPatient() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {username, name, email, password, dateOfBirth, gender, mobileNumber, emergencyName, emergencyMobile, emergencyRelation}
+    const data = {Username:username, Name:name, Email:email, Password:password, DateOfBirth:dateOfBirth, Gender:gender, MobileNumber:mobileNumber, EmergencyContactName:emergencyName, EmergencyContactMobile:emergencyMobile}
     console.log(data)
-    const response = axios.post('http://localhost:8000/Guest/RegisterPatient', data, { mode: 'cors' })
+    const response = axios.post('http://localhost:4000/Patient/registerPatient', data)
 .then(res =>console.log(res.data)).catch(err => console.log(err))
   }
   return (
@@ -98,10 +98,6 @@ function RegisterPatient() {
   <h3>
   <label>Emergency Contact Mobile Number</label>
   <input type="text" required title="Emergency Contact Mobile" placeholder="Enter Emergency Contact Mobile" onChange={(e) => setEmergencyMobile(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Emergency Contact Relation</label>
-  <input type="text" required title="Emergency Contact Relation" placeholder="Enter Emergency Contact Relation" onChange={(e) => setEmergencyRelation(e.target.value)}/>
   </h3>
   <h3>
   <button type="submit">Submit</button>

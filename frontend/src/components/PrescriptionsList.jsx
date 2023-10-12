@@ -1,23 +1,27 @@
 import Search from './Search.jsx';
 import Table from './TableRequests.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import search from '../assets/images/svg/search.svg';
 import filter from '../assets/images/svg/filter.svg';
 import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
+import TablePrescriptions from './TablePrescriptions.jsx'
+import NavBarPatient from './NavBarPatient.jsx';
+
 
 
 function PrescriptionsList() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
+  const {username} = useParams();
 
 
   useEffect(() => {
-const response = axios.get('http://localhost:8000/Pharmacist/AvailableMedicinesDetailsByPatient')
-.then(res =>setResult(res.data)).catch(err => console.log(err))
+const response = axios.get(`http://localhost:4000/Patient/viewAllMyPres/${username}`)
+.then(res =>setResult(res.data)).catch(err => console.log(err.request))
   }, [])
 console.log(result)
 result.map((e) => {
@@ -30,13 +34,14 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Name', 'Active Ingredients', 'Price', 'Photo', 'Medical Use', 'View'];
+  let tHead = ['Doctor Username', 'Prescription Date', 'Description'];
 
   return (
     <div>
+      <NavBarPatient username={username}/>
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
-      <p className="text-capitalize fs-4 w-25">Medicines</p>
+      <p className="text-capitalize fs-4 w-25">Prescriptions</p>
       <div className="d-flex flex-row w-75 justify-content-end">
         <div className="input-group w-50">
           <span

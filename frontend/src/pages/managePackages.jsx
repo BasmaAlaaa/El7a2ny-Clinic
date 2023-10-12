@@ -10,26 +10,46 @@ function ManagePackages(){
     const [medicineDiscount, setMedicineDiscount] = useState(0)
     const [familySubscriptionDiscount, setFamilySubscriptionDiscount] = useState(0)
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const data = {type, annualFee, doctorSessionDiscount, medicineDiscount, familySubscriptionDiscount}
+    const handleSubmit = () => {
+
+        const data = {Type:type, AnnualFee:annualFee, DoctorSessionDiscount:doctorSessionDiscount, MedicineDiscount:medicineDiscount, FamilySubscriptionDiscount:familySubscriptionDiscount}
         console.log(data)
-        const response = axios.post('http://localhost:4000//HealthPackage/create', data)
-    .then(res =>console.log(res.data)).catch(err => console.log(err))
+        const response = axios.post('http://localhost:4000/HealthPackage/create', data)
+    .then(res =>console.log(res.data)).catch(err => console.log(err.request))
       }
 
-      const handleDelete = (e) => {
-        e.preventDefault();
-        const response = axios.delete(`http://localhost:4000//HealthPackage/delete/${typeDelete}`)
+      const handleDelete = () => {
+
+        const response = axios.delete(`http://localhost:4000/HealthPackage/delete/${typeDelete}`)
     .then(res =>console.log(res.data)).catch(err => console.log(err))
       }
-      const handleUpdate = (e) => {
-        e.preventDefault();
-        const data = {type, annualFee, doctorSessionDiscount, medicineDiscount, familySubscriptionDiscount}
-        console.log(data)
-        const response = axios.put(`http://localhost:4000//HealthPackage/update/${typeUpdate}`, data)
-    .then(res =>console.log(res.data)).catch(err => console.log(err))
+    //   const handleUpdate = (e) => {
+    //     e.preventDefault();
+    //     const data = {type, annualFee, doctorSessionDiscount, medicineDiscount, familySubscriptionDiscount}
+    //     console.log(data)
+    //     const response = axios.put(`http://localhost:4000//HealthPackage/update/${typeUpdate}`, data)
+    // .then(res =>console.log(res.data)).catch(err => console.log(err))
+    //   }
+    const handleUpdate = () => {
+      
+      if(annualFee){
+      const response = axios.put(`http://localhost:4000/HealthPackage/updateAnnualFee/${typeUpdate}`, {AnnualFee:annualFee})
+      .then(res =>console.log(res.data)).catch(err => console.log(err))
+      console.log(annualFee)
       }
+      if(doctorSessionDiscount){
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateDoctorSessionDiscount/${typeUpdate}`, {DoctorSessionDiscount:doctorSessionDiscount})
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+      if(medicineDiscount){
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateMedicineDiscount/${typeUpdate}`, {MedicineDiscount:medicineDiscount})
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+      if(familySubscriptionDiscount){
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateFamilySubscriptionDiscount/${typeUpdate}`, {FamilySubscriptionDiscount:familySubscriptionDiscount})
+        .then(res =>console.log(res.data)).catch(err => console.log(err))
+        }
+    }
     
     
 return(
@@ -75,19 +95,19 @@ return(
         </h3>
   <h3>
     <label>Annual Fee</label>
-  <input type="number" required placeholder="Enter Annual Fee" onChange={(e) => setAnnualFee(e.target.value)}/>
+  <input type="number"  placeholder="Enter Annual Fee" onChange={(e) => setAnnualFee(e.target.value)}/>
   </h3>
   <h3>
   <label>Doctor Session Discount</label>
-  <input type="number" required placeholder="Enter Doctor Session Discount" onChange={(e) => setDoctorSessionDiscount(e.target.value)}/>
+  <input type="number"  placeholder="Enter Doctor Session Discount" onChange={(e) => setDoctorSessionDiscount(e.target.value)}/>
   </h3>
   <h3>
   <label>Medicine Discount</label>
-  <input type="number" required placeholder="Enter Medicine Discount" onChange={(e) => setMedicineDiscount(e.target.value)}/>
+  <input type="number"  placeholder="Enter Medicine Discount" onChange={(e) => setMedicineDiscount(e.target.value)}/>
   </h3>
   <h3>
   <label>Family Subscription Discount</label>
-  <input type="number" required placeholder="Enter Family Subscription Discount" onChange={(e) => setFamilySubscriptionDiscount(e.target.value)}/>
+  <input type="number"  placeholder="Enter Family Subscription Discount" onChange={(e) => setFamilySubscriptionDiscount(e.target.value)}/>
   </h3>
   <h3>
   <button type="submit">Update Package</button>

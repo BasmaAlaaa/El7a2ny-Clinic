@@ -7,25 +7,9 @@ function CaseTableBody({ data }) {
   return (
     <>
       
-    {data.Name && <th>{data.Name}</th>}
-
-    {data.ActiveIngredients && <td>{data.ActiveIngredients}</td>}
-    {data.Price && <td>{data.Price}</td>}
-    {data.Picture && <td> <img src = {data.Picture} alt='image' width={60} height={60}/> </td>}
-    {data.MedicalUse && <td>{data.MedicalUse}</td>}
-    {data.Quantity && <td>{data.Quantity}</td>}
-    {data.Sales && <td>{data.Sales}</td>}
-
-    {data.Gender&&<td>{data.Gender}</td>}
-    {data.Age&&<td>{data.Age}</td>}
-    {data.MobileNumber&&<td>{data.MobileNumber}</td>}
-
-    {data.Username&&<td>{data.Username}</td>}
-    {data.Email&&<td>{data.Email}</td>}
-    {data.Affiliation&&<td>{data.Affiliation}</td>}
-    {data.Affilation&&<td>{data.Affilation}</td>}
-    {data.HourlyRate&&<td>{data.HourlyRate}</td>}
-    {data.EDB&&<td>{data.EDB}</td>}
+    {data.Date && <th>{data.Date}</th>}
+    {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
+    {data.Status && <td>{data.Status}</td>}
     
       
 

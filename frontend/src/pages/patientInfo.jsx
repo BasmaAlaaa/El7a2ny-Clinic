@@ -14,17 +14,17 @@ function PatientInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:8000/Admin/PatientInfo/${username}`)
+  const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${username}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
   console.log(result)
 
-  const handleRemove=() => {
-    const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
-  .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
-  }
-  console.log(resultDelete)
+  // const handleRemove=() => {
+  //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
+  // .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
+  // }
+  // console.log(resultDelete)
 
 //   result.map((e) => {
 //     console.log(e)
@@ -48,9 +48,9 @@ function PatientInfo(){
             <h3>Mobile Number: {result.EmergencyContactMobile}</h3>
             <h3>Relation: {result.EmergencyContactRelation}</h3>
         </ul>
-        <button onClick={handleRemove}>
+        {/* <button onClick={handleRemove}>
             Remove Patient
-        </button>
+        </button> */}
         </div>
     )
     }

@@ -2,16 +2,15 @@ import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
 import { useParams} from 'react-router-dom';
 import axios from "axios";
-import NavBar from "../components/NavBar";
+import NavBarDoctor from "../components/NavBarDoctor";
 import MainBtn from "../components/Button";
 import { useNavigate } from 'react-router-dom';
 
 
 function DoctorView(){
 
-    const {id} = useParams();
+    const {username} = useParams();
     const[result, setResult] = useState([]);
-    const[resultDelete, setResultDelete] = useState([]);
     const [email, setEmail] = useState('');
     const [hourlyrate, setHourlyRate] = useState(0);
     const [affiliation, setAffiliation] = useState('');
@@ -19,24 +18,31 @@ function DoctorView(){
 
 
 
-  // const handleRemove=() => {
-  //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
-  // .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
-  // }
-  // console.log(resultDelete)
+  const updateEmail=() => {
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email})
+  .then(res =>setResult(res.data)).catch(err => console.log(err))
+  console.log(result)
+  }
+  const updateHourlyRate=() => {
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate})
+  .then(res =>setResult(res.data)).catch(err => console.log(err))
+  console.log(result)
+  }
+  const updateAffiliation=() => {
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation})
+  .then(res =>setResult(res.data)).catch(err => console.log(err))
+  console.log(result)
+  }
 
-//   result.map((e) => {
-//     console.log(e)
-//   })
 
     return (
         <div>
-        <NavBar/>
+        <NavBarDoctor username={username}/>
         <div>
             <MainBtn
               txt="View All Patients"
               style="green-btn"
-              action={() => navigate(`/patientsList/${id}`)}
+              action={() => navigate(`/patientsList/${username}`)}
               key="navBtn"
             />
           </div>
@@ -44,17 +50,17 @@ function DoctorView(){
             <MainBtn
               txt="View All Appointments"
               style="green-btn"
-              action={() => navigate(`/appointmentsList/${id}`)}
+              action={() => navigate(`/appointmentsList/${username}`)}
               key="navBtn"
             />
             </div>
               <form >
   <h3><input  type= 'email'  placeholder= 'Enter New Email'  onChange={(e) => setEmail(e.target.value)} />
-  <button>Update Email</button></h3>
+  <button onClick={updateEmail}>Update Email</button></h3>
   <h3><input type="number"  placeholder="Enter New Hourly Rate" onChange={(e) => setHourlyRate(e.target.value)}/>
-  <button >Update Hourly Rate</button></h3>
+  <button onClick={updateHourlyRate}>Update Hourly Rate</button></h3>
   <h3><input type="text"  placeholder="Enter New Affiliation" onChange={(e) => setAffiliation(e.target.value)}/>
-  <button >Update Affiliation</button></h3>
+  <button onClick={updateAffiliation}>Update Affiliation</button></h3>
 </form>
           
       

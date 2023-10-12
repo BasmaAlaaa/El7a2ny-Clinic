@@ -1,24 +1,46 @@
 import FamilyMembersList from "../components/FamilyMembersList";
-import NavBar from "../components/NavBar";
-import DoctorsList from "../components/doctorsList";
-import PrescriptionsList from "../components/prescriptionsList";
+import NavBarPatient from "../components/NavBarPatient";
+import DoctorsList from "../components/DoctorsList";
+import PrescriptionsList from "../components/PrescriptionsList";
+import MainBtn from "../components/Button";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 
 
 function PatientView(){
+  const navigate = useNavigate();
+  const {username} = useParams();
 return (
     <div>
-    <NavBar/>
+    <NavBarPatient username={username}/>
     <div>
             <MainBtn
               txt="View All Appointments"
               style="green-btn"
-              action={() => navigate(`/appointmentsList/${id}`)}
+              action={() => navigate(`/appointmentsList/${username}`)}
               key="navBtn"
             />
-            </div>
-    <FamilyMembersList/>
+            
+            <MainBtn
+              txt="View All Registered Family Members"
+              style="green-btn"
+              action={() => navigate(`/familyMembersList/${username}`)}
+              key="navBtn"
+            />
+            
+            <MainBtn
+            txt="View All of my Prescriptions"
+            style="green-btn"
+            action={() => navigate(`/prescriptionsList/${username}`)}
+            key="navBtn"
+          />
+            <MainBtn
+            txt="Add Family Member"
+            style="green-btn"
+            action={() => navigate(`/addFamilyMember/${username}`)}
+            key="navBtn"
+          />
+          </div>
     <DoctorsList/>
-    <PrescriptionsList/>
 
     </div>
 )
