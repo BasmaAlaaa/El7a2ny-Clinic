@@ -51,8 +51,12 @@ const doctorSchema = new Schema({
         type: Date,
         required: true
       },
-      Time:{
-        type:String,
+      From:{
+        type:Number,
+        required:true
+      },
+      To: {
+        type:Number,
         required:true
       }
     }
