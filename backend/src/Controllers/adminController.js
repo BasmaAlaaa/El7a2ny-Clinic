@@ -48,6 +48,7 @@ const deleteEntity = async (req, res) => {
     switch(entityType.toLowerCase()){
       case "doctor":
         const deletedAp1 = await Appointment.findOneAndDelete({DoctorUsername: Username});
+        console.log(deletedAp1);
         break;
       case "patient":
         
@@ -56,8 +57,10 @@ const deleteEntity = async (req, res) => {
         const deletedPres = await Prescription.findOneAndDelete({PatientUsername: Username});
         
         const famMembersIds = patient.FamilyMembers;
-        for(const member of famMembersIds){
-          const deletedFam = await FamilyMember.findOneAndDelete({NationalID: member});
+        for( let i = 0; i < famMembersIds; i++){
+          if(famMembersIds[i] === Username){
+            let deletedFam = famMembersIds.splice(i,1);
+          }
         }
 
         const HPPatients = await HealthPackage.PatientsUsernames;
