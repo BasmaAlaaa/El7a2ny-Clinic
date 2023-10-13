@@ -231,6 +231,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
     const result = [];
 
     for (const doctor of doctors) {
+      console.log("sccc",doctor.Schedule)
       const doctorRate = doctor.HourlyRate;
 
       const clinicMarkup = 0.10; // 10% markup
@@ -254,7 +255,8 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
         Username:doctor.Username,
         Email: doctor.Email,
         Speciality: doctor.Speciality,
-        sessionPrice
+        sessionPrice,
+        Schedule: doctor.Schedule
       });
     }
     
@@ -301,25 +303,31 @@ const findDocByAvailability = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   //console.log(Speciality)
-  const { Username, Date, Time} = req.params;
+  const {Date, Time} = req.params;
   try {
 
-    const patient = await patientSchema.findOne({Username: Username});
+    // const patient = await patientSchema.findOne({Username: Username});
 
-    if(!patient){
-      return res.status(404).send("NO patient found");
-    }
+    // if(!patient){
+    //   return res.status(404).send("NO patient found");
+    // }
 
     const doctors = await doctorSchema.find();
+    console.log(doctors)
     //const result = doctors.flatMap(({Schedule}) => Schedule.map(({Date,Time}) => ({Date,Time})));
 
-    const result = {};
+    const result = [];
     for (const doc of doctors){
-      const sch = doc.Schedule.map(({Date,Time})=>({Date, Time}));
-      if(sch.Date == Date && sch.Time == Time){
+      // const sch = doc.Schedule.map(({Date, From, To})=>({Date, From, To}));
+      console.log(doc.Schedule)
+    doc.Schedule.map((e) => {
+
+      if(e.Date.toISOString().substring(0,4)=== Date.substring(0,4) && e.Date.toISOString().substring(5,7) === Date.substring(5,7) && e.Date.toISOString().substring(8,10) === Date.substring(8,10)){
         console.log(doc);
         result.push(doc);
     }
+  });
+
   }
 
     console.log(result);

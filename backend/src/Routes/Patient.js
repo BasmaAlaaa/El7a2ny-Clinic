@@ -36,7 +36,7 @@ router.post('/addFamMember/:Username', addFamMember)
 router.get('/getFamMembers/:Username', getFamMembers)
 
 router.get('/findDocBySpeciality/:Username/:Speciality', findDocBySpecality)
-router.get('/findDocByAvailability/:Username/:Date/:Time', findDocByAvailability)
+router.get('/findDocByAvailability/:Date/:Time', findDocByAvailability)
 
 router.get('/searchDocByName/:Username/:Name', searchDocByName)
 router.get('/searchDocBySpec/:Username/:Speciality', searchDocBySpec)
