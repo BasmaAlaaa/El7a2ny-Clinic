@@ -44,6 +44,7 @@ function CaseTableBody({ data, username }) {
 // }
 
 function TablePatients({ tHead, data, searchText, filterText, username }) {
+  console.log("filterr", filterText)
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">

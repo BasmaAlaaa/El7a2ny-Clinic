@@ -63,7 +63,7 @@ let navigate = useNavigate()
         <select name='upcomingAppointments' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
         <option value='upcoming'>Upcoming</option> 
-        <option value='upcoming'>Finished</option> 
+        <option value='finished'>Finished</option> 
         <option value='running'>Running</option> 
 
 
