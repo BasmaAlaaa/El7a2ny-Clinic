@@ -6,7 +6,7 @@ import Validation from '../validate/validate';
 import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 import { useState } from 'react';
 import axios from 'axios'
-import NavBar from '../components/NavBar.jsx';
+import NavBarPatient from '../components/NavBarPatient.jsx';
 
 function AddFamilyMember() {
   // let { errors, handleSubmit, register } = Validation('username')
@@ -44,7 +44,7 @@ function AddFamilyMember() {
 
   return (
     <div>
-      <NavBar/>
+      <NavBarPatient username={username}/>
       {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
       <form onSubmit={handleSubmit}>
         <h2>Add Family Member</h2>
