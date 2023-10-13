@@ -617,11 +617,12 @@ const viewMyPres = async (req,res) => {
 
     const result = {
       PatientName: patient.Name,
+      PatientUsername: patient.Username,
       DoctorName: doctor.Name,
       Description: prescription.Description,
       Date: prescription.Date,
       Filled: prescription.Filled,
-      AppointmentStatus: appointment.Status
+      AppointmentID: prescription.Appointment_ID
     }
 
     res.status(200).send(result);

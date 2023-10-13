@@ -14,6 +14,7 @@ import NavBarPatient from './NavBarPatient.jsx';
 
 function PrescriptionsList() {
   const[searchText, setSearchText] = useState('');
+  const[searchDate, setSearchDate] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
   const {username} = useParams();
@@ -34,7 +35,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Doctor Username', 'Prescription Date', 'Description'];
+  let tHead = ['Doctor Username', 'Prescription Date', 'Description', 'View'];
 
   return (
     <div>
@@ -52,8 +53,14 @@ let navigate = useNavigate()
           <input
             type="text"
             className="form-control border-start-0 search ps-0"
-            placeholder="Search"
+            placeholder="Search by doctor username"
             onChange={(e) => setSearchText(e.target.value)}
+          />
+          <input
+            type="date"
+            className="form-control border-start-0 search ps-0"
+            placeholder="Search by date"
+            onChange={(e) => setSearchDate(e.target.value)}
           />
         </div>
         {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
@@ -62,12 +69,12 @@ let navigate = useNavigate()
         </button> */}
         <select name='medicalUse' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
-        <option value='pain Killer'>Pain killer</option>
-        <option value='antiinflammatory'>Antiinflammatory</option>
+        <option value='filled'>Filled</option>
+        <option value='unfilled'>Unfilled</option>
         </select>
       </div>
     </div>
-      <TablePrescriptions tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TablePrescriptions tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
     </div>
   );
 }

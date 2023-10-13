@@ -8,7 +8,7 @@ function CaseTableBody({ data }) {
   return (
     <>
       
-    {data.Date && <th>{data.Date}</th>}
+    {data.Date && <th>{data.Date.substring(0,10)}</th>}
     {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
     {data.Status && <td>{data.Status}</td>}
     

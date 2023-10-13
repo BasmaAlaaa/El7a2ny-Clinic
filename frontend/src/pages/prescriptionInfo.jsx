@@ -10,12 +10,13 @@ function PrescriptionInfo(){
     const[result, setResult] = useState([]);
 
 
+
     useEffect(() => {
   const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${id}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
-  console.log(result)
+
 
 //   result.map((e) => {
 //     console.log(e)
@@ -23,15 +24,14 @@ function PrescriptionInfo(){
 
 return (
     <div>
-        <NavBarPatient/>
+        <NavBarPatient username={result.PatientUsername}/>
         <h1>Prescription Info</h1>
         <ul>
-            <h3>Prescription ID: {result.PrescriptionID}</h3>
-            <h3>Appointment ID: {result.AppointmentID}</h3>
-            <h3>Doctor Username: {result.DoctorUsername}</h3>
+            <h3>Patient Name: {result.PatientName}</h3>
+            <h3>Doctor Name: {result.DoctorName}</h3>
             <h3>Prescription Date: {result.Date}</h3>
             <h3>Description: {result.Description}</h3>
-            <h3>Filled: {result.Filled}</h3>
+            <h3>Status: {result.Filled? "Filled" : "Unfilled"}</h3>
 
 
         </ul>

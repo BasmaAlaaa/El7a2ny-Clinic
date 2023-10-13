@@ -16,6 +16,7 @@ import DoctorInfo from './pages/doctorInfo';
 import RequestInfo from './pages/requestInfo';
 import AddMedicine from './pages/addMedicine';
 import EditMedicine from './pages/editMedicine';
+import PrescriptionInfo from './pages/prescriptionInfo';
 
 import DoctorView from './pages/doctorView';
 import ManagePackages from './pages/managePackages';
@@ -52,6 +53,8 @@ function App() {
           <Route exact path="/doctorView/:username" element={<DoctorView />} />
           <Route exact path="/managePackages" element={<ManagePackages />} />
           <Route exact path="/removeUser" element={<RemoveUser />} />
+          <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
+
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />

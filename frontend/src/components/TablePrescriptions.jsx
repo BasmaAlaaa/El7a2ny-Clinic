@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 
 function CaseTableBody({ data }) {
   let navigate = useNavigate()
-
+console.log("pres id", data.prescriptionID)
   return (
     <>
       
     {data.DoctorUsername && <th>{data.DoctorUsername}</th>}
-    {data.Date && <td>{data.Date}</td>}
+    {data.Date && <td>{data.Date.substring(0,10)}</td>}
     {data.Description && <td>{data.Description}</td>}
 
 
@@ -41,7 +41,8 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TablePrescriptions({ tHead, data, searchText, filterText }) {
+function TablePrescriptions({ tHead, data, searchText, filterText, searchDate }) {
+  console.log("fff",filterText.toLowerCase())
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -55,12 +56,16 @@ function TablePrescriptions({ tHead, data, searchText, filterText }) {
         <tbody>
           {data
           .filter((e) => {
-            return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
-            e : e.MedicalUse.toLowerCase() === filterText.toLowerCase()
+            return filterText === '' || filterText.toLowerCase() === 'all'?
+            e : filterText.toLowerCase() === 'filled'?  e.Filled : !e.Filled
           })
           .filter((e) => {
-            return searchText.toLowerCase() === '' ? 
-            e: e.Name.toLowerCase().includes(searchText.toLowerCase())
+            return searchText=== '' ? 
+            e: e.DoctorUsername.toLowerCase().includes(searchText.toLowerCase())
+          })
+          .filter((e) => {
+            return searchDate=== ''?
+            e: e.Date.substring(0,10) === searchDate
           })
           .map((e) => (
             <tr className="text-capitalize">
