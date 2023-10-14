@@ -44,7 +44,7 @@ const doctorSchema = new Schema({
   Speciality:{
     type: String,
     required: true,
-    enum:["dermatology","dentistry","psychiatry","neurology","orthopedics"]
+    enum:["dermatology","dentistry","psychiatry","neurology","orthopedics","Dermatology","Dentistry","Psychiatry","Neurology","Orthopedics"]
 
   },
   Schedule: [
