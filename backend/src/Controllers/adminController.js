@@ -5,7 +5,7 @@ const HealthPackage = require("../Models/HealthPackage");
 const GuestDoctor = require("../Models/GuestDoctor");
 const Appointment = require("../Models/Appointment");
 const Prescription = require("../Models/Prescription");
-const FamilyMember = require("../Models/FamilyMember");
+const FamilyMemberSchema = require("../Models/FamilyMember");
 //const isUsernameUnique = require('../utils');
 
 async function isUsernameUnique(username) {
@@ -42,42 +42,54 @@ const deleteEntity = async (req, res) => {
         return res.status(400).json({ error: "Invalid entity type" });
     }
 
-    const deletedEntity = await Model.findOneAndDelete({ Username: Username });
-
     // Search and delete the document where the Username field equals the provided Username.
     switch(entityType.toLowerCase()){
       case "doctor":
-        const deletedAp1 = await Appointment.findOneAndDelete({DoctorUsername: Username});
-        console.log(deletedAp1);
+        const deletedAp1 = await Appointment.deleteMany({DoctorUsername: Username});
         break;
       case "patient":
-        
-        const patient = await Patient.findOne()
-        const deletedAp2 = await Appointment.findOneAndDelete({PatientUsername: Username});
-        const deletedPres = await Prescription.findOneAndDelete({PatientUsername: Username});
+        const patient = await Patient.findOne({Username: Username});
+        const deletedAp2 = await Appointment.deleteMany({PatientUsername: Username});
+        const deletedPres = await Prescription.deleteMany({PatientUsername: Username});
         
         const famMembersIds = patient.FamilyMembers;
-        for( let i = 0; i < famMembersIds; i++){
-          if(famMembersIds[i] === Username){
-            let deletedFam = famMembersIds.splice(i,1);
+        //const res = [];
+        const allPatients = await Patient.find();
+        for(let i = 0; i < famMembersIds.length; i++){
+          let x = false;
+          for(const pat of allPatients){
+            if(!(pat.Username === Username) && pat.FamilyMembers.includes(famMembersIds[i])){
+              console.log(famMembersIds[i]);
+              x = true;
+              break;
+            }
+          }
+          if(x === false){
+            const deleted = await FamilyMemberSchema.deleteOne({NationalID: famMembersIds[i]});
+            console.log(deleted);
           }
         }
+        //const deletedFams = await FamilyMemberSchema.deleteMany({NationalID:{ $in: famMembersIds}});
 
-        const HPPatients = await HealthPackage.PatientsUsernames;
-        for( let i = 0; i < HPPatients; i++){
-          if(HPPatients[i] === Username){
-            let deletedHP = HPPatients.splice(i,1);
+        const healthPacks = await HealthPackage.find();
+        for (const hp of healthPacks){
+          const index = hp.PatientsUsernames.indexOf(Username);
+          if(!index){
+            const update = await HealthPackage.updateOne({Type: hp.Type}, 
+              { $pull: { PatientsUsernames: Username}});
           }
         }
-
-        const docPatients = Doctor.PatientsUsernames;
-        for( let i = 0; i < docPatients; i++){
-          if(docPatients[i] === Username){
-            let deletedHP = docPatients.splice(i,1);
-          }
-        }
+        
+        const docs = await Doctor.find();
+        for (const doc of docs){
+          const index = doc.PatientsUsernames.indexOf(Username);
+          if(!index){
+            const update = await Doctor.updateOne({Username: doc.Username}, 
+              { $pull: { PatientsUsernames: Username}});
+          }        }
         break;
     }
+    const deletedEntity = await Model.findOneAndDelete({ Username: Username });
 
     // Check if an entity was actually deleted; if not, respond with a 404 status code and an error message.
     if (!deletedEntity) {

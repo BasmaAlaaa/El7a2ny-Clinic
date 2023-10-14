@@ -66,5 +66,6 @@ FamilyMemberSchema.statics.register = async function (
     return FamilyMember;
 };
 
-module.exports = mongoose.model('FamilyMember', FamilyMemberSchema);
+const FamilyMember = mongoose.model('FamilyMember', FamilyMemberSchema);
+module.exports = FamilyMember;
 

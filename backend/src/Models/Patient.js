@@ -64,7 +64,9 @@ const patientSchema = new Schema({
     Gender,
     MobileNumber,
     EmergencyContactName,
-    EmergencyContactMobile
+    EmergencyContactMobile,
+    FamilyMembers,
+    PatientPrescriptions
   ) {
 
     // validation 
@@ -92,7 +94,9 @@ const patientSchema = new Schema({
       Gender,
       MobileNumber,
       EmergencyContactName,
-      EmergencyContactMobile
+      EmergencyContactMobile,
+      FamilyMembers,
+      PatientPrescriptions
     });
   
     return patient;

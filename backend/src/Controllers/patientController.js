@@ -25,6 +25,8 @@ const registerPatient = async (req, res) => {
     MobileNumber,
     EmergencyContactName,
     EmergencyContactMobile,
+    FamilyMembers,
+    PatientPrescriptions
   } = req.body;
   
   try {
@@ -45,7 +47,9 @@ console.log("username",Username)
       Gender,
       MobileNumber,
       EmergencyContactName,
-      EmergencyContactMobile
+      EmergencyContactMobile,
+      FamilyMembers,
+      PatientPrescriptions
     );
 
     await patient.save();
