@@ -34,7 +34,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Date', 'Doctor Username', 'Status'];
+  let tHead = ['Date', 'Doctor Username','Patient Username', 'Status'];
 
   return (
     <div>
@@ -59,6 +59,7 @@ let navigate = useNavigate()
         <option value='all'>All</option>
         <option value='upcoming'>Upcoming</option>
         <option value='finished'>Finished</option>
+        
         </select>
       </div>
     </div>

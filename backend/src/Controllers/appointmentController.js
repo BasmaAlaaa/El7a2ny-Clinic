@@ -32,6 +32,9 @@ const registerAppointment = async (req, res) => {
             Status
           );
         await appointment.save();
+
+        doctorExists.PatientsUsernames.push(patientExists.Username);
+        await doctorExists.save();
         res.status(200).json({appointment})
     } catch(error) {
         res.status(400).json({ error: error.message})

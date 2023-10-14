@@ -210,7 +210,7 @@ const allAppointments = async (req,res) => {
       }
 
       // Send the list of matching appointments as a response
-      res.status(200).send({filteredAppointments});
+      res.status(200).send(filteredAppointments);
   } catch (error) {
     res.status(500).send({error: error.message});
 }
