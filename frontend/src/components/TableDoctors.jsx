@@ -43,13 +43,9 @@ function CaseTableBody({ data , user}) {
 //   );
 // }
 
-function TableDoctors({ tHead, data, searchText, searchDate, searchTime, filterText, user }) {
-  console.log(searchDate)
-  console.log(searchTime)
-//    const[result, setResult] = useState('')
-//    axios.get(`http://localhost:4000/Patient/findDocByAvailability/${searchDate}/${searchTime}`)
-//    .then(res =>setResult(res.data)).catch(err => console.log(err))
-//  console.log(result)
+function TableDoctors({ tHead, data, searchText, searchDate, searchTime, resultDateTime, filterText, user }) {
+console.log(resultDateTime.length)
+ 
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -63,7 +59,16 @@ function TableDoctors({ tHead, data, searchText, searchDate, searchTime, filterT
         <tbody>
           {data
           .filter((e) => {
-            console.log(e.Schedule)
+            let exists = false
+           resultDateTime.map((s) => {
+           if(e.Username===s.Username) {
+            exists = true
+           }
+          // return true
+           })
+           return resultDateTime.length ? exists : !(searchDate && searchTime) 
+          })
+          .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
             e : e.Speciality.toLowerCase() === filterText.toLowerCase()
           })

@@ -18,6 +18,18 @@ function DoctorsList() {
   const[result, setResult] = useState([]);
   const{username} = useParams();
 
+  const[resultDateTime, setResultDateTime] = useState([])
+  //    if(searchDate && searchTime){
+  //    axios.get(`http://localhost:4000/Patient/findDocByAvailability/${searchDate}/${searchTime}`)
+  //    .then(res =>setResultDateTime(res.data)).catch(err => console.log(err))
+  //  console.log(resultDateTime)
+  //    }
+
+  useEffect(() => {
+     axios.get(`http://localhost:4000/Patient/findDocByAvailability/${searchDate}/${searchTime}`)
+     .then(res =>setResultDateTime(res.data)).catch(err => console.log(err))
+   console.log("hena", resultDateTime)
+  }, [searchDate, searchTime])
 
   useEffect(() => {
 const response = axios.get(`http://localhost:4000/Patient/viewAllDoctors/${username}`)
@@ -65,14 +77,6 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='speciality' onChange={onFilterValueChanged}>
-        <option value='all'>All</option>
-        <option value='dermatology'>Dermatology</option>
-        <option value='dentistry'>Dentistry</option>
-        <option value='psychiatry'>Psychiatry</option>
-        <option value='neurology'>Neurology</option>
-        <option value='orthopedics'>Orthopedics</option>
-        </select>
         <select name='time' onChange={(e) => setSearchTime(e.target.value)}>
         <option value='12'>12 p.m.</option>
         <option value='1'>1 p.m.</option>
@@ -85,12 +89,18 @@ let navigate = useNavigate()
         <option value='8'>8 p.m.</option>
         <option value='9'>9 p.m.</option>
         <option value='10'>10 p.m.</option>
-
-
+        </select>
+        <select name='speciality' onChange={onFilterValueChanged}>
+        <option value='all'>All</option>
+        <option value='dermatology'>Dermatology</option>
+        <option value='dentistry'>Dentistry</option>
+        <option value='psychiatry'>Psychiatry</option>
+        <option value='neurology'>Neurology</option>
+        <option value='orthopedics'>Orthopedics</option>
         </select>
       </div>
     </div>
-      <TableDoctors tHead={tHead} data={result} searchText={searchText} searchTime={searchTime} searchDate={searchDate} filterText={filterText} user={username}/>
+      <TableDoctors tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} searchTime={searchTime} resultDateTime={resultDateTime} filterText={filterText} user={username}/>
     </div>
   );
 }

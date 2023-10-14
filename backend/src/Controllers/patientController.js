@@ -313,17 +313,15 @@ const findDocByAvailability = async (req, res) => {
     // }
 
     const doctors = await doctorSchema.find();
-    console.log(doctors)
     //const result = doctors.flatMap(({Schedule}) => Schedule.map(({Date,Time}) => ({Date,Time})));
 
     const result = [];
     for (const doc of doctors){
       // const sch = doc.Schedule.map(({Date, From, To})=>({Date, From, To}));
-      console.log(doc.Schedule)
     doc.Schedule.map((e) => {
 
-      if(e.Date.toISOString().substring(0,4)=== Date.substring(0,4) && e.Date.toISOString().substring(5,7) === Date.substring(5,7) && e.Date.toISOString().substring(8,10) === Date.substring(8,10)){
-        console.log(doc);
+      if(e.Date.toISOString().substring(0,4)=== Date.substring(0,4) && e.Date.toISOString().substring(5,7) === Date.substring(5,7) && e.Date.toISOString().substring(8,10) === Date.substring(8,10)
+      && e.From<=Time && e.To>=Time){
         result.push(doc);
     }
   });
