@@ -33,7 +33,7 @@ const onFilterValueChanged=(event)=>{
 console.log("filter",filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Date', 'Doctor Username', 'Status'];
+  let tHead = ['Date', 'Doctor Username', 'Patient Username', 'Status'];
 
   return (
     <div>
