@@ -37,6 +37,27 @@ const guestDoctorSchema = new Schema(
       type: String,
       required: true,
     },
+    Speciality:{
+      type: String,
+      required: true,
+      enum:["dermatology","dentistry","psychiatry","neurology","orthopedics"]
+    },
+    Schedule: [
+      {
+        Date:{
+          type: Date,
+          //required: true
+        },
+        From:{
+          type:Number,
+          //required:true
+        },
+        To: {
+          type:Number,
+          //required:true
+        }
+      }
+    ],
     IsApproved: {
       type: Boolean,
       default: false,
@@ -54,7 +75,9 @@ guestDoctorSchema.statics.register = async function (
   DateOfBirth,
   HourlyRate,
   Affiliation,
-  EDB
+  EDB,
+  Speciality,
+  Schedule
 ) {
   // validation
   if (
@@ -65,8 +88,8 @@ guestDoctorSchema.statics.register = async function (
     !DateOfBirth ||
     !HourlyRate ||
     !Affiliation ||
-    !EDB
-  ) {
+    !EDB ||
+    !Speciality) {
     throw Error("All fields must be filled.");
   }
 
@@ -83,6 +106,8 @@ guestDoctorSchema.statics.register = async function (
     HourlyRate,
     Affiliation,
     EDB,
+    Speciality,
+    Schedule
   });
 
   return guestDoctor;

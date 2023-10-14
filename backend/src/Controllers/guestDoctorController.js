@@ -16,7 +16,9 @@ const registerGuestDoctor = async (req, res) => {
         DateOfBirth,
         HourlyRate,
         Affiliation,
-        EDB
+        EDB,
+        Speciality,
+        Schedule
     } = req.body;
 
     try {
@@ -37,7 +39,9 @@ const registerGuestDoctor = async (req, res) => {
             DateOfBirth,
             HourlyRate,
             Affiliation,
-            EDB
+            EDB,
+            Speciality,
+            Schedule
           );
           
         await guestDoctor.save();

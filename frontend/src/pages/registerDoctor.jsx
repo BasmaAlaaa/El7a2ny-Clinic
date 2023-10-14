@@ -39,14 +39,23 @@ function RegisterDoctor() {
   const [hourlyRate, setHourlyRate] = useState(0)
   const [affiliation, setAffiliation] = useState('')
   const [educationalBackground, setEducationalBackground] = useState('')
+  const [speciality, setSpeciality] = useState('')
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {Username:username, Name:name, Email:email, Password:password, DateOfBirth:dateOfBirth, HourlyRate:hourlyRate, Affiliation:affiliation, EDB:educationalBackground}
+    const data = {Username:username, 
+      Name:name, 
+      Email:email, 
+      Password:password, 
+      DateOfBirth:dateOfBirth, 
+      HourlyRate:hourlyRate, 
+      Affiliation:affiliation, 
+      EDB:educationalBackground,
+      Speciality:speciality}
     console.log(data)
     const response = axios.post('http://localhost:4000/GuestDoctor/Register', data)
-.then(res =>console.log(res.data)).catch(err => console.log(err))
+.then(res =>console.log(res.data)).catch(err => console.log(err.request))
   }
   return (
     <div>
@@ -89,6 +98,10 @@ function RegisterDoctor() {
   <h3>
   <label>Educational Background</label>
   <input type="text" required title="Educational Background" placeholder="Enter Educational Background" onChange={(e) => setEducationalBackground(e.target.value)}/>
+  </h3>
+  <h3>
+  <label>Speciality</label>
+  <input type="text" required title="Speciality" placeholder="Enter Speciality" onChange={(e) => setSpeciality(e.target.value)}/>
   </h3>
 
   <h3>
