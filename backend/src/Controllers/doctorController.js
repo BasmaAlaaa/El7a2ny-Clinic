@@ -235,7 +235,7 @@ const viewInfoAndRecords = async (req,res)=>{
         const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
     
         // Find all patients whose IDs are in the patientIds array
-        const patients = await patientSchema.findOne({ Username: PatientUsername, Username: { $in: patientsUsernames } });
+        const patients = await patientSchema.findOne({ Username: PatientUsername});
     
         if (!patients) {
           return res.status(404).send('No patients found for this doctor');
@@ -291,13 +291,15 @@ const MyPatients = async (req,res) =>{
         const result = [];
         for(const patient of patients){
           for(const app of appointments){
-            result.push({
-              Name: patient.Name,
-              Username: patient.Username,
-              Email: patient.Email,
-              DateOfBirth: patient.DateOfBirth,
-              Appointment_Status: app.Status
-            });
+            if(app.PatientUsername === patient.Username){
+              result.push({
+                Name: patient.Name,
+                Username: patient.Username,
+                Email: patient.Email,
+                DateOfBirth: patient.DateOfBirth,
+                Appointment_Status: app.Status
+              });
+            }
           }
         }
         res.status(200).send(result);
