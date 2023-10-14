@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 function CaseTableBody({ data , user}) {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
 
   return (
     <>
@@ -41,8 +43,9 @@ function CaseTableBody({ data , user}) {
 //   );
 // }
 
-function TableDoctors({ tHead, data, searchText, filterText, user }) {
-  console.log("use patient", user)
+function TableDoctors({ tHead, data, searchText, searchDate, searchTime, resultDateTime, filterText, user }) {
+console.log(resultDateTime.length)
+ 
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -55,6 +58,16 @@ function TableDoctors({ tHead, data, searchText, filterText, user }) {
         </thead>
         <tbody>
           {data
+          .filter((e) => {
+            let exists = false
+           resultDateTime.map((s) => {
+           if(e.Username===s.Username) {
+            exists = true
+           }
+          // return true
+           })
+           return resultDateTime.length ? exists : !(searchDate && searchTime) 
+          })
           .filter((e) => {
             return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
             e : e.Speciality.toLowerCase() === filterText.toLowerCase()
