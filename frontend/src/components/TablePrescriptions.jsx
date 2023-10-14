@@ -10,6 +10,8 @@ console.log("pres id", data.prescriptionID)
     {data.DoctorUsername && <th>{data.DoctorUsername}</th>}
     {data.Date && <td>{data.Date.substring(0,10)}</td>}
     {data.Description && <td>{data.Description}</td>}
+    {data.Filled && <td>{data.Filled}</td>}
+
 
 
       <td className="py-3 text-align-center">

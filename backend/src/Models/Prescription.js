@@ -30,7 +30,7 @@ const prescriptionSchema = new Schema({
         ref: 'Appointment'
     },
     Filled: {
-        type: Boolean,
+        type: String,
         default: false
         //required: true,
     }

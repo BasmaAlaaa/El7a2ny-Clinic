@@ -15,6 +15,17 @@ const registerPrescription = async (req, res) => {
     } = req.body
 
     try {
+
+        const doctorExists = await doctorSchema.findOne({Username: DoctorUsername});
+        if(!doctorExists){
+            return res.status(400).json("Doctor doesn't exist!");
+        }
+
+        const patientExists = await patientSchema.findOne({Username: PatientUsername});
+        if(!patientExists){
+            return res.status(400).json("Patient doesn't exist!");
+        }
+
         const prescription = await prescriptionModel.register(
             DoctorUsername,
             PatientUsername,
@@ -25,6 +36,9 @@ const registerPrescription = async (req, res) => {
         )
 
         await prescription.save();
+
+        patientExists.PatientPrescriptions.push(prescription._id);
+        await patientExists.save();
         res.status(200).json({ prescription });
     } catch (error) {
         res.status(400).json({ error: error.message })

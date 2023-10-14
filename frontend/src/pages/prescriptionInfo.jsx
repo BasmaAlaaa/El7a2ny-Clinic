@@ -31,7 +31,7 @@ return (
             <h3>Doctor Name: {result.DoctorName}</h3>
             <h3>Prescription Date: {result.Date}</h3>
             <h3>Description: {result.Description}</h3>
-            <h3>Status: {result.Filled? "Filled" : "Unfilled"}</h3>
+            <h3>Status: {result.Filled==true? "Filled" : "Unfilled"}</h3>
 
 
         </ul>
