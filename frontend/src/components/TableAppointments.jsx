@@ -10,7 +10,9 @@ function CaseTableBody({ data }) {
       
     {data.Date && <th>{data.Date.substring(0,10)}</th>}
     {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
+    {data.PatientUsername && <td>{data.PatientUsername}</td>}
     {data.Status && <td>{data.Status}</td>}
+
     
       
 
@@ -32,6 +34,7 @@ function CaseTableBody({ data }) {
 // }
 
 function TableAppointments({ tHead, data, searchText, searchDate, filterText }) {
+  console.log('haayaa', data)
 
   return (
     <div className="case-table card mt-4">
@@ -46,7 +49,7 @@ function TableAppointments({ tHead, data, searchText, searchDate, filterText }) 
         <tbody>
           {data
           .filter((e) => {
-            return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all'?
+            return filterText === '' || filterText.toLowerCase() === 'all'?
             e : e.Status.toLowerCase() === filterText.toLowerCase()
           })
           .filter((e) => {
