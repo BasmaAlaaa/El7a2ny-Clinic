@@ -21,9 +21,9 @@ function AppointmentsListDoctor() {
 
   useEffect(() => {
 const response = axios.get(`http://localhost:4000/Doctor/allAppointments/${username}`)
-.then(res =>setResult(res.data.filteredAppointments)).catch(err => console.log(err))
+.then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
-console.log(result)
+console.log('hayouya', result)
 // result.map((e) => {
 //   console.log(e)
 // })
