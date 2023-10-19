@@ -29,6 +29,9 @@ import FamilyMembersList from './components/FamilyMembersList';
 import PatientsList from './components/PatientsList';
 import AddFamilyMember from './pages/addFamilyMember';
 import AppointmentsListDoctor from './components/AppointmentsListDoctor';
+import ForgotPassword from './pages/forgot_password';
+import ChangePassword from './pages/change_password';
+import ResetPassword from './pages/reset_passowrd'
 
 
 
@@ -39,7 +42,10 @@ function App() {
       {/* <NavBar /> */}
       <main>
         <Routes>
-          <Route exact path="/login" element={<Login />} />
+        <Route exact path="/login" element={<Login />} />
+          <Route exact path="/forgotPassword" element={<ForgotPassword />} />
+          <Route exact path="/changePassword" element={<ChangePassword />} />
+          <Route exact path="/resetPassword" element={<ResetPassword />} />
           <Route exact path="/registerPatient" element={<RegisterPatient />} />
           <Route exact path="/registerDoctor" element={<RegisterDoctor />} />
           <Route exact path="/patientView/:username" element={<PatientView />} />

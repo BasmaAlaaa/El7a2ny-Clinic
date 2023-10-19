@@ -24,6 +24,14 @@ function NavBarPatient(props) {
               key="navBtn"
             />
           </div>
+          <div>
+            <MainBtn
+              txt="Logout"
+              style="green-btn"
+              // action={() => navigate('/administratorView')}
+              key="navBtn"
+            />
+          </div>
         
       </div>
     </nav>
