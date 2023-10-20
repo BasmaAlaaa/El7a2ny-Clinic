@@ -447,6 +447,21 @@ const viewContract = async (req, res) => {
       res.status(500).json({ error: "Server error", details: error.message });
   }
 };
+const acceptContract = async (req, res) => {
+  try {
+      const DoctorUsername = req.params.DoctorUsername; 
+      // Update the contract status to 'accepted' for the specific doctor
+      const updatedContract = await ContractSchema.findOneAndUpdate({ DoctorUsername: DoctorUsername }, { Status: 'accepted' }, { new: true });
+
+      if (!updatedContract) {
+          return res.status(404).json({ error: "Contract not found for this doctor." });
+      }
+
+      res.status(200).json({ message: 'Contract accepted successfully', contract: updatedContract });
+  } catch (error) {
+      res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
 
 module.exports = {
     docFilterAppsByDate,
@@ -462,7 +477,7 @@ module.exports = {
     selectPatientWithHisName,
     addDoctor,
     viewContract,
-    allAppointments
+    allAppointments, acceptContract
 };
 
 

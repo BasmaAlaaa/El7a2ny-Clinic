@@ -11,7 +11,14 @@ const ContractSchema = new Schema(
     MarkUp:{
         type: Number,
         required: true
-    }
+    },
+    Status:{
+        type: String,
+        required: true,
+        enum: ['Approved', 'Rejected', 'Pending'],
+        default: 'Pending'
+    },
+
 });
 module.exports= mongoose.model('Contract', ContractSchema);
 
