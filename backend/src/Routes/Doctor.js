@@ -17,7 +17,7 @@ const { registerDoctor,
     updateDoctorByEmail,
     docFilterAppsByDate,
     docFilterAppsByStatus,
-    allAppointments
+    allAppointments,viewContract
 } = require('../Controllers/doctorController'); // Import the function
 //const doctorController = require('../../../Controllers/doctorController.js');
 
@@ -52,5 +52,6 @@ router.get('/PatientsUpcoming/:Username',PatientsUpcoming)
 router.get('/selectPatientWithHisName/:DoctorId/:Username',selectPatientWithHisName)
 
 router.post('/addDoc', addDoctor);
+router.get('/viewContract/:Username', viewContract);
 
 module.exports = router

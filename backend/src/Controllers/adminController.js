@@ -6,6 +6,7 @@ const GuestDoctor = require("../Models/GuestDoctor");
 const Appointment = require("../Models/Appointment");
 const Prescription = require("../Models/Prescription");
 const FamilyMemberSchema = require("../Models/FamilyMember");
+const Contract = require("../Models/Contract");
 //const isUsernameUnique = require('../utils');
 
 async function isUsernameUnique(username) {
@@ -276,6 +277,28 @@ const acceptOrRejectDoctorRequest = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+//create A METHOD TO CREATE A NEW CONTRACT
+const createContract = async (req, res) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    try {
+        const { DoctorUsername, MarkUp } = req.body;
+        if (!DoctorUsername || !MarkUp) {
+            throw Error('All fields must be filled.');
+        }
+        const doctorExists = await Doctor.findOne({ Username: DoctorUsername });
+        if (!doctorExists) {
+            return res.status(404).json({ error: 'Doctor not found.' });
+        }
+        const newContract = new Contract({ DoctorUsername, MarkUp });
+        await newContract.save();
+        res.status(200).json({ message: 'New contract created', contract: newContract });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+
 
 module.exports = {
   viewUnapprovedDoctors,
@@ -284,4 +307,5 @@ module.exports = {
   deleteEntity,
   viewDoctorInfo,
   acceptOrRejectDoctorRequest,
+  createContract
 };

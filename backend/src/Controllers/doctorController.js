@@ -2,6 +2,7 @@ const { StatusFile } = require('git');
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
+const ContractSchema = require('../Models/Contract.js');
 const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 
 // register Doctor
@@ -429,6 +430,24 @@ const addDoctor = async (req,res) =>{
         });
 }
 
+const viewContract = async (req, res) => {
+  try {
+      const DoctorUsername = req.params.Username; //passing the doctor's username
+      const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
+      if (!doctorExists) {
+          return res.status(404).json({ error: 'Doctor not found.' });
+      }
+      const contractDetails = await ContractSchema.findOne({ DoctorUsername });
+
+      if (!contractDetails) {
+          return res.status(404).json({ error: "Contract not found for this doctor." });
+      }
+      res.status(200).json({ contract: contractDetails });
+  } catch (error) {
+      res.status(500).json({ error: "Server error", details: error.message });
+  }
+};
+
 module.exports = {
     docFilterAppsByDate,
     docFilterAppsByStatus,
@@ -442,6 +461,7 @@ module.exports = {
     updateDoctorByHourlyRate,
     selectPatientWithHisName,
     addDoctor,
+    viewContract,
     allAppointments
 };
 

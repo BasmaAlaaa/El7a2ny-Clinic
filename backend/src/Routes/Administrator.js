@@ -15,6 +15,7 @@ router.delete("/deleteEntity2/:Username", adminController.deleteEntity2);
 router.get("/viewUnapprovedDoctors", adminController.viewUnapprovedDoctors);
 router.get("/viewDoctorInfo/:Username", adminController.viewDoctorInfo);
 router.post('/acceptOrRejectDoctorRequest/:Username', adminController.acceptOrRejectDoctorRequest);
+router.post("/createContract", adminController.createContract);
 
 
 //app.post("/addUser",createUser);
