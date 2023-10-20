@@ -17,9 +17,8 @@ async function isUsernameUnique(username) {
 
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity = async (req, res) => {
-  
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials',true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
   try {
     // Destructure 'username' and 'entityType' from request parameters.
@@ -43,50 +42,66 @@ const deleteEntity = async (req, res) => {
     }
 
     // Search and delete the document where the Username field equals the provided Username.
-    switch(entityType.toLowerCase()){
+    switch (entityType.toLowerCase()) {
       case "doctor":
-        const deletedAp1 = await Appointment.deleteMany({DoctorUsername: Username});
+        const deletedAp1 = await Appointment.deleteMany({
+          DoctorUsername: Username,
+        });
         break;
       case "patient":
-        const patient = await Patient.findOne({Username: Username});
-        const deletedAp2 = await Appointment.deleteMany({PatientUsername: Username});
-        const deletedPres = await Prescription.deleteMany({PatientUsername: Username});
-        
+        const patient = await Patient.findOne({ Username: Username });
+        const deletedAp2 = await Appointment.deleteMany({
+          PatientUsername: Username,
+        });
+        const deletedPres = await Prescription.deleteMany({
+          PatientUsername: Username,
+        });
+
         const famMembersIds = patient.FamilyMembers;
         //const res = [];
         const allPatients = await Patient.find();
-        for(let i = 0; i < famMembersIds.length; i++){
+        for (let i = 0; i < famMembersIds.length; i++) {
           let x = false;
-          for(const pat of allPatients){
-            if(!(pat.Username === Username) && pat.FamilyMembers.includes(famMembersIds[i])){
+          for (const pat of allPatients) {
+            if (
+              !(pat.Username === Username) &&
+              pat.FamilyMembers.includes(famMembersIds[i])
+            ) {
               console.log(famMembersIds[i]);
               x = true;
               break;
             }
           }
-          if(x === false){
-            const deleted = await FamilyMemberSchema.deleteOne({NationalID: famMembersIds[i]});
+          if (x === false) {
+            const deleted = await FamilyMemberSchema.deleteOne({
+              NationalID: famMembersIds[i],
+            });
             console.log(deleted);
           }
         }
         //const deletedFams = await FamilyMemberSchema.deleteMany({NationalID:{ $in: famMembersIds}});
 
         const healthPacks = await HealthPackage.find();
-        for (const hp of healthPacks){
+        for (const hp of healthPacks) {
           const index = hp.PatientsUsernames.indexOf(Username);
-          if(!index){
-            const update = await HealthPackage.updateOne({Type: hp.Type}, 
-              { $pull: { PatientsUsernames: Username}});
+          if (!index) {
+            const update = await HealthPackage.updateOne(
+              { Type: hp.Type },
+              { $pull: { PatientsUsernames: Username } }
+            );
           }
         }
-        
+
         const docs = await Doctor.find();
-        for (const doc of docs){
+        for (const doc of docs) {
           const index = doc.PatientsUsernames.indexOf(Username);
-          if(!index){
-            const update = await Doctor.updateOne({Username: doc.Username}, 
-              { $pull: { PatientsUsernames: Username}});
-          }        }
+          if (!index) {
+            const update = await Doctor.updateOne(
+              { Username: doc.Username },
+              { $pull: { PatientsUsernames: Username } }
+            );
+          }
+        }
         break;
     }
     const deletedEntity = await Model.findOneAndDelete({ Username: Username });
@@ -106,20 +121,19 @@ const deleteEntity = async (req, res) => {
 
 // Task 7 : add admin to DB
 const createAdmin = async (req, res) => {
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials',true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
   try {
     const { Username, Password } = req.body;
     // Validate input, ensure admin does not already exist
-    
+
     if (!Username || !Password) {
       throw Error("All fields must be filled.");
     }
 
     if (!(await isUsernameUnique(Username))) {
-      throw new Error('Username is already taken.');
+      throw new Error("Username is already taken.");
     }
 
     const newAdmin = new Admin({ Username, Password });
@@ -127,15 +141,14 @@ const createAdmin = async (req, res) => {
 
     res.status(200).json({ message: "New admin created", admin: newAdmin });
   } catch (error) {
-    res.status(500).json({ error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity2 = async (req, res) => {
-  
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials',true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
   try {
     // Destructure 'username' from request parameters.
@@ -176,11 +189,21 @@ const deleteEntity2 = async (req, res) => {
 
 // Task 9 : view all information of doctors who wants to join platform
 const viewUnapprovedDoctors = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
   try {
     // Find all doctors where IsApproved is false.
-    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false },{Password: 0, HourlyRate: 0, Affiliation: 0, EDB: 0, DateOfBirth: 0, _id: 0});
+    const unapprovedDoctors = await GuestDoctor.find(
+      { IsApproved: false },
+      {
+        Password: 0,
+        HourlyRate: 0,
+        Affiliation: 0,
+        EDB: 0,
+        DateOfBirth: 0,
+        _id: 0,
+      }
+    );
 
     // Check if there are any unapproved doctors; if not, respond with a 404 status code and an error message.
     if (!unapprovedDoctors.length) {
@@ -196,30 +219,69 @@ const viewUnapprovedDoctors = async (req, res) => {
 };
 
 const viewDoctorInfo = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
 
-  try{
+  try {
+    const { Username } = req.params;
 
-    const {Username} = req.params;
+    const doc = await GuestDoctor.findOne(
+      { Username: Username },
+      { _id: 0, Password: 0 }
+    );
 
-    const doc = await GuestDoctor.findOne({Username: Username},{_id: 0, Password: 0});
-    
     if (!doc) {
-      return res.status(404).json({ error: "No unapproved doctor found by this username" });
+      return res
+        .status(404)
+        .json({ error: "No unapproved doctor found by this username" });
     }
 
-    res.status(200).json({ doctor: doc});
-
-  } catch (error){
+    res.status(200).json({ doctor: doc });
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+};
+//Task 10:accept or reject the request of a doctor to join the platform
+const acceptOrRejectDoctorRequest = async (req, res) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  try {
+    const { Username } = req.params;
+    const { action } = req.body;
+    const guestDoctor = await GuestDoctor.findOne({ Username, IsApproved: false });
+    // doctor doesn't exist or is already approved
+    if (!guestDoctor) {
+      return res
+        .status(404)
+        .json({ error: "Doctor not found or already approved" });
+    }
+    if (action === 'accept') {
+      // Create a new doctor in the Doctor model.
+      const newDoctor = new Doctor(guestDoctor.toObject());
+      await newDoctor.save();
+      // Delete from the GuestDoctor.
+      await guestDoctor.remove();
+
+      return res
+        .status(200)
+        .json({ message: "Doctor approved and added to the platform" });
+    } else if (action === "reject") {
+      await guestDoctor.remove();
+      return res.status(200).json({ message: "Doctor request rejected , Doctor is removed" });
+    } else {
+      return res.status(400).json({ error: "Invalid action , Please type accept or reject" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
 module.exports = {
   viewUnapprovedDoctors,
   deleteEntity2,
   createAdmin,
   deleteEntity,
-  viewDoctorInfo
-}
+  viewDoctorInfo,
+  acceptOrRejectDoctorRequest,
+};
