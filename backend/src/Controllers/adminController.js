@@ -198,9 +198,6 @@ const viewUnapprovedDoctors = async (req, res) => {
       { IsApproved: false },
       {
         Password: 0,
-        HourlyRate: 0,
-        Affiliation: 0,
-        EDB: 0,
         DateOfBirth: 0,
         _id: 0,
       }

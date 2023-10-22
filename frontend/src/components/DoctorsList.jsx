@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import search from '../assets/images/svg/search.svg';
 import filter from '../assets/images/svg/filter.svg';
-import MedicineView from '../pages/medicineView.jsx';
 import NavBar from './NavBar.jsx';
 import TableDoctors from './TableDoctors.jsx'
 

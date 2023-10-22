@@ -8,14 +8,10 @@ import RegisterPatient from './pages/registerPatient';
 import RegisterDoctor from './pages/registerDoctor';
 import AdministratorView from './pages/administratorView';
 import PatientView from './pages/patientView';
-import PharmacistView from './pages/pharmacistView';
-import MedicineView from './pages/medicineView';
 import AddAdministrator from './pages/addAdministrator';
 import PatientInfo from './pages/patientInfo';
 import DoctorInfo from './pages/doctorInfo';
 import RequestInfo from './pages/requestInfo';
-import AddMedicine from './pages/addMedicine';
-import EditMedicine from './pages/editMedicine';
 import PrescriptionInfo from './pages/prescriptionInfo';
 
 import DoctorView from './pages/doctorView';
@@ -52,7 +48,6 @@ function App() {
           <Route exact path="/administratorView" element={<AdministratorView />} />
           <Route exact path="/addAdministrator" element={<AddAdministrator />} />
           <Route exact path="/addFamilyMember/:username" element={<AddFamilyMember />} />
-          <Route exact path="/editMedicine/:name" element={<EditMedicine />} />
           <Route exact path="/patientInfo/:usernameDoctor/:usernamePatient" element={<PatientInfo />} />
           <Route exact path="/doctorInfo/:usernameDoctor/:usernamePatient" element={<DoctorInfo />} />
           <Route exact path="/requestInfo/:username" element={<RequestInfo />} />

@@ -5,7 +5,6 @@ import axios from 'axios';
 import { useEffect, useState } from 'react';
 import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 import MainBtn from '../components/Button.jsx';
-import MedicineList from '../components/medicineList.jsx';
 
 function AdministratorView() {
   const[searchText, setSearchText] = useState('');
@@ -30,7 +29,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHeadRequests = ['Name', 'Username', 'Email', 'Affiliation', 'Hourly Rate', 'EducationalBackground'];
+  let tHeadRequests = ['Name', 'Username', 'Email', 'Affiliation', 'Hourly Rate', 'EducationalBackground', 'Accept', 'Reject'];
   let dataRequests = [{
     name: 'Ahmed',
     affiliation: 'Y Hospital',
