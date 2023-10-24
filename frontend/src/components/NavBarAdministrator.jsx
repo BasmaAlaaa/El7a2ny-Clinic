@@ -27,6 +27,22 @@ function NavBarAdministrator() {
               action={() => navigate('/administratorView')}
               key="navBtn"
             />
+            </div>
+            <div>
+          <MainBtn
+              txt="Change Password"
+              style="green-btn"
+              action={() => navigate('/changePassword')}
+              key="navBtn"
+            />
+            </div>
+            <div>
+            <MainBtn
+              txt="Logout"
+              style="green-btn"
+              // action={() => navigate('/administratorView')}
+              key="navBtn"
+            />
           </div>
 
       </div>

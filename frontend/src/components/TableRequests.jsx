@@ -14,8 +14,28 @@ function CaseTableBody({ data }) {
     {data.Affilation&&<td>{data.Affilation}</td>}
     {data.HourlyRate&&<td>{data.HourlyRate}</td>}
     {data.EDB&&<td>{data.EDB}</td>}
-    
+
+    <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+       // onClick={()=>navigate(`/medicineView/:${data.Name}`)}
+      >
+        Accept
+      </button>
+      </div>
+      </td>
       
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+         // onClick={()=>navigate(`/medicineView/:${data.Name}`)}
+      >
+        Reject
+      </button>
+      </div>
+      </td>
 
     </>
   );
