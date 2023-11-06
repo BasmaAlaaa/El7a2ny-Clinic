@@ -194,7 +194,7 @@ const viewUnapprovedDoctors = async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
   try {
     // Find all doctors where IsApproved is false.
-    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false },{Password: 0, HourlyRate: 0, Affiliation: 0, EDB: 0, DateOfBirth: 0, _id: 0});
+    const unapprovedDoctors = await GuestDoctor.find({ IsApproved: false },{Password: 0, DateOfBirth: 0, _id: 0});
 
     // Check if there are any unapproved doctors; if not, respond with a 404 status code and an error message.
     if (!unapprovedDoctors.length) {
