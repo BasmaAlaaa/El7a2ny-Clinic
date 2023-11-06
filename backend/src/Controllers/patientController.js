@@ -728,6 +728,47 @@ const viewWalletAmountByPatient = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+//Task 30: 
+const viewSubscribedHealthPackages = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username } = req.params;
+
+  try {
+    
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    // Get the health packages subscribed by the patient
+    const healthPackages = await HealthPackage.find({ PatientsUsernames: Username });
+
+    // Check if the patient has family members
+    if (patient.FamilyMembers.length > 0) {
+      // Get the usernames of family members
+      const familyMemberUsernames = patient.FamilyMembers;
+
+      // Find health packages for family members
+      const familyHealthPackages = await HealthPackage.find({ PatientsUsernames: { $in: familyMemberUsernames } });
+
+      // Combine the patient's and family members' health packages
+      healthPackages.push(...familyHealthPackages);
+    }
+
+    if (healthPackages.length === 0) {
+      return res.status(404).send('No subscribed health packages found');
+    }
+
+    res.status(200).send(healthPackages);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
 
 /*const payForAppointment = async (req, res) => {
 
@@ -805,6 +846,5 @@ module.exports = {
   allAppointments,
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
-  viewWalletAmountByPatient,
-  payForAppointment
+  viewWalletAmountByPatient
 }

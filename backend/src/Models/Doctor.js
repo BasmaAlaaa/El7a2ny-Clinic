@@ -51,21 +51,30 @@ const doctorSchema = new Schema({
     {
       Date:{
         type: Date,
-        required: true
+       // required: true
       },
       From:{
         type:Number,
-        required:true
+      //  required:true
       },
       To: {
         type:Number,
-        required:true
+       // required:true
       }
     }
   ],
   WalletAmount:{
     type: Number,
     default: 0
+  },
+  IDDocument: {
+    type: String,
+  },
+  MedicalDegreeDocument: {
+    type: String,
+  },
+  WorkingLicenseDocument: {
+    type: String,
   }
 }, { timestamps: true });
 

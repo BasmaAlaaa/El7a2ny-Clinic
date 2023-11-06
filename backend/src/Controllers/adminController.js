@@ -272,24 +272,21 @@ const createContract = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
     try {
-        const { DoctorUsername, MarkUp } = req.body;
-        if (!DoctorUsername || !MarkUp) {
+        const { DoctorUsername, MarkUp,StartDate, EndDate,DoctorSpecialty,Salary,compensation,workingHours,workingDays,Type,Status} = req.body;
+        if (!DoctorUsername || !MarkUp || !EndDate||!DoctorSpecialty||!Salary||!compensation||!workingHours||!workingDays||!Type||!Status) {
             throw Error('All fields must be filled.');
         }
         const doctorExists = await Doctor.findOne({ Username: DoctorUsername });
         if (!doctorExists) {
             return res.status(404).json({ error: 'Doctor not found.' });
         }
-        const newContract = new Contract({ DoctorUsername, MarkUp });
+        const newContract = new Contract({ DoctorUsername, MarkUp,StartDate, EndDate,DoctorSpecialty,Salary,compensation,workingHours,workingDays,Type,Status });
         await newContract.save();
         res.status(200).json({ message: 'New contract created', contract: newContract });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 };
-
-
-
 module.exports = {
   viewUnapprovedDoctors,
   deleteEntity2,

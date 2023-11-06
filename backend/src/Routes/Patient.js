@@ -26,6 +26,7 @@ const {
     choosePaymentMethodForHP,
     choosePaymentMethodForApp,
     viewWalletAmountByPatient,
+    viewSubscribedHealthPackages,
     payForAppointment
 } = require('../Controllers/patientController');
 
@@ -67,7 +68,7 @@ router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMeth
 router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
 
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
-    
-router.post('/create-checkout-session', payForAppointment);
+
+
 
 module.exports = router
