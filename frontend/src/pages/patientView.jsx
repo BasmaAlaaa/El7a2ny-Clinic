@@ -19,6 +19,12 @@ return (
               action={() => navigate(`/appointmentsList/${username}`)}
               key="navBtn"
             />
+            <MainBtn
+              txt="View Health Packages"
+              style="green-btn"
+              action={() => navigate(`/healthPackages/${username}`)}
+              key="navBtn"
+            />
             
             <MainBtn
               txt="View All Registered Family Members"

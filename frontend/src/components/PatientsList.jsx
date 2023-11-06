@@ -33,7 +33,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Name', 'Username', 'Email', 'Date Of Birth'];
+  let tHead = ['Name', 'Username', 'Email', 'View'];
 
   return (
     <div>
