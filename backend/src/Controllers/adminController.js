@@ -257,7 +257,7 @@ const acceptOrRejectDoctorRequest = async (req, res) => {
       return res
         .status(200)
         .json({ message: "Doctor approved and added to the platform" });
-    } else if (action === "reject") {
+    } else if (action === 'reject') {
       await guestDoctor.remove();
       return res.status(200).json({ message: "Doctor request rejected , Doctor is removed" });
     } else {

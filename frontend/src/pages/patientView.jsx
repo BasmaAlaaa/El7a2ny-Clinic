@@ -22,7 +22,7 @@ return (
             <MainBtn
               txt="View Health Packages"
               style="green-btn"
-              action={() => navigate(`/healthPackages/${username}`)}
+              action={() => navigate(`/healthPackagesList/${username}`)}
               key="navBtn"
             />
             
