@@ -57,6 +57,6 @@ router.post('/addDoc', addDoctor);
 router.get('/viewContract/:Username', viewContract);
 router.post('/acceptContract/:DoctorUsername', acceptContract);
 
-router.get('/viewWalletAmountByDoc', viewWalletAmountByDoc);
+router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
 
 module.exports = router
