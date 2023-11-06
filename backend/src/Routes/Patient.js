@@ -25,7 +25,8 @@ const {
     allAppointments,
     choosePaymentMethodForHP,
     choosePaymentMethodForApp,
-    viewWalletAmountByPatient
+    viewWalletAmountByPatient,
+    viewSubscribedHealthPackages
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -66,7 +67,7 @@ router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMeth
 router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
 
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
-
+router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
     
     
 
