@@ -14,6 +14,10 @@ function DoctorView(){
     const [email, setEmail] = useState('');
     const [hourlyrate, setHourlyRate] = useState(0);
     const [affiliation, setAffiliation] = useState('');
+    const [date, setDate] = useState('');
+    const [from, setFrom] = useState(0);
+    const [to, setTo] = useState(0);
+
     let navigate = useNavigate()
 
 
@@ -54,14 +58,28 @@ function DoctorView(){
               key="navBtn"
             />
             </div>
-              <form >
+              
   <h3><input  type= 'email'  placeholder= 'Enter New Email'  onChange={(e) => setEmail(e.target.value)} />
   <button onClick={updateEmail}>Update Email</button></h3>
   <h3><input type="number"  placeholder="Enter New Hourly Rate" onChange={(e) => setHourlyRate(e.target.value)}/>
   <button onClick={updateHourlyRate}>Update Hourly Rate</button></h3>
   <h3><input type="text"  placeholder="Enter New Affiliation" onChange={(e) => setAffiliation(e.target.value)}/>
   <button onClick={updateAffiliation}>Update Affiliation</button></h3>
-</form>
+  <form>
+    <h3>
+      Add Appointment
+    </h3>
+    <h3>
+    <input  type= 'date' required onChange={(e) => setDate(e.target.value)} />
+    </h3>
+    <h3>
+    <input  type= 'number' placeholder="From" required onChange={(e) => setFrom(e.target.value)} />
+    </h3>
+    <h3>
+    <input  type= 'number' placeholder="To" required onChange={(e) => setTo(e.target.value)} />
+    </h3>
+    <button>Add Appointment</button>
+  </form>
           
       
         </div>

@@ -28,6 +28,7 @@ import AppointmentsListDoctor from './components/AppointmentsListDoctor';
 import ForgotPassword from './pages/forgot_password';
 import ChangePassword from './pages/change_password';
 import ResetPassword from './pages/reset_passowrd'
+import HealthPackages from './pages/healthPackages';
 
 
 
@@ -63,6 +64,8 @@ function App() {
           <Route exact path="/appointmentsListDoctor/:username" element={<AppointmentsListDoctor />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
+          <Route exact path="/healthPackages/:username" element={<HealthPackages />} />
+
 
 
 
