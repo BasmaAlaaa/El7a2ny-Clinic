@@ -25,8 +25,9 @@ const {
     allAppointments,
     choosePaymentMethodForHP,
     choosePaymentMethodForApp,
-    viewWalletAmountByPatient,
-    viewHealthPackages
+    viewWalletAmountByPatient ,
+    viewHealthPackages 
+   
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -69,7 +70,6 @@ router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 router.get('/health-packages', viewHealthPackages);
 
-    
-    
+
 
 module.exports = router

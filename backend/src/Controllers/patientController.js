@@ -8,6 +8,11 @@ const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
 
+const express = require("express");
+const Stripe = require("stripe");
+require("dotenv").config();
+const stripe = Stripe(process.env.STRIPE_KEY);
+
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
@@ -723,6 +728,100 @@ const viewWalletAmountByPatient = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
+//Task 30: 
+const viewSubscribedHealthPackages = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username } = req.params;
+
+  try {
+    
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    // Get the health packages subscribed by the patient
+    const healthPackages = await HealthPackage.find({ PatientsUsernames: Username });
+
+    // Check if the patient has family members
+    if (patient.FamilyMembers.length > 0) {
+      // Get the usernames of family members
+      const familyMemberUsernames = patient.FamilyMembers;
+
+      // Find health packages for family members
+      const familyHealthPackages = await HealthPackage.find({ PatientsUsernames: { $in: familyMemberUsernames } });
+
+      // Combine the patient's and family members' health packages
+      healthPackages.push(...familyHealthPackages);
+    }
+
+    if (healthPackages.length === 0) {
+      return res.status(404).send('No subscribed health packages found');
+    }
+
+    res.status(200).send(healthPackages);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+/*const payForAppointment = async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const {username, id} = req.params;
+  const { amount } = req.body;
+    
+  try{
+    const patient = await patientSchema.findOne({Username: username});
+
+    if(!patient){
+      return res.status(404).send("No patient found");
+    }
+
+    const app = await appointmentSchema.findOne({_id: id});
+
+    if(!app){
+      return res.status(404).send("No appointment found");
+    }
+
+    const paymentIntent = await Stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'egp'
+    })
+
+    res.status(200).json(patient.WalletAmount);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};*/
+
+const payForAppointment = async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'egp',
+          product_data: {
+            name: 'Appointment',
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: '${process.env.CLIENT_URL}/checkout-success',
+    cancel_url: '${process.env.CLIENT_URL}/appointment',
+  });
+
+  res.send({url: session.url});
+}
+
 
 
 // Req 27 view health package options and details
@@ -734,7 +833,7 @@ const viewHealthPackages = async (req, res) => {
       return res.status(404).send('No health packages found');
     }
 
-    // You can customize the response format to include package details here
+  
     const packageInfo = healthPackages.map((package) => ({
       Type: package.Type,
       AnnualFee: package.AnnualFee,
@@ -748,10 +847,6 @@ const viewHealthPackages = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
-
-
-
-
 
 
 
@@ -781,15 +876,8 @@ module.exports = {
   allAppointments,
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
-  viewWalletAmountByPatient ,
-  viewHealthPackages
-} ;
-
-
-
-
-
-
-
-
-
+  viewWalletAmountByPatient,
+  payForAppointment ,
+  viewHealthPackages ,
+  viewSubscribedHealthPackages
+}

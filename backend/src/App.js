@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 require("dotenv").config();
 const cors = require("cors")
+
+const stripe = require('stripe')('YOUR_STRIPE_SECRET_KEY');
+const bodyParser = require('body-parser');
+
+
 const patientRoutes = require("../src/Routes/Patient"); // Require Patient
 const adminRoutes = require('../src/Routes/Administrator'); //require admin
 const healthPackageRoutes = require('../src/Routes/HealthPackage'); //require health package
@@ -19,8 +24,13 @@ const MongoURI = process.env.MONGO_URI ;
 
 //App variables
 const app = express();
+
 app.use(express.json()); 
 app.use(cors());
+app.use(bodyParser.json());
+
+
+
 const port = process.env.PORT || "4000";
 /////////////////////////////////////////////////////////
 //A method to create an admin at the begginning of the server "3shan mainf3shanesh n-create admin "

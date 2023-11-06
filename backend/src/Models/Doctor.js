@@ -51,39 +51,32 @@ const doctorSchema = new Schema({
     {
       Date:{
         type: Date,
-        required: true
+       // required: true
       },
       From:{
         type:Number,
-        required:true
+      //  required:true
       },
       To: {
         type:Number,
-        required:true
+       // required:true
       }
     }
   ],
   WalletAmount:{
     type: Number,
     default: 0
+  },
+  IDDocument: {
+    type: String,
+  },
+  MedicalDegreeDocument: {
+    type: String,
+  },
+  WorkingLicenseDocument: {
+    type: String,
   } ,
-  availableTimeSlots: [
-    {
-      dayOfWeek: {
-        type: String, // e.g., "Monday", "Tuesday", etc.
-        required: true,
-      },
-      startTime: {
-        type: String, // e.g., "09:00 AM"
-        required: true,
-      },
-      endTime: {
-        type: String, // e.g., "12:00 PM"
-        required: true,
-      },
-    },
-  ],
-
+ 
 
 
 

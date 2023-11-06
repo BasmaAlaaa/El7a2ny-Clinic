@@ -54,7 +54,8 @@ const patientSchema = new Schema({
   SubscribedHP: [{
     Type:{
       type: String,
-      required: false
+      required: false,
+      ref: 'HealthPackage'
     },
     DateOfSubscription:{
       type: Date,
@@ -64,6 +65,15 @@ const patientSchema = new Schema({
       type: String,
       default: "Wallet",
       enum: ["wallet","Wallet","Credit Card","credit card"]
+    },
+    PaymentStatus: {
+      type: String,
+      default: "Unpaid",
+      enum: ["paid","unpaid","Unpaid","Paid"]
+    },
+    RenewalDate: {
+      type: Date,
+      required: false
     }
   }],
   WalletAmount:{

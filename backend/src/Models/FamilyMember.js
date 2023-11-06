@@ -3,6 +3,8 @@ const { required } = require('nodemon/lib/config');
 const Schema = mongoose.Schema;
 const validator = require('validator');
 
+const Patient = require('../Models/Patient.js');
+
 const FamilyMemberSchema = new Schema({
     Name: {
         type: String,
@@ -26,7 +28,12 @@ const FamilyMemberSchema = new Schema({
         type: String,
         required: true,
         enum: ["Wife", "Husband", "Son", "Daughter","wife", "husband", "son", "daughter"]
-    }
+    },
+    PatientUsername: {      //in case the family member is patient registered in the system
+        type: String,
+        ref: 'Patient',
+        required: false, // Make it not required
+    },
 },
     { timestamps: true });
 
@@ -36,7 +43,8 @@ FamilyMemberSchema.statics.register = async function (
     NationalID,
     Age,
     Gender,
-    RelationToPatient
+    RelationToPatient,
+    PatientUsername
 ) {
 
     // validation 
@@ -45,7 +53,8 @@ FamilyMemberSchema.statics.register = async function (
         !NationalID ||
         !Age ||
         !Gender ||
-        !RelationToPatient) {
+        !RelationToPatient ||
+        !PatientUsername) {
         throw Error('All fields must be filled.');
     }
 
@@ -60,7 +69,8 @@ FamilyMemberSchema.statics.register = async function (
         NationalID,
         Age,
         Gender,
-        RelationToPatient
+        RelationToPatient,
+        PatientUsername
     });
 
     return FamilyMember;

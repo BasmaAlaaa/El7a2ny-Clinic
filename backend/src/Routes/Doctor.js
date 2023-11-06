@@ -5,8 +5,6 @@ const bodyParser = require('body-parser');
 /*const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
 const patientSchema = require('../../../Models/Patient.js');
 const appointmentSchema = require('../../../Models/Appointment.js');*/
-
-
 const { registerDoctor,
     viewInfoAndRecords,
     MyPatients,
@@ -27,10 +25,12 @@ const { registerDoctor,
     viewHealthRecords 
 } = require('../Controllers/doctorController'); // Import the function
 
-const router = express.Router();
-
 // register route
-router.post('/Register', registerDoctor)
+router.post('/Register', upload.fields([
+    { name: 'IDDocument', maxCount: 1 },
+    { name: 'MedicalDegreeDocument', maxCount: 1 },
+    { name: 'WorkingLicenseDocument', maxCount: 1 },
+  ]), registerDoctor)
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 router.put('/updateDoctorByAffiliation/:Username', updateDoctorByAffiliation);
