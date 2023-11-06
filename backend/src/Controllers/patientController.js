@@ -724,6 +724,43 @@ const viewWalletAmountByPatient = async (req, res) => {
   }
 };
 
+
+
+// Req 27 view health package options and details
+const viewHealthPackages = async (req, res) => {
+  try {
+    const healthPackages = await HealthPackage.find();
+
+    if (healthPackages.length === 0) {
+      return res.status(404).send('No health packages found');
+    }
+
+    // You can customize the response format to include package details here
+    const packageInfo = healthPackages.map((package) => ({
+      Type: package.Type,
+      AnnualFee: package.AnnualFee,
+      DoctorSessionDiscount: package.DoctorSessionDiscount,
+      MedicineDiscount: package.MedicineDiscount,
+      FamilySubscriptionDiscount: package.FamilySubscriptionDiscount,
+    }));
+
+    res.status(200).json(packageInfo);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -745,5 +782,15 @@ module.exports = {
   allAppointments,
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
-  viewWalletAmountByPatient
-}
+  viewWalletAmountByPatient ,
+  viewHealthPackages
+} ;
+
+
+
+
+
+
+
+
+
