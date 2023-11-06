@@ -21,6 +21,18 @@ const MongoURI = process.env.MONGO_URI ;
 const app = express();
 app.use(express.json()); 
 app.use(cors());
+
+
+const stripe = require('stripe')
+(process.env.STRIPE_PRIVATE_KEY);
+
+const storeItems = new Map([
+    [1, { priceInCents: 1000000, name: 'learning'}],
+    [2, { priceInCents: 2000000, name: 'talking'}],
+]);
+
+
+
 const port = process.env.PORT || "4000";
 /////////////////////////////////////////////////////////
 //A method to create an admin at the begginning of the server "3shan mainf3shanesh n-create admin "
