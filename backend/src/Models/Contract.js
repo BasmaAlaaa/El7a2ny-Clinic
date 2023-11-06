@@ -22,7 +22,9 @@ const ContractSchema = new Schema(
     },
     DoctorSpecialty:{
         type: String,
-        required: true
+        required: true,
+        enum:["dermatology","dentistry","psychiatry","neurology","orthopedics","Dermatology","Dentistry","Psychiatry","Neurology","Orthopedics"]
+
     },
     Salary:{
         type: Number,
@@ -42,13 +44,13 @@ const ContractSchema = new Schema(
     },
     Type:{
         type: String,
-        required: true,
+        //required: true,
         enum: ['Full Time', 'Part Time'],
         default: 'Full Time'
     },
     Status:{
         type: String,
-        required: true,
+       // required: true,
         enum: ['Approved', 'Rejected', 'Pending'],
         default: 'Pending'
     },}
