@@ -12,13 +12,45 @@ const ContractSchema = new Schema(
         type: Number,
         required: true
     },
+    StartDate:{
+        type: Date,
+        required: true
+    },
+    EndDate:{ 
+        type: Date,
+        required: true
+    },
+    DoctorSpecialty:{
+        type: String,
+        required: true
+    },
+    Salary:{
+        type: Number,
+        required: true
+    },
+    compensation:{
+        type: Number,
+        required: true
+    },
+    workingHours:{
+        type: Number,
+        required: true
+    },
+    workingDays:{
+        type: Number,
+        required: true
+    },
+    Type:{
+        type: String,
+        required: true,
+        enum: ['Full Time', 'Part Time'],
+        default: 'Full Time'
+    },
     Status:{
         type: String,
         required: true,
         enum: ['Approved', 'Rejected', 'Pending'],
         default: 'Pending'
-    },
-
-});
+    },}
+, { timestamps: true});
 module.exports= mongoose.model('Contract', ContractSchema);
-
