@@ -768,8 +768,6 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
-
-
 /*const payForAppointment = async (req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -846,5 +844,6 @@ module.exports = {
   allAppointments,
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
-  viewWalletAmountByPatient
+  viewWalletAmountByPatient,
+  payForAppointment
 }
