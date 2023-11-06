@@ -51,21 +51,43 @@ const patientSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Patient
   }],
-  SubscribedHP: [{
+  SubscribedHP: {
     Type:{
       type: String,
       required: false
     },
-    DateOfSubscription:{
-      type: Date,
-      required: false
-    },
+    // DateOfSubscription:{
+    //   type: Date,
+    //   required: false
+    // },
     PaymentMethod: {
       type: String,
       default: "Wallet",
       enum: ["wallet","Wallet","Credit Card","credit card"]
-    }
-  }],
+    },
+    Status: {
+      type: String,
+      enum: ['Subscribed', 'Unsubscribed', 'Cancelled'],
+      default: 'Unsubscribed',
+    },
+    SubscriptionStartDate: {
+      type: Date,
+      default: null,
+      
+    },
+    SubscriptionEndDate: {
+      type: Date,
+      default: null,
+      
+    },
+    CancellationDate: {
+      type: Date,
+      default: null,
+     
+    },
+
+    
+  },
   WalletAmount:{
     type: Number,
     default: 0
@@ -84,7 +106,9 @@ const patientSchema = new Schema({
     EmergencyContactName,
     EmergencyContactMobile,
     FamilyMembers,
-    PatientPrescriptions
+    PatientPrescriptions,
+    SubscribedHP,
+
   ) {
 
     // validation 
@@ -114,7 +138,8 @@ const patientSchema = new Schema({
       EmergencyContactName,
       EmergencyContactMobile,
       FamilyMembers,
-      PatientPrescriptions
+      PatientPrescriptions,
+      SubscribedHP
     });
   
     return patient;
@@ -122,3 +147,5 @@ const patientSchema = new Schema({
   
   const Patient = mongoose.model('Patient', patientSchema);
   module.exports = Patient;
+
+
