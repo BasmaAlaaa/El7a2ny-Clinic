@@ -97,7 +97,8 @@ const updatePackageByAnnualFee = async (req, res) => {
       $set: {
           AnnualFee: req.body.AnnualFee
       }
-  };
+    };
+    
     const updatedPackage = await HealthPackage.updateOne(
       {Type: Type}, // filter
       updatedPack // update

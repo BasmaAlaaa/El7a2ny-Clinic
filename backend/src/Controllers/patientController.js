@@ -639,7 +639,36 @@ const viewMyPres = async (req,res) => {
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
-}; 
+};
+
+
+
+const choosePaymentMethodForHP = async(req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { id } = req.params;
+  try{
+    
+    const hp = await HealthPackage.findById(id);
+
+    if(!hp){
+      return res.status(404).json({error : "This health package doesn't exist!"})
+  }
+
+  const updatedHP = {
+    $set: {
+        PaymentMethod: req.body.PaymentMethod
+    },
+  };
+
+  const updated = await Appointment.updateOne({_id: id},updatedApp);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+
+};
 
 module.exports = {
   registerPatient,
@@ -659,5 +688,6 @@ module.exports = {
   filterMyPresBasedOnFilled,
   patientFilterAppsByDate,
   patientFilterAppsByStatus,
-  allAppointments
+  allAppointments,
+  choosePaymentMethod
 }
