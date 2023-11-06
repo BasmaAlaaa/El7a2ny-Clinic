@@ -61,57 +61,66 @@ const guestDoctorSchema = new Schema(
     IsApproved: {
       type: Boolean,
       default: false,
+    },
+    IDDocument: {
+      type: String,
+    },
+    MedicalDegreeDocument: {
+      type: String,
+    },
+    WorkingLicenseDocument: {
+      type: String,
     }
   },
   { timestamps: true }
 );
 
 // static register method
-guestDoctorSchema.statics.register = async function (
-  Username,
-  Name,
-  Email,
-  Password,
-  DateOfBirth,
-  HourlyRate,
-  Affiliation,
-  EDB,
-  Speciality,
-  Schedule
-) {
-  // validation
-  if (
-    !Username ||
-    !Name ||
-    !Email ||
-    !Password ||
-    !DateOfBirth ||
-    !HourlyRate ||
-    !Affiliation ||
-    !EDB ||
-    !Speciality) {
-    throw Error("All fields must be filled.");
-  }
+// guestDoctorSchema.statics.register = async function (
+//   Username,
+//   Name,
+//   Email,
+//   Password,
+//   DateOfBirth,
+//   HourlyRate,
+//   Affiliation,
+//   EDB,
+//   Speciality,
+//   Schedule
+// ) {
+//   // validation
+//   if (
+//     !Username ||
+//     !Name ||
+//     !Email ||
+//     !Password ||
+//     !DateOfBirth ||
+//     !HourlyRate ||
+//     !Affiliation ||
+//     !EDB ||
+//     !Speciality) {
+//     throw Error("All fields must be filled.");
+//   }
 
-  if (!validator.isEmail(Email)) {
-    throw Error("Email must be in the form of johndoe@example.com");
-  }
+//   if (!validator.isEmail(Email)) {
+//     throw Error("Email must be in the form of johndoe@example.com");
+//   }
 
-  const guestDoctor = await this.create({
-    Username,
-    Name,
-    Email,
-    Password,
-    DateOfBirth,
-    HourlyRate,
-    Affiliation,
-    EDB,
-    Speciality,
-    Schedule
-  });
+//   const guestDoctor = await this.create({
+//     Username,
+//     Name,
+//     Email,
+//     Password,
+//     DateOfBirth,
+//     HourlyRate,
+//     Affiliation,
+//     EDB,
+//     Speciality,
+//     Schedule
+//   });
 
-  return guestDoctor;
-};
+//   return guestDoctor;
+// };
 
 const guestDoctor = mongoose.model("guestDoctor", guestDoctorSchema);
 module.exports = guestDoctor;
