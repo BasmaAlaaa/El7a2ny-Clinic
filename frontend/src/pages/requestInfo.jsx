@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
-import { useParams} from 'react-router-dom';
+import { useNavigate, useParams} from 'react-router-dom';
 import axios from "axios";
+import MainBtn from "../components/Button";
 
 
 function RequestInfo(){
     const {username} = useParams();
     const[result, setResult] = useState([]);
-
+    let navigate = useNavigate();
 
     useEffect(() => {
   const response = axios.get(`http://localhost:8000/Admin/InfosOfAPharmacistRequest/${username}`)
@@ -35,12 +36,20 @@ return (
             <h3>Request Status: {result.Status}</h3>
 
         </ul>
-        <button>
-            Accept Request
-        </button>
-        <button>
-            Reject Request
-        </button>
+        <div>
+            <MainBtn
+              txt="Accept request"
+              style="green-btn"
+              action={() => navigate('/administratorView')}
+              key="navBtn"
+            />
+             <MainBtn
+              txt="Reject Request"
+              style="white-btn"
+              action={() => navigate('/administratorView')}
+              key="navBtn"
+            />
+          </div>
         </div>
 )
 }
