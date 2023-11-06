@@ -60,7 +60,7 @@ router.get('/PatientsUpcoming/:Username',PatientsUpcoming)
 router.get('/selectPatientWithHisName/:DoctorId/:Username',selectPatientWithHisName)
 
 router.post('/addDoc', addDoctor);
-router.get('/viewContract/:Username', viewContract);
+router.get('/viewContract/:DoctorUsername', viewContract);
 router.post('/acceptContract/:DoctorUsername', acceptContract);
 
 router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);

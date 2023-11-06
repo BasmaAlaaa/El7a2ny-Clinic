@@ -30,6 +30,8 @@ import ChangePassword from './pages/change_password';
 import ResetPassword from './pages/reset_passowrd'
 import HealthPackagesList from './components/HealthPackagesList';
 import HealthPackageInfo from './pages/healthPackageInfo';
+import ContractView from './pages/contractView'; 
+
 
 
 
@@ -54,6 +56,7 @@ function App() {
           <Route exact path="/doctorInfo/:usernameDoctor/:usernamePatient" element={<DoctorInfo />} />
           <Route exact path="/requestInfo/:username" element={<RequestInfo />} />
           <Route exact path="/doctorView/:username" element={<DoctorView />} />
+          <Route path="/doctor/:username/contract" element={<ContractView />} />
           <Route exact path="/managePackages" element={<ManagePackages />} />
           <Route exact path="/removeUser" element={<RemoveUser />} />
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
