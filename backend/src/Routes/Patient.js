@@ -23,7 +23,9 @@ const {
     patientFilterAppsByDate,
     patientFilterAppsByStatus,
     allAppointments,
-    choosePaymentMethod
+    choosePaymentMethodForHP,
+    choosePaymentMethodForApp,
+    viewWalletAmountByPatient
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -60,6 +62,9 @@ router.get('/patientFilterAppsByDate/:Username/:Date',patientFilterAppsByDate)
 router.get('/patientFilterAppsByStatus/:Username/:Status',patientFilterAppsByStatus)
 router.get('/allAppointments/:Username', allAppointments);
 
-router.put('/choosePaymentMethod', choosePaymentMethod);
+router.put('/choosePaymentMethodForApp', choosePaymentMethodForApp);
+router.put('/choosePaymentMethodForHP', choosePaymentMethodForHP);
+
+router.get('/viewWalletAmountByPatient', viewWalletAmountByPatient);
 
 module.exports = router

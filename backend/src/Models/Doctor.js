@@ -62,7 +62,11 @@ const doctorSchema = new Schema({
         required:true
       }
     }
-  ]
+  ],
+  WalletAmount:{
+    type: Number,
+    default: 0
+  }
 }, { timestamps: true });
 
   // static register method

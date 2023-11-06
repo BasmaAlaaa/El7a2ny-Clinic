@@ -463,6 +463,27 @@ const acceptContract = async (req, res) => {
   }
 };
 
+//Req 67: view Wallet amount
+const viewWalletAmountByDoc = async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const {DoctorUsername} = req.params;
+    
+  try{
+    const doc = await doctorSchema.findOne({Username: DoctorUsername});
+
+    if(!doc){
+      return res.status(404).send("No doctor found");
+    }
+
+    res.status(200).json(doc.WalletAmount);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
 module.exports = {
     docFilterAppsByDate,
     docFilterAppsByStatus,
@@ -477,7 +498,9 @@ module.exports = {
     selectPatientWithHisName,
     addDoctor,
     viewContract,
-    allAppointments, acceptContract
+    allAppointments, 
+    acceptContract,
+    viewWalletAmountByDoc
 };
 
 

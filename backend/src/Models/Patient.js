@@ -50,8 +50,26 @@ const patientSchema = new Schema({
   PatientPrescriptions: [{
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Patient
-  }]
-
+  }],
+  SubscribedHP: [{
+    Type:{
+      type: String,
+      required: false
+    },
+    DateOfSubscription:{
+      type: Date,
+      required: false
+    },
+    PaymentMethod: {
+      type: String,
+      default: "Wallet",
+      enum: ["wallet","Wallet","Credit Card","credit card"]
+    }
+  }],
+  WalletAmount:{
+    type: Number,
+    default: 0
+  }
   }, { timestamps: true });
 
   // static register method
