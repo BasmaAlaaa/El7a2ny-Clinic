@@ -4,6 +4,7 @@ const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const ContractSchema = require('../Models/Contract.js');
 const {isEmailUnique, isUsernameUnique} = require('../utils.js');
+//const Doctor = require('../Models/Doctor'); 
 
 // register Doctor
 const registerDoctor = async (req, res) => {
@@ -484,6 +485,89 @@ const viewWalletAmountByDoc = async (req, res) => {
   }
 };
 
+// Req 24 viewing the health records of a patient
+
+const viewHealthRecords = async (req, res) => {
+  const { DoctorUsername, PatientUsername } = req.params;
+
+  try {
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    // Check if the patient is in the doctor's list of patients
+    if (!doctor.PatientsUsernames.includes(PatientUsername)) {
+      return res.status(404).json({ error: 'Patient not found in the doctor\'s list of patients.' });
+    }
+
+    const patient = await patientSchema.findOne({ Username: PatientUsername });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    // Retrieving the health records
+    const healthRecords = patient.healthRecords;
+
+    if (healthRecords.length === 0) {
+      return res.status(404).json({ message: 'No health records found for the patient.' });
+    }
+
+    // Sending the health records in the response
+    res.status(200).json({ healthRecords });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', details: error.message });
+  }
+};
+
+
+// Req 60 Add new health record for a patient
+
+const addHealthRecordForPatient = async (req, res) => {
+  const { DoctorUsername, PatientUsername } = req.params;
+  const { newHealthRecord } = req.body;
+
+  try {
+    // Check if the doctor exists
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    // Check if the doctor has the patient in their list
+    if (!doctor.PatientsUsernames.includes(PatientUsername)) {
+      return res.status(404).json({ error: 'Patient not found in the doctor\'s list of patients.' });
+    }
+
+    // Retrieve the patient by their username
+    const patient = await patientSchema.findOne({ Username: PatientUsername });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    // Create a new health record object based on your model structure
+    const healthRecord = {
+      date: newHealthRecord.date,
+      description: newHealthRecord.description,
+      diagnosis: newHealthRecord.diagnosis,
+      medication: newHealthRecord.medication,
+    };
+
+    // Add the new health record to the patient's healthRecords array
+    patient.healthRecords.push(healthRecord);
+    await patient.save();
+
+    res.status(200).json({ message: 'New health record added for the patient.' });
+  } catch (error) {
+    res.status(500).json({ error: 'Server error', details: error.message });
+  }
+};
+
+
+
 module.exports = {
     docFilterAppsByDate,
     docFilterAppsByStatus,
@@ -500,7 +584,21 @@ module.exports = {
     viewContract,
     allAppointments, 
     acceptContract,
-    viewWalletAmountByDoc
+    viewWalletAmountByDoc,
+    viewHealthRecords ,
+    addHealthRecordForPatient,
 };
+
+
+
+
+
+
+
+
+
+
+
+
 
 
