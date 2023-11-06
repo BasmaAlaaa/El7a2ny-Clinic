@@ -2,6 +2,8 @@
 const express = require("express");
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const router = express.Router(); // Make sure you are creating a router object
+const upload = require('../Routes/multer-config');
 /*const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
 const patientSchema = require('../../../Models/Patient.js');
 const appointmentSchema = require('../../../Models/Appointment.js');*/
@@ -30,7 +32,7 @@ router.post('/Register', upload.fields([
     { name: 'IDDocument', maxCount: 1 },
     { name: 'MedicalDegreeDocument', maxCount: 1 },
     { name: 'WorkingLicenseDocument', maxCount: 1 },
-  ]), registerDoctor)
+  ]), registerDoctor) ;
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 router.put('/updateDoctorByAffiliation/:Username', updateDoctorByAffiliation);

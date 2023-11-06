@@ -8,10 +8,10 @@ const patientSchema = new Schema({
     type: String,
     required: true,
     unique: true
-  },  
+  },
   Name: {
-      type: String,
-      required: true
+    type: String,
+    required: true
   },
   Email: {
     type: String,
@@ -20,7 +20,7 @@ const patientSchema = new Schema({
   },
   Password: {
     type: String,
-    required: true,
+    required: true
   },
   DateOfBirth: {
     type: Date,
@@ -45,40 +45,54 @@ const patientSchema = new Schema({
   },
   FamilyMembers: [{
     type: String,
-    ref: 'FamilyMember', // This should match the model name you defined for Patient
+    ref: 'FamilyMember', // This should match the model name you defined for FamilyMember
   }],
   PatientPrescriptions: [{
     type: Schema.Types.ObjectId,
-    ref: 'Prescription', // This should match the model name you defined for Patient
+    ref: 'Prescription', // This should match the model name you defined for Prescription
   }],
-  SubscribedHP: [{
-    Type:{
+  SubscribedHP: {
+    Type: {
       type: String,
       required: false,
       ref: 'HealthPackage'
     },
-    DateOfSubscription:{
-      type: Date,
-      required: false
-    },
     PaymentMethod: {
       type: String,
       default: "Wallet",
-      enum: ["wallet","Wallet","Credit Card","credit card"]
+      enum: ["wallet", "Wallet", "Credit Card", "credit card"]
     },
-    PaymentStatus: {
+    Status: {
       type: String,
-      default: "Unpaid",
-      enum: ["paid","unpaid","Unpaid","Paid"]
+      enum: ['Subscribed', 'Unsubscribed', 'Cancelled'],
+      default: 'Unsubscribed',
     },
-    RenewalDate: {
+    SubscriptionStartDate: {
       type: Date,
-      required: false
-    }
-  }],
-  WalletAmount:{
+      default: null,
+    },
+    SubscriptionEndDate: {
+      type: Date,
+      default: null,
+    },
+    CancellationDate: {
+      type: Date,
+      default: null,
+    },
+  },
+  PaymentStatus: {
+    type: String,
+    default: "Unpaid",
+    enum: ["paid", "unpaid", "Unpaid", "Paid"]
+  },
+  RenewalDate: {
+    type: Date,
+    required: false
+  },
+  WalletAmount: {
     type: Number,
     default: 0
+
   } ,
   healthRecords: [
     {
@@ -93,9 +107,41 @@ const patientSchema = new Schema({
   
 
   }, { timestamps: true });
+  
 
-  // static register method
-  patientSchema.statics.register = async function (
+
+// static register method
+patientSchema.statics.register = async function (
+  Username,
+  Name,
+  Email,
+  Password,
+  DateOfBirth,
+  Gender,
+  MobileNumber,
+  EmergencyContactName,
+  EmergencyContactMobile,
+  FamilyMembers,
+  PatientPrescriptions,
+  SubscribedHP
+) {
+  // validation
+  if (!Username ||
+    !Name ||
+    !Email ||
+    !Password ||
+    !DateOfBirth ||
+    !Gender ||
+    !MobileNumber ||
+    !EmergencyContactName ||
+    !EmergencyContactMobile) {
+    throw Error('All fields must be filled.');
+  }
+  if (!validator.isEmail(Email)) {
+    throw Error('Email must be in the form of johndoe@example.com');
+  }
+
+  const patient = await this.create({
     Username,
     Name,
     Email,
@@ -106,41 +152,12 @@ const patientSchema = new Schema({
     EmergencyContactName,
     EmergencyContactMobile,
     FamilyMembers,
-    PatientPrescriptions
-  ) {
+    PatientPrescriptions,
+    SubscribedHP
+  });
 
-    // validation 
-    if (!Username ||
-      !Name ||
-      !Email ||
-      !Password ||
-      !DateOfBirth ||
-      !Gender ||
-      !MobileNumber ||
-      !EmergencyContactName ||
-      !EmergencyContactMobile ) { 
-    throw Error('All fields must be filled.');
-    }
-    if (!validator.isEmail(Email)) {
-      throw Error('Email must be in the form of johndoe@example.com');
-    }
+  return patient;
+};
 
-    const patient = await this.create({
-      Username,
-      Name,
-      Email,
-      Password,
-      DateOfBirth,
-      Gender,
-      MobileNumber,
-      EmergencyContactName,
-      EmergencyContactMobile,
-      FamilyMembers,
-      PatientPrescriptions
-    });
-  
-    return patient;
-  };
-  
-  const Patient = mongoose.model('Patient', patientSchema);
-  module.exports = Patient;
+const Patient = mongoose.model('Patient', patientSchema);
+module.exports = Patient;

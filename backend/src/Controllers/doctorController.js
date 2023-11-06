@@ -655,7 +655,8 @@ module.exports = {
     acceptContract,
     viewWalletAmountByDoc,
     viewHealthRecords ,
-    addHealthRecordForPatient,
+    addHealthRecordForPatient
+  
 };
 
 
