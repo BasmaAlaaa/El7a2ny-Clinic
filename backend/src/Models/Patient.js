@@ -69,7 +69,19 @@ const patientSchema = new Schema({
   WalletAmount:{
     type: Number,
     default: 0
-  }
+  } ,
+  healthRecords: [
+    {
+      // Define the structure of a health record
+      date: Date,
+      description: String,
+      diagnosis: String,
+      medication: String,
+      // Other relevant fields
+    }
+  ],
+  
+
   }, { timestamps: true });
 
   // static register method
