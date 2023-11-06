@@ -10,6 +10,9 @@ function PatientInfo(){
     const {usernameDoctor, usernamePatient} = useParams();
     const[result, setResult] = useState([]);
     const[resultDelete, setResultDelete] = useState([]);
+    const [date, setDate] = useState('');
+    const [time, setTime] = useState(0);
+    const [healthRecord, setHealthRecord] = useState('');
 
 
 
@@ -50,6 +53,25 @@ function PatientInfo(){
         {/* <button onClick={handleRemove}>
             Remove Patient
         </button> */}
+        <h1>Health Records</h1>
+    <form>
+    <h1>
+      Add new health records
+    </h1>
+    <h3>
+    <input  type= 'text' required onChange={(e) => setHealthRecord(e.target.value)} />
+    </h3>
+    <h1>
+      Schedule Follow-up
+    </h1>
+    <h3>
+    <input  type= 'date' required onChange={(e) => setDate(e.target.value)} />
+    </h3>
+    <h3>
+    <input  type= 'number' placeholder="Time" required onChange={(e) => setTime(e.target.value)} />
+    </h3>
+    <button>Add Appointment</button>
+  </form>
         </div>
     )
     }

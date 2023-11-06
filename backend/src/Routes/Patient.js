@@ -62,9 +62,6 @@ router.get('/patientFilterAppsByDate/:Username/:Date',patientFilterAppsByDate)
 router.get('/patientFilterAppsByStatus/:Username/:Status',patientFilterAppsByStatus)
 router.get('/allAppointments/:Username', allAppointments);
 
-router.put('/choosePaymentMethodForApp', choosePaymentMethodForApp);
-router.put('/choosePaymentMethodForHP', choosePaymentMethodForHP);
-
-router.get('/viewWalletAmountByPatient', viewWalletAmountByPatient);
+router.put('/choosePaymentMethod', choosePaymentMethod);
 
 module.exports = router

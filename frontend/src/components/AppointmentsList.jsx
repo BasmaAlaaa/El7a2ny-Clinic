@@ -56,10 +56,12 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='medicalUse' onChange={onFilterValueChanged}>
+        <select name='appointments' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
         <option value='upcoming'>Upcoming</option>
-        <option value='finished'>Finished</option>
+        <option value='completed'>Completed</option>
+        <option value='canceled'>Canceled</option>
+        <option value='rescheduled'>Rescheduled</option>
         </select>
       </div>
     </div>
