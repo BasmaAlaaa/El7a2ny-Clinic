@@ -501,7 +501,7 @@ const addDoctor = async (req,res) =>{
 
 const viewContract = async (req, res) => {
   try {
-      const DoctorUsername = req.params.Username; //passing the doctor's username
+      const DoctorUsername = req.params.DoctorUsername; //passing the doctor's username
       const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
       if (!doctorExists) {
           return res.status(404).json({ error: 'Doctor not found.' });
