@@ -689,5 +689,5 @@ module.exports = {
   patientFilterAppsByDate,
   patientFilterAppsByStatus,
   allAppointments,
-  choosePaymentMethod
+  choosePaymentMethodForHP
 }
