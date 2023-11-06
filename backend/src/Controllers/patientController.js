@@ -725,7 +725,6 @@ const viewWalletAmountByPatient = async (req, res) => {
 };
 
 
-
 // Req 27 view health package options and details
 const viewHealthPackages = async (req, res) => {
   try {
