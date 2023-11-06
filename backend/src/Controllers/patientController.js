@@ -31,7 +31,8 @@ const registerPatient = async (req, res) => {
     EmergencyContactName,
     EmergencyContactMobile,
     FamilyMembers,
-    PatientPrescriptions
+    PatientPrescriptions,
+    SubscribedHP
   } = req.body;
   
   try {
@@ -54,7 +55,8 @@ console.log("username",Username)
       EmergencyContactName,
       EmergencyContactMobile,
       FamilyMembers,
-      PatientPrescriptions
+      PatientPrescriptions,
+      SubscribedHP
     );
 
     await patient.save();
@@ -728,7 +730,8 @@ const viewWalletAmountByPatient = async (req, res) => {
     res.status(400).send({ error: error.message });
   }
 };
-//Task 30: 
+ 
+// Req 30: view subscribed health packages for the patient and family members
 const viewSubscribedHealthPackages = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -736,35 +739,45 @@ const viewSubscribedHealthPackages = async (req, res) => {
   const { Username } = req.params;
 
   try {
-    
-    const patient = await patientSchema.findOne({ Username: Username });
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username });
 
     if (!patient) {
-      return res.status(404).send({ error: 'Patient not found' });
+      return res.status(404).send('Patient not found');
     }
 
-    // Get the health packages subscribed by the patient
-    const healthPackages = await HealthPackage.find({ PatientsUsernames: Username });
+    // Get the subscribed health packages for the patient
+    const subscribedHP = patient.SubscribedHP;
 
     // Check if the patient has family members
     if (patient.FamilyMembers.length > 0) {
-      // Get the usernames of family members
-      const familyMemberUsernames = patient.FamilyMembers;
+      // Get the family members' usernames
+      const familyMemberName = patient.FamilyMembers;
 
-      // Find health packages for family members
-      const familyHealthPackages = await HealthPackage.find({ PatientsUsernames: { $in: familyMemberUsernames } });
+      for (const familyMemberUsername of familyMemberName) {
+        // Find the family member by username
+        const familyMember = await FamilyMember.findOne({ Username: familyMemberUsername });
 
-      // Combine the patient's and family members' health packages
-      healthPackages.push(...familyHealthPackages);
+        if (familyMember) {
+          // Get the associated PatientUsername from the FamilyMember model
+          const patientUsername = familyMember.PatientUsername;
+
+          if (patientUsername) {
+            // Find the patient with the associated PatientUsername
+            const familyMemberPatient = await patientSchema.findOne({ Username: patientUsername });
+
+            if (familyMemberPatient && familyMemberPatient.SubscribedHP.Type) {
+              subscribedHP.push(familyMemberPatient.SubscribedHP);
+            }
+          }
+        }
+      }
     }
 
-    if (healthPackages.length === 0) {
-      return res.status(404).send('No subscribed health packages found');
-    }
-
-    res.status(200).send(healthPackages);
+    // Send the list of subscribed health packages as a response
+    res.status(200).json({ subscribedHealthPackages: subscribedHP });
   } catch (error) {
-    res.status(400).send({ error: error.message });
+    res.status(400).json({ error: error.message });
   }
 };
 
@@ -823,6 +836,9 @@ const payForAppointment = async (req, res) => {
 }
 
 
+
+
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -845,5 +861,6 @@ module.exports = {
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
   viewWalletAmountByPatient,
-  payForAppointment
+  payForAppointment,
+  viewSubscribedHealthPackages
 }
