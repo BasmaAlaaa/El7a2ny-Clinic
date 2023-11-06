@@ -8,6 +8,11 @@ const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
 
+const express = require("express");
+const Stripe = require("stripe");
+require("dotenv").config();
+const stripe = Stripe(process.env.STRIPE_KEY);
+
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
@@ -724,6 +729,61 @@ const viewWalletAmountByPatient = async (req, res) => {
   }
 };
 
+/*const payForAppointment = async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const {username, id} = req.params;
+  const { amount } = req.body;
+    
+  try{
+    const patient = await patientSchema.findOne({Username: username});
+
+    if(!patient){
+      return res.status(404).send("No patient found");
+    }
+
+    const app = await appointmentSchema.findOne({_id: id});
+
+    if(!app){
+      return res.status(404).send("No appointment found");
+    }
+
+    const paymentIntent = await Stripe.paymentIntents.create({
+      amount: amount,
+      currency: 'egp'
+    })
+
+    res.status(200).json(patient.WalletAmount);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};*/
+
+const payForAppointment = async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'egp',
+          product_data: {
+            name: 'Appointment',
+          },
+          unit_amount: 2000,
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    success_url: '${process.env.CLIENT_URL}/checkout-success',
+    cancel_url: '${process.env.CLIENT_URL}/appointment',
+  });
+
+  res.send({url: session.url});
+}
+
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -745,5 +805,6 @@ module.exports = {
   allAppointments,
   choosePaymentMethodForApp,
   choosePaymentMethodForHP,
-  viewWalletAmountByPatient
+  viewWalletAmountByPatient,
+  payForAppointment
 }

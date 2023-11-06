@@ -4,6 +4,11 @@ const mongoose = require('mongoose');
 mongoose.set('strictQuery', false);
 require("dotenv").config();
 const cors = require("cors")
+
+const stripe = require('stripe')('YOUR_STRIPE_SECRET_KEY');
+const bodyParser = require('body-parser');
+
+
 const patientRoutes = require("../src/Routes/Patient"); // Require Patient
 const adminRoutes = require('../src/Routes/Administrator'); //require admin
 const healthPackageRoutes = require('../src/Routes/HealthPackage'); //require health package
@@ -19,17 +24,10 @@ const MongoURI = process.env.MONGO_URI ;
 
 //App variables
 const app = express();
+
 app.use(express.json()); 
 app.use(cors());
-
-
-const stripe = require('stripe')
-(process.env.STRIPE_PRIVATE_KEY);
-
-const storeItems = new Map([
-    [1, { priceInCents: 1000000, name: 'learning'}],
-    [2, { priceInCents: 2000000, name: 'talking'}],
-]);
+app.use(bodyParser.json());
 
 
 
