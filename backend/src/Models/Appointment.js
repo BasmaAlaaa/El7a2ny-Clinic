@@ -19,6 +19,11 @@ const appointmentSchema = new Schema({
         type: String,
         default:"Upcoming",
         enum: ["Finished", "Following", "Upcoming","finished", "following", "upcoming"]
+    },
+    PaymentMethod: {
+      type: String,
+      default: "Wallet",
+      enum: ["wallet","Wallet","Credit Card","credit card"]
     }
 },{ timestamps: true })
 
