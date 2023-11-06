@@ -641,9 +641,8 @@ const viewMyPres = async (req,res) => {
   }
 };
 
-
-
-const choosePaymentMethodForHP = async(req, res) => {
+//Req 20: choose payment method of appointment
+const choosePaymentMethodForApp = async(req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -651,13 +650,13 @@ const choosePaymentMethodForHP = async(req, res) => {
   const { id } = req.params;
   try{
     
-    const hp = await HealthPackage.findById(id);
+    const app = await HealthPackage.findById(id);
 
-    if(!hp){
-      return res.status(404).json({error : "This health package doesn't exist!"})
+    if(!app){
+      return res.status(404).json({error : "This appointment doesn't exist!"})
   }
 
-  const updatedHP = {
+  const updatedApp = {
     $set: {
         PaymentMethod: req.body.PaymentMethod
     },
@@ -668,6 +667,61 @@ const choosePaymentMethodForHP = async(req, res) => {
     res.status(400).send({ error: error.message });
   }
 
+};
+
+//Req 29: choose payment method of health package
+const choosePaymentMethodForHP = async(req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { type,PatientUsername } = req.params;
+  try{
+    
+    const hp = await HealthPackage.findOne({Type: type});
+
+    if(!hp){
+      return res.status(404).json({error : "This health package doesn't exist!"})
+  }
+
+  const patient = await patientSchema.findOne({Username: PatientUsername});
+
+    if(!patient){
+      return res.status(404).json({error : "This patient doesn't exist!"})
+  }
+
+  const updatedHP = {
+    $set: {
+      "SubscribedHP.$[].PaymentMethod": req.body.PaymentMethod
+    }
+  };
+
+  const updated = await patientSchema.updateOne({Username: PatientUsername, "SubscribedHP.Type": type}, updatedHP);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+
+};
+
+//Req 67: view Wallet amount
+const viewWalletAmountByPatient = async (req, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const {PatientUsername} = req.params;
+    
+  try{
+    const patient = await patientSchema.findOne({Username: PatientUsername});
+
+    if(!patient){
+      return res.status(404).send("No patient found");
+    }
+
+    res.status(200).json(patient.WalletAmount);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
 };
 
 module.exports = {
@@ -689,5 +743,7 @@ module.exports = {
   patientFilterAppsByDate,
   patientFilterAppsByStatus,
   allAppointments,
-  choosePaymentMethodForHP
+  choosePaymentMethodForApp,
+  choosePaymentMethodForHP,
+  viewWalletAmountByPatient
 }

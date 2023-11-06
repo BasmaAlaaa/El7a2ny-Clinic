@@ -17,9 +17,11 @@ const { registerDoctor,
     updateDoctorByEmail,
     docFilterAppsByDate,
     docFilterAppsByStatus,
-    allAppointments,viewContract,acceptContract
+    allAppointments,
+    viewContract,
+    acceptContract,
+    viewWalletAmountByDoc
 } = require('../Controllers/doctorController'); // Import the function
-//const doctorController = require('../../../Controllers/doctorController.js');
 
 const router = express.Router();
 
@@ -55,5 +57,6 @@ router.post('/addDoc', addDoctor);
 router.get('/viewContract/:Username', viewContract);
 router.post('/acceptContract/:DoctorUsername', acceptContract);
 
+router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
 
 module.exports = router
