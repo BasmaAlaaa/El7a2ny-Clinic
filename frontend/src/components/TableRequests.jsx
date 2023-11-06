@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 function CaseTableBody({ data ,onAcceptOrReject }) {
   let navigate = useNavigate()
-  console.log("Logging onAcceptOrReject prop in CaseTableBody:", onAcceptOrReject);
+  console.log("Logging ahoooo onAcceptOrReject prop in CaseTableBody:", onAcceptOrReject);
 
   const handleAccept = () => {
     onAcceptOrReject(data.Username, 'accept');
@@ -49,7 +49,7 @@ function CaseTableBody({ data ,onAcceptOrReject }) {
   );
 }
 function TableRequests({ tHead, data, searchText, filterText ,onAcceptOrReject}) {
-  console.log("Logging onAcceptOrReject prop in TableRequests:", onAcceptOrReject);
+  console.log("walahy Logging onAcceptOrReject prop in TableRequests:", onAcceptOrReject);
 
   return (
     <div className="case-table card mt-4">
