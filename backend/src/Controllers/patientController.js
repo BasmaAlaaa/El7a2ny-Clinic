@@ -835,6 +835,147 @@ const payForAppointment = async (req, res) => {
   res.send({url: session.url});
 }
 
+// Req 31: View the status of health care package subscription for the patient and family members
+const viewHealthCarePackageStatus = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username } = req.params;
+
+  try {
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username });
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    // Get the health care package status for the patient
+    const patientSubscription = patient.SubscribedHP;
+
+    const result = {
+      Patient: {
+        Status: patientSubscription.Status,
+        EndDate: null,
+      },
+      FamilyMembers: [],
+    };
+
+    // Check if the patient has family members
+    if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
+      // Get the family members' usernames
+      const familyMemberUsernames = patient.FamilyMembers;
+
+      for (const familyMemberUsername of familyMemberUsernames) {
+        // Find the family member by username
+        const familyMember = await FamilyMember.findOne({ Username: familyMemberUsername });
+
+        if (familyMember) {
+          // Get the associated PatientUsername from the FamilyMember model
+          const patientUsername = familyMember.PatientUsername;
+
+          if (patientUsername) {
+            // Find the patient with the associated PatientUsername
+            const familyMemberPatient = await patientSchema.findOne({ Username: patientUsername });
+
+            if (familyMemberPatient) {
+              const familyMemberSubscription = familyMemberPatient.SubscribedHP;
+              if (familyMemberSubscription.Status !== 'Unsubscribed') {
+                result.FamilyMembers.push({
+                  Name: familyMember.Name,
+                  Status: familyMemberSubscription.Status,
+                  EndDate: familyMemberSubscription.Status !== 'Unsubscribed' ? familyMemberSubscription.SubscriptionEndDate : null,
+                });
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // Set the EndDate for the patient
+    if (patientSubscription.Status !== 'Unsubscribed') {
+      result.Patient.EndDate = patientSubscription.SubscriptionEndDate;
+    }
+
+    // Send the health care package status as a response
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+// Req 32: Cancel a subscription of a health package for the patient and family members
+const cancelHealthCarePackageSubscription = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username, Type } = req.params;
+
+  try {
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username });
+
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    // Check if the patient has a subscription for the specified health package type
+    const subscription = patient.SubscribedHP;
+
+    if (subscription && subscription.Type === Type) {
+      // Cancel the patient's subscription
+      subscription.Status = 'Cancelled';
+      subscription.CancellationDate = new Date();
+
+      // Save the updated patient
+      await patient.save();
+    }
+
+    // Check if the patient has family members
+    if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
+      // Get the family members' usernames
+      const familyMemberUsernames = patient.FamilyMembers;
+
+      for (const familyMemberUsername of familyMemberUsernames) {
+        // Find the family member by username
+        const familyMember = await FamilyMember.findOne({ Username: familyMemberUsername });
+
+        if (familyMember) {
+          // Get the associated PatientUsername from the FamilyMember model
+          const patientUsername = familyMember.PatientUsername;
+
+          if (patientUsername) {
+            // Find the patient with the associated PatientUsername
+            const familyMemberPatient = await patientSchema.findOne({ Username: patientUsername });
+
+            if (familyMemberPatient) {
+              // Check if the family member has a subscription for the specified health package type
+              const familyMemberSubscription = familyMemberPatient.SubscribedHP;
+
+              if (familyMemberSubscription && familyMemberSubscription.Type === Type) {
+                // Cancel the family member's subscription
+                familyMemberSubscription.Status = 'Cancelled';
+                familyMemberSubscription.CancellationDate = new Date();
+                // Save the updated family member
+                await familyMemberPatient.save();
+              }
+            }
+          }
+        }
+      }
+    }
+
+    res.status(200).send('Health package subscription has been cancelled for the patient and family members.');
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+
 
 
 
@@ -862,5 +1003,7 @@ module.exports = {
   choosePaymentMethodForHP,
   viewWalletAmountByPatient,
   payForAppointment,
-  viewSubscribedHealthPackages
+  viewSubscribedHealthPackages,
+  viewHealthCarePackageStatus,
+  cancelHealthCarePackageSubscription
 }

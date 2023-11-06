@@ -27,6 +27,8 @@ const {
     choosePaymentMethodForApp,
     viewWalletAmountByPatient,
     viewSubscribedHealthPackages,
+    viewHealthCarePackageStatus,
+    cancelHealthCarePackageSubscription,
     payForAppointment
 } = require('../Controllers/patientController');
 
@@ -70,6 +72,10 @@ router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 
 router.get('/viewSubscribedHealthPackages/:Username', viewSubscribedHealthPackages);
+
+router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus);
+
+router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
 
 
 
