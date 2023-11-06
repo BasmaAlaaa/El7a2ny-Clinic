@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 /*const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
 const patientSchema = require('../../../Models/Patient.js');
 const appointmentSchema = require('../../../Models/Appointment.js');*/
+
+
 const { registerDoctor,
     viewInfoAndRecords,
     MyPatients,
@@ -20,7 +22,9 @@ const { registerDoctor,
     allAppointments,
     viewContract,
     acceptContract,
-    viewWalletAmountByDoc
+    viewWalletAmountByDoc ,
+    addHealthRecordForPatient,
+    viewHealthRecords 
 } = require('../Controllers/doctorController'); // Import the function
 
 const router = express.Router();
@@ -58,5 +62,15 @@ router.get('/viewContract/:Username', viewContract);
 router.post('/acceptContract/:DoctorUsername', acceptContract);
 
 router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
+
+// route to show the uploaded health records
+router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', viewHealthRecords);
+
+
+
+// Define the route for adding a health record for a patient
+router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordForPatient);
+
+
 
 module.exports = router
