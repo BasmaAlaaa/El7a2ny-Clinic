@@ -10,8 +10,29 @@ function AdministratorView() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
 
+
   const[resultRequest, setResultRequest] = useState([]);
 
+  const acceptOrRejectDoctorRequest = async (Username, action) => {
+    try {
+      
+      const response = await axios.post(`http://localhost:4000/Admin/acceptOrRejectDoctorRequest/${Username}`, { action });
+      if (response.status === 200) {
+        console.log(response.data.message);
+        setResultRequest(prevRequests => prevRequests.filter(doctor => doctor.Username !== Username));
+        alert(`Doctor ${action === 'accept' ? 'accepted' : 'rejected'} successfully`);
+
+      }
+    } catch (error) {
+      console.error('Error object:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Error response:', error.response);
+      }
+      console.error(error.response?.data?.error || error.message);
+      alert(`Failed to ${action === 'accept' ? 'accept' : 'reject'} doctor`);
+      
+    }
+  };
 
   useEffect(() => {
     const response = axios.get('http://localhost:4000/Admin/viewUnapprovedDoctors')
@@ -66,6 +87,7 @@ let navigate = useNavigate()
               action={() => navigate('/removeUser')}
               key="navBtn"
             />
+            
           </div>
 
     <div className="d-flex justify-content-between flex-row">
@@ -74,8 +96,12 @@ let navigate = useNavigate()
         <div className="input-group w-50"></div> 
       </div>
     </div>
-      <TableRequests tHead={tHeadRequests} data={resultRequest} filterText='' searchText=''/>
-
+     <TableRequests
+     tHead={tHeadRequests}
+     data={resultRequest}
+     filterText={filterText}
+     searchText={searchText}
+     onAcceptOrReject={acceptOrRejectDoctorRequest} />
     </div>
   );
 }

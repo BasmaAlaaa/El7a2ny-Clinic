@@ -1,9 +1,17 @@
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data ,onAcceptOrReject }) {
   let navigate = useNavigate()
+  console.log("Logging ahoooo onAcceptOrReject prop in CaseTableBody:", onAcceptOrReject);
 
+  const handleAccept = () => {
+    onAcceptOrReject(data.Username, 'accept');
+  };
+
+  const handleReject = () => {
+    onAcceptOrReject(data.Username, 'reject');
+  };
   return (
     <>
       
@@ -19,7 +27,7 @@ function CaseTableBody({ data }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-       // onClick={()=>navigate(`/medicineView/:${data.Name}`)}
+        onClick={handleAccept}
       >
         Accept
       </button>
@@ -30,7 +38,7 @@ function CaseTableBody({ data }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-         // onClick={()=>navigate(`/medicineView/:${data.Name}`)}
+        onClick={handleReject}
       >
         Reject
       </button>
@@ -40,21 +48,9 @@ function CaseTableBody({ data }) {
     </>
   );
 }
+function TableRequests({ tHead, data, searchText, filterText ,onAcceptOrReject}) {
+  console.log("walahy Logging onAcceptOrReject prop in TableRequests:", onAcceptOrReject);
 
-// function NoramlTableBody({ data }) {
-//   let arr = [];
-//   for (let key in data) arr.push(data[key]);
-
-//   return (
-//     <>
-//       {arr.map((e) => (
-//         <td>{e}</td>
-//       ))}
-//     </>
-//   );
-// }
-
-function TableRequests({ tHead, data, searchText, filterText }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -76,8 +72,8 @@ function TableRequests({ tHead, data, searchText, filterText }) {
             e: e.Name.toLowerCase().includes(searchText.toLowerCase())
           })
           .map((e) => (
-            <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+            <tr className="text-capitalize" >
+            <CaseTableBody data={e} onAcceptOrReject={onAcceptOrReject} />
             </tr>
           ))}
         </tbody>
