@@ -4,6 +4,8 @@ import { useParams} from 'react-router-dom';
 import axios from "axios";
 import NavBarDoctor from "../components/NavBarDoctor";
 import MainBtn from "../components/Button";
+import Contract from '../components/Contract'; 
+
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,11 +19,40 @@ function DoctorView(){
     const [date, setDate] = useState('');
     const [from, setFrom] = useState(0);
     const [to, setTo] = useState(0);
+    const [contractInfo, setContractInfo] = useState(null);
+    const [showContract, setShowContract] = useState(false);
+
 
     let navigate = useNavigate()
 
 
+    const viewContract = async (DoctorUsername) => {
+      try {
+        const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${DoctorUsername}`);
+        setContractInfo(response.data.contract, () => {
+          console.log("Contract info set:", contractInfo);
+          setShowContract(true);
+        });
+      } catch (error) {
+        console.error("Failed to fetch contract details:", error);
+      }
+    };
+    
+    // const handleViewContract = async () => {
+    //   try {
+    //     const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${username}`);
+    //     setContractInfo(response.data.contract);
+    //     setShowContract(true); // This will display the contract component
+    //   } catch (error) {
+    //     console.error("Failed to fetch contract details:", error);
+    //     setShowContract(false); // In case of error, do not show the contract component
+    //   }
+    // };
+    const handleViewContract = () => {
+      navigate(`/doctor/${username}/contract`);
+    };
 
+    
   const updateEmail=() => {
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email})
   .then(res =>setResult(res.data)).catch(err => console.log(err))
@@ -37,7 +68,13 @@ function DoctorView(){
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
-
+  useEffect(() => {
+    if (contractInfo) {
+      console.log("Contract info set:", contractInfo);
+      setShowContract(true);
+    }
+  }, [contractInfo]); 
+  
 
     return (
         <div>
@@ -58,6 +95,18 @@ function DoctorView(){
               key="navBtn"
             />
             </div>
+            <div>
+            <MainBtn
+              txt="View Contract"
+              style="green-btn"
+              action={handleViewContract}
+              key="navBtn"
+            />
+            </div>
+            {showContract && contractInfo && (
+              <Contract contract={contractInfo} />
+            )}
+            
               
   <h3><input  type= 'email'  placeholder= 'Enter New Email'  onChange={(e) => setEmail(e.target.value)} />
   <button onClick={updateEmail}>Update Email</button></h3>
