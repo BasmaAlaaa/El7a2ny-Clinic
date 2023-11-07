@@ -114,7 +114,13 @@ const patientSchema = new Schema({
       }
       // Other relevant fields
     }
-  ]
+  ],
+  MedicalHistoryDocuments: [
+    {
+      type: String,
+    },
+  ],
+  
   }, { timestamps: true });
   
 
