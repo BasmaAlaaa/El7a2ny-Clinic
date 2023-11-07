@@ -6,19 +6,29 @@ import { useEffect, useState } from 'react';
 
 function HealthPackagesList(){
     const[result, setResult] = useState([]);
+    const[resultSub, setResultSub] = useState([]);
+
     const {username} = useParams();
   
   
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Patient/allAppointments/${username}`)
-  .then(res =>setResult(res.data.filteredAppointments)).catch(err => console.log(err))
+  const response = axios.get('http://localhost:4000/Patient/health-packages')
+  .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
+    useEffect(() => {
+      const response = axios.get(`http://localhost:4000/Patient/viewSubscribedHealthPackages/${username}`)
+      .then(res =>setResultSub(res.data.subscribedHealthPackages)).catch(err => console.log(err))
+        }, [])
   console.log('hayouya', result)
   result.map((e) => {
     console.log(e)
   })
+  console.log('hayouya sub', resultSub)
+  resultSub.map((e) => {
+    console.log(e)
+  })
   let navigate = useNavigate()
-  let tHead = ['Type', 'Annual Fee', 'View'];
+  let tHead = ['Type', 'Annual Fee', 'Doctor Session Discount', 'Medicine Discount', 'Family Subscription Discount', 'View'];
     return (
         <div>
           <NavBarPatient username={username}/>
@@ -26,7 +36,11 @@ function HealthPackagesList(){
       <p className="text-capitalize fs-4 w-25">Health Packages</p>
     </div>
     <TableHealthPackages tHead={tHead} data={result}/>
-        <h1>Subscribed Health Packages</h1>
+    <div className="d-flex justify-content-between flex-row">
+      <p className="text-capitalize fs-4 w-25">Subscribed Health Packages</p>
+    </div>    
+    <TableHealthPackages tHead={tHead} data={resultSub}/>
+
         </div>
     )
 }

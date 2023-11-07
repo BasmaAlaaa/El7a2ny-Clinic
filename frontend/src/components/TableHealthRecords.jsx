@@ -8,23 +8,12 @@ function CaseTableBody({ data }) {
   return (
     <>
       
-    {data.Type && <th>{data.Type}</th>}
-    {data.AnnualFee && <td>{data.AnnualFee}</td>}
-    {data.DoctorSessionDiscount && <td>{data.DoctorSessionDiscount}</td>}
-    {data.MedicineDiscount && <td>{data.MedicineDiscount}</td>}
-    {data.FamilySubscriptionDiscount && <td>{data.FamilySubscriptionDiscount}</td>}
+    {data.Date && <th>{data.Date.substring(0,10)}</th>}
+    {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
+    {data.PatientUsername && <td>{data.PatientUsername}</td>}
+    {data.Status && <td>{data.Status}</td>}
 
-
-    <td className="py-3 text-align-center">
-      <div className="d-flex flex-row">
-      <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        //onClick={()=>navigate(`/healthPackageInfo/${username}/${data.type}`)}
-      >
-        View
-      </button>
-      </div>
-      </td>
+    
       
 
     </>
@@ -44,7 +33,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableHealthPackages({ tHead, data }) {
+function TableHealthRecords({ tHead, data, searchText, searchDate, filterText }) {
   console.log('haayaa', data)
 
   return (
@@ -70,4 +59,4 @@ function TableHealthPackages({ tHead, data }) {
   );
 }
 
-export default TableHealthPackages;
+export default TableHealthRecords;

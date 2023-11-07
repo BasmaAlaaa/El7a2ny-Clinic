@@ -1077,6 +1077,7 @@ const viewHealthPackages = async (req, res) => {
       MedicineDiscount: package.MedicineDiscount,
       FamilySubscriptionDiscount: package.FamilySubscriptionDiscount,
     }));
+    console.log('pcinfo', packageInfo);
 
     res.status(200).json(packageInfo);
   } catch (error) {
