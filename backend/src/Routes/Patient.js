@@ -69,6 +69,4 @@ router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
 
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 
-
-
 module.exports = router

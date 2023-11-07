@@ -51,6 +51,10 @@ const patientSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Patient
   }],
+  StripeCustomerId:{
+    type: String,
+    required: false
+  },
   SubscribedHP: [{
     Type:{
       type: String,
@@ -94,7 +98,8 @@ const patientSchema = new Schema({
     EmergencyContactName,
     EmergencyContactMobile,
     FamilyMembers,
-    PatientPrescriptions
+    PatientPrescriptions,
+    StripeCustomerId
   ) {
 
     // validation 
@@ -106,7 +111,8 @@ const patientSchema = new Schema({
       !Gender ||
       !MobileNumber ||
       !EmergencyContactName ||
-      !EmergencyContactMobile ) { 
+      !EmergencyContactMobile ||
+      !StripeCustomerId) { 
     throw Error('All fields must be filled.');
     }
     if (!validator.isEmail(Email)) {
@@ -124,7 +130,8 @@ const patientSchema = new Schema({
       EmergencyContactName,
       EmergencyContactMobile,
       FamilyMembers,
-      PatientPrescriptions
+      PatientPrescriptions,
+      StripeCustomerId
     });
   
     return patient;

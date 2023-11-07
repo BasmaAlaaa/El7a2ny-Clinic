@@ -29,6 +29,10 @@ const appointmentSchema = new Schema({
       type: String,
       default: "Unpaid",
       enum: ["paid","unpaid","Unpaid","Paid"]
+    },
+    Price:{
+      type: Number,
+      required: true
     }
 },{ timestamps: true })
 

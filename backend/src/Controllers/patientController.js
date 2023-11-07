@@ -7,11 +7,11 @@ const FamilyMember = require('../Models/FamilyMember.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
+const Payment = require("../Models/Payment.js")
 
-const express = require("express");
-const Stripe = require("stripe");
 require("dotenv").config();
-const stripe = Stripe(process.env.STRIPE_KEY);
+
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
 
 // Task 1 : register patient
@@ -42,7 +42,9 @@ const registerPatient = async (req, res) => {
     if (!(await isEmailUnique(Email))) {
       throw new Error('Email is already in use.');
     }
-console.log("username",Username)
+    
+    const customer = await createStripeCustomer({ Email,Name,MobileNumber });
+
     const patient = await patientSchema.register(
       Username,
       Name,
@@ -54,15 +56,35 @@ console.log("username",Username)
       EmergencyContactName,
       EmergencyContactMobile,
       FamilyMembers,
-      PatientPrescriptions
+      PatientPrescriptions,
+      customer.id
     );
 
     await patient.save();
+    
     res.status(200).json({patient});
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
+
+//Function for Stripe
+async function createStripeCustomer({ Email, Name, Phone }) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const Customer = await stripe.customers.create({
+        name: Name,
+        email: Email,
+        phone: Phone
+      });
+
+      resolve(Customer);
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+}
 
 
 // Req 18: app.post('/addFamMember/:Username')
@@ -768,60 +790,125 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
-/*const payForAppointment = async (req, res) => {
+//req 21 : pay for appointment
+const payForAppointment = async(res, req) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const {username, id} = req.params;
-  const { amount } = req.body;
+  const { appId, paymentMethod } = req.params;
+
+  try {
     
-  try{
-    const patient = await patientSchema.findOne({Username: username});
+    const app = await Appointment.findOne({_id: appId });
 
-    if(!patient){
-      return res.status(404).send("No patient found");
+    if (!app) {
+      return res.status(404).send({ error: 'Appointment not found' });
     }
 
-    const app = await appointmentSchema.findOne({_id: id});
+    const patient = await patientSchema.findOne({Username: app.PatientUsername});
 
-    if(!app){
-      return res.status(404).send("No appointment found");
-    }
+    if(paymentMethod === "Credit Card"){
 
-    const paymentIntent = await Stripe.paymentIntents.create({
-      amount: amount,
-      currency: 'egp'
-    })
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: app.Price,
+      currency: 'egp',
+      customer: patient.StripeCustomerId,
+      description: "Paying for an appointment"
+    });
 
-    res.status(200).json(patient.WalletAmount);
+    await stripe.paymentIntents.confirm(paymentIntent);
+
+    const updatedApp = {
+      $set: {
+          PaymentStatus: "paid",
+          PaymentMethod: "Credit Card"
+      },
+    };
+  
+    const updated = await Appointment.updateOne({_id: appId},updatedApp);
+
+    const payment = await Payment.create({
+      PatientUsername: app.PatientUsername,
+      Amount: app.Price,
+      PaidOnDate: new Date(),
+      ItemPaidForId: appId,
+      TypeOfPurschase: "appointment",
+      PaymentMethod: "Credit Card",
+      Status: "success"
+  });
+}
+else if(paymentMethod === "Wallet"){
+
+  if(patient.WalletAmount >= app.Price){
+
+    const updatedPat = {
+      $set: {
+        WalletAmount: (WalletAmount-app.Price),
+      },
+    };
+  
+    const update = await patientSchema.updateOne({Username: app.PatientUsername},updatedPat);
+
+    const updatedApp = {
+      $set: {
+          PaymentStatus: "paid",
+          PaymentMethod: "Wallet"
+      },
+    };
+  
+    const updated = await Appointment.updateOne({_id: appId},updatedApp);
+
+    const payment = await Payment.create({
+      PatientUsername: app.PatientUsername,
+      Amount: app.Price,
+      PaidOnDate: new Date(),
+      ItemPaidForId: appId,
+      TypeOfPurschase: "appointment",
+      PaymentMethod: "Wallet",
+      Status: "success"
+  });
+  }
+  else{
+
+    const updatedApp = {
+      $set: {
+          PaymentStatus: "unpaid",
+          PaymentMethod: "Wallet"
+      },
+    };
+  
+    const updated = await Appointment.updateOne({_id: appId},updatedApp);
+
+    const payment = await Payment.create({
+      PatientUsername: app.PatientUsername,
+      Amount: app.Price,
+      PaidOnDate: new Date(),
+      ItemPaidForId: appId,
+      TypeOfPurschase: "appointment",
+      PaymentMethod: "Wallet",
+      Status: "failed"
+  });
+
+    return res.status(400).send("Not enough money in the wallet!");
+  }
+  
+}
+  const updatedDoc = {
+    $set: {
+      WalletAmount: (WalletAmount+app.Price),
+    },
+  };
+
+  const update = await doctorSchema.updateOne({Username: app.DoctorUsername},updatedDoc);
+
+    return res.status(200).send(payment);
+
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
-};*/
 
-const payForAppointment = async (req, res) => {
-  const session = await stripe.checkout.sessions.create({
-    line_items: [
-      {
-        price_data: {
-          currency: 'egp',
-          product_data: {
-            name: 'Appointment',
-          },
-          unit_amount: 2000,
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: '${process.env.CLIENT_URL}/checkout-success',
-    cancel_url: '${process.env.CLIENT_URL}/appointment',
-  });
-
-  res.send({url: session.url});
-}
-
+};
 
 module.exports = {
   registerPatient,
