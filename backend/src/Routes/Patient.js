@@ -80,6 +80,4 @@ router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus
 
 router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
 
-
-
 module.exports = router

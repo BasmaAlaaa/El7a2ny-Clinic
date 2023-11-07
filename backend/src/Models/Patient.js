@@ -51,7 +51,11 @@ const patientSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Prescription
   }],
-  SubscribedHP: {
+  StripeCustomerId: {
+    type: String,
+    required: false
+  },
+  SubscribedHP: [{
     Type: {
       type: String,
       required: false,
@@ -79,33 +83,38 @@ const patientSchema = new Schema({
       type: Date,
       default: null,
     },
-  },
-  PaymentStatus: {
-    type: String,
-    default: "Unpaid",
-    enum: ["paid", "unpaid", "Unpaid", "Paid"]
-  },
-  RenewalDate: {
-    type: Date,
-    required: false
-  },
+    PaymentStatus: {
+      type: String,
+      default: "Unpaid",
+      enum: ["paid", "unpaid", "Unpaid", "Paid"]
+    },
+    RenewalDate: {
+      type: Date,
+      required: false
+    },
+  }],
   WalletAmount: {
     type: Number,
     default: 0
-
-  } ,
-  healthRecords: [
+  },
+  HealthRecords: [
     {
       // Define the structure of a health record
-      date: Date,
-      description: String,
-      diagnosis: String,
-      medication: String,
+      Date: {
+        type: Date
+      },
+      Description:{
+        type: String
+      },
+      Diagnosis: {
+        type: String
+      },
+      Medication: {
+        type: String
+      }
       // Other relevant fields
     }
-  ],
-  
-
+  ]
   }, { timestamps: true });
   
 
@@ -123,7 +132,8 @@ patientSchema.statics.register = async function (
   EmergencyContactMobile,
   FamilyMembers,
   PatientPrescriptions,
-  SubscribedHP
+  SubscribedHP,
+  StripeCustomerId
 ) {
   // validation
   if (!Username ||
@@ -134,7 +144,8 @@ patientSchema.statics.register = async function (
     !Gender ||
     !MobileNumber ||
     !EmergencyContactName ||
-    !EmergencyContactMobile) {
+    !EmergencyContactMobile ||
+    !StripeCustomerId) {
     throw Error('All fields must be filled.');
   }
   if (!validator.isEmail(Email)) {
@@ -153,11 +164,12 @@ patientSchema.statics.register = async function (
     EmergencyContactMobile,
     FamilyMembers,
     PatientPrescriptions,
+    StripeCustomerId,
     SubscribedHP
   });
-
-  return patient;
+  
+    return patient;
+  
 };
-
 const Patient = mongoose.model('Patient', patientSchema);
 module.exports = Patient;

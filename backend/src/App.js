@@ -5,7 +5,6 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 const cors = require("cors")
 
-const stripe = require('stripe')('YOUR_STRIPE_SECRET_KEY');
 const bodyParser = require('body-parser');
 
 

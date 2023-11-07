@@ -40,10 +40,10 @@ function RegisterDoctor() {
   const [affiliation, setAffiliation] = useState('')
   const [educationalBackground, setEducationalBackground] = useState('')
   const [speciality, setSpeciality] = useState('')
+  let navigate = useNavigate();
 
 
   const handleSubmit = (e) => {
-    e.preventDefault();
     const data = {Username:username, 
       Name:name, 
       Email:email, 
@@ -56,6 +56,7 @@ function RegisterDoctor() {
     console.log(data)
     const response = axios.post('http://localhost:4000/GuestDoctor/Register', data)
 .then(res =>console.log(res.data)).catch(err => console.log(err.request))
+navigate('/login');
   }
   return (
     <div>

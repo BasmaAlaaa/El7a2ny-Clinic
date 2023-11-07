@@ -97,7 +97,8 @@ const doctorSchema = new Schema({
 
 
 
-}, { timestamps: true });
+  
+},{ timestamps: true });
 
   // static register method
   doctorSchema.statics.register = async function (
