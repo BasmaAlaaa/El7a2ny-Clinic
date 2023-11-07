@@ -597,7 +597,7 @@ const viewHealthRecords = async (req, res) => {
 
 const addHealthRecordForPatient = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
-  const { newHealthRecord } = req.body;
+  const { Date, Description, Diagnosis, Medication } = req.body;
 
   try {
     // Check if the doctor exists
@@ -620,14 +620,14 @@ const addHealthRecordForPatient = async (req, res) => {
 
     // Create a new health record object based on your model structure
     const healthRecord = {
-      date: newHealthRecord.date,
-      description: newHealthRecord.description,
-      diagnosis: newHealthRecord.diagnosis,
-      medication: newHealthRecord.medication,
+      Date: Date,
+      Description: Description,
+      Diagnosis: Diagnosis,
+      Medication: Medication,
     };
 
     // Add the new health record to the patient's healthRecords array
-    patient.healthRecords.push(healthRecord);
+    patient.HealthRecords.push(healthRecord);
     await patient.save();
 
     res.status(200).json({ message: 'New health record added for the patient.' });

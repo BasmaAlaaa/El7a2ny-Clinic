@@ -10,17 +10,31 @@ function PatientInfo(){
 
     const {usernameDoctor, usernamePatient} = useParams();
     const[result, setResult] = useState([]);
-    const[resultDelete, setResultDelete] = useState([]);
+    const[resultAdd, setResultAdd] = useState([]);
     const [date, setDate] = useState('');
     const [time, setTime] = useState(0);
-    const [healthRecord, setHealthRecord] = useState('');
+    const [healthRecord, setHealthRecord] = useState([]);
+    const [healthRecordDate, setHealthRecordDate] = useState('');
+    const [healthRecordDescription, setHealthRecordDescription] = useState('');
+    const [healthRecordDiagnosis, setHealthRecordDiagnosis] = useState('');
+    const [healthRecordMedication, setHealthRecordMedication] = useState('');
 
-
+    const handleSubmit = () => {
+      const data = {Date:healthRecordDate, Description:healthRecordDescription, Diagnosis:healthRecordDiagnosis, Medication:healthRecordMedication}
+      console.log(data)
+      const response = axios.post(`http://localhost:4000/Doctor/addHealthRecord/${usernameDoctor}/${usernamePatient}`, data)
+      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+    }
 
     useEffect(() => {
   const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`)
-  .then(res =>setResult(res)).catch(err => console.log(err))
+  .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
+    console.log(result.HealthRecords);
+   // console.log('heeeee', healthRecord);
+    
+    //console.log('resultttt adddd', resultAdd)
+
 
   // console.log('recordssss',result.PatientPrescriptions);
   // if(result.HealthRecords){
@@ -71,17 +85,24 @@ function PatientInfo(){
     <h1>
       Add new health records
     </h1>
-    <h3>
-    <input  type= 'text' required onChange={(e) => setHealthRecord(e.target.value)} />
-    </h3>
+    {/* {healthRecord && healthRecord.map((e) => {
+      <h3>{e.Date}</h3>
+    })} */}
+    
+    <h3><input  type= 'date' placeholder="Date" onChange={(e) => setHealthRecordDate(e.target.value)} /> </h3>
+    <h3><input  type= 'text' placeholder="Description" onChange={(e) => setHealthRecordDescription(e.target.value)} /></h3>
+    <h3><input  type= 'text' placeholder="Diagnosis" onChange={(e) => setHealthRecordDiagnosis(e.target.value)} /></h3>
+    <h3><input  type= 'text' placeholder="Medication" onChange={(e) => setHealthRecordMedication(e.target.value)} /></h3>
+    <button onClick={handleSubmit}>Add Health Records</button>
+
     <h1>
       Schedule Follow-up
     </h1>
     <h3>
-    <input  type= 'date' required onChange={(e) => setDate(e.target.value)} />
+    <input  type= 'date'  onChange={(e) => setDate(e.target.value)} />
     </h3>
     <h3>
-    <input  type= 'number' placeholder="Time" required onChange={(e) => setTime(e.target.value)} />
+    <input  type= 'number' placeholder="Time" onChange={(e) => setTime(e.target.value)} />
     </h3>
     <button>Add Appointment</button>
   </form>
