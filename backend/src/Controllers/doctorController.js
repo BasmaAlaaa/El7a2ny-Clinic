@@ -661,6 +661,40 @@ const addAvailableTimeSlots = async (req, res) => {
   }
 };
 
+  // 51 schedule a follow-up for a patient
+  const scheduleFollowUp = async (req, res) => {
+    const { DoctorUsername, PatientUsername, date } = req.body;
+  
+    try {
+      // Check if the doctor and patient are associated
+      const existingDoctor = await doctorSchema.findOne({ Username: DoctorUsername, PatientsUsernames: PatientUsername });
+  
+      if (!existingDoctor) {
+        return res.status(404).json({ error: 'The specified doctor is not associated with the patient.' });
+      }
+  
+    
+  
+      // Update the patient's status to 'Follow-up' in the appointment
+      await appointmentSchema.updateOne(
+        { DoctorUsername, PatientUsername, Status: 'Upcoming' },
+        { $set: { Status: 'Following' } }
+      );
+  
+      res.status(200).json({ message: 'Follow-up appointment created and patient status updated.' });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
+
+
+
+
+
+
+
+
 
 module.exports = {
     docFilterAppsByDate,
@@ -681,10 +715,10 @@ module.exports = {
     viewWalletAmountByDoc,
     viewHealthRecords ,
     addHealthRecordForPatient ,
-    addAvailableTimeSlots
+    addAvailableTimeSlots ,
+    scheduleFollowUp
   
 };
-
 
 
 
