@@ -41,6 +41,7 @@ function ContractView () {
 
   return (
    <div>
+    <NavBarDoctor username={username}/>
       {contractInfo ? (
         <Contract contract={contractInfo} onAccept={handleAcceptContract}/>
       ) : (

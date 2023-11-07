@@ -4,6 +4,7 @@ import { useParams} from 'react-router-dom';
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import NavBarPatient from "../components/NavBarPatient";
+import TableSchedule from "../components/TableSchedule";
 
 
 function DoctorInfo(){
@@ -11,6 +12,10 @@ function DoctorInfo(){
     const {usernameDoctor, usernamePatient} = useParams();
     const[result, setResult] = useState([]);
     const[resultDelete, setResultDelete] = useState([]);
+    const[filterText, setFilterText] = useState('');
+  const[searchDate, setSearchDate] = useState('');
+  const[searchText, setSearchText] = useState('');
+
 
 
 
@@ -30,6 +35,7 @@ function DoctorInfo(){
 //   result.map((e) => {
 //     console.log(e)
 //   })
+let tHead = ['Date', 'From', 'To', 'Book'];
 
     return (
         <div>
@@ -43,6 +49,9 @@ function DoctorInfo(){
             <h3>Hourly Rate: {result.HourlyRate}</h3>
             <h3>Affiliation: {result.Affiliation}</h3>
             <h3>Educational Background: {result.EDB}</h3>
+            <h2>Available Appointments: </h2>
+            <TableSchedule tHead={tHead} data={result.Schedule} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
+
 
         </ul>
         </div>
