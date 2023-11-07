@@ -75,11 +75,7 @@ const doctorSchema = new Schema({
   },
   WorkingLicenseDocument: {
     type: String,
-  } ,
- 
-
-
-
+  },
 }, { timestamps: true });
 
   // static register method
