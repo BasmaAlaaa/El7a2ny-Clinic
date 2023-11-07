@@ -18,7 +18,7 @@ const appointmentSchema = new Schema({
     Status: {
         type: String,
         default:"Upcoming",
-        enum: ["Finished", "Following", "Upcoming","finished", "following", "upcoming"]
+        enum: ["Upcoming", "upcoming", "Completed", "completed", "Canceled", "canceled", "Rescheduled", "rescheduled"]
     },
     PaymentMethod: {
       type: String,
@@ -29,6 +29,10 @@ const appointmentSchema = new Schema({
       type: String,
       default: "Unpaid",
       enum: ["paid","unpaid","Unpaid","Paid"]
+    },
+    Price:{
+      type: Number,
+      required: true
     }
 },{ timestamps: true })
 

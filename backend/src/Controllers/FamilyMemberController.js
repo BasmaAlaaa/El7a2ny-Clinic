@@ -29,3 +29,5 @@ const registerFamilyMember = async (req, res) => {
 }
 
 module.exports = registerFamilyMember;
+
+
