@@ -42,3 +42,5 @@ const registerAppointment = async (req, res) => {
 }
 
 module.exports = registerAppointment;
+
+

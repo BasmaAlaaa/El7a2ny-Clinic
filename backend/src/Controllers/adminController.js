@@ -273,7 +273,7 @@ const createContract = async (req, res) => {
     res.setHeader('Access-Control-Allow-Credentials', true);
     try {
         const { DoctorUsername, MarkUp,StartDate, EndDate,DoctorSpecialty,Salary,compensation,workingHours,workingDays,Type,Status} = req.body;
-        if (!DoctorUsername || !MarkUp || !EndDate||!DoctorSpecialty||!Salary||!compensation||!workingHours||!workingDays||!Type||!Status) {
+        if (!DoctorUsername || !MarkUp || !EndDate||!DoctorSpecialty||!Salary||!compensation||!workingHours||!workingDays) {
             throw Error('All fields must be filled.');
         }
         const doctorExists = await Doctor.findOne({ Username: DoctorUsername });

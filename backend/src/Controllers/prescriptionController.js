@@ -3,6 +3,7 @@ const appointmentSchema = require('../Models/Appointment.js')
 const doctorSchema = require('../Models/Doctor.js')
 const patientSchema = require('../Models/Patient.js')
 const prescriptionModel = require('../Models/Prescription.js')
+const mongoose = require('mongoose');
 
 const registerPrescription = async (req, res) => {
     const {
@@ -47,3 +48,8 @@ const registerPrescription = async (req, res) => {
 
 
 module.exports = registerPrescription
+
+
+
+
+

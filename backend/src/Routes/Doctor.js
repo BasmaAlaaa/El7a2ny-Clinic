@@ -1,9 +1,12 @@
 // External variables
 const express = require("express");
-const router = express.Router();
-const upload = require('./multer-config');
-
-
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const router = express.Router(); // Make sure you are creating a router object
+const upload = require('../Routes/multer-config');
+/*const doctorSchema = require('../Models/Doctor.js'); // Import your Doctor model
+const patientSchema = require('../../../Models/Patient.js');
+const appointmentSchema = require('../../../Models/Appointment.js');*/
 const { registerDoctor,
     viewInfoAndRecords,
     MyPatients,
@@ -19,7 +22,9 @@ const { registerDoctor,
     allAppointments,
     viewContract,
     acceptContract,
-    viewWalletAmountByDoc
+    viewWalletAmountByDoc ,
+    addHealthRecordForPatient,
+    viewHealthRecords 
 } = require('../Controllers/doctorController'); // Import the function
 
 // register route
@@ -27,7 +32,7 @@ router.post('/Register', upload.fields([
     { name: 'IDDocument', maxCount: 1 },
     { name: 'MedicalDegreeDocument', maxCount: 1 },
     { name: 'WorkingLicenseDocument', maxCount: 1 },
-  ]), registerDoctor)
+  ]), registerDoctor) ;
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 router.put('/updateDoctorByAffiliation/:Username', updateDoctorByAffiliation);
@@ -55,9 +60,19 @@ router.get('/PatientsUpcoming/:Username',PatientsUpcoming)
 router.get('/selectPatientWithHisName/:DoctorId/:Username',selectPatientWithHisName)
 
 router.post('/addDoc', addDoctor);
-router.get('/viewContract/:Username', viewContract);
+router.get('/viewContract/:DoctorUsername', viewContract);
 router.post('/acceptContract/:DoctorUsername', acceptContract);
 
 router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
+
+// route to show the uploaded health records
+router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', viewHealthRecords);
+
+
+
+// Define the route for adding a health record for a patient
+router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordForPatient);
+
+
 
 module.exports = router
