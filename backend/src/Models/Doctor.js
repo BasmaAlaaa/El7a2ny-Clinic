@@ -76,6 +76,23 @@ const doctorSchema = new Schema({
   WorkingLicenseDocument: {
     type: String,
   } ,
+
+   availableTimeSlots: [
+    {
+      dayOfWeek: {
+        type: String, // e.g., "Monday", "Tuesday", etc.
+        required: true,
+      },
+      startTime: {
+        type: String, // e.g., "09:00 AM"
+        required: true,
+      },
+      endTime: {
+        type: String, // e.g., "12:00 PM"
+        required: true,
+      },
+    },
+  ],
  
 
 

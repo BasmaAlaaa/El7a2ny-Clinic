@@ -4,6 +4,7 @@ const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const ContractSchema = require('../Models/Contract.js');
 const {isEmailUnique, isUsernameUnique} = require('../utils.js');
+//const Appointment = require ('../Models/Appointment.js');
 //const Doctor = require('../Models/Doctor'); 
 
 // register Doctor
@@ -636,6 +637,30 @@ const addHealthRecordForPatient = async (req, res) => {
 };
 
 
+  // req 17 add availableTimeSlots
+
+const addAvailableTimeSlots = async (req, res) => {
+  const { DoctorUsername } = req.params;
+  const { availableTimeSlots } = req.body; // Assuming availableTimeSlots is an array of time slots
+
+  try {
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    // Add the received availableTimeSlots to the doctor's existing availableTimeSlots array
+    doctor.availableTimeSlots.push(...availableTimeSlots);
+
+    await doctor.save();
+
+    res.status(200).json({ message: 'Available time slots added successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 
 module.exports = {
     docFilterAppsByDate,
@@ -655,7 +680,8 @@ module.exports = {
     acceptContract,
     viewWalletAmountByDoc,
     viewHealthRecords ,
-    addHealthRecordForPatient
+    addHealthRecordForPatient ,
+    addAvailableTimeSlots
   
 };
 

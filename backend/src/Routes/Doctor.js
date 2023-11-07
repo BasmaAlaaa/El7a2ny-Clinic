@@ -24,7 +24,8 @@ const { registerDoctor,
     acceptContract,
     viewWalletAmountByDoc ,
     addHealthRecordForPatient,
-    viewHealthRecords 
+    viewHealthRecords ,
+    addAvailableTimeSlots
 } = require('../Controllers/doctorController'); // Import the function
 
 // register route
@@ -72,6 +73,9 @@ router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', viewHealthReco
 
 // Define the route for adding a health record for a patient
 router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordForPatient);
+
+// Route to add available time slots 
+router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 
 
 
