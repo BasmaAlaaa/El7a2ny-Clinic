@@ -1,8 +1,8 @@
 // routes
-
-
 const express = require('express');
 const mongoose = require('mongoose');
+const upload = require('./multer-config');
+
 // controller functions
 const {
     registerPatient,
@@ -25,13 +25,14 @@ const {
     allAppointments,
     choosePaymentMethodForHP,
     choosePaymentMethodForApp,
-    viewWalletAmountByPatient ,
-    viewHealthPackages ,
+    viewWalletAmountByPatient,
+    viewHealthPackages,
     viewSubscribedHealthPackages,
     viewHealthCarePackageStatus,
     cancelHealthCarePackageSubscription,
-    payForAppointment
-
+    payForAppointment,
+    addMedicalHistoryDocument,
+    deleteMedicalHistoryDocument
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -70,14 +71,14 @@ router.get('/allAppointments/:Username', allAppointments);
 
 router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMethodForHP);
 router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
-
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 router.get('/health-packages', viewHealthPackages);
-
 router.get('/viewSubscribedHealthPackages/:Username', viewSubscribedHealthPackages);
-
 router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus);
-
 router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
+router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
+
+router.post('/uploadDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
+router.delete('/deleteDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 
 module.exports = router

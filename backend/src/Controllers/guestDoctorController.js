@@ -22,10 +22,8 @@ const registerGuestDoctor = async (req, res) => {
         Schedule
     } = req.body;
 
-    console.log(req.files);
-
     try {
-
+        
         if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
             return res.status(400).json('Missing file(s)');
         }
