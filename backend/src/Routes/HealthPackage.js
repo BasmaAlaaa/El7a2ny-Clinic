@@ -13,5 +13,6 @@ router.put("/updateFamilySubscriptionDiscount/:Type", healthPackageController.up
 router.put("/updateMedicineDiscount/:Type", healthPackageController.updatePackageByMedicineDiscount);
 
 router.delete("/delete/:Type", healthPackageController.deletePackage);
+router.get("/view/:Type", healthPackageController.viewHealthPackageInfo);
 
 module.exports = router;

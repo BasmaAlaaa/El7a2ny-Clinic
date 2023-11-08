@@ -243,6 +243,24 @@ const deletePackage = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+ const viewHealthPackageInfo = async(req,res) =>{
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  try{
+    const {Type} = req.params;
+    const pack = await HealthPackage.findOne({Type:Type});
+    if(!pack){
+      return res.status(404).json({error: "Package not found"});
+    }
+    res.status(200).json(pack);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+
+ }
+
+
 
 module.exports = {
   subscribeToPackage,
@@ -253,4 +271,5 @@ module.exports = {
   updatePackageByFamilySubscriptionDiscount, 
   updatePackageByMedicineDiscount,
   createPackage,
+  viewHealthPackageInfo,
 }
