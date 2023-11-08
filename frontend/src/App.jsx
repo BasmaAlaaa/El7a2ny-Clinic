@@ -30,7 +30,9 @@ import ChangePassword from './pages/change_password';
 import ResetPassword from './pages/reset_passowrd'
 import HealthPackagesList from './components/HealthPackagesList';
 import HealthPackageInfo from './pages/healthPackageInfo';
-import ContractView from './pages/contractView'; 
+import ContractView from './pages/contractView';
+
+import AddMedicalHistoryDocument from './pages/addMedicalHistoryDocument';
 
 
 
@@ -42,7 +44,7 @@ function App() {
       {/* <NavBar /> */}
       <main>
         <Routes>
-        <Route exact path="/login" element={<Login />} />
+          <Route exact path="/login" element={<Login />} />
           <Route exact path="/forgotPassword" element={<ForgotPassword />} />
           <Route exact path="/changePassword" element={<ChangePassword />} />
           <Route exact path="/resetPassword" element={<ResetPassword />} />
@@ -60,7 +62,7 @@ function App() {
           <Route exact path="/managePackages" element={<ManagePackages />} />
           <Route exact path="/removeUser" element={<RemoveUser />} />
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
-
+          <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />

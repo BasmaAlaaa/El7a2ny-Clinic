@@ -79,8 +79,8 @@ router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus
 router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
 router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 
-router.post('/uploadDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
-router.delete('/deleteDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
+router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
+router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewHealthRecords/:Username',viewHealthRecords)
 
 const log =require("../Controllers/loginController")

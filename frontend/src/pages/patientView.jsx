@@ -57,6 +57,12 @@ return (
             action={() => navigate(`/addFamilyMember/${username}`)}
             key="navBtn"
           />
+          <MainBtn
+            txt="Add Medical History Document"
+            style="green-btn"
+            action={() => navigate(`/addMedicalHistoryDocument/${username}`)}
+            key="navBtn"
+          />
           </div>
     <DoctorsList/>
     <h1>Health Records </h1>

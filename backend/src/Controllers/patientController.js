@@ -1090,22 +1090,18 @@ const addMedicalHistoryDocument = async (req, res) => {
   const username = req.params.Username;
 
   try {
-    // Find the patient by username
     const patient = await patientSchema.findOne({ Username: username });
 
     if (!patient) {
       return res.status(404).json({ message: 'Patient not found' });
     }
 
-    // Check if a file was uploaded
     if (!req.file) {
       return res.status(400).json({ message: 'No file uploaded' });
     }
 
-    // Add the uploaded file to the MedicalHistoryDocuments array
     patient.MedicalHistoryDocuments.push(req.file.filename);
 
-    // Save the updated patient document
     await patient.save();
 
     return res.status(200).json({ message: 'Document uploaded successfully' });
