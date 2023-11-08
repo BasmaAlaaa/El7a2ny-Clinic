@@ -579,7 +579,7 @@ const viewHealthRecords = async (req, res) => {
     }
 
     // Retrieving the health records
-    const healthRecords = patient.healthRecords;
+    const healthRecords = patient.HealthRecords;
 
     if (healthRecords.length === 0) {
       return res.status(404).json({ message: 'No health records found for the patient.' });

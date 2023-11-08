@@ -30,7 +30,12 @@ function PatientInfo(){
   const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
-    console.log(result.HealthRecords);
+    console.log(result);
+    useEffect(() => {
+      const response = axios.get(`http://localhost:4000/Doctor/viewHealthRecords/${usernameDoctor}/${usernamePatient}`)
+      .then(res =>setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
+        }, [])
+    console.log(healthRecord);
    // console.log('heeeee', healthRecord);
     
     //console.log('resultttt adddd', resultAdd)
@@ -44,7 +49,7 @@ function PatientInfo(){
   //   setDate(e.Date)
 
   //   })} 
-    let tHead = ['Name', 'Age', 'National ID', 'Gender', 'Relation to Patient'];
+    let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
 
   // const handleRemove=() => {
   //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
@@ -77,7 +82,7 @@ function PatientInfo(){
             Remove Patient
         </button> */}
         <h1>Health Records </h1>
-        {/* <TableHealthRecords tHead={tHead} data={result.HealthRecords} /> */}
+         <TableHealthRecords tHead={tHead} data={healthRecord} /> 
           {/* <h3>Description: {result.HealthRecords[0].Description}</h3> 
           <h3>Diagnosis: {result.HealthRecords[0].Diagnosis}</h3> 
           <h3>Medication: {result.HealthRecords[0].Medication}</h3>  */}

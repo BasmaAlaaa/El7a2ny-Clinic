@@ -9,9 +9,9 @@ function CaseTableBody({ data }) {
     <>
       
     {data.Date && <th>{data.Date.substring(0,10)}</th>}
-    {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
-    {data.PatientUsername && <td>{data.PatientUsername}</td>}
-    {data.Status && <td>{data.Status}</td>}
+    {data.Description && <td>{data.Description}</td>}
+    {data.Diagnosis && <td>{data.Diagnosis}</td>}
+    {data.Medication && <td>{data.Medication}</td>}
 
     
       
@@ -33,7 +33,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableHealthRecords({ tHead, data, searchText, searchDate, filterText }) {
+function TableHealthRecords({ tHead, data }) {
   console.log('haayaa', data)
 
   return (
