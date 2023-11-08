@@ -686,6 +686,67 @@ const addAvailableTimeSlots = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
+  const docotrPastApp = async (req,res) =>{
+    
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+  
+    try {
+          const { Username } = req.params;
+      
+          // Find the doctor by ID
+          const doctor = await doctorSchema.findOne({Username:Username});
+      
+          if (!doctor) {
+            return res.status(404).send('Doctor not found');
+          }
+      
+          const patientsUsernames = doctor.PatientsUsernames; // Assuming it's an array of patient IDs
+      
+          // Find upcoming appointments for the doctor
+          const pastAppointments = await appointmentSchema.find({
+            DoctorUsername: Username,
+            Status: { $in: ["Finished", "Following","finished","following"]}, // Adjust this condition based on your schema
+            PatientUsername: {$in: patientsUsernames}
+          },{PatientUsername: 1, Date:1, Status:1, _id:0,Time:1});
+      
+          if (pastAppointments.length === 0) {
+            return res.status(404).send('No upcoming appointments found for this doctor');
+          }
+            
+          res.send(pastAppointments);
+        } catch (err) {
+          console.error(err);
+          res.status(500).send('Internal Server Error');
+        }
+  };
+
+  const createAvailableApps = async (req, res) => {
+    const { DoctorUsername } = req.params;
+    const { Date , Time ,Price} = req.body; 
+  
+    try {
+      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+  
+      if (!doctor) {
+        return res.status(404).json({ error: 'Doctor not found.' });
+      }
+  
+      const newApp = Appointment.create({
+        DoctorUsername: DoctorUsername,
+        Date: Date,
+        Price: Price,
+        Time: Time,
+        Status: "Available"
+      })
+      
+      await newApp.save();
+      res.status(200).json({ message: 'Available Appointment added successfully' , appointment: newApp });
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  };
+  
   
 
 
@@ -716,7 +777,10 @@ module.exports = {
     viewHealthRecords ,
     addHealthRecordForPatient ,
     addAvailableTimeSlots ,
-    scheduleFollowUp
+    scheduleFollowUp,
+    docotrPastApp,
+    createAvailableApps
+  
   
 };
 

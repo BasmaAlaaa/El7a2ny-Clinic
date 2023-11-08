@@ -10,7 +10,9 @@ const registerAppointment = async (req, res) => {
         Date,
         DoctorUsername,
         PatientUsername,
-        Status
+        Status,
+        Price,
+        Time
     } = req.body;
 
     try {
@@ -29,7 +31,9 @@ const registerAppointment = async (req, res) => {
             Date,
             DoctorUsername,
             PatientUsername,
-            Status
+            Status,
+            Price,
+            Time
           );
         await appointment.save();
 

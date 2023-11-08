@@ -34,7 +34,12 @@ const {
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
     viewMedicalHistoryDocuments,
-    viewHealthRecords
+    viewHealthRecords,
+    patientPastApp,
+    patientUpcoming,
+    availableDoctorApps,
+    selectAppointmentDateTime,
+    selectAppointmentDateTimeFamMem
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -84,6 +89,17 @@ router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistor
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
+router.get('/patientPastApp/:Username', patientPastApp);
+router.get('/patientUpcoming/:Username', patientUpcoming);
+router.get('/availableDoctorApps/:Username', availableDoctorApps);
+router.post('/selectAppointment/:Username', selectAppointmentDateTime);
+router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
+
+const log =require("../Controllers/loginController")
+
+router.post('/login',log.login);
+router.get('/logout',log.logout);
+
 
 
 

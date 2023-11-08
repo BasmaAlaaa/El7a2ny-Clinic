@@ -1179,6 +1179,203 @@ const viewHealthRecords = async (req, res) => {
   }
 };
 
+const patientPastApp = async (req,res) =>{
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  try {
+        const { Username } = req.params;
+    
+        // Find the doctor by ID
+        const patient = await patientSchema.findOne({Username:Username});
+    
+        if (!patient) {
+          return res.status(404).send('patient not found');
+        }
+
+    
+        // Find upcoming appointments for the doctor
+        const pastAppointments = await appointmentSchema.find({
+          Status: { $in: ["Finished", "Following","finished","following"]}, // Adjust this condition based on your schema
+          PatientUsername: Username
+        },{DoctorUsername: 1, Date:1, Status:1, _id:0,PaymentMethod:1,Time:1});
+    
+        if (pastAppointments.length === 0) {
+          return res.status(404).send('No upcoming appointments found for this patient');
+        }
+          
+        res.send(pastAppointments);
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+}
+
+const patientUpcoming = async (req,res) =>{
+    
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  try {
+        const { Username } = req.params;
+    
+        // Find the doctor by ID
+        const patient = await patientSchema.findOne({Username:Username});
+    
+        if (!patient) {
+          return res.status(404).send('patient not found');
+        }
+    
+        // Find upcoming appointments for the doctor
+        const upcomingAppointments = await appointmentSchema.find({
+          Status: { $in: ["Upcoming", "Following","upcoming","following"]}, // Adjust this condition based on your schema
+          PatientUsername: Username
+        },{DoctorUsername: 1, Date:1, Status:1, _id:0,PaymentMethod:1,Time:1});
+    
+        if (upcomingAppointments.length === 0) {
+          return res.status(404).send('No upcoming appointments found for this patient');
+        }
+          
+        res.send(upcomingAppointments);
+      } catch (err) {
+        console.error(err);
+        res.status(500).send('Internal Server Error');
+      }
+}
+
+const availableDoctorApps = async (req, res) => {
+  
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  
+  const { Username } = req.params;
+  const { DoctorUsername } = req.body;
+
+
+  try {
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const Appointments = await appointmentSchema.find({
+      DoctorUsername: DoctorUsername,
+      Status: { $in: ["Available", "available"]}, // Adjust this condition based on your schema
+    },{DoctorUsername: 1, Date:1, Status:1, _id:0,Time:1});
+
+    if (Appointments.length === 0) {
+      return res.status(404).send('No upcoming appointments found for this patient');
+    }
+      
+    res.send(Appointments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+}
+
+const selectAppointmentDateTime = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username } = req.params;
+  const { Date, Time, DoctorUsername } = req.body;
+
+  try {
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    // Check if the selected date and time are available for the specified doctor
+    const isAppointmentAvailable = await appointmentSchema.exists({
+      DoctorUsername: DoctorUsername,
+      Date: Date,
+      Time: Time,
+      Status:  { $in: ["Available", "available"]},
+    });
+
+    if (!isAppointmentAvailable) {
+      return res.status(400).send({ error: 'Selected appointment date and time are not available' });
+    }
+
+    // Create a new appointment for the patient
+    const newAppointment = new appointmentSchema({
+      Date: Date,
+      Time: Time,
+      DoctorUsername: DoctorUsername,
+      PatientUsername: Username,
+      Status: 'Upcoming',
+    });
+
+    await newAppointment.save();
+
+    res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+
+const selectAppointmentDateTimeFamMem = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username } = req.params;
+  const { Date, Time, DoctorUsername ,Name , RelationToPatient} = req.body;
+
+  try {
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const FamilyMember=await FamilyMember.findOne({
+      Name: Name,
+      RelationToPatient: RelationToPatient,
+      patientUsername: Username
+
+    })
+
+    if (!FamilyMember) {
+
+      return res.status(404).send({ error: 'Family Member Not registered to this patient' });
+    }
+
+
+    // Check if the selected date and time are available for the specified doctor
+    const isAppointmentAvailable = await appointmentSchema.exists({
+      DoctorUsername: DoctorUsername,
+      Date: Date,
+      Time: Time,
+      Status:  { $in: ["Available", "available"]},
+    });
+
+    if (!isAppointmentAvailable) {
+      return res.status(400).send({ error: 'Selected appointment date and time are not available' });
+    }
+
+    // Create a new appointment for the patient
+    const newAppointment = new appointmentSchema({
+      Date: Date,
+      Time: Time,
+      DoctorUsername: DoctorUsername,
+      PatientUsername: Username,
+      Status: 'Upcoming',
+    });
+
+    await newAppointment.save();
+
+    res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -1209,5 +1406,11 @@ module.exports = {
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
   viewMedicalHistoryDocuments,
-  viewHealthRecords
+  viewHealthRecords,
+  patientPastApp,
+  patientUpcoming,
+  availableDoctorApps,
+  selectAppointmentDateTime,
+  selectAppointmentDateTimeFamMem
+
 }

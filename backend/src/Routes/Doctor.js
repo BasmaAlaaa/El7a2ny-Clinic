@@ -26,7 +26,8 @@ const { registerDoctor,
     addHealthRecordForPatient,
     viewHealthRecords ,
     addAvailableTimeSlots ,
-    scheduleFollowUp
+    scheduleFollowUp, docotrPastApp,
+    createAvailableApps
 } = require('../Controllers/doctorController'); // Import the function
 
 // register route
@@ -80,6 +81,12 @@ router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
 router.post('/schedule-follow-up', scheduleFollowUp);
+router.get('/docotrPastApp/:Username', docotrPastApp);
+router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 
 
+const log =require("../Controllers/loginController")
+
+router.post('/login',log.login);
+router.get('/logout',log.logout);
 module.exports = router
