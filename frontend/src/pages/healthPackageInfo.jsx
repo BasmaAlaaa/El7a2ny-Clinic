@@ -14,7 +14,7 @@ function HealthPackageInfo(){
     let navigate = useNavigate();
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:8000/Admin/InfosOfAPharmacistRequest/${username}`)
+  const response = axios.get(`http://localhost:4000/HealthPackage/view/${type}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
@@ -30,12 +30,12 @@ return (
         
         <h1>Package Info</h1>
         <ul>
-            <h3>Type: {result.Name}</h3>
-            <h3>Annual Fee: {result.Username}</h3>
-            <h3>Doctor Session Discount: {result.Email}</h3>
-            <h3>Medicine Discount: {result.DateOfBirth}</h3>
-            <h3>Family Subscription Discount: {result.HourlyRate}</h3>
-            <h3>Status: {result.HourlyRate}</h3>
+            <h3>Type: {result.Type}</h3>
+            <h3>Annual Fee: {result.AnnualFee}</h3>
+            <h3>Doctor Session Discount: {result.DoctorSessionDiscount}</h3>
+            <h3>Medicine Discount: {result.MedicineDiscount}</h3>
+            <h3>Family Subscription Discount: {result.FamilySubscriptionDiscount}</h3>
+            {/* <h3>Status: {result.HourlyRate}</h3> */}
 
 
         </ul>

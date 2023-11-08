@@ -1,10 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import moment from 'moment';
 
 
 function CaseTableBody({ data }) {
   let navigate = useNavigate()
-
+  const {username} = useParams();
   return (
     <>
       
@@ -19,7 +19,7 @@ function CaseTableBody({ data }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        //onClick={()=>navigate(`/healthPackageInfo/${username}/${data.type}`)}
+        onClick={()=>navigate(`/healthPackageInfo/${username}/${data.type}`)}
       >
         View
       </button>
