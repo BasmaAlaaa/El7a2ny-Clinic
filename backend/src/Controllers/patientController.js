@@ -1139,6 +1139,27 @@ const deleteMedicalHistoryDocument = async (req, res) => {
   }
 };
 
+const viewMedicalHistoryDocuments = async (req, res) => {
+  const { Username } = req.params;
+  
+  try {
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const MedicalHistoryDocuments = patient.MedicalHistoryDocuments;
+    if (MedicalHistoryDocuments.length == 0) {
+      return res.status(404).json({ message: 'No medical history documents found.' });
+    }
+
+     res.status(200).json({ MedicalHistoryDocuments });
+  } catch (error) {
+    res.status(500).json({error: 'Server error', details: error.message });
+  }
+};
+
 const viewHealthRecords = async (req, res) => {
   const { Username } = req.params;
 
@@ -1150,13 +1171,14 @@ const viewHealthRecords = async (req, res) => {
     }
     const healthRecords = patient.HealthRecords;
     if (healthRecords.length === 0) {
-      return res.status(404).json({ message: 'No health records found for the patient.' });
+      return res.status(404).json({ message: 'No health records found.' });
     }
     res.status(200).json({ healthRecords });
   } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -1186,5 +1208,6 @@ module.exports = {
   viewHealthCarePackageStatus,
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
+  viewMedicalHistoryDocuments,
   viewHealthRecords
 }

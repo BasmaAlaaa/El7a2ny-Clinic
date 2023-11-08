@@ -33,6 +33,7 @@ const {
     payForAppointment,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
+    viewMedicalHistoryDocuments,
     viewHealthRecords
 } = require('../Controllers/patientController');
 
@@ -66,8 +67,8 @@ router.get('/viewDoctorInfo/:DoctorUsername/:PatientUsername', viewDoctorInfo);
 
 router.get('/viewAllMyPres/:Username', viewAllMyPres);
 
-router.get('/patientFilterAppsByDate/:Username/:Date',patientFilterAppsByDate)
-router.get('/patientFilterAppsByStatus/:Username/:Status',patientFilterAppsByStatus)
+router.get('/patientFilterAppsByDate/:Username/:Date', patientFilterAppsByDate)
+router.get('/patientFilterAppsByStatus/:Username/:Status', patientFilterAppsByStatus)
 router.get('/allAppointments/:Username', allAppointments);
 
 router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMethodForHP);
@@ -81,12 +82,13 @@ router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
-router.get('/viewHealthRecords/:Username',viewHealthRecords)
+router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
+router.get('/viewHealthRecords/:Username', viewHealthRecords);
 
-const log =require("../Controllers/loginController")
+const log = require("../Controllers/loginController")
 
-router.post('/login',log.login);
-router.get('/logout',log.logout);
+router.post('/login', log.login);
+router.get('/logout', log.logout);
 
 
 module.exports = router

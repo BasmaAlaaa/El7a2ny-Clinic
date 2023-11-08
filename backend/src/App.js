@@ -80,7 +80,7 @@ app.use('/Admin', adminRoutes);
 
 app.use("/Appointment", appointmentRoutes);
 
-app.use("/Doctor", doctorRoutes);//
+app.use("/Doctor", doctorRoutes);
 
 app.use("/FamilyMember", familyMemberRoutes);
 
@@ -91,4 +91,4 @@ app.use('/HealthPackage', healthPackageRoutes);
 app.use("/Patient", patientRoutes);
 
 app.use("/Prescription", prescriptionRoutes);
-;
+
