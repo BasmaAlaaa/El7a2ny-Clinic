@@ -1085,91 +1085,7 @@ const viewHealthPackages = async (req, res) => {
   }
 };
 
-// // Task 2: upload medical history document
-// const addMedicalHistoryDocument = (req, res) => {
-//   const { Username } = req.params;
-//   const document = req.file.path;
-
-//   patientSchema.updateOne(
-//     { Username: Username },
-//     { $push: { MedicalHistoryDocuments: document } },
-//     (err, result) => {
-//       if (err) {
-//         return res.status(500).send({ error: 'Failed to upload the document' });
-//       }
-
-//       if (result.nModified === 0) {
-//         return res.status(404).send({ error: 'Patient not found' });
-//       }
-
-//       res.status(200).send({ message: 'Document uploaded successfully' });
-//     }
-//   );
-// };
-
-
-// // Task 2: delete medical history document
-// const deleteMedicalHistoryDocument = async (req, res) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   const { Username, documentId } = req.params;
-
-//   try {
-//     const patient = await patientSchema.findOne({ Username }).populate('MedicalHistoryDocuments');
-
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
-
-//     //const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id.toString() === documentId);
-//     const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id && document._id.toString() === documentId);
-
-//     console.log(documentToRemove);
-
-
-//     if (!documentToRemove) {
-//       return res.status(404).json({ error: 'Document not found' });
-//     }
-
-//     patient.MedicalHistoryDocuments.pull(documentToRemove);
-    
-//     await patient.save();
-
-//     res.status(200).send({ message: 'Document deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-const deleteMedicalHistoryDocument = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  const { Username, filePathToRemove } = req.params;
-
-  try {
-    const patient = await patientSchema.findOne({ Username });
-
-    if (!patient) {
-      return res.status(404).json({ error: 'Patient not found' });
-    }
-    const documentIndex = patient.MedicalHistoryDocuments.indexOf(filePathToRemove);
-
-    if (documentIndex === -1) {
-      return res.status(404).json({ error: 'Document not found' });
-    }
-    patient.MedicalHistoryDocuments.splice(documentIndex, 1);
-    
-    await patient.save();
-
-    res.status(200).send({ message: 'Document deleted successfully' });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-
-
+// Task 2: upload medical history document
 const addMedicalHistoryDocument = async (req, res) => {
   const username = req.params.Username;
 
@@ -1196,6 +1112,34 @@ const addMedicalHistoryDocument = async (req, res) => {
   } catch (error) {
     console.error('Error in addMedicalHistoryDocument:', error);
     res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
+// Task 2: delete medical history document
+const deleteMedicalHistoryDocument = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username, filePathToRemove } = req.params;
+
+  try {
+    const patient = await patientSchema.findOne({ Username });
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+    const documentIndex = patient.MedicalHistoryDocuments.indexOf(filePathToRemove);
+
+    if (documentIndex === -1) {
+      return res.status(404).json({ error: 'Document not found' });
+    }
+    patient.MedicalHistoryDocuments.splice(documentIndex, 1);
+    
+    await patient.save();
+
+    res.status(200).send({ message: 'Document deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 };
 
