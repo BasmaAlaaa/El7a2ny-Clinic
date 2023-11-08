@@ -32,7 +32,8 @@ const {
     cancelHealthCarePackageSubscription,
     payForAppointment,
     addMedicalHistoryDocument,
-    deleteMedicalHistoryDocument
+    deleteMedicalHistoryDocument,
+    viewHealthRecords
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -80,5 +81,6 @@ router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 
 router.post('/uploadDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
+router.get('/viewHealthRecords/:Username',viewHealthRecords)
 
 module.exports = router
