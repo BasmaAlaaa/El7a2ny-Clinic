@@ -73,6 +73,13 @@ app.get("/home", (req, res) => {
     res.status(200).send("You have everything installed!");
   });
 
+const {
+  login,
+  logout
+}= require("../src/Controllers/loginController")
+
+app.post("/login", login);
+app.get("/logout", logout);
 
 // Registering Routes
 

@@ -85,10 +85,6 @@ router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:
 router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
 
-const log = require("../Controllers/loginController")
-
-router.post('/login', log.login);
-router.get('/logout', log.logout);
 
 
 module.exports = router

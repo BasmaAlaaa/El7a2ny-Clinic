@@ -82,9 +82,4 @@ router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 router.post('/schedule-follow-up', scheduleFollowUp);
 
 
-const log =require("../Controllers/loginController")
-
-router.post('/login',log.login);
-router.get('/logout',log.logout);
-
 module.exports = router
