@@ -83,4 +83,10 @@ router.post('/uploadDocument/:Username', upload.single('MedicalHistoryDocuments'
 router.delete('/deleteDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewHealthRecords/:Username',viewHealthRecords)
 
+const log =require("../Controllers/loginController")
+
+router.post('/login',log.login);
+router.get('/logout',log.logout);
+
+
 module.exports = router
