@@ -1091,61 +1091,34 @@ const viewHealthPackages = async (req, res) => {
 };
 
 // // Task 2: upload medical history document
-// const addMedicalHistoryDocument = (req, res) => {
-//   const { Username } = req.params;
-//   const document = req.file.path;
+const addMedicalHistoryDocument = async (req, res) => {
+  const username = req.params.Username;
 
-//   patientSchema.updateOne(
-//     { Username: Username },
-//     { $push: { MedicalHistoryDocuments: document } },
-//     (err, result) => {
-//       if (err) {
-//         return res.status(500).send({ error: 'Failed to upload the document' });
-//       }
+  try {
 
-//       if (result.nModified === 0) {
-//         return res.status(404).send({ error: 'Patient not found' });
-//       }
+    const patient = await patientSchema.findOne({ Username: username });
 
-//       res.status(200).send({ message: 'Document uploaded successfully' });
-//     }
-//   );
-// };
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
 
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
+    }
 
-// // Task 2: delete medical history document
-// const deleteMedicalHistoryDocument = async (req, res) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
+    patient.MedicalHistoryDocuments.push(req.file.filename);
 
-//   const { Username, documentId } = req.params;
+    await patient.save();
 
-//   try {
-//     const patient = await patientSchema.findOne({ Username }).populate('MedicalHistoryDocuments');
-
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
-
-//     //const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id.toString() === documentId);
-//     const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id && document._id.toString() === documentId);
-
-//     console.log(documentToRemove);
+    return res.status(200).json({ message: 'Document uploaded successfully' });
+  } catch (error) {
+    console.error('Error in addMedicalHistoryDocument:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
 
-//     if (!documentToRemove) {
-//       return res.status(404).json({ error: 'Document not found' });
-//     }
-
-//     patient.MedicalHistoryDocuments.pull(documentToRemove);
-    
-//     await patient.save();
-
-//     res.status(200).send({ message: 'Document deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
+// Task 2: delete medical history document
 const deleteMedicalHistoryDocument = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -1173,34 +1146,23 @@ const deleteMedicalHistoryDocument = async (req, res) => {
   }
 };
 
-
-
-const addMedicalHistoryDocument = async (req, res) => {
-  const username = req.params.Username;
+// view medical history documents
+const viewMedicalHistoryDocuments = async (req, res) => {
+  const { Username } = req.params;
 
   try {
-    // Find the patient by username
-    const patient = await patientSchema.findOne({ Username: username });
+    const patient = await patientSchema.findOne({ Username: Username });
 
     if (!patient) {
-      return res.status(404).json({ message: 'Patient not found' });
+      return res.status(404).json({ error: 'Patient not found.' });
     }
-
-    // Check if a file was uploaded
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
+    const MedicalHistoryDocuments = patient.MedicalHistoryDocuments;
+    if (MedicalHistoryDocuments.length === 0) {
+      return res.status(404).json({ message: 'No health records found for the patient.' });
     }
-
-    // Add the uploaded file to the MedicalHistoryDocuments array
-    patient.MedicalHistoryDocuments.push(req.file.filename);
-
-    // Save the updated patient document
-    await patient.save();
-
-    return res.status(200).json({ message: 'Document uploaded successfully' });
+    res.status(200).json({ MedicalHistoryDocuments });
   } catch (error) {
-    console.error('Error in addMedicalHistoryDocument:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
 

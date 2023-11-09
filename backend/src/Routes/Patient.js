@@ -30,7 +30,7 @@ const {
     viewSubscribedHealthPackages,
     viewHealthCarePackageStatus,
     cancelHealthCarePackageSubscription,
-    payForAppointment,
+  //  payForAppointment,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
     viewMedicalHistoryDocuments,
@@ -89,11 +89,11 @@ router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistor
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
-router.get('/patientPastApp/:Username', patientPastApp);
-router.get('/patientUpcoming/:Username', patientUpcoming);
-router.get('/availableDoctorApps/:Username', availableDoctorApps);
-router.post('/selectAppointment/:Username', selectAppointmentDateTime);
-router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
+// router.get('/patientPastApp/:Username', patientPastApp);
+// router.get('/patientUpcoming/:Username', patientUpcoming);
+// router.get('/availableDoctorApps/:Username', availableDoctorApps);
+// router.post('/selectAppointment/:Username', selectAppointmentDateTime);
+// router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 const log =require("../Controllers/loginController")
 
