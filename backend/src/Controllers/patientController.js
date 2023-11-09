@@ -7,7 +7,7 @@ const FamilyMember = require('../Models/FamilyMember.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
-const Payment = require("../Models/Payment.js")
+const Payment = require("../Models/Payment.js");
 
 require("dotenv").config();
 
@@ -23,6 +23,7 @@ const registerPatient = async (req, res) => {
   const {
     Username,
     Name,
+    NationalID,
     Email,
     Password,
     DateOfBirth,
@@ -43,12 +44,19 @@ const registerPatient = async (req, res) => {
     if (!(await isEmailUnique(Email))) {
       throw new Error('Email is already in use.');
     }
+
+    const patientExists = await Patient.findOne({ NationalID: NationalID });
+
+    if(patientExists){
+      return res.status(404).send("You already registered");
+    }
     
     const customer = await createStripeCustomer({ Email,Name,MobileNumber });
 
     const patient = await patientSchema.register(
       Username,
       Name,
+      NationalID,
       Email,
       Password,
       DateOfBirth,
@@ -58,8 +66,8 @@ const registerPatient = async (req, res) => {
       EmergencyContactMobile,
       FamilyMembers,
       PatientPrescriptions,
-      customer.id,
-      SubscribedHP
+      SubscribedHP,
+      customer.id
     );
 
     await patient.save();
@@ -1381,6 +1389,57 @@ const selectAppointmentDateTimeFamMem = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 };
+
+const linkPatientAccountAsFam = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { PatientUsername } = req.params;
+  const { Email, RelationToPatient} = req.body;
+
+  try {
+    const patient = await patientSchema.findOne({ Username: PatientUsername });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const famToBeLinked = await patientSchema.findOne({Email: Email});
+
+    if(!famToBeLinked){
+      return res.status(404).send({ error: 'Patient to be linked not found' });
+    }
+
+    if(patient.Email === famToBeLinked.Email){
+      return res.status(404).send({ error: 'It is your email' });
+    }
+
+    //Calculating the age of the patientToBeLinked
+    var dob = new Date(famToBeLinked.DateOfBirth);  
+    var month_diff = Date.now() - dob.getTime();  
+    var age_dt = new Date(month_diff);         
+    var year = age_dt.getUTCFullYear();        
+    var ageofFam1 = Math.abs(year - 1970); 
+
+    patient.FamilyMembers.push(famToBeLinked.NationalID);
+    const familyMem = await FamilyMember.create({
+      Name: famToBeLinked.Name,
+      NationalID: famToBeLinked.NationalID,
+      Age: ageofFam1,
+      Gender: famToBeLinked.Gender,
+      RelationToPatient: RelationToPatient,
+      PatientUsername: PatientUsername
+  });
+
+  patient.save();
+
+    res.status(200).send({ message: 'Patient linked successfully scheduled', LinkedPatient: famToBeLinked, MyPatient: patient });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -1410,6 +1469,12 @@ module.exports = {
   viewHealthCarePackageStatus,
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
-  viewMedicalHistoryDocuments,
-  viewHealthRecords
+  //viewMedicalHistoryDocuments,
+  viewHealthRecords,
+  selectAppointmentDateTimeFamMem,
+  selectAppointmentDateTime,
+  availableDoctorApps,
+  patientUpcoming,
+  patientPastApp,
+  linkPatientAccountAsFam
 }

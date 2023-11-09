@@ -47,22 +47,6 @@ const doctorSchema = new Schema({
     enum:["dermatology","dentistry","psychiatry","neurology","orthopedics","Dermatology","Dentistry","Psychiatry","Neurology","Orthopedics"]
 
   },
-  Schedule: [
-    {
-      Date:{
-        type: Date,
-       // required: true
-      },
-      From:{
-        type:Number,
-      //  required:true
-      },
-      To: {
-        type:Number,
-       // required:true
-      }
-    }
-  ],
   WalletAmount:{
     type: Number,
     default: 0
@@ -75,21 +59,20 @@ const doctorSchema = new Schema({
   },
   WorkingLicenseDocument: {
     type: String,
-  } ,
-
-   availableTimeSlots: [
+  },
+  AvailableTimeSlots: [
     {
-      dayOfWeek: {
-        type: String, // e.g., "Monday", "Tuesday", etc.
-        required: true,
+      Date: {
+        type: Date, // e.g., "Monday", "Tuesday", etc.
       },
-      startTime: {
-        type: String, // e.g., "09:00 AM"
-        required: true,
+      Time: {
+        type: Number, // e.g., "09:00 AM"
       },
-      endTime: {
+      Status: {
         type: String, // e.g., "12:00 PM"
-        required: true,
+        default: "available",
+        enum: ["available", "booked"],
+        required: false,
       },
     },
   ],
@@ -124,8 +107,7 @@ const doctorSchema = new Schema({
       !HourlyRate ||
       !Affiliation ||
       !EDB ||
-      !Speciality ||
-      !Schedule) 
+      !Speciality) 
       { 
     throw Error('All fields must be filled.');
 }

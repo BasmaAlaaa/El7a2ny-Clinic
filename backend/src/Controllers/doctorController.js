@@ -641,7 +641,7 @@ const addHealthRecordForPatient = async (req, res) => {
 
 const addAvailableTimeSlots = async (req, res) => {
   const { DoctorUsername } = req.params;
-  const { availableTimeSlots } = req.body; // Assuming availableTimeSlots is an array of time slots
+  const { date, time } = req.body; // Assuming availableTimeSlots is an array of time slots
 
   try {
     const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
@@ -650,12 +650,27 @@ const addAvailableTimeSlots = async (req, res) => {
       return res.status(404).json({ error: 'Doctor not found.' });
     }
 
-    // Add the received availableTimeSlots to the doctor's existing availableTimeSlots array
-    doctor.availableTimeSlots.push(...availableTimeSlots);
+    const slots = doctor.AvailableTimeSlots;
+    var found = false;
 
+    const newDate = new Date(date);
+
+    for(const slot of slots){
+      if(!found){
+        if(slot.Date.getTime() === newDate.getTime() && slot.Time === time){
+          found = true;
+          return res.status(404).send("Already added Slot in your Schedule");
+        }
+      }
+    }
+
+    // Add the received availableTimeSlots to the doctor's existing availableTimeSlots array
+    if(!found){
+      doctor.AvailableTimeSlots.push({Date: date, Time: time, Status: "available"});
+    }
     await doctor.save();
 
-    res.status(200).json({ message: 'Available time slots added successfully' });
+    res.status(200).json(doctor.AvailableTimeSlots);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

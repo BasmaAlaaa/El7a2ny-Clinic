@@ -13,6 +13,11 @@ const patientSchema = new Schema({
     type: String,
     required: true
   },
+  NationalID: {
+    type: String,
+    required: true,
+    unique: true
+  },
   Email: {
     type: String,
     required: true,
@@ -129,6 +134,7 @@ const patientSchema = new Schema({
 patientSchema.statics.register = async function (
   Username,
   Name,
+  NationalID,
   Email,
   Password,
   DateOfBirth,
@@ -151,9 +157,10 @@ patientSchema.statics.register = async function (
     !MobileNumber ||
     !EmergencyContactName ||
     !EmergencyContactMobile ||
-    !StripeCustomerId) {
+    !NationalID) {
     throw Error('All fields must be filled.');
   }
+
   if (!validator.isEmail(Email)) {
     throw Error('Email must be in the form of johndoe@example.com');
   }
@@ -161,6 +168,7 @@ patientSchema.statics.register = async function (
   const patient = await this.create({
     Username,
     Name,
+    NationalID,
     Email,
     Password,
     DateOfBirth,
@@ -170,8 +178,8 @@ patientSchema.statics.register = async function (
     EmergencyContactMobile,
     FamilyMembers,
     PatientPrescriptions,
-    StripeCustomerId,
-    SubscribedHP
+    SubscribedHP,
+    StripeCustomerId
   });
   
     return patient;
