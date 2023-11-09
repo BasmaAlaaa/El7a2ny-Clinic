@@ -35,7 +35,7 @@ function DoctorInfo(){
 //   result.map((e) => {
 //     console.log(e)
 //   })
-let tHead = ['Date', 'From', 'To', 'Book'];
+let tHead = ['Date', 'Time', 'Status', 'Book'];
 
     return (
         <div>
@@ -50,7 +50,7 @@ let tHead = ['Date', 'From', 'To', 'Book'];
             <h3>Affiliation: {result.Affiliation}</h3>
             <h3>Educational Background: {result.EDB}</h3>
             <h2>Available Appointments: </h2>
-            <TableSchedule tHead={tHead} data={result.Schedule} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
+            <TableSchedule tHead={tHead} data={result.AvailableTimeSlots} searchText={searchText} searchDate={searchDate} filterText={filterText}/>
 
 
         </ul>
