@@ -103,7 +103,7 @@ const patientSchema = new Schema({
       Date: {
         type: Date
       },
-      Description:{
+      Description: {
         type: String
       },
       Diagnosis: {
@@ -120,9 +120,9 @@ const patientSchema = new Schema({
       type: String,
     },
   ],
-  
-  }, { timestamps: true });
-  
+
+}, { timestamps: true });
+
 
 
 // static register method
@@ -176,9 +176,9 @@ patientSchema.statics.register = async function (
     SubscribedHP,
     StripeCustomerId
   });
-  
-    return patient;
-  
+
+  return patient;
+
 };
 const Patient = mongoose.model('Patient', patientSchema);
 module.exports = Patient;

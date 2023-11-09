@@ -35,6 +35,7 @@ function RegisterPatient() {
   //   },
   // ];
   const [name, setName] = useState('')
+  const [nationalID, setNationalID] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -48,61 +49,73 @@ function RegisterPatient() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {Username:username, Name:name, Email:email, Password:password, DateOfBirth:dateOfBirth, Gender:gender, MobileNumber:mobileNumber, EmergencyContactName:emergencyName, EmergencyContactMobile:emergencyMobile}
+    const data = { Username: username, 
+      Name: name, 
+      Email: email, 
+      Password: password, 
+      DateOfBirth: dateOfBirth, 
+      Gender: gender, 
+      MobileNumber: mobileNumber, 
+      EmergencyContactName: emergencyName,
+      EmergencyContactMobile: emergencyMobile }
     console.log(data)
     const response = axios.post('http://localhost:4000/Patient/registerPatient', data)
-.then(res =>console.log(res.data)).catch(err => console.log(err))
+      .then(res => console.log(res.data)).catch(err => console.log(err))
   }
   return (
     <div>
-      <NavBar/>
+      <NavBar />
       {/* <Form
         title="create account"
         inputArr={inputArr}
         btnArr={btnArr}
         type="register"
       /> */}
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit}>
         <h3>
-        <label>Name</label>
-        <input  title= 'name' required placeholder= 'enter name' type= 'text' onChange={(e) => setName(e.target.value)} />
+          <label>Name</label>
+          <input title='name' required placeholder='Name...' type='text' onChange={(e) => setName(e.target.value)} />
         </h3>
-  <h3>
-    <label>Username</label>
-  <input type="text" required title="Username" placeholder="Enter username" onChange={(e) => setUsername(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Email</label>
-  <input type="email" required title="Email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Password</label>
-  <input type="password" required title="Password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Date Of Birth</label>
-  <input type="date" required title="Date Of Birth" placeholder="Enter Date Of Birth" onChange={(e) => setDateOfBirth(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Gender</label>
-  <input type="text" required title="Gender" placeholder="Enter Gender" onChange={(e) => setGender(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Mobile Number</label>
-  <input type="text" required title="Mobile Number" placeholder="Enter Mobile Number" onChange={(e) => setMobileNumber(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Emergency Contact Name</label>
-  <input type="text" required title="Emergency Contact Name" placeholder="Enter Emergency Contact Name" onChange={(e) => setEmergencyName(e.target.value)}/>
-  </h3>
-  <h3>
-  <label>Emergency Contact Mobile Number</label>
-  <input type="text" required title="Emergency Contact Mobile" placeholder="Enter Emergency Contact Mobile" onChange={(e) => setEmergencyMobile(e.target.value)}/>
-  </h3>
-  <h3>
-  <button type="submit">Submit</button>
-  </h3>
-</form>
+        <h3>
+          <label>National ID</label>
+          <input title='name' required placeholder='National ID...' type='text' onChange={(e) => setNationalID(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Username</label>
+          <input type="text" required title="Username" placeholder="Username..." onChange={(e) => setUsername(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Email</label>
+          <input type="email" required title="Email" placeholder="Email..." onChange={(e) => setEmail(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Password</label>
+          <input type="password" required title="Password" placeholder="Password..." onChange={(e) => setPassword(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Date Of Birth</label>
+          <input type="date" required title="Date Of Birth" placeholder="Date Of Birth..." onChange={(e) => setDateOfBirth(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Gender</label>
+          <input type="text" required title="Gender" placeholder="Gender..." onChange={(e) => setGender(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Mobile Number</label>
+          <input type="text" required title="Mobile Number" placeholder="Mobile Number..." onChange={(e) => setMobileNumber(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Emergency Contact Name</label>
+          <input type="text" required title="Emergency Contact Name" placeholder="Emergency Contact Name..." onChange={(e) => setEmergencyName(e.target.value)} />
+        </h3>
+        <h3>
+          <label>Emergency Contact Mobile Number</label>
+          <input type="text" required title="Emergency Contact Mobile" placeholder="Emergency Contact Mobile..." onChange={(e) => setEmergencyMobile(e.target.value)} />
+        </h3>
+        <h3>
+          <button type="submit">Submit</button>
+        </h3>
+      </form>
     </div>
   );
 }

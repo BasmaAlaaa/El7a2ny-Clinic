@@ -44,13 +44,13 @@ const registerPatient = async (req, res) => {
       throw new Error('Email is already in use.');
     }
 
-    const patientExists = await Patient.findOne({ NationalID: NationalID });
+    const patientExists = await patientSchema.findOne({ NationalID: NationalID });
 
-    if(patientExists){
-      return res.status(404).send("You already registered");
+    if (patientExists) {
+      return res.status(404).send("You already registered.");
     }
-    
-    const customer = await createStripeCustomer({ Email,Name,MobileNumber });
+
+    const customer = await createStripeCustomer({ Email, Name, MobileNumber });
 
     const patient = await patientSchema.register(
       Username,
@@ -70,8 +70,8 @@ const registerPatient = async (req, res) => {
     );
 
     await patient.save();
-    
-    res.status(200).json({patient});
+
+    res.status(200).json({ patient });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -776,7 +776,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
     }
 
     // Get the subscribed health packages for the patient
-    const subscribedHP = patient.SubscribedHP.find({Status: "Subscribed"});
+    const subscribedHP = patient.SubscribedHP.find({ Status: "Subscribed" });
 
     // Send the list of subscribed health packages as a response
     res.status(200).json({ subscribedHealthPackages: subscribedHP });
@@ -786,7 +786,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
 };
 
 //req 21 : pay for appointment
-const payForAppointment = async(res, req) => {
+const payForAppointment = async (res, req) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -794,78 +794,78 @@ const payForAppointment = async(res, req) => {
   const { appId, paymentMethod } = req.params;
 
   try {
-    
-    const app = await Appointment.findOne({_id: appId });
+
+    const app = await Appointment.findOne({ _id: appId });
 
     if (!app) {
       return res.status(404).send({ error: 'Appointment not found' });
     }
 
-    const patient = await patientSchema.findOne({Username: app.PatientUsername});
+    const patient = await patientSchema.findOne({ Username: app.PatientUsername });
 
-    if(paymentMethod === "card"){
+    if (paymentMethod === "card") {
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: app.Price,
-      currency: 'egp',
-      customer: patient.StripeCustomerId,
-      description: "Paying for an appointment"
-    });
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: app.Price,
+        currency: 'egp',
+        customer: patient.StripeCustomerId,
+        description: "Paying for an appointment"
+      });
 
-    await stripe.paymentIntents.confirm(paymentIntent);
+      await stripe.paymentIntents.confirm(paymentIntent);
 
-    const updatedApp = {
-      $set: {
+      const updatedApp = {
+        $set: {
           PaymentMethod: "card"
-      },
-    };
-  
-    const updated = await Appointment.updateOne({_id: appId},updatedApp);
-}
-else if(paymentMethod === "Wallet"){
+        },
+      };
 
-  if(patient.WalletAmount <= app.Price)
-    return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
+      const updated = await Appointment.updateOne({ _id: appId }, updatedApp);
+    }
+    else if (paymentMethod === "Wallet") {
 
-  if(patient.WalletAmount >= app.Price){
+      if (patient.WalletAmount <= app.Price)
+        return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
 
-    const updatedPat = {
+      if (patient.WalletAmount >= app.Price) {
+
+        const updatedPat = {
+          $set: {
+            WalletAmount: (WalletAmount - app.Price),
+          },
+        };
+
+        const update = await patientSchema.updateOne({ Username: app.PatientUsername }, updatedPat);
+
+        const updatedApp = {
+          $set: {
+            PaymentMethod: "wallet"
+          },
+        };
+
+        const updated = await Appointment.updateOne({ _id: appId }, updatedApp);
+      }
+      else {
+
+        const updatedApp = {
+          $set: {
+            PaymentMethod: "wallet"
+          },
+        };
+
+        const updated = await Appointment.updateOne({ _id: appId }, updatedApp);
+
+        return res.status(400).send("Not enough money in the wallet!");
+      }
+
+    }
+    const updatedDoc = {
       $set: {
-        WalletAmount: (WalletAmount-app.Price),
+        WalletAmount: (WalletAmount + app.Price),
       },
     };
-  
-    const update = await patientSchema.updateOne({Username: app.PatientUsername},updatedPat);
 
-    const updatedApp = {
-      $set: {
-          PaymentMethod: "wallet"
-      },
-    };
-  
-    const updated = await Appointment.updateOne({_id: appId},updatedApp);
-  }
-  else{
-
-    const updatedApp = {
-      $set: {
-          PaymentMethod: "wallet"
-      },
-    };
-  
-    const updated = await Appointment.updateOne({_id: appId},updatedApp);
-
-    return res.status(400).send("Not enough money in the wallet!");
-  }
-  
-}
-  const updatedDoc = {
-    $set: {
-      WalletAmount: (WalletAmount+app.Price),
-    },
-  };
-
-  const update = await doctorSchema.updateOne({Username: app.DoctorUsername},updatedDoc);
+    const update = await doctorSchema.updateOne({ Username: app.DoctorUsername }, updatedDoc);
 
     return res.status(200).send(payment);
 
@@ -890,9 +890,9 @@ const viewHealthCarePackageStatus = async (req, res) => {
     }
 
     // Get the health care package status for the patient
-    const patientSubscription = patient.SubscribedHP.find({Type: healthPackageType})
+    const patientSubscription = patient.SubscribedHP.find({ Type: healthPackageType })
 
-    if(!patientSubscription){
+    if (!patientSubscription) {
 
     }
     // Send the health care package status as a response
@@ -1039,7 +1039,7 @@ const deleteMedicalHistoryDocument = async (req, res) => {
       return res.status(404).json({ error: 'Document not found' });
     }
     patient.MedicalHistoryDocuments.splice(documentIndex, 1);
-    
+
     await patient.save();
 
     res.status(200).send({ message: 'Document deleted successfully' });
@@ -1090,76 +1090,76 @@ const viewHealthRecords = async (req, res) => {
   }
 };
 
-const patientPastApp = async (req,res) =>{
-    
+const patientPastApp = async (req, res) => {
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   try {
-        const { Username } = req.params;
-    
-        // Find the doctor by ID
-        const patient = await patientSchema.findOne({Username:Username});
-    
-        if (!patient) {
-          return res.status(404).send('patient not found');
-        }
+    const { Username } = req.params;
 
-    
-        // Find upcoming appointments for the doctor
-        const pastAppointments = await appointmentSchema.find({
-          Status: { $in: ["Finished", "Following","finished","following"]}, // Adjust this condition based on your schema
-          PatientUsername: Username
-        },{DoctorUsername: 1, Date:1, Status:1, _id:0,PaymentMethod:1,Time:1});
-    
-        if (pastAppointments.length === 0) {
-          return res.status(404).send('No upcoming appointments found for this patient');
-        }
-          
-        res.send(pastAppointments);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-      }
+    // Find the doctor by ID
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send('patient not found');
+    }
+
+
+    // Find upcoming appointments for the doctor
+    const pastAppointments = await appointmentSchema.find({
+      Status: { $in: ["Finished", "Following", "finished", "following"] }, // Adjust this condition based on your schema
+      PatientUsername: Username
+    }, { DoctorUsername: 1, Date: 1, Status: 1, _id: 0, PaymentMethod: 1, Time: 1 });
+
+    if (pastAppointments.length === 0) {
+      return res.status(404).send('No upcoming appointments found for this patient');
+    }
+
+    res.send(pastAppointments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
 }
 
-const patientUpcoming = async (req,res) =>{
-    
+const patientUpcoming = async (req, res) => {
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   try {
-        const { Username } = req.params;
-    
-        // Find the doctor by ID
-        const patient = await patientSchema.findOne({Username:Username});
-    
-        if (!patient) {
-          return res.status(404).send('patient not found');
-        }
-    
-        // Find upcoming appointments for the doctor
-        const upcomingAppointments = await appointmentSchema.find({
-          Status: { $in: ["Upcoming", "Following","upcoming","following"]}, // Adjust this condition based on your schema
-          PatientUsername: Username
-        },{DoctorUsername: 1, Date:1, Status:1, _id:0,PaymentMethod:1,Time:1});
-    
-        if (upcomingAppointments.length === 0) {
-          return res.status(404).send('No upcoming appointments found for this patient');
-        }
-          
-        res.send(upcomingAppointments);
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Internal Server Error');
-      }
+    const { Username } = req.params;
+
+    // Find the doctor by ID
+    const patient = await patientSchema.findOne({ Username: Username });
+
+    if (!patient) {
+      return res.status(404).send('patient not found');
+    }
+
+    // Find upcoming appointments for the doctor
+    const upcomingAppointments = await appointmentSchema.find({
+      Status: { $in: ["Upcoming", "Following", "upcoming", "following"] }, // Adjust this condition based on your schema
+      PatientUsername: Username
+    }, { DoctorUsername: 1, Date: 1, Status: 1, _id: 0, PaymentMethod: 1, Time: 1 });
+
+    if (upcomingAppointments.length === 0) {
+      return res.status(404).send('No upcoming appointments found for this patient');
+    }
+
+    res.send(upcomingAppointments);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
 }
 
 const availableDoctorApps = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
+
   const { Username } = req.params;
   const { DoctorUsername } = req.body;
 
@@ -1173,13 +1173,13 @@ const availableDoctorApps = async (req, res) => {
 
     const Appointments = await appointmentSchema.find({
       DoctorUsername: DoctorUsername,
-      Status: { $in: ["Available", "available"]}, // Adjust this condition based on your schema
-    },{DoctorUsername: 1, Date:1, Status:1, _id:0,Time:1});
+      Status: { $in: ["Available", "available"] }, // Adjust this condition based on your schema
+    }, { DoctorUsername: 1, Date: 1, Status: 1, _id: 0, Time: 1 });
 
     if (Appointments.length === 0) {
       return res.status(404).send('No upcoming appointments found for this patient');
     }
-      
+
     res.send(Appointments);
   } catch (err) {
     console.error(err);
@@ -1208,100 +1208,100 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
     if (!doctor) {
       return res.status(404).send({ error: 'Doctor not found' });
     }
-      const doctorRate = doctor.HourlyRate;
+    const doctorRate = doctor.HourlyRate;
 
-      const clinicMarkup = 0.10; // 10% markup
+    const clinicMarkup = 0.10; // 10% markup
 
-      let sessionPrice = doctorRate;
+    let sessionPrice = doctorRate;
 
-      const healthPackages = patient.SubscribedHP;
+    const healthPackages = patient.SubscribedHP;
 
-      for(const hp of healthPackages){
-        if (hp.Status === "Subscribed") {
-          const discountPercentage = hp.doctorSessionDiscount || 0;
-  
-          const discountAmount = (doctorRate * discountPercentage) / 100;
-  
-          sessionPrice -= discountAmount;
-        }
+    for (const hp of healthPackages) {
+      if (hp.Status === "Subscribed") {
+        const discountPercentage = hp.doctorSessionDiscount || 0;
+
+        const discountAmount = (doctorRate * discountPercentage) / 100;
+
+        sessionPrice -= discountAmount;
       }
-      sessionPrice += sessionPrice * clinicMarkup;
-    
+    }
+    sessionPrice += sessionPrice * clinicMarkup;
+
     const availableSlots = doctor.AvailableTimeSlots;
 
     //var appDate = new Date(date);
     const booked = false;
 
-    let newAppointment = {}; 
+    let newAppointment = {};
 
-    for(const slot of availableSlots){
+    for (const slot of availableSlots) {
 
-        //if((appDate.getTime() === slot.Date.getTime()) && (time === slot.Time) && slot.Status === "available"){
-        if(!booked && timeSlot === slot._id){  
-          console.log("weseellt");
-          slot.Status = "booked";
-          doctor.save();
-  
-          newAppointment = appointmentSchema.create({
-            Date: date,
-            Time: time, 
-            DoctorUsername: doctorUsername,
-            PatientUsername: patientUsername,
-            Status: 'Upcoming',
-            PaymentMethod: paymentMethod,
-            Price: sessionPrice
-          });
+      //if((appDate.getTime() === slot.Date.getTime()) && (time === slot.Time) && slot.Status === "available"){
+      if (!booked && timeSlot === slot._id) {
+        console.log("weseellt");
+        slot.Status = "booked";
+        doctor.save();
 
-          booked = true;
-        }
+        newAppointment = appointmentSchema.create({
+          Date: date,
+          Time: time,
+          DoctorUsername: doctorUsername,
+          PatientUsername: patientUsername,
+          Status: 'Upcoming',
+          PaymentMethod: paymentMethod,
+          Price: sessionPrice
+        });
+
+        booked = true;
+      }
     }
 
     if (booked === false) {
       return res.status(404).send({ error: 'Selected appointment date and time are not available' });
     }
-    
+
     // paying for appointment
     const appId = newAppointment._id;
-    const app = await Appointment.findOne({_id: appId });
+    const app = await Appointment.findOne({ _id: appId });
 
     if (!app) {
       return res.status(404).send({ error: 'Appointment not found' });
     }
 
-    if(paymentMethod === "card"){
+    if (paymentMethod === "card") {
 
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: app.Price,
-      currency: 'egp',
-      customer: patient.StripeCustomerId,
-      description: "Paying for an appointment"
-    });
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: app.Price,
+        currency: 'egp',
+        customer: patient.StripeCustomerId,
+        description: "Paying for an appointment"
+      });
 
-    await stripe.paymentIntents.confirm(paymentIntent);
-  }
-else if(paymentMethod === "wallet"){
+      await stripe.paymentIntents.confirm(paymentIntent);
+    }
+    else if (paymentMethod === "wallet") {
 
-  if(patient.WalletAmount < app.Price)
-    return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
+      if (patient.WalletAmount < app.Price)
+        return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
 
-  if(patient.WalletAmount >= app.Price){
-    const updatedPat = {
+      if (patient.WalletAmount >= app.Price) {
+        const updatedPat = {
+          $set: {
+            WalletAmount: (WalletAmount - app.Price),
+          },
+        };
+
+        const update = await patientSchema.updateOne({ Username: app.PatientUsername }, updatedPat);
+      }
+    }
+
+    const updatedDoc = {
       $set: {
-        WalletAmount: (WalletAmount-app.Price),
+        WalletAmount: (WalletAmount + app.Price),
       },
     };
-  
-    const update = await patientSchema.updateOne({Username: app.PatientUsername},updatedPat);
-  }
-}
 
-  const updatedDoc = {
-    $set: {
-      WalletAmount: (WalletAmount+app.Price),
-    },
-  };
-
-  const update = await doctorSchema.updateOne({Username: app.DoctorUsername},updatedDoc);
+    const update = await doctorSchema.updateOne({ Username: app.DoctorUsername }, updatedDoc);
 
     res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
   } catch (error) {
@@ -1315,7 +1315,7 @@ const selectAppointmentDateTimeFamMem = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { Username } = req.params;
-  const { Date, Time, DoctorUsername ,Name , RelationToPatient} = req.body;
+  const { Date, Time, DoctorUsername, Name, RelationToPatient } = req.body;
 
   try {
     const patient = await patientSchema.findOne({ Username: Username });
@@ -1324,7 +1324,7 @@ const selectAppointmentDateTimeFamMem = async (req, res) => {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    const FamilyMember=await FamilyMember.findOne({
+    const FamilyMember = await FamilyMember.findOne({
       Name: Name,
       RelationToPatient: RelationToPatient,
       patientUsername: Username
@@ -1342,7 +1342,7 @@ const selectAppointmentDateTimeFamMem = async (req, res) => {
       DoctorUsername: DoctorUsername,
       Date: Date,
       Time: Time,
-      Status:  { $in: ["Available", "available"]},
+      Status: { $in: ["Available", "available"] },
     });
 
     if (!isAppointmentAvailable) {
@@ -1371,7 +1371,7 @@ const linkPatientAccountAsFam = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { PatientUsername } = req.params;
-  const { Email, RelationToPatient} = req.body;
+  const { Email, RelationToPatient } = req.body;
 
   try {
     const patient = await patientSchema.findOne({ Username: PatientUsername });
@@ -1380,22 +1380,22 @@ const linkPatientAccountAsFam = async (req, res) => {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    const famToBeLinked = await patientSchema.findOne({Email: Email});
+    const famToBeLinked = await patientSchema.findOne({ Email: Email });
 
-    if(!famToBeLinked){
+    if (!famToBeLinked) {
       return res.status(404).send({ error: 'Patient to be linked not found' });
     }
 
-    if(patient.Email === famToBeLinked.Email){
+    if (patient.Email === famToBeLinked.Email) {
       return res.status(404).send({ error: 'It is your email' });
     }
 
     //Calculating the age of the patientToBeLinked
-    var dob = new Date(famToBeLinked.DateOfBirth);  
-    var month_diff = Date.now() - dob.getTime();  
-    var age_dt = new Date(month_diff);         
-    var year = age_dt.getUTCFullYear();        
-    var ageofFam1 = Math.abs(year - 1970); 
+    var dob = new Date(famToBeLinked.DateOfBirth);
+    var month_diff = Date.now() - dob.getTime();
+    var age_dt = new Date(month_diff);
+    var year = age_dt.getUTCFullYear();
+    var ageofFam1 = Math.abs(year - 1970);
 
     patient.FamilyMembers.push(famToBeLinked.NationalID);
     const familyMem = await FamilyMember.create({
@@ -1405,9 +1405,9 @@ const linkPatientAccountAsFam = async (req, res) => {
       Gender: famToBeLinked.Gender,
       RelationToPatient: RelationToPatient,
       PatientUsername: PatientUsername
-  });
+    });
 
-  patient.save();
+    patient.save();
 
     res.status(200).send({ message: 'Patient is successfully linked', LinkedPatient: famToBeLinked, MyPatient: patient });
   } catch (error) {
@@ -1437,25 +1437,27 @@ const subscribeToAHealthPackage = async (req, res) => {
       return res.status(404).send({ error: 'Health Package not found' });
     }
 
-      const healthPackagesOfPatient = patient.SubscribedHP;
-      var patSub = false;
-      for(const hp of healthPackagesOfPatient){
-        if (hp.Type === healthPackageType || patSub){
-          patSub = true;
-          return res.status(404).send("You are already subscribed to this health package");
-        }
-        else if(hp.Status === "Subscribed") {
-          patSub = true;
-          return res.status(404).send("You are already subscribed to a health package");
-        }
+    const healthPackagesOfPatient = patient.SubscribedHP;
+    var patSub = false;
+    for (const hp of healthPackagesOfPatient) {
+      if (hp.Type === healthPackageType || patSub) {
+        patSub = true;
+        return res.status(404).send("You are already subscribed to this health package");
       }
-    
-    if(!patSub){
-      patient.SubscribedHP.push({Type: healthPackageType, 
-      PaymentMethod: paymentMethod,
-      Status: "Subscribed",
-      SubscriptionStartDate: Date.now(),
-      RenewalDate: (Date.now().getUTCFullYear()+1)});
+      else if (hp.Status === "Subscribed") {
+        patSub = true;
+        return res.status(404).send("You are already subscribed to a health package");
+      }
+    }
+
+    if (!patSub) {
+      patient.SubscribedHP.push({
+        Type: healthPackageType,
+        PaymentMethod: paymentMethod,
+        Status: "Subscribed",
+        SubscriptionStartDate: Date.now(),
+        RenewalDate: (Date.now().getUTCFullYear() + 1)
+      });
 
       patient.save();
     }
