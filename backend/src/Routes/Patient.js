@@ -33,13 +33,14 @@ const {
     payForAppointment,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
-    viewMedicalHistoryDocuments,
+    //viewMedicalHistoryDocuments,
     viewHealthRecords,
     patientPastApp,
     patientUpcoming,
     availableDoctorApps,
     selectAppointmentDateTime,
-    selectAppointmentDateTimeFamMem
+    selectAppointmentDateTimeFamMem,
+    linkPatientAccountAsFam
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -78,6 +79,9 @@ router.get('/allAppointments/:Username', allAppointments);
 
 router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMethodForHP);
 router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
+
+router.put('/payForAppointment/:appId/:paymentMethod',payForAppointment);
+
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 router.get('/health-packages', viewHealthPackages);
 router.get('/viewSubscribedHealthPackages/:Username', viewSubscribedHealthPackages);
@@ -87,7 +91,7 @@ router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
-router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
+//router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
 router.get('/patientPastApp/:Username', patientPastApp);
 router.get('/patientUpcoming/:Username', patientUpcoming);
@@ -95,6 +99,7 @@ router.get('/availableDoctorApps/:Username', availableDoctorApps);
 router.post('/selectAppointment/:Username', selectAppointmentDateTime);
 router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
+router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
 const log =require("../Controllers/loginController")
 
 router.post('/login',log.login);
