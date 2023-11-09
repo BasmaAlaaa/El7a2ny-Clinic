@@ -45,7 +45,7 @@ function CaseTableBody({ data }) {
 // }
 
 function TableHealthPackages({ tHead, data }) {
-  console.log('haayaa', data)
+  console.log('table health packages', data)
 
   return (
     <div className="case-table card mt-4">

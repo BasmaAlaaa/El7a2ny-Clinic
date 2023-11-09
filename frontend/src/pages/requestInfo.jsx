@@ -11,7 +11,7 @@ function RequestInfo(){
     let navigate = useNavigate();
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:8000/Admin/InfosOfAPharmacistRequest/${username}`)
+  const response = axios.get(`http://localhost:4000/Admin/InfosOfAPharmacistRequest/${username}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 

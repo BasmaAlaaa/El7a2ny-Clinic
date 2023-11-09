@@ -19,7 +19,7 @@ function AddMedicalHistoryDocument() {
     data.append('MedicalHistoryDocuments', MedicalHistoryDocuments);
 
     console.log(data)
-    const response = axios.post(`http://localhost:8000/Patient/addMedicalHistoryDocument/${username}`, data)
+    const response = axios.post(`http://localhost:4000/Patient/addMedicalHistoryDocument/${username}`, data)
       .then(res => console.log(res.data)).catch(err => console.log(err))
   }
 
