@@ -21,6 +21,8 @@ function DoctorView(){
     const [to, setTo] = useState(0);
     const [contractInfo, setContractInfo] = useState(null);
     const [showContract, setShowContract] = useState(false);
+    const[wallet, setWallet] = useState('');
+
 
 
     let navigate = useNavigate()
@@ -48,6 +50,26 @@ function DoctorView(){
     //     setShowContract(false); // In case of error, do not show the contract component
     //   }
     // };
+    console.log('date format', date)
+const handleAddAppointment = (e) => {
+  if(date && from){
+  const data = {date: date, time:from}
+ // try{
+    const response = axios.post(`http://localhost:4000/Doctor/addAvailableTimeSlots/${username}`, data)
+    .then(res =>alert('added')).catch(err => alert('error'))
+  }
+      // if (response.status === 200) {
+      //       alert(response.data.message);
+      //         console.log(response.data.message);
+      //     }}
+      //     catch(error ){
+      //       alert(`Failed to add appointment `);
+      //       console.error('Error:', error);
+      //     };
+         // window.location.reload(true); 
+         e.preventDefault();
+}
+
     const handleViewContract = () => {
       navigate(`/doctor/${username}/contract`);
     };
@@ -74,6 +96,12 @@ function DoctorView(){
       setShowContract(true);
     }
   }, [contractInfo]); 
+
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Doctor/viewWalletAmountByDoc/${username}`)
+    .then(res =>setWallet(res.data)).catch(err => console.log(err))
+    console.log('w',wallet)
+  }, []); 
   
 
     return (
@@ -122,13 +150,15 @@ function DoctorView(){
     <input  type= 'date' required onChange={(e) => setDate(e.target.value)} />
     </h3>
     <h3>
-    <input  type= 'number' placeholder="From" required onChange={(e) => setFrom(e.target.value)} />
+    <input  type= 'number' placeholder="Time" required onChange={(e) => setFrom(e.target.value)} />
     </h3>
-    <h3>
-    <input  type= 'number' placeholder="To" required onChange={(e) => setTo(e.target.value)} />
-    </h3>
-    <button>Add Appointment</button>
+    <button onClick={handleAddAppointment}>Add Appointment</button>
   </form>
+  {wallet &&
+  <div>
+  <h1>Wallet Amount: {wallet}</h1>
+  </div>
+  }
           
       
         </div>
