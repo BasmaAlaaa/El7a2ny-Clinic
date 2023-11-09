@@ -19,11 +19,23 @@ function HealthPackageInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/viewHealthCarePackageStatus/${username}/${type}`)
+  const response = axios.get(`http://localhost:4000/Patient/viewHealthCarePackageStatus/${username}/${type}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
   console.log(result)
+
+  const handleSubscribe = () =>{
+    const response = axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`)
+  .then(res =>alert('subscribed')).catch(err => alert(err.message))
+  window.location.reload(true);
+
+  }
+  const handleCancel = () =>{
+    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`)
+  .then(res =>alert('Cancelled')).catch(err => alert(err))
+  window.location.reload(true);
+  }
  
 
 
@@ -109,11 +121,11 @@ return (
 }       
         
         <div>
-          {result.Status !='Subscribed' && 
+          {result.Status !='Subscribed' && (typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
             <MainBtn
               txt="Subscribe"
               style="green-btn"
-              action={() => navigate(`/healthPackagesList/${username}`)}
+              action={handleSubscribe}
               key="navBtn"
             />
           }
@@ -121,7 +133,7 @@ return (
              <MainBtn
               txt="Cancel Subscription"
               style="white-btn"
-              action={() => navigate(`/healthPackagesList/${username}`)}
+              action={handleCancel}
               key="navBtn"
             />
           }

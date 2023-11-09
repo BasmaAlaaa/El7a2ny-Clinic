@@ -78,8 +78,23 @@ const {
   logout
 }= require("../src/Controllers/loginController")
 
+
 app.post("/login", login);
 app.get("/logout", logout);
+
+//OTP + Change password routes
+const{
+  sendOTP,
+  updatePassword,
+  changePassword
+} = require ('../src/Controllers/OtpController')
+
+
+app.post('/OtpResetPassword',sendOTP);
+app.get('/UpdatePassword',updatePassword);
+app.get('/ChangePassword',changePassword);
+
+
 
 // Registering Routes
 
@@ -98,4 +113,5 @@ app.use('/HealthPackage', healthPackageRoutes);
 app.use("/Patient", patientRoutes);
 
 app.use("/Prescription", prescriptionRoutes);
+
 
