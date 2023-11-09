@@ -1469,7 +1469,7 @@ module.exports = {
   viewHealthCarePackageStatus,
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
-  //viewMedicalHistoryDocuments,
+  viewMedicalHistoryDocuments,
   viewHealthRecords,
   selectAppointmentDateTimeFamMem,
   selectAppointmentDateTime,
