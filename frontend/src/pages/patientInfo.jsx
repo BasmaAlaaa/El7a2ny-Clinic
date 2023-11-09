@@ -52,7 +52,7 @@ function PatientInfo(){
     let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
 
   // const handleRemove=() => {
-  //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
+  //   const response = axios.delete(`http://localhost:4000/Admin/RemovePatientOrPharmacist/${username}`)
   // .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
   // }
   // console.log(resultDelete)
