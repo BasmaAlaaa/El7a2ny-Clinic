@@ -19,11 +19,23 @@ function HealthPackageInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/HealthPackage/view/${type}`)
+  const response = axios.get(`http://localhost:4000/Patient/viewHealthCarePackageStatus/${username}/${type}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
   console.log(result)
+
+  const handleSubscribe = () =>{
+    const response = axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`)
+  .then(res =>alert('subscribed')).catch(err => alert(err.message))
+  window.location.reload(true);
+
+  }
+  const handleCancel = () =>{
+    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`)
+  .then(res =>alert('Cancelled')).catch(err => alert(err))
+  window.location.reload(true);
+  }
  
 
 
@@ -52,7 +64,7 @@ return (
             <h3>Doctor Session Discount: {result.DoctorSessionDiscount}</h3>
             <h3>Medicine Discount: {result.MedicineDiscount}</h3>
             <h3>Family Subscription Discount: {result.FamilySubscriptionDiscount}</h3>
-            <h3>Status:</h3>
+            <h3>Status: {result.Status}</h3>
 
 
         </ul>
@@ -109,18 +121,22 @@ return (
 }       
         
         <div>
+          {result.Status !='Subscribed' && (typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
             <MainBtn
               txt="Subscribe"
               style="green-btn"
-              action={() => navigate(`/healthPackagesList/${username}`)}
+              action={handleSubscribe}
               key="navBtn"
             />
+          }
+          {result.Status === 'Subscribed' &&
              <MainBtn
               txt="Cancel Subscription"
               style="white-btn"
-              action={() => navigate(`/healthPackagesList/${username}`)}
+              action={handleCancel}
               key="navBtn"
             />
+          }
           </div>
         </div>
 )
