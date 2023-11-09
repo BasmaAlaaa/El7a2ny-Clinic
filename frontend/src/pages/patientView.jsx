@@ -14,6 +14,8 @@ function PatientView(){
   const navigate = useNavigate();
   const {username} = useParams();
   const [healthRecord, setHealthRecord] = useState([]);
+  const[wallet, setWallet] = useState('');
+
 
   let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
   useEffect(() => {
@@ -21,6 +23,13 @@ function PatientView(){
     .then(res =>setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
       }, [])
   console.log(healthRecord);
+
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Patient/viewWalletAmountByPatient/${username}`)
+    .then(res =>setWallet(res.data)).catch(err => console.log(err))
+    console.log('w',wallet)
+  }, []); 
+
 return (
     <div>
     <NavBarPatient username={username}/>
@@ -67,6 +76,12 @@ return (
     <DoctorsList/>
     <h1>Health Records </h1>
          <TableHealthRecords tHead={tHead} data={healthRecord} /> 
+         {wallet &&
+  <div>
+  <h1>Wallet Amount: {wallet}</h1>
+  </div>
+  }
+
 
     </div>
 )

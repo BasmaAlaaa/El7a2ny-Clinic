@@ -31,7 +31,7 @@ const {
     cancelHealthCarePackageSubscription,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
-    //viewMedicalHistoryDocuments,
+    viewMedicalHistoryDocuments,
     viewHealthRecords,
     patientPastApp,
     patientUpcoming,
@@ -88,13 +88,18 @@ router.post('/subscribeToAHealthPackage/:patientUsername/:healthPackageType', su
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
-//router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
+router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
+
 router.get('/patientPastApp/:Username', patientPastApp);
 router.get('/patientUpcoming/:Username', patientUpcoming);
 router.get('/availableDoctorApps/:Username', availableDoctorApps);
 router.post('/selectAppointment/:patientUsername/:timeSlot/:doctorUsername', selectAppointmentDateTimeAndPay);
 router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
+// router.get('/patientPastApp/:Username', patientPastApp);
+// router.get('/patientUpcoming/:Username', patientUpcoming);
+// router.get('/availableDoctorApps/:Username', availableDoctorApps);
+// router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
 const log =require("../Controllers/loginController")
