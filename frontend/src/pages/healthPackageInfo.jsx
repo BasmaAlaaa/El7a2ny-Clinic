@@ -19,7 +19,7 @@ function HealthPackageInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/HealthPackage/view/${type}`)
+  const response = axios.get(`http://localhost:4000/viewHealthCarePackageStatus/${username}/${type}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
