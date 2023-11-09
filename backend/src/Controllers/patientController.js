@@ -1067,7 +1067,7 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
 
     // Check if the patient has a subscription for the specified health package type
     const subscription = patient.SubscribedHP;
-    if(subscription.length <= 0){
+    if(subscription.length === 0){
       return res.status(404).send('You are not subscribed to any health package');
     }
 
@@ -1077,6 +1077,8 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
         hp.Status = 'Cancelled';
         hp.CancellationDate = new Date();
         hp.RenewalDate = null;
+
+        patient.WalletAmount = patient.WalletAmount+healthPackage.AnnualFee;
         // Save the updated patient
         await patient.save();
       }
@@ -1097,8 +1099,8 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
         if (familyMember) {
           // Get the associated PatientUsername from the FamilyMember model
           const subscription = familyMember.SubscribedHP;
-          if(subscription.length === 0){
-            return res.status(404).send('You are not subscribed to any health package');
+          if(subscription.length <= 0){
+            console.log('Your family member is not subscribed to any health package');
           }
 
           for(const hp of subscription){
@@ -1107,6 +1109,9 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
               hp.Status = 'Cancelled';
               hp.CancellationDate = new Date();
               hp.RenewalDate = null;
+
+              familyMember.WalletAmount = familyMember.WalletAmount+healthPackage.AnnualFee;
+
               // Save the updated patient
               await familyMember.save();
             }
@@ -1561,6 +1566,9 @@ const linkPatientAccountAsFam = async (req, res) => {
 
     patient.save();
 
+    famToBeLinked.FamilyMembers.push(patient.NationalID);
+    famToBeLinked.save();
+
     res.status(200).send({ message: 'Patient is successfully linked', LinkedPatient: famToBeLinked, MyPatient: patient });
   } catch (error) {
     res.status(500).send({ error: error.message });
@@ -1588,6 +1596,7 @@ const subscribeToAHealthPackage = async (req, res) => {
     if (!healthPackage) {
       return res.status(404).send({ error: 'Health Package not found' });
     }
+    if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= healthPackage.AnnualFee)){
 
     const healthPackagesOfPatient = patient.SubscribedHP;
     var patSub = false;
@@ -1596,32 +1605,33 @@ const subscribeToAHealthPackage = async (req, res) => {
     aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
 
     for (const hp of healthPackagesOfPatient) {
-      if ((hp.Type === healthPackageType && hp.Status === "Subscribed") || patSub) {
-        patSub = true;
-        return res.status(404).send("You are already subscribed to this health package");
-      }
-      else if (hp.Status === "Subscribed") {
+      if (hp.Status === "Subscribed" && !patSub) {
         patSub = true;
         return res.status(404).send("You are already subscribed to a health package");
       }
-      else if(hp.Type === healthPackageType && hp.Status === "Cancelled"){
+      else if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
         hp.Status = "Subscribed";
         hp.RenewalDate = aYearFromNow;
         hp.CancellationDate = null;
+        hp.PaymentMethod = paymentMethod;
+        hp.SubscriptionStartDate = new Date();
+        patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
 
         patient.save();
         patSub = true;
       }
-      else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"){
+      else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub){
         hp.Status = "Subscribed";
         hp.RenewalDate = aYearFromNow;
         hp.CancellationDate = null;
-
+        hp.PaymentMethod = paymentMethod;
+        hp.SubscriptionStartDate = new Date();
+        patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
         patient.save();
         patSub = true;
       }
+      
     }
-    
     if (!patSub) {
       patient.SubscribedHP.push({
         Type: healthPackageType,
@@ -1630,10 +1640,72 @@ const subscribeToAHealthPackage = async (req, res) => {
         SubscriptionStartDate: Date.now(),
         RenewalDate: aYearFromNow
       });
-
+      patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
       patient.save();
     }
+  }
+  else{
+    return res.status(404).send("Not enough cash in the wallet");
+  }
 
+    // Check if the patient has family members
+    if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
+      // Get the family members' usernames
+      const familyMemberIds = patient.FamilyMembers;
+
+      for (const familyMemberId of familyMemberIds) {
+        // Find the family member by username
+        const familyMember = await patientSchema.findOne({NationalID: familyMemberId});
+
+        if (familyMember) {
+          // Get the associated PatientUsername from the FamilyMember model
+          const healthPackagesOfFam = familyMember.SubscribedHP;
+          var patSub1 = false;
+
+          const aYearFromNow = new Date();
+          aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+
+          for (const hp of healthPackagesOfFam) {
+            if (hp.Status === "Subscribed" && !patSub1) {
+              patSub1 = true;
+              console.log("Your family member is already subscribed to a health package");
+            }
+            else if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub1){
+              hp.Status = "Subscribed";
+              hp.RenewalDate = aYearFromNow;
+              hp.CancellationDate = null;
+              hp.PaymentMethod = paymentMethod;
+              hp.SubscriptionStartDate = new Date();
+
+              familyMember.save();
+              patSub1 = true;
+            }
+            else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub1){
+              hp.Status = "Subscribed";
+              hp.RenewalDate = aYearFromNow;
+              hp.CancellationDate = null;
+              hp.PaymentMethod = paymentMethod;
+              hp.SubscriptionStartDate = new Date();
+
+              familyMember.save();
+              patSub1 = true;
+            }
+      
+          }
+          if (!patSub1) {
+            familyMember.SubscribedHP.push({
+              Type: healthPackageType,
+              PaymentMethod: paymentMethod,
+              Status: "Subscribed",
+              SubscriptionStartDate: Date.now(),
+              RenewalDate: aYearFromNow
+            });
+
+            familyMember.save();
+          }
+        }
+      }
+    }
     res.status(200).send({ message: 'Subscribed successfully', patient });
   } catch (error) {
     res.status(500).send({ error: error.message });
