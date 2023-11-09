@@ -68,7 +68,7 @@ function RegisterDoctor() {
 
     console.log(data)
 
-    const response = axios.post('http://localhost:8000/GuestDoctor/Register', data)
+    const response = axios.post('http://localhost:4000/GuestDoctor/Register', data)
       .then(res => console.log(res.data)).catch(err => console.log(err.request))
     navigate('/login');
   }

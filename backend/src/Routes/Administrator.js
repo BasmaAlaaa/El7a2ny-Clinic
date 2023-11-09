@@ -1,5 +1,5 @@
 const express = require("express");
-const log =require("../Controllers/loginController")
+
 // controller functions
 const adminController = require("../Controllers/adminController");
 
@@ -16,9 +16,6 @@ router.get("/viewUnapprovedDoctors", adminController.viewUnapprovedDoctors);
 router.get("/viewDoctorInfo/:Username", adminController.viewDoctorInfo);
 router.post('/acceptOrRejectDoctorRequest/:Username', adminController.acceptOrRejectDoctorRequest);
 router.post("/createContract", adminController.createContract);
-
-router.post('/login',log.login);
-router.get('/logout',log.logout);
 
 //app.post("/addUser",createUser);
 //router.get("/doctorInfo", getDocInfo);

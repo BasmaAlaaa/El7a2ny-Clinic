@@ -18,7 +18,7 @@ const appointmentSchema = new Schema({
     Status: {
         type: String,
         default:"Upcoming",
-        enum: ["Upcoming", "upcoming", "Completed", "completed", "Canceled", "canceled", "Rescheduled", "rescheduled","Following"]
+        enum: ["Upcoming", "upcoming", "Completed", "completed", "Canceled", "canceled", "Rescheduled", "rescheduled","Following","folloing","Available","available"]
     },
     PaymentMethod: {
       type: String,
@@ -33,6 +33,10 @@ const appointmentSchema = new Schema({
     Price:{
       type: Number,
       required: true
+    },
+    Time:{
+      type:Number,
+      required:true
     }
 },{ timestamps: true })
 
@@ -40,21 +44,27 @@ appointmentSchema.statics.register = async function (
     Date,
     DoctorUsername,
     PatientUsername,
-    Status
+    Status,
+    Price,
+    Time
   ) {
 
     // validation 
     if (!Date ||
       !PatientUsername ||
       !DoctorUsername ||
-      !Status ) { 
+      !Status ||
+      !Price ||
+      !Time) { 
     throw Error('All fields must be filled.');
 }
     const appointment = await this.create({
       Date,
       DoctorUsername,
       PatientUsername,
-      Status
+      Status,
+      Price,
+      Time
     });
   
     return appointment;
