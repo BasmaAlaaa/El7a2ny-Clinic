@@ -52,7 +52,7 @@ return (
             <h3>Doctor Session Discount: {result.DoctorSessionDiscount}</h3>
             <h3>Medicine Discount: {result.MedicineDiscount}</h3>
             <h3>Family Subscription Discount: {result.FamilySubscriptionDiscount}</h3>
-            <h3>Status:</h3>
+            <h3>Status: {result.Status}</h3>
 
 
         </ul>
@@ -109,18 +109,22 @@ return (
 }       
         
         <div>
+          {result.Status !='Subscribed' && 
             <MainBtn
               txt="Subscribe"
               style="green-btn"
               action={() => navigate(`/healthPackagesList/${username}`)}
               key="navBtn"
             />
+          }
+          {result.Status === 'Subscribed' &&
              <MainBtn
               txt="Cancel Subscription"
               style="white-btn"
               action={() => navigate(`/healthPackagesList/${username}`)}
               key="navBtn"
             />
+          }
           </div>
         </div>
 )

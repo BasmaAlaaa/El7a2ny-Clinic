@@ -28,6 +28,7 @@ const {
     viewHealthPackages,
     viewSubscribedHealthPackages,
     viewHealthCarePackageStatus,
+    viewHealthPackageStatus,
     cancelHealthCarePackageSubscription,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
@@ -85,6 +86,8 @@ router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealth
 router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 router.post('/subscribeToAHealthPackage/:patientUsername/:healthPackageType', subscribeToAHealthPackage);
 router.get('/viewHealthCarePackageStatus/:Username/:healthPackageType', viewHealthCarePackageStatus);
+router.get('/viewHealthPackageStatus/:Username/:healthPackageType', viewHealthPackageStatus);
+
 
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
