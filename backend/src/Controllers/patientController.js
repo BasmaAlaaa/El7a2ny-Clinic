@@ -776,10 +776,17 @@ const viewSubscribedHealthPackages = async (req, res) => {
     }
 
     // Get the subscribed health packages for the patient
-    const subscribedHP = patient.SubscribedHP.find({ Status: "Subscribed" });
+    const subscribedHPs = patient.SubscribedHP;
+
+    for( const hp of subscribedHPs){
+      if(hp.Status === "Subscribed"){
+        return res.status(200).json({hp});
+      }
+    }
+    
+    return res.status(404).send("The patient is not subscribed to any healthPackage at the moment");
 
     // Send the list of subscribed health packages as a response
-    res.status(200).json({ subscribedHealthPackages: subscribedHP });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
