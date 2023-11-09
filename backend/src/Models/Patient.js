@@ -68,8 +68,8 @@ const patientSchema = new Schema({
     },
     PaymentMethod: {
       type: String,
-      default: "Wallet",
-      enum: ["wallet", "Wallet", "Credit Card", "credit card"]
+      default: "card",
+      enum: ["wallet", "card"]
     },
     Status: {
       type: String,
@@ -87,11 +87,6 @@ const patientSchema = new Schema({
     CancellationDate: {
       type: Date,
       default: null,
-    },
-    PaymentStatus: {
-      type: String,
-      default: "Unpaid",
-      enum: ["paid", "unpaid", "Unpaid", "Paid"]
     },
     RenewalDate: {
       type: Date,

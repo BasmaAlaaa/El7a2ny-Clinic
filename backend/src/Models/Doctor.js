@@ -94,8 +94,7 @@ const doctorSchema = new Schema({
     Affiliation,
     EDB,
     PatientsUsernames,
-    Speciality,
-    Schedule    
+    Speciality    
   ) {
 
     // validation 
@@ -125,8 +124,7 @@ const doctorSchema = new Schema({
       Affiliation,
       EDB,
       PatientsUsernames,
-      Speciality,
-      Schedule
+      Speciality
     });
   
     return doctor;

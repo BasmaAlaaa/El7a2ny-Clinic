@@ -7,7 +7,6 @@ const FamilyMember = require('../Models/FamilyMember.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
-const Payment = require("../Models/Payment.js");
 
 require("dotenv").config();
 
@@ -272,7 +271,6 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
     const result = [];
 
     for (const doctor of doctors) {
-      console.log("sccc", doctor.Schedule)
       const doctorRate = doctor.HourlyRate;
 
       const clinicMarkup = 0.10; // 10% markup
@@ -297,7 +295,7 @@ const viewDoctorsWithSessionPrices = async (req, res) => {
         Email: doctor.Email,
         Speciality: doctor.Speciality,
         sessionPrice,
-        Schedule: doctor.Schedule
+        AvailableTimeSlots: doctor.AvailableTimeSlots
       });
     }
 
@@ -360,7 +358,7 @@ const findDocByAvailability = async (req, res) => {
     const result = [];
     for (const doc of doctors) {
       // const sch = doc.Schedule.map(({Date, From, To})=>({Date, From, To}));
-      doc.Schedule.map((e) => {
+      doc.AvailableTimeSlots.map((e) => {
 
         if (e.Date.toISOString().substring(0, 4) === Date.substring(0, 4) && e.Date.toISOString().substring(5, 7) === Date.substring(5, 7) && e.Date.toISOString().substring(8, 10) === Date.substring(8, 10)
           && e.From <= Time && e.To >= Time) {
@@ -778,32 +776,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
     }
 
     // Get the subscribed health packages for the patient
-    const subscribedHP = patient.SubscribedHP;
-
-    // Check if the patient has family members
-    if (patient.FamilyMembers.length > 0) {
-      // Get the family members' usernames
-      const familyMemberName = patient.FamilyMembers;
-
-      for (const familyMemberUsername of familyMemberName) {
-        // Find the family member by username
-        const familyMember = await FamilyMember.findOne({ Username: familyMemberUsername });
-
-        if (familyMember) {
-          // Get the associated PatientUsername from the FamilyMember model
-          const patientUsername = familyMember.PatientUsername;
-
-          if (patientUsername) {
-            // Find the patient with the associated PatientUsername
-            const familyMemberPatient = await patientSchema.findOne({ Username: patientUsername });
-
-            if (familyMemberPatient && familyMemberPatient.SubscribedHP.Type) {
-              subscribedHP.push(familyMemberPatient.SubscribedHP);
-            }
-          }
-        }
-      }
-    }
+    const subscribedHP = patient.SubscribedHP.find({Status: "Subscribed"});
 
     // Send the list of subscribed health packages as a response
     res.status(200).json({ subscribedHealthPackages: subscribedHP });
@@ -819,8 +792,6 @@ const payForAppointment = async(res, req) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { appId, paymentMethod } = req.params;
-  const { ExpMonth, ExpYear, CVV, CardNumber } = req.body;
-
 
   try {
     
@@ -832,7 +803,7 @@ const payForAppointment = async(res, req) => {
 
     const patient = await patientSchema.findOne({Username: app.PatientUsername});
 
-    if(paymentMethod === "Credit Card"){
+    if(paymentMethod === "card"){
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount: app.Price,
@@ -845,22 +816,11 @@ const payForAppointment = async(res, req) => {
 
     const updatedApp = {
       $set: {
-          PaymentStatus: "paid",
-          PaymentMethod: "Credit Card"
+          PaymentMethod: "card"
       },
     };
   
     const updated = await Appointment.updateOne({_id: appId},updatedApp);
-
-    const payment = await Payment.create({
-      PatientUsername: app.PatientUsername,
-      Amount: app.Price,
-      PaidOnDate: new Date(),
-      ItemPaidForId: appId,
-      TypeOfPurschase: "appointment",
-      PaymentMethod: "Credit Card",
-      Status: "success"
-  });
 }
 else if(paymentMethod === "Wallet"){
 
@@ -879,43 +839,21 @@ else if(paymentMethod === "Wallet"){
 
     const updatedApp = {
       $set: {
-          PaymentStatus: "paid",
-          PaymentMethod: "Wallet"
+          PaymentMethod: "wallet"
       },
     };
   
     const updated = await Appointment.updateOne({_id: appId},updatedApp);
-
-    const payment = await Payment.create({
-      PatientUsername: app.PatientUsername,
-      Amount: app.Price,
-      PaidOnDate: new Date(),
-      ItemPaidForId: appId,
-      TypeOfPurschase: "appointment",
-      PaymentMethod: "Wallet",
-      Status: "success"
-  });
   }
   else{
 
     const updatedApp = {
       $set: {
-          PaymentStatus: "unpaid",
-          PaymentMethod: "Wallet"
+          PaymentMethod: "wallet"
       },
     };
   
     const updated = await Appointment.updateOne({_id: appId},updatedApp);
-
-    const payment = await Payment.create({
-      PatientUsername: app.PatientUsername,
-      Amount: app.Price,
-      PaidOnDate: new Date(),
-      ItemPaidForId: appId,
-      TypeOfPurschase: "appointment",
-      PaymentMethod: "Wallet",
-      Status: "failed"
-  });
 
     return res.status(400).send("Not enough money in the wallet!");
   }
@@ -941,7 +879,7 @@ const viewHealthCarePackageStatus = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username } = req.params;
+  const { Username, healthPackageType } = req.params;
 
   try {
     // Find the patient by username
@@ -952,55 +890,13 @@ const viewHealthCarePackageStatus = async (req, res) => {
     }
 
     // Get the health care package status for the patient
-    const patientSubscription = patient.SubscribedHP;
+    const patientSubscription = patient.SubscribedHP.find({Type: healthPackageType})
 
-    const result = {
-      Patient: {
-        Status: patientSubscription.Status,
-        EndDate: null,
-      },
-      FamilyMembers: [],
-    };
+    if(!patientSubscription){
 
-    // Check if the patient has family members
-    if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
-      // Get the family members' usernames
-      const familyMemberUsernames = patient.FamilyMembers;
-
-      for (const familyMemberUsername of familyMemberUsernames) {
-        // Find the family member by username
-        const familyMember = await FamilyMember.findOne({ Username: familyMemberUsername });
-
-        if (familyMember) {
-          // Get the associated PatientUsername from the FamilyMember model
-          const patientUsername = familyMember.PatientUsername;
-
-          if (patientUsername) {
-            // Find the patient with the associated PatientUsername
-            const familyMemberPatient = await patientSchema.findOne({ Username: patientUsername });
-
-            if (familyMemberPatient) {
-              const familyMemberSubscription = familyMemberPatient.SubscribedHP;
-              if (familyMemberSubscription.Status !== 'Unsubscribed') {
-                result.FamilyMembers.push({
-                  Name: familyMember.Name,
-                  Status: familyMemberSubscription.Status,
-                  EndDate: familyMemberSubscription.Status !== 'Unsubscribed' ? familyMemberSubscription.SubscriptionEndDate : null,
-                });
-              }
-            }
-          }
-        }
-      }
     }
-
-    // Set the EndDate for the patient
-    if (patientSubscription.Status !== 'Unsubscribed') {
-      result.Patient.EndDate = patientSubscription.SubscriptionEndDate;
-    }
-
     // Send the health care package status as a response
-    res.status(200).json(result);
+    res.status(200).json(patientSubscription);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -1082,7 +978,6 @@ const viewHealthPackages = async (req, res) => {
       return res.status(404).send('No health packages found');
     }
 
-
     const packageInfo = healthPackages.map((package) => ({
       Type: package.Type,
       AnnualFee: package.AnnualFee,
@@ -1090,7 +985,6 @@ const viewHealthPackages = async (req, res) => {
       MedicineDiscount: package.MedicineDiscount,
       FamilySubscriptionDiscount: package.FamilySubscriptionDiscount,
     }));
-    console.log('pcinfo', packageInfo);
 
     res.status(200).json(packageInfo);
   } catch (error) {
@@ -1221,10 +1115,13 @@ const viewHealthRecords = async (req, res) => {
     if (!patient) {
       return res.status(404).json({ error: 'Patient not found.' });
     }
+
     const healthRecords = patient.HealthRecords;
+
     if (healthRecords.length === 0) {
       return res.status(404).json({ message: 'No health records found for the patient.' });
     }
+
     res.status(200).json({ healthRecords });
   } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });
@@ -1328,42 +1225,121 @@ const availableDoctorApps = async (req, res) => {
   }
 }
 
-const selectAppointmentDateTime = async (req, res) => {
+const selectAppointmentDateTimeAndPay = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username } = req.params;
-  const { Date, Time, DoctorUsername } = req.body;
+  const { patientUsername, timeSlot, doctorUsername } = req.params;
+  const { paymentMethod } = req.body;
 
   try {
-    const patient = await patientSchema.findOne({ Username: Username });
+
+    //Selecting the date and time and payment method of appointment
+    const patient = await patientSchema.findOne({ Username: patientUsername });
 
     if (!patient) {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    // Check if the selected date and time are available for the specified doctor
-    const isAppointmentAvailable = await appointmentSchema.exists({
-      DoctorUsername: DoctorUsername,
-      Date: Date,
-      Time: Time,
-      Status:  { $in: ["Available", "available"]},
-    });
+    const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
-    if (!isAppointmentAvailable) {
-      return res.status(400).send({ error: 'Selected appointment date and time are not available' });
+    if (!doctor) {
+      return res.status(404).send({ error: 'Doctor not found' });
+    }
+      const doctorRate = doctor.HourlyRate;
+
+      const clinicMarkup = 0.10; // 10% markup
+
+      let sessionPrice = doctorRate;
+
+      const healthPackages = patient.SubscribedHP;
+
+      for(const hp of healthPackages){
+        if (hp.Status === "Subscribed") {
+          const discountPercentage = hp.doctorSessionDiscount || 0;
+  
+          const discountAmount = (doctorRate * discountPercentage) / 100;
+  
+          sessionPrice -= discountAmount;
+        }
+      }
+      sessionPrice += sessionPrice * clinicMarkup;
+    
+    const availableSlots = doctor.AvailableTimeSlots;
+
+    //var appDate = new Date(date);
+    const booked = false;
+
+    let newAppointment = {}; 
+
+    for(const slot of availableSlots){
+
+        //if((appDate.getTime() === slot.Date.getTime()) && (time === slot.Time) && slot.Status === "available"){
+        if(!booked && timeSlot === slot._id){  
+          console.log("weseellt");
+          slot.Status = "booked";
+          doctor.save();
+  
+          newAppointment = appointmentSchema.create({
+            Date: date,
+            Time: time, 
+            DoctorUsername: doctorUsername,
+            PatientUsername: patientUsername,
+            Status: 'Upcoming',
+            PaymentMethod: paymentMethod,
+            Price: sessionPrice
+          });
+
+          booked = true;
+        }
     }
 
-    // Create a new appointment for the patient
-    const newAppointment = new appointmentSchema({
-      Date: Date,
-      Time: Time,
-      DoctorUsername: DoctorUsername,
-      PatientUsername: Username,
-      Status: 'Upcoming',
+    if (booked === false) {
+      return res.status(404).send({ error: 'Selected appointment date and time are not available' });
+    }
+    
+    // paying for appointment
+    const appId = newAppointment._id;
+    const app = await Appointment.findOne({_id: appId });
+
+    if (!app) {
+      return res.status(404).send({ error: 'Appointment not found' });
+    }
+
+    if(paymentMethod === "card"){
+
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: app.Price,
+      currency: 'egp',
+      customer: patient.StripeCustomerId,
+      description: "Paying for an appointment"
     });
 
-    await newAppointment.save();
+    await stripe.paymentIntents.confirm(paymentIntent);
+  }
+else if(paymentMethod === "wallet"){
+
+  if(patient.WalletAmount < app.Price)
+    return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
+
+  if(patient.WalletAmount >= app.Price){
+    const updatedPat = {
+      $set: {
+        WalletAmount: (WalletAmount-app.Price),
+      },
+    };
+  
+    const update = await patientSchema.updateOne({Username: app.PatientUsername},updatedPat);
+  }
+}
+
+  const updatedDoc = {
+    $set: {
+      WalletAmount: (WalletAmount+app.Price),
+    },
+  };
+
+  const update = await doctorSchema.updateOne({Username: app.DoctorUsername},updatedDoc);
 
     res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
   } catch (error) {
@@ -1471,7 +1447,58 @@ const linkPatientAccountAsFam = async (req, res) => {
 
   patient.save();
 
-    res.status(200).send({ message: 'Patient linked successfully scheduled', LinkedPatient: famToBeLinked, MyPatient: patient });
+    res.status(200).send({ message: 'Patient is successfully linked', LinkedPatient: famToBeLinked, MyPatient: patient });
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+};
+
+const subscribeToAHealthPackage = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { patientUsername, healthPackageType } = req.params;
+  const { paymentMethod } = req.body;
+
+  try {
+
+    //Selecting the date and time and payment method of appointment
+    const patient = await patientSchema.findOne({ Username: patientUsername });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const healthPackage = await HealthPackage.findOne({ Type: healthPackageType });
+
+    if (!healthPackage) {
+      return res.status(404).send({ error: 'Health Package not found' });
+    }
+
+      const healthPackagesOfPatient = patient.SubscribedHP;
+      var patSub = false;
+      for(const hp of healthPackagesOfPatient){
+        if (hp.Type === healthPackageType || patSub){
+          patSub = true;
+          return res.status(404).send("You are already subscribed to this health package");
+        }
+        else if(hp.Status === "Subscribed") {
+          patSub = true;
+          return res.status(404).send("You are already subscribed to a health package");
+        }
+      }
+    
+    if(!patSub){
+      patient.SubscribedHP.push({Type: healthPackageType, 
+      PaymentMethod: paymentMethod,
+      Status: "Subscribed",
+      SubscriptionStartDate: Date.now(),
+      RenewalDate: (Date.now().getUTCFullYear()+1)});
+
+      patient.save();
+    }
+
+    res.status(200).send({ message: 'Subscribed successfully', patient });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -1497,10 +1524,10 @@ module.exports = {
   patientFilterAppsByDate,
   patientFilterAppsByStatus,
   allAppointments,
-  choosePaymentMethodForApp,
+  //choosePaymentMethodForApp,
   choosePaymentMethodForHP,
   viewWalletAmountByPatient,
-  payForAppointment,
+  //payForAppointment,
   viewHealthPackages,
   viewSubscribedHealthPackages,
   cancelHealthCarePackageSubscription,
@@ -1510,9 +1537,10 @@ module.exports = {
   //viewMedicalHistoryDocuments,
   viewHealthRecords,
   selectAppointmentDateTimeFamMem,
-  selectAppointmentDateTime,
+  selectAppointmentDateTimeAndPay,
   availableDoctorApps,
   patientUpcoming,
   patientPastApp,
-  linkPatientAccountAsFam
+  linkPatientAccountAsFam,
+  subscribeToAHealthPackage
 }

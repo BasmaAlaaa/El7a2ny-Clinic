@@ -42,22 +42,6 @@ const guestDoctorSchema = new Schema(
       required: true,
       enum:["dermatology","dentistry","psychiatry","neurology","orthopedics"]
     },
-    Schedule: [
-      {
-        Date:{
-          type: Date,
-          //required: true
-        },
-        From:{
-          type:Number,
-          //required:true
-        },
-        To: {
-          type:Number,
-          //required:true
-        }
-      }
-    ],
     IsApproved: {
       type: Boolean,
       default: false,

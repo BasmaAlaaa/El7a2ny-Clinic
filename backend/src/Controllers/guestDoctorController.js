@@ -18,8 +18,7 @@ const registerGuestDoctor = async (req, res) => {
         HourlyRate,
         Affiliation,
         EDB,
-        Speciality,
-        Schedule
+        Speciality
     } = req.body;
 
     try {
@@ -58,7 +57,6 @@ const registerGuestDoctor = async (req, res) => {
             Affiliation,
             EDB,
             Speciality,
-            Schedule,
             IDDocument: req.files['IDDocument'][0].path,
             MedicalDegreeDocument: req.files['MedicalDegreeDocument'][0].path,
             WorkingLicenseDocument: req.files['WorkingLicenseDocument'][0].path

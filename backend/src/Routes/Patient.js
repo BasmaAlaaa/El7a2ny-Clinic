@@ -24,13 +24,11 @@ const {
     patientFilterAppsByStatus,
     allAppointments,
     choosePaymentMethodForHP,
-    choosePaymentMethodForApp,
     viewWalletAmountByPatient,
     viewHealthPackages,
     viewSubscribedHealthPackages,
     viewHealthCarePackageStatus,
     cancelHealthCarePackageSubscription,
-    payForAppointment,
     addMedicalHistoryDocument,
     deleteMedicalHistoryDocument,
     //viewMedicalHistoryDocuments,
@@ -38,9 +36,10 @@ const {
     patientPastApp,
     patientUpcoming,
     availableDoctorApps,
-    selectAppointmentDateTime,
     selectAppointmentDateTimeFamMem,
-    linkPatientAccountAsFam
+    linkPatientAccountAsFam,
+    selectAppointmentDateTimeAndPay,
+    subscribeToAHealthPackage
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -78,9 +77,6 @@ router.get('/patientFilterAppsByStatus/:Username/:Status', patientFilterAppsBySt
 router.get('/allAppointments/:Username', allAppointments);
 
 router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMethodForHP);
-router.put('/choosePaymentMethodForApp/:_id', choosePaymentMethodForApp);
-
-router.put('/payForAppointment/:appId/:paymentMethod',payForAppointment);
 
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 router.get('/health-packages', viewHealthPackages);
@@ -88,6 +84,7 @@ router.get('/viewSubscribedHealthPackages/:Username', viewSubscribedHealthPackag
 router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus);
 router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
 router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
+router.post('/subscribeToAHealthPackage/:patientUsername/:healthPackageType', subscribeToAHealthPackage)
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
@@ -96,7 +93,7 @@ router.get('/viewHealthRecords/:Username', viewHealthRecords);
 router.get('/patientPastApp/:Username', patientPastApp);
 router.get('/patientUpcoming/:Username', patientUpcoming);
 router.get('/availableDoctorApps/:Username', availableDoctorApps);
-router.post('/selectAppointment/:Username', selectAppointmentDateTime);
+router.post('/selectAppointment/:patientUsername/:timeSlot/:doctorUsername', selectAppointmentDateTimeAndPay);
 router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
