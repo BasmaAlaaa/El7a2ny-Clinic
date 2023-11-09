@@ -811,6 +811,8 @@ const payForAppointment = async(res, req) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { appId, paymentMethod } = req.params;
+  const { ExpMonth, ExpYear, CVV, CardNumber } = req.body;
+
 
   try {
     
@@ -853,6 +855,9 @@ const payForAppointment = async(res, req) => {
   });
 }
 else if(paymentMethod === "Wallet"){
+
+  if(patient.WalletAmount <= app.Price)
+    return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
 
   if(patient.WalletAmount >= app.Price){
 
@@ -1085,33 +1090,62 @@ const viewHealthPackages = async (req, res) => {
   }
 };
 
-// Task 2: upload medical history document
-const addMedicalHistoryDocument = async (req, res) => {
-  const username = req.params.Username;
+// // Task 2: upload medical history document
+// const addMedicalHistoryDocument = (req, res) => {
+//   const { Username } = req.params;
+//   const document = req.file.path;
 
-  try {
-    const patient = await patientSchema.findOne({ Username: username });
+//   patientSchema.updateOne(
+//     { Username: Username },
+//     { $push: { MedicalHistoryDocuments: document } },
+//     (err, result) => {
+//       if (err) {
+//         return res.status(500).send({ error: 'Failed to upload the document' });
+//       }
 
-    if (!patient) {
-      return res.status(404).json({ message: 'Patient not found' });
-    }
+//       if (result.nModified === 0) {
+//         return res.status(404).send({ error: 'Patient not found' });
+//       }
 
-    if (!req.file) {
-      return res.status(400).json({ message: 'No file uploaded' });
-    }
+//       res.status(200).send({ message: 'Document uploaded successfully' });
+//     }
+//   );
+// };
 
-    patient.MedicalHistoryDocuments.push(req.file.filename);
 
-    await patient.save();
+// // Task 2: delete medical history document
+// const deleteMedicalHistoryDocument = async (req, res) => {
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Credentials', true);
 
-    return res.status(200).json({ message: 'Document uploaded successfully' });
-  } catch (error) {
-    console.error('Error in addMedicalHistoryDocument:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
+//   const { Username, documentId } = req.params;
 
-// Task 2: delete medical history document
+//   try {
+//     const patient = await patientSchema.findOne({ Username }).populate('MedicalHistoryDocuments');
+
+//     if (!patient) {
+//       return res.status(404).json({ error: 'Patient not found' });
+//     }
+
+//     //const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id.toString() === documentId);
+//     const documentToRemove = patient.MedicalHistoryDocuments.find(document => document._id && document._id.toString() === documentId);
+
+//     console.log(documentToRemove);
+
+
+//     if (!documentToRemove) {
+//       return res.status(404).json({ error: 'Document not found' });
+//     }
+
+//     patient.MedicalHistoryDocuments.pull(documentToRemove);
+    
+//     await patient.save();
+
+//     res.status(200).send({ message: 'Document deleted successfully' });
+//   } catch (error) {
+//     res.status(500).json({ error: error.message });
+//   }
+// };
 const deleteMedicalHistoryDocument = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -1139,24 +1173,34 @@ const deleteMedicalHistoryDocument = async (req, res) => {
   }
 };
 
-const viewMedicalHistoryDocuments = async (req, res) => {
-  const { Username } = req.params;
-  
+
+
+const addMedicalHistoryDocument = async (req, res) => {
+  const username = req.params.Username;
+
   try {
-    const patient = await patientSchema.findOne({ Username: Username });
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username: username });
 
     if (!patient) {
-      return res.status(404).json({ error: 'Patient not found.' });
+      return res.status(404).json({ message: 'Patient not found' });
     }
 
-    const MedicalHistoryDocuments = patient.MedicalHistoryDocuments;
-    if (MedicalHistoryDocuments.length == 0) {
-      return res.status(404).json({ message: 'No medical history documents found.' });
+    // Check if a file was uploaded
+    if (!req.file) {
+      return res.status(400).json({ message: 'No file uploaded' });
     }
 
-     res.status(200).json({ MedicalHistoryDocuments });
+    // Add the uploaded file to the MedicalHistoryDocuments array
+    patient.MedicalHistoryDocuments.push(req.file.filename);
+
+    // Save the updated patient document
+    await patient.save();
+
+    return res.status(200).json({ message: 'Document uploaded successfully' });
   } catch (error) {
-    res.status(500).json({error: 'Server error', details: error.message });
+    console.error('Error in addMedicalHistoryDocument:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
   }
 };
 
@@ -1171,14 +1215,13 @@ const viewHealthRecords = async (req, res) => {
     }
     const healthRecords = patient.HealthRecords;
     if (healthRecords.length === 0) {
-      return res.status(404).json({ message: 'No health records found.' });
+      return res.status(404).json({ message: 'No health records found for the patient.' });
     }
     res.status(200).json({ healthRecords });
   } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
 };
-
 module.exports = {
   registerPatient,
   addFamMember,
@@ -1208,6 +1251,5 @@ module.exports = {
   viewHealthCarePackageStatus,
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
-  viewMedicalHistoryDocuments,
   viewHealthRecords
 }
