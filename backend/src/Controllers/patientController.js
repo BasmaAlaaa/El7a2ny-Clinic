@@ -896,14 +896,66 @@ const viewHealthCarePackageStatus = async (req, res) => {
       return res.status(404).send('Patient not found');
     }
 
+    const healthPackage = await HealthPackage.findOne({Type: healthPackageType});
+
+    if (!healthPackage) {
+      return res.status(404).send('Health Package not found');
+    }
+
     // Get the health care package status for the patient
-    const patientSubscription = patient.SubscribedHP
+    const patientSubscription = patient.SubscribedHP;
+    var result ={};
 
-    if (!patientSubscription) {
-
+    if(patientSubscription.length === 0){
+      result  = {
+        Type: healthPackageType,
+        AnnualFee: healthPackage.AnnualFee,
+        DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
+        MedicineDiscount: healthPackage.MedicineDiscount,
+        FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
+        Status: 'Unsubscribed',
+      }
+    }
+    else{
+      for(const hp of patientSubscription){
+        if(hp.Type === healthPackageType){
+          if(hp.Status === "Cancelled"){
+            result  = {
+              Type: healthPackageType,
+              AnnualFee: healthPackage.AnnualFee,
+              DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
+              MedicineDiscount: healthPackage.MedicineDiscount,
+              FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
+              Status: 'Cancelled',
+              CancellationDate: hp.CancellationDate
+            }
+          }
+          else if(hp.Status === "Subscribed"){
+            result  = {
+              Type: healthPackageType,
+              AnnualFee: healthPackage.AnnualFee,
+              DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
+              MedicineDiscount: healthPackage.MedicineDiscount,
+              FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
+              Status: 'Subscribed',
+              RenewalDate: hp.RenewalDate
+            }
+          }
+        }
+        else{
+          result  = {
+            Type: healthPackageType,
+            AnnualFee: healthPackage.AnnualFee,
+            DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
+            MedicineDiscount: healthPackage.MedicineDiscount,
+            FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
+            Status: 'Unsubscribed',
+          }
+        }
+      }
     }
     // Send the health care package status as a response
-    res.status(200).json(patientSubscription);
+    res.status(200).send(result);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

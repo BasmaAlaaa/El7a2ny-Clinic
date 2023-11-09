@@ -81,7 +81,7 @@ router.put('/choosePaymentMethodForHP/:type/:PatientUsername', choosePaymentMeth
 router.get('/viewWalletAmountByPatient/:PatientUsername', viewWalletAmountByPatient);
 router.get('/health-packages', viewHealthPackages);
 router.get('/viewSubscribedHealthPackages/:Username', viewSubscribedHealthPackages);
-router.get('/viewHealthCarePackageStatus/:Username', viewHealthCarePackageStatus);
+router.get('/viewHealthCarePackageStatus/:Username/:healthPackageType', viewHealthCarePackageStatus);
 router.post('/cancelHealthCarePackageSubscription/:Username/:Type', cancelHealthCarePackageSubscription);
 router.get('/viewHealthPackages/:Username', viewSubscribedHealthPackages);
 router.post('/subscribeToAHealthPackage/:patientUsername/:healthPackageType', subscribeToAHealthPackage)
