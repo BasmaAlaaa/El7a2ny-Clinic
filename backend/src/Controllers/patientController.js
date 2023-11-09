@@ -780,7 +780,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
 
     for( const hp of subscribedHPs){
       if(hp.Status === "Subscribed"){
-        return res.status(200).json({hp});
+        return res.status(200).send([hp]);
       }
     }
     
@@ -897,7 +897,7 @@ const viewHealthCarePackageStatus = async (req, res) => {
     }
 
     // Get the health care package status for the patient
-    const patientSubscription = patient.SubscribedHP.find({ Type: healthPackageType })
+    const patientSubscription = patient.SubscribedHP
 
     if (!patientSubscription) {
 
