@@ -18,17 +18,12 @@ const appointmentSchema = new Schema({
     Status: {
         type: String,
         default:"Upcoming",
-        enum: ["Upcoming", "upcoming", "Completed", "completed", "Canceled", "canceled", "Rescheduled", "rescheduled","Following","folloing","Available","available"]
+        enum: ["Upcoming", "upcoming", "Completed", "completed", "Canceled", "canceled", "Rescheduled", "rescheduled","Following","folloing"]
     },
     PaymentMethod: {
       type: String,
-      default: "Wallet",
-      enum: ["wallet","Wallet","Credit Card","credit card"]
-    },
-    PaymentStatus: {
-      type: String,
-      default: "Unpaid",
-      enum: ["paid","unpaid","Unpaid","Paid"]
+      default: "card",
+      enum: ["wallet","card"]
     },
     Price:{
       type: Number,

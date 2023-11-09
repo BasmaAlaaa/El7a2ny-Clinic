@@ -26,7 +26,8 @@ const { registerDoctor,
     addHealthRecordForPatient,
     viewHealthRecords ,
     addAvailableTimeSlots ,
-    scheduleFollowUp, docotrPastApp,
+    scheduleFollowUp, 
+    doctorPastApp,
     createAvailableApps
 } = require('../Controllers/doctorController'); // Import the function
 
@@ -71,8 +72,6 @@ router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
 // route to show the uploaded health records
 router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', viewHealthRecords);
 
-
-
 // Define the route for adding a health record for a patient
 router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordForPatient);
 
@@ -80,8 +79,8 @@ router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordF
 router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
-router.post('/schedule-follow-up', scheduleFollowUp);
-router.get('/docotrPastApp/:Username', docotrPastApp);
+router.post('/scheduleFollowUp', scheduleFollowUp);
+router.get('/doctorPastApp/:Username', doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 
 

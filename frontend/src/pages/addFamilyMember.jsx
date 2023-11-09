@@ -31,7 +31,11 @@ function AddFamilyMember() {
   const [nationalID, setNationalID] = useState('');
   const [age, setAge] = useState(0)
   const [gender, setGender] = useState('')
-  const [relationToPatient, setRelationToPatient] = useState('')
+  const [relationToPatient, setRelationToPatient] = useState('');
+  const [relationToPatientLink, setRelationToPatientLink] = useState('');
+  const [email, setEmail] = useState('')
+
+
 
 
   const handleSubmit = (e) => {
@@ -40,6 +44,13 @@ function AddFamilyMember() {
     console.log(data)
     const response = axios.post(`http://localhost:4000/Patient/addFamMember/${username}`, data)
 .then(res =>console.log(res.data)).catch(err => console.log(err))
+  }
+  const handleSubmitLink = (e) => {
+    e.preventDefault();
+    const data = {Email:email, RelationToPatient:relationToPatientLink}
+    console.log(data)
+    const response = axios.post(`http://localhost:4000/Patient/linkPatientAccountAsFam/${username}`, data)
+.then(res =>alert('Added successfully')).catch(err => alert(err))
   }
 
   return (
@@ -53,6 +64,13 @@ function AddFamilyMember() {
         <h3><input  required placeholder= 'enter Age' type= 'number' onChange={(e) => setAge(e.target.value)} /></h3>
         <h3><input  required placeholder= 'enter Gender' type= 'text' onChange={(e) => setGender(e.target.value)} /></h3>
         <h3><input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatient(e.target.value)} /></h3>
+
+        <h3><button type="submit">Submit</button></h3>
+    </form>
+    <form onSubmit={handleSubmitLink}>
+        <h2>Link Patient as Family Member</h2>
+        <h3><input  required placeholder= 'enter Email' type= 'email' onChange={(e) => setEmail(e.target.value)} /></h3>
+        <h3><input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatientLink(e.target.value)} /></h3>
 
         <h3><button type="submit">Submit</button></h3>
     </form>

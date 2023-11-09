@@ -9,8 +9,7 @@ function CaseTableBody({ data }) {
     <>
       
     {data.Date && <th>{data.Date.substring(0,10)}</th>}
-    {data.From && <td>{data.From}</td>}
-    {data.To && <td>{data.To}</td>}
+    {data.Time && <td>{data.Time}</td>}
     {data.Status && <td>{data.Status}</td>}
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">

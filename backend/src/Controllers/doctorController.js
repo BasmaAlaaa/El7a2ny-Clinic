@@ -71,8 +71,7 @@ const registerDoctor = async (req, res) => {
       HourlyRate,
       Affiliation,
       EDB,
-      Speciality,
-      Schedule
+      Speciality
   } = req.body;
 
   console.log(req.files)
@@ -113,7 +112,6 @@ const registerDoctor = async (req, res) => {
           Affiliation,
           EDB,
           Speciality,
-          Schedule,
           IDDocument: req.files['IDDocument'][0].path,
           MedicalDegreeDocument: req.files['MedicalDegreeDocument'][0].path,
           WorkingLicenseDocument: req.files['WorkingLicenseDocument'][0].path
@@ -630,7 +628,7 @@ const addHealthRecordForPatient = async (req, res) => {
     patient.HealthRecords.push(healthRecord);
     await patient.save();
 
-    res.status(200).json({ message: 'New health record added for the patient.' });
+    res.status(200).json({ message: 'New health record added for the patient.', patient });
   } catch (error) {
     res.status(500).json({ error: 'Server error', details: error.message });
   }
@@ -657,6 +655,9 @@ const addAvailableTimeSlots = async (req, res) => {
 
     for(const slot of slots){
       if(!found){
+        console.log(slot.Date, newDate);
+        console.log(slot.Time, time);
+
         if(slot.Date.getTime() === newDate.getTime() && slot.Time === time){
           found = true;
           return res.status(404).send("Already added Slot in your Schedule");
@@ -687,9 +688,7 @@ const addAvailableTimeSlots = async (req, res) => {
       if (!existingDoctor) {
         return res.status(404).json({ error: 'The specified doctor is not associated with the patient.' });
       }
-  
-    
-  
+
       // Update the patient's status to 'Follow-up' in the appointment
       await appointmentSchema.updateOne(
         { DoctorUsername, PatientUsername, Status: 'Upcoming' },
@@ -701,7 +700,9 @@ const addAvailableTimeSlots = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
-  const docotrPastApp = async (req,res) =>{
+
+
+  const doctorPastApp = async (req,res) =>{
     
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
@@ -793,21 +794,6 @@ module.exports = {
     addHealthRecordForPatient ,
     addAvailableTimeSlots ,
     scheduleFollowUp,
-    docotrPastApp,
+    doctorPastApp,
     createAvailableApps
-  
-  
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
