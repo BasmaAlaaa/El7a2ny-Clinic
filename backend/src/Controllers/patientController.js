@@ -1449,14 +1449,16 @@ const subscribeToAHealthPackage = async (req, res) => {
         return res.status(404).send("You are already subscribed to a health package");
       }
     }
-
+    const aYearFromNow = new Date();
+    aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+    
     if (!patSub) {
       patient.SubscribedHP.push({
         Type: healthPackageType,
         PaymentMethod: paymentMethod,
         Status: "Subscribed",
         SubscriptionStartDate: Date.now(),
-        RenewalDate: (Date.now().getUTCFullYear() + 1)
+        RenewalDate: aYearFromNow
       });
 
       patient.save();
