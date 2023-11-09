@@ -17,29 +17,32 @@ function HealthPackagesList(){
     }, [])
     useEffect(() => {
       const response = axios.get(`http://localhost:4000/Patient/viewSubscribedHealthPackages/${username}`)
-      .then(res =>setResultSub(res.data.subscribedHealthPackages)).catch(err => console.log(err))
+      .then(res =>setResultSub(res.data)).catch(err => console.log(err))
         }, [])
   console.log('hayouya', result)
-  result.map((e) => {
-    console.log(e)
-  })
+  // result.map((e) => {
+  //   console.log(e)
+  // })
   console.log('hayouya sub', resultSub)
-  resultSub.map((e) => {
-    console.log(e)
-  })
+  // resultSub.map((e) => {
+  //   console.log(e)
+  // })
   let navigate = useNavigate()
   let tHead = ['Type', 'Annual Fee', 'Doctor Session Discount', 'Medicine Discount', 'Family Subscription Discount', 'View'];
+  let tHeadSub = ['Type', 'Payment Method', 'Renewal Date', 'Subscription Start Date', 'Subscription End Date']
     return (
         <div>
           <NavBarPatient username={username}/>
         <div className="d-flex justify-content-between flex-row">
       <p className="text-capitalize fs-4 w-25">Health Packages</p>
     </div>
-    <TableHealthPackages tHead={tHead} data={result}/>
+    {result && <TableHealthPackages tHead={tHead} data={result}/>
+}
     <div className="d-flex justify-content-between flex-row">
-      <p className="text-capitalize fs-4 w-25">Subscribed Health Packages</p>
+      <p className="text-capitalize fs-4 w-25">Subscribed Health Package</p>
     </div>    
-    <TableHealthPackages tHead={tHead} data={resultSub}/>
+    {resultSub && <TableHealthPackages tHead={tHeadSub} data={resultSub}/>
+}
 
         </div>
     )
