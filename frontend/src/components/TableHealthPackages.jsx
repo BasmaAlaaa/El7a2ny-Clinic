@@ -14,18 +14,23 @@ function CaseTableBody({ data }) {
     {data.MedicineDiscount && <td>{data.MedicineDiscount}</td>}
     {data.FamilySubscriptionDiscount && <td>{data.FamilySubscriptionDiscount}</td>}
 
+    {data.PaymentMethod && <td>{data.PaymentMethod}</td>}
+    {data.RenewalDate && <td>{data.RenewalDate.substring(0,10)}</td>}
+    {data.SubscriptionStartDate && <td>{data.SubscriptionStartDate.substring(0,10)}</td>}
+    {data.SubscriptionEndDate && <td>{data.SubscriptionEndDate.substring(0,10)}</td>}
 
+{data.AnnualFee &&
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/healthPackageInfo/${username}/${data.type}`)}
+        onClick={()=>navigate(`/healthPackageInfo/${username}/${data.Type}`)}
       >
         View
       </button>
       </div>
       </td>
-      
+}
 
     </>
   );
