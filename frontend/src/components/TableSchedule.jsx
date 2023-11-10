@@ -1,8 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import moment from 'moment';
 
-
-function CaseTableBody({ data }) {
+function CaseTableBody({ data, doctorUsername, patientUsername }) {
   let navigate = useNavigate()
 
   return (
@@ -11,17 +9,31 @@ function CaseTableBody({ data }) {
     {data.Date && <th>{data.Date.substring(0,10)}</th>}
     {data.Time && <td>{data.Time}</td>}
     {data.Status && <td>{data.Status}</td>}
+    {data.Status==='available' &&
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        //onClick={handleReject}
+        onClick={()=>navigate(`/payAppointment/${patientUsername}/${data._id}/${doctorUsername}`)}
       >
         Book
       </button>
       </div>
       </td>
-    
+}
+{data.Status==='available' &&
+
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate(`/payAppointmentFamily/${patientUsername}/${data._id}/${doctorUsername}`)}
+      >
+        Book For a Family Member
+      </button>
+      </div>
+      </td>
+}
       
 
     </>
@@ -41,7 +53,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableSchedule({ tHead, data, searchText, searchDate, filterText }) {
+function TableSchedule({ tHead, data, doctorUsername, patientUsername }) {
   console.log('haayaa', data)
 
   return (
@@ -58,7 +70,7 @@ function TableSchedule({ tHead, data, searchText, searchDate, filterText }) {
           {data && data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} doctorUsername={doctorUsername} patientUsername={patientUsername}/>
             </tr>
           ))}
         </tbody>
