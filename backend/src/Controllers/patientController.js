@@ -1150,32 +1150,6 @@ const viewHealthPackages = async (req, res) => {
 };
 
 // // Task 2: upload medical history document
-// const addMedicalHistoryDocument = async (req, res) => {
-//   const username = req.params.Username;
-
-//   try {
-
-//     const patient = await patientSchema.findOne({ Username: username });
-
-//     if (!patient) {
-//       return res.status(404).json({ message: 'Patient not found' });
-//     }
-
-//     if (!req.file) {
-//       return res.status(400).json({ message: 'No file uploaded' });
-//     }
-
-//     patient.MedicalHistoryDocuments.push(req.file.filename);
-
-//     await patient.save();
-
-//     return res.status(200).json({ message: 'Document uploaded successfully' });
-//   } catch (error) {
-//     console.error('Error in addMedicalHistoryDocument:', error);
-//     res.status(500).json({ message: 'Internal Server Error' });
-//   }
-// };
-
 const addMedicalHistoryDocument = async (req, res) => {
   const username = req.params.Username;
 
@@ -1210,33 +1184,6 @@ const addMedicalHistoryDocument = async (req, res) => {
 
 
 // Task 2: delete medical history document
-// const deleteMedicalHistoryDocument = async (req, res) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   const { Username, filePathToRemove } = req.params;
-
-//   try {
-//     const patient = await patientSchema.findOne({ Username });
-
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found' });
-//     }
-//     const documentIndex = patient.MedicalHistoryDocuments.indexOf(filePathToRemove);
-
-//     if (documentIndex === -1) {
-//       return res.status(404).json({ error: 'Document not found' });
-//     }
-//     patient.MedicalHistoryDocuments.splice(documentIndex, 1);
-
-//     await patient.save();
-
-//     res.status(200).send({ message: 'Document deleted successfully' });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// };
-
 const deleteMedicalHistoryDocument = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -1273,25 +1220,6 @@ const deleteMedicalHistoryDocument = async (req, res) => {
 
 
 // view medical history documents
-// const viewMedicalHistoryDocuments = async (req, res) => {
-//   const { Username } = req.params;
-
-//   try {
-//     const patient = await patientSchema.findOne({ Username: Username });
-
-//     if (!patient) {
-//       return res.status(404).json({ error: 'Patient not found.' });
-//     }
-//     const MedicalHistoryDocuments = patient.MedicalHistoryDocuments;
-//     if (MedicalHistoryDocuments.length === 0) {
-//       return res.status(404).json({ message: 'No health records found for the patient.' });
-//     }
-//     res.status(200).json({ MedicalHistoryDocuments });
-//   } catch (error) {
-//     res.status(500).json({ error: 'Server error', details: error.message });
-//   }
-// };
-
 const viewMedicalHistoryDocuments = async (req, res) => {
   const { Username } = req.params;
 
