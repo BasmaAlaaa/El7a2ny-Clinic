@@ -1377,16 +1377,21 @@ const availableDoctorApps = async (req, res) => {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    const Appointments = await appointmentSchema.find({
-      DoctorUsername: DoctorUsername,
-      Status: { $in: ["Available", "available"] }, // Adjust this condition based on your schema
-    }, { DoctorUsername: 1, Date: 1, Status: 1, _id: 0, Time: 1 });
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
 
-    if (Appointments.length === 0) {
-      return res.status(404).send('No upcoming appointments found for this patient');
+    if (!doctor) {
+      return res.status(404).send({ error: 'doctor not found' });
     }
 
-    res.send(Appointments);
+    let result = [];
+    const slots = doctor.AvailableTimeSlots;
+    for(const slot of slots){
+      if(slot.Status === "available"){
+        result.push(slot);
+      }
+    }
+
+    res.send(result);
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
