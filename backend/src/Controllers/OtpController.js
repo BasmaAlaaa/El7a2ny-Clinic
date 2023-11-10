@@ -20,7 +20,7 @@ const transporter = nodemailer.createTransport({
 
 const sendOTP = async ({ body }, res) => {
     const {Email} = body;
-    
+
   const isPatient = await Patient.findOne({ Email : Email});
   const isDoctor = await Doctor.findOne({ Email : Email });
   const isAdmin = await Admin.findOne({ Email : Email });
@@ -113,22 +113,27 @@ const updatePassword = async ({ body }, res) => {
   }
 };
 
-const changePassword = async ({ body }, res) => {
-  const { Email, oldPassword, newPassword } = body;
+const changePassword = async (req, res) => {
+  const { Username } = req.params;
+  const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
     // Find and update the password for patient or Doctor
-    const updateQuery = { Email: Email, Password: oldPassword };
-    const updateField = { Password: newPassword };
+    if(newPassword === confirmPassword){
+      const updateQuery = { Username: Username, Password: oldPassword };
+      const updateField = { Password: newPassword };
 
-    const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
-    const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
-    const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
+      const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
+      const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
+      const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
 
-
-    if (updatedPatient || updatedDoctor || updatedAdmin) {
-      res.status(200).json({ message: 'Password updated successfully' });
-    } else {
-      res.status(401).json({ error: 'Invalid email or password' });
+      if (updatedPatient || updatedDoctor || updatedAdmin) {
+        res.status(200).json({ message: 'Password updated successfully' });
+      } else {
+        res.status(401).json({ error: 'Invalid email or password' });
+      }
+    }
+    else{
+      return res.status(401).json({ error: 'New Password and Confirm Password do not match' });
     }
   } catch (error) {
     res.status(500).json({ error: 'Failed to change password' });

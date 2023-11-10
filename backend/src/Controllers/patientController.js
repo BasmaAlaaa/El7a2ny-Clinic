@@ -474,9 +474,29 @@ const viewDoctorInfo = async (req, res) => {
 
     sessionPrice += sessionPrice * clinicMarkup;
 
+    const slots = doctor.AvailableTimeSlots;
+    const availableSlots = [];
+
+    for( const slot of slots){
+      if(slot.Status === "available"){
+        availableSlots.push(slot);
+      }
+    }
+
     const result = {
-      doctor,
-      SessionPrice : sessionPrice
+      Username: doctor.Username,
+      Name: doctor.Name,
+      Email: doctor.Email,
+      DateOfBirth: doctor.DateOfBirth,
+      HourlyRate: doctor.HourlyRate,
+      Affiliation: doctor.Affiliation,
+      EBD: doctor.EDB,
+      Speciality: doctor.Speciality,
+      IDDocument: doctor.IDDocument,
+      MedicalDegreeDocument: doctor.MedicalDegreeDocument,
+      WorkingLicenseDocument: doctor.WorkingLicenseDocument,
+      AvailableTimeSlots: availableSlots,
+      SessionPrice: sessionPrice
     };
 
     res.status(200).json(result);
