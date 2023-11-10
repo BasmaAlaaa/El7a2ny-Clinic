@@ -7,6 +7,7 @@ import Input from '../components/Input.jsx';
 import MainBtn from '../components/Button.jsx';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import axios from "axios";
 
 
 function Login() {
@@ -15,8 +16,27 @@ function Login() {
   const dispatch = useDispatch();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [username, setUsername] = useState(""); 
   
+  const handleLogin = async (event) => {
+    event.preventDefault(); 
+    try {
+      const response = await axios.post('http://localhost:4000/login', { Username: username, password: password });
+      localStorage.setItem('token', response.data.token); 
+      if (response.data.userDoctor) {
+        navigate('/doctorView/${username}');
+      } else if (response.data.userPatient) {
+        navigate('/patientView/${username}');
+      } else if (response.data.userAdmin) {
+        navigate('/administratorView/${username}');
+      } else {
+        console.error('User role not recognized');
+      }
+    } catch (error) {
+      console.error(error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.error : error.message);
+    }
+  };
 
   return (
     <div>
@@ -27,12 +47,12 @@ function Login() {
       <div className="form-width">
         <p className="text-capitalize fs-4">Login</p>
  
-          <Input
-            title='email'
-            placeholder='enter your email'
-            type='email'
-            onChange={(e) => setEmail(e.target.value)}
-          />
+        <Input
+        title='username' 
+        placeholder='enter your username'
+        type='text'
+        onChange={(e) => setUsername(e.target.value)}
+      />
           <Input
             title='password'
             placeholder='enter your password'
@@ -54,7 +74,7 @@ function Login() {
             <MainBtn
               txt='login'
               style='green-btn'
-              // action={handleSubmit(c)}
+              action={handleLogin}
               
             />
           </div>
