@@ -3,6 +3,11 @@ const Schema = mongoose.Schema;
 const validator = require('validator');
 const Appointment = require('./Appointment');
 
+const medicalHistoryDocument = new Schema({
+  document: Buffer,
+  contentType: String
+})
+
 const patientSchema = new Schema({
   Username: {
     type: String,
@@ -116,9 +121,7 @@ const patientSchema = new Schema({
     }
   ],
   MedicalHistoryDocuments: [
-    {
-      type: String,
-    },
+    medicalHistoryDocument
   ],
 
 }, { timestamps: true });

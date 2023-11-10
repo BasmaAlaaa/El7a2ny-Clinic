@@ -1,7 +1,5 @@
-import FamilyMembersList from "../components/FamilyMembersList";
 import NavBarPatient from "../components/NavBarPatient";
 import DoctorsList from "../components/DoctorsList";
-import PrescriptionsList from "../components/PrescriptionsList";
 import MainBtn from "../components/Button";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
@@ -70,7 +68,7 @@ function PatientView() {
           key="navBtn"
         />
         <MainBtn
-          txt="View Medical History Documents"
+          txt="Delete Medical History Documents"
           style="green-btn"
           action={() => navigate(`/viewMedicalHistoryDocuments/${username}`)}
           key="navBtn"

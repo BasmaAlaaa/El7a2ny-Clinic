@@ -89,7 +89,7 @@ router.get('/viewHealthCarePackageStatus/:Username/:healthPackageType', viewHeal
 router.get('/viewHealthPackageStatus/:Username/:healthPackageType', viewHealthPackageStatus);
 
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
-router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
+router.delete('/deleteMedicalHistoryDocument/:Username/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
 router.get('/viewHealthRecords/:Username', viewHealthRecords);
 
