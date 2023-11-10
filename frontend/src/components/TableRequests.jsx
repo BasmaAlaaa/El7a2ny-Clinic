@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data ,onAcceptOrReject }) {
+function CaseTableBody({ data ,onAcceptOrReject, username }) {
   let navigate = useNavigate()
   console.log("Logging ahoooo onAcceptOrReject prop in CaseTableBody:", onAcceptOrReject);
 
@@ -48,7 +48,7 @@ function CaseTableBody({ data ,onAcceptOrReject }) {
     </>
   );
 }
-function TableRequests({ tHead, data, searchText, filterText ,onAcceptOrReject}) {
+function TableRequests({ tHead, data, searchText, filterText ,onAcceptOrReject, username}) {
   console.log("walahy Logging onAcceptOrReject prop in TableRequests:", onAcceptOrReject);
 
   return (
@@ -73,7 +73,7 @@ function TableRequests({ tHead, data, searchText, filterText ,onAcceptOrReject})
           })
           .map((e) => (
             <tr className="text-capitalize" >
-            <CaseTableBody data={e} onAcceptOrReject={onAcceptOrReject} />
+            <CaseTableBody data={e} onAcceptOrReject={onAcceptOrReject} username={username}/>
             </tr>
           ))}
         </tbody>

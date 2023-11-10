@@ -65,7 +65,7 @@ let navigate = useNavigate()
 
   return (
     <div>
-        <NavBarAdministrator/>
+        <NavBarAdministrator username={username}/>
         <div>
             <MainBtn
               txt="Add Administrator"
@@ -103,7 +103,9 @@ let navigate = useNavigate()
      data={resultRequest}
      filterText={filterText}
      searchText={searchText}
-     onAcceptOrReject={acceptOrRejectDoctorRequest} />
+     onAcceptOrReject={acceptOrRejectDoctorRequest} 
+     username={username}
+     />
     </div>
   );
 }
