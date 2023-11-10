@@ -5,7 +5,6 @@ const upload = require('../Routes/multer-config');
 
 // Task 3 : register Doctor
 const registerGuestDoctor = async (req, res) => {
-
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -22,7 +21,6 @@ const registerGuestDoctor = async (req, res) => {
     } = req.body;
 
     try {
-        
         if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
             return res.status(400).json('Missing file(s)');
         }
@@ -46,7 +44,7 @@ const registerGuestDoctor = async (req, res) => {
             !Speciality) {
             return res.status(400).json('All fields must be filled.');
         }
-
+        
         const guestDoctor = new guestDoctorModel({
             Username,
             Name,
@@ -57,16 +55,26 @@ const registerGuestDoctor = async (req, res) => {
             Affiliation,
             EDB,
             Speciality,
-            IDDocument: req.files['IDDocument'][0].path,
-            MedicalDegreeDocument: req.files['MedicalDegreeDocument'][0].path,
-            WorkingLicenseDocument: req.files['WorkingLicenseDocument'][0].path
+            IDDocument: {
+                data: Buffer.from(req.files['IDDocument'][0].buffer),
+                contentType: req.files['IDDocument'][0].mimetype,
+            },
+            MedicalDegreeDocument: {
+                data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
+                contentType: req.files['MedicalDegreeDocument'][0].mimetype,
+            },
+            WorkingLicenseDocument: {
+                data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
+                contentType: req.files['WorkingLicenseDocument'][0].mimetype,
+            },
         });
 
         await guestDoctor.save();
-        res.status(200).json({ guestDoctor })
+        res.status(200).json({ guestDoctor });
     } catch (error) {
-        res.status(400).json({ error: error.message })
+        res.status(400).json({ error: error.message });
     }
-}
+};
+
 
 module.exports = registerGuestDoctor;

@@ -47,64 +47,32 @@ const guestDoctorSchema = new Schema(
       default: false,
     },
     IDDocument: {
-      type: String,
+      data: {
+        type: Buffer,
+      },
+      contentType: {
+        type: String,
+      },
     },
     MedicalDegreeDocument: {
-      type: String,
+      data: {
+        type: Buffer,
+      },
+      contentType: {
+        type: String,
+      },
     },
     WorkingLicenseDocument: {
-      type: String,
-    }
+      data: {
+        type: Buffer,
+      },
+      contentType: {
+        type: String,
+      },
+    },
   },
   { timestamps: true }
 );
-
-// static register method
-// guestDoctorSchema.statics.register = async function (
-//   Username,
-//   Name,
-//   Email,
-//   Password,
-//   DateOfBirth,
-//   HourlyRate,
-//   Affiliation,
-//   EDB,
-//   Speciality,
-//   Schedule
-// ) {
-//   // validation
-//   if (
-//     !Username ||
-//     !Name ||
-//     !Email ||
-//     !Password ||
-//     !DateOfBirth ||
-//     !HourlyRate ||
-//     !Affiliation ||
-//     !EDB ||
-//     !Speciality) {
-//     throw Error("All fields must be filled.");
-//   }
-
-//   if (!validator.isEmail(Email)) {
-//     throw Error("Email must be in the form of johndoe@example.com");
-//   }
-
-//   const guestDoctor = await this.create({
-//     Username,
-//     Name,
-//     Email,
-//     Password,
-//     DateOfBirth,
-//     HourlyRate,
-//     Affiliation,
-//     EDB,
-//     Speciality,
-//     Schedule
-//   });
-
-//   return guestDoctor;
-// };
 
 const guestDoctor = mongoose.model("guestDoctor", guestDoctorSchema);
 module.exports = guestDoctor;

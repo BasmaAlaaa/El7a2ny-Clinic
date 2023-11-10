@@ -8,57 +8,7 @@ const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 //const Doctor = require('../Models/Doctor'); 
 
 // register Doctor
-// const registerDoctor = async (req, res) => {
-    
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials',true);
-
-//   const { 
-//         Username,
-//         Name,
-//         Email,
-//         Password,
-//         DateOfBirth,
-//         HourlyRate,
-//         Affiliation,
-//         EDB,
-//         PatientsUsernames,
-//         Speciality,
-//         Schedule
-//     } = req.body;
-
-//     try {
-
-//       if (!(await isUsernameUnique(Username))) {
-//         throw new Error('Username is already taken.');
-//       }
-    
-//       if (!(await isEmailUnique(Email))) {
-//           throw new Error('Email is already in use.');
-//       }
-//         const doctor = await doctorSchema.register(
-//             Username,
-//             Name,
-//             Email,
-//             Password,
-//             DateOfBirth,
-//             HourlyRate,
-//             Affiliation,
-//             EDB,
-//             PatientsUsernames,
-//             Speciality,
-//             Schedule
-//         );
-          
-//         await doctor.save();
-//         res.status(200).json({ doctor });
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// }
-
 const registerDoctor = async (req, res) => {
-
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -74,10 +24,7 @@ const registerDoctor = async (req, res) => {
       Speciality
   } = req.body;
 
-  console.log(req.files)
-
   try {
-
       if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
           return res.status(400).json('Missing file(s)');
       }
@@ -101,8 +48,8 @@ const registerDoctor = async (req, res) => {
           !Speciality) {
           return res.status(400).json('All fields must be filled.');
       }
-
-      const guestDoctor = new doctorSchema ({
+      
+      const guestDoctor = new doctorSchema({
           Username,
           Name,
           Email,
@@ -112,17 +59,26 @@ const registerDoctor = async (req, res) => {
           Affiliation,
           EDB,
           Speciality,
-          IDDocument: req.files['IDDocument'][0].path,
-          MedicalDegreeDocument: req.files['MedicalDegreeDocument'][0].path,
-          WorkingLicenseDocument: req.files['WorkingLicenseDocument'][0].path
+          IDDocument: {
+              data: Buffer.from(req.files['IDDocument'][0].buffer),
+              contentType: req.files['IDDocument'][0].mimetype,
+          },
+          MedicalDegreeDocument: {
+              data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
+              contentType: req.files['MedicalDegreeDocument'][0].mimetype,
+          },
+          WorkingLicenseDocument: {
+              data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
+              contentType: req.files['WorkingLicenseDocument'][0].mimetype,
+          },
       });
 
       await guestDoctor.save();
-      res.status(200).json({ guestDoctor })
+      res.status(200).json({ guestDoctor });
   } catch (error) {
-      res.status(400).json({ error: error.message })
+      res.status(400).json({ error: error.message });
   }
-}
+};
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 const updateDoctorByEmail = async (req, res) => {
