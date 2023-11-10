@@ -123,6 +123,7 @@ const changePassword = async (req, res) => {
       const updateField = { Password: newPassword };
 
       const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
+      console.log('ppp', updatedPatient)
       const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
       const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
 

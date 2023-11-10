@@ -1,18 +1,24 @@
-import { Link } from 'react-router-dom';
 import MainBtn from '../components/Button.jsx';
-import Form from '../components/Form.jsx';
-import Validation from '../validate/validate';
 import Input from '../components/Input.jsx';
 import { useState } from 'react';
 import NavBar from '../components/NavBar.jsx';
+import axios from 'axios';
+import { useParams } from 'react-router';
+
 
 function ChangePassword() {
-  let {errors,handleSubmit,register} = Validation('changePassword')
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const {username} = useParams();
 
-
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const data = {oldPassword:oldPassword, newPassword:password, confirmPassword:confirmPassword}
+    console.log(data)
+    const response = axios.post(`http://localhost:4000/ChangePassword/${username}`, data)
+    .then(res =>console.log(res.data)).catch(err => console.log(err.request))
+  }
   return (
     <div>
       <NavBar />
@@ -38,7 +44,7 @@ function ChangePassword() {
           <Input
             title='confirm Password'
             placeholder='confirm password'
-            type='confirmPassword'
+            type='password'
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
       
@@ -56,7 +62,7 @@ function ChangePassword() {
             <MainBtn
               txt='save'
               style='green-btn'
-              // action={handleSubmit(c)}
+              action={handleSubmit}
               
             />
           </div>
