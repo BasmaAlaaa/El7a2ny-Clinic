@@ -25,10 +25,13 @@ function AddAdministrator() {
   // ];
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
+
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {Username:username, Password:password}
+    const data = {Username:username, Password:password, Email: email}
     console.log(data)
     const response = axios.post('http://localhost:4000/Admin/createAdmin', data)
 .then(res =>console.log(res.data)).catch(err => console.log(err.request))
@@ -40,6 +43,7 @@ function AddAdministrator() {
       {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
       <form onSubmit={handleSubmit}>
   <input  title= 'username' required placeholder= 'enter username' type= 'text' onChange={(e) => setUsername(e.target.value)} />
+  <input type="email" required title="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)}/>
   <input type="password" required title="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)}/>
   <button type="submit">Submit</button>
 </form>

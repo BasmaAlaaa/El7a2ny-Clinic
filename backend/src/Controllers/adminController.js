@@ -18,6 +18,14 @@ async function isUsernameUnique(username) {
   return !patientExists && !doctorExists && !adminExists;
 }
 
+async function isEmailUnique(email) {
+  const patientExists = await Patient.findOne({ Email: email });
+  const guestDoctorExists = await GuestDoctor.findOne({ Email: email });
+  const doctorExists = await Doctor.findOne({ Email: email });
+  const adminExists = await Admin.findOne({ Email: email });
+  return !patientExists && !guestDoctorExists && !doctorExists && !adminExists;
+}
+
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity = async (req, res) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -128,10 +136,10 @@ const createAdmin = async (req, res) => {
   res.setHeader("Access-Control-Allow-Credentials", true);
 
   try {
-    const { Username, Password } = req.body;
+    const { Username, Password, Email} = req.body;
     // Validate input, ensure admin does not already exist
 
-    if (!Username || !Password) {
+    if (!Username || !Password || Email) {
       throw Error("All fields must be filled.");
     }
 
@@ -139,7 +147,11 @@ const createAdmin = async (req, res) => {
       throw new Error("Username is already taken.");
     }
 
-    const newAdmin = new Admin({ Username, Password });
+    if (!(await isEmailUnique(Email))) {
+      throw new Error("Email is already taken.");
+    }
+
+    const newAdmin = new Admin({ Username, Password, Email });
     await newAdmin.save();
 
     res.status(200).json({ message: "New admin created", admin: newAdmin });

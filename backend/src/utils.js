@@ -15,7 +15,8 @@ async function isEmailUnique(email) {
   const patientExists = await Patient.findOne({ Email: email });
   const guestDoctorExists = await GuestDoctor.findOne({ Email: email });
   const doctorExists = await Doctor.findOne({ Email: email });
-  return !patientExists && !guestDoctorExists && !doctorExists;
+  const adminExists = await Admin.findOne({ Email: email });
+  return !patientExists && !guestDoctorExists && !doctorExists && !adminExists;
 }
 
 module.exports = {
