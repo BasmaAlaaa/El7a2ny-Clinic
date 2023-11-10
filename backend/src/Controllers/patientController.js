@@ -454,7 +454,32 @@ const viewDoctorInfo = async (req, res) => {
       return res.status(404).send({ error: 'Doctor not found' });
     }
 
-    res.status(200).json(doctor);
+    const doctorRate = doctor.HourlyRate;
+
+    const clinicMarkup = 0.10; // 10% markup
+
+    let sessionPrice = doctorRate;
+
+    const healthPackages = patient.SubscribedHP;
+
+    for (const hp of healthPackages) {
+      if (hp.Status === "Subscribed") {
+        const discountPercentage = hp.doctorSessionDiscount || 0;
+
+        const discountAmount = (doctorRate * discountPercentage) / 100;
+
+        sessionPrice -= discountAmount;
+      }
+    }
+
+    sessionPrice += sessionPrice * clinicMarkup;
+
+    const result = {
+      doctor,
+      SessionPrice : sessionPrice
+    };
+
+    res.status(200).json(result);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }

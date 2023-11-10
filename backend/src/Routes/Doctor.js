@@ -79,7 +79,7 @@ router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordF
 router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
-router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername/:timeSlot', scheduleFollowUp);
+router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername', scheduleFollowUp);
 router.get('/doctorPastApp/:Username', doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 

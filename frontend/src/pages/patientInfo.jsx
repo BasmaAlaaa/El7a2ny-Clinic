@@ -26,6 +26,13 @@ function PatientInfo(){
       .then(res =>setResultAdd(res)).catch(err => console.log(err))
     }
 
+    const handleSubmit1 = () => {
+      const data = {date:date, time:time}
+      console.log(data)
+      const response = axios.post(`http://localhost:4000/Doctor/scheduleFollowUp/${usernameDoctor}/${usernamePatient}`, data)
+      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+    }
+
     useEffect(() => {
   const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`)
   .then(res =>setResult(res.data)).catch(err => console.log(err))
@@ -109,7 +116,7 @@ function PatientInfo(){
     <h3>
     <input  type= 'number' placeholder="Time" onChange={(e) => setTime(e.target.value)} />
     </h3>
-    <button>Add Appointment</button>
+    <button onClick={handleSubmit}>Add Appointment</button>
   </form>
         </div>
     )
