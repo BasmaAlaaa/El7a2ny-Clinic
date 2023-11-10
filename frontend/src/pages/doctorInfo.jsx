@@ -42,15 +42,16 @@ let tHead = ['Date', 'Time', 'Status', 'Book', 'Book For A Family Member'];
         <NavBarPatient username={usernamePatient}/>
         <h1>Doctor Info</h1>
         <ul>
-            <h3>Name: {result.Name}</h3>
-            <h3>Username: {result.Username}</h3>
-            <h3>Email: {result.Email}</h3>
-            <h3>Date of Birth: {result.DateOfBirth}</h3>
-            <h3>Hourly Rate: {result.HourlyRate}</h3>
-            <h3>Affiliation: {result.Affiliation}</h3>
-            <h3>Educational Background: {result.EDB}</h3>
+            <h3>Name: {result.doctor.Name}</h3>
+            <h3>Username: {result.doctor.Username}</h3>
+            <h3>Email: {result.doctor.Email}</h3>
+            <h3>Date of Birth: {result.doctor.DateOfBirth}</h3>
+            <h3>Hourly Rate: {result.doctor.HourlyRate}</h3>
+            <h3>Affiliation: {result.doctor.Affiliation}</h3>
+            <h3>Educational Background: {result.doctor.EDB}</h3>
+            <h3>Session Price: {result.SessionPrice}</h3>
             <h2>Available Appointments: </h2>
-            <TableSchedule tHead={tHead} data={result.AvailableTimeSlots} doctorUsername={usernameDoctor} patientUsername={usernamePatient}/>
+            <TableSchedule tHead={tHead} data={result.doctor.AvailableTimeSlots} doctorUsername={usernameDoctor} patientUsername={usernamePatient}/>
 
 
         </ul>
