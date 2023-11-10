@@ -24,11 +24,11 @@ function Login() {
       const response = await axios.post('http://localhost:4000/login', { Username: username, password: password });
       localStorage.setItem('token', response.data.token); 
       if (response.data.userDoctor) {
-        navigate('/doctorView/${username}');
+        navigate(`/doctorView/${username}`);
       } else if (response.data.userPatient) {
-        navigate('/patientView/${username}');
+        navigate(`/patientView/${username}`);
       } else if (response.data.userAdmin) {
-        navigate('/administratorView/${username}');
+        navigate(`/administratorView/${username}`);
       } else {
         console.error('User role not recognized');
       }
