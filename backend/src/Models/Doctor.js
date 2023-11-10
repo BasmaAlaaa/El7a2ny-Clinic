@@ -52,13 +52,28 @@ const doctorSchema = new Schema({
     default: 0
   },
   IDDocument: {
-    type: String,
+    data: {
+      type: Buffer,
+    },
+    contentType: {
+      type: String,
+    },
   },
   MedicalDegreeDocument: {
-    type: String,
+    data: {
+      type: Buffer,
+    },
+    contentType: {
+      type: String,
+    },
   },
   WorkingLicenseDocument: {
-    type: String,
+    data: {
+      type: Buffer,
+    },
+    contentType: {
+      type: String,
+    },
   },
   AvailableTimeSlots: [
     {
@@ -82,53 +97,6 @@ const doctorSchema = new Schema({
 
   
 },{ timestamps: true });
-
-  // static register method
-  doctorSchema.statics.register = async function (
-    Username,
-    Name,
-    Email,
-    Password,
-    DateOfBirth,
-    HourlyRate,
-    Affiliation,
-    EDB,
-    PatientsUsernames,
-    Speciality    
-  ) {
-
-    // validation 
-    if (!Username ||
-      !Name ||
-      !Email ||
-      !Password ||
-      !DateOfBirth ||
-      !HourlyRate ||
-      !Affiliation ||
-      !EDB ||
-      !Speciality) 
-      { 
-    throw Error('All fields must be filled.');
-}
-    if (!validator.isEmail(Email)) {
-      throw Error('Email must be in the form of johndoe@example.com');
-    }
-
-    const doctor = await this.create({
-      Username,
-      Name,
-      Email,
-      Password,
-      DateOfBirth,
-      HourlyRate,
-      Affiliation,
-      EDB,
-      PatientsUsernames,
-      Speciality
-    });
-  
-    return doctor;
-  };
 
   const Doctor = mongoose.model('Doctor', doctorSchema);
   module.exports = Doctor;

@@ -3,15 +3,7 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        const uploadDir = path.join(__dirname, '../../../frontend/public/uploads');
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        cb(null, file.fieldname + '-' + Date.now() + '.' + file.originalname.split('.').pop());
-    }
-});
+const storage = multer.memoryStorage();
 
 const allowedFileTypes = ['pdf', 'jpeg', 'jpg', 'png'];
 
