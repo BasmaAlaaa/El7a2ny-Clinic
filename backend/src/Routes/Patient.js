@@ -37,7 +37,7 @@ const {
     patientPastApp,
     patientUpcoming,
     availableDoctorApps,
-    selectAppointmentDateTimeFamMem,
+    selectAppointmentDateTimeAndPayFam,
     linkPatientAccountAsFam,
     selectAppointmentDateTimeAndPay,
     subscribeToAHealthPackage
@@ -88,8 +88,6 @@ router.post('/subscribeToAHealthPackage/:patientUsername/:healthPackageType', su
 router.get('/viewHealthCarePackageStatus/:Username/:healthPackageType', viewHealthCarePackageStatus);
 router.get('/viewHealthPackageStatus/:Username/:healthPackageType', viewHealthPackageStatus);
 
-
-
 router.post('/addMedicalHistoryDocument/:Username', upload.single('MedicalHistoryDocuments'), addMedicalHistoryDocument);
 router.delete('/deleteMedicalHistoryDocument/:Username/MedicalHistoryDocuments/:filePathToRemove', deleteMedicalHistoryDocument);
 router.get('/viewMedicalHistoryDocuments/:Username', viewMedicalHistoryDocuments);
@@ -99,7 +97,7 @@ router.get('/patientPastApp/:Username', patientPastApp);
 router.get('/patientUpcoming/:Username', patientUpcoming);
 router.get('/availableDoctorApps/:Username', availableDoctorApps);
 router.post('/selectAppointment/:patientUsername/:timeSlot/:doctorUsername', selectAppointmentDateTimeAndPay);
-router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
+router.post('/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctorUsername', selectAppointmentDateTimeAndPayFam);
 // router.get('/patientPastApp/:Username', patientPastApp);
 // router.get('/patientUpcoming/:Username', patientUpcoming);
 // router.get('/availableDoctorApps/:Username', availableDoctorApps);

@@ -655,9 +655,6 @@ const addAvailableTimeSlots = async (req, res) => {
 
     for(const slot of slots){
       if(!found){
-        console.log(slot.Date, newDate);
-        console.log(slot.Time, time);
-
         if(slot.Date.getTime() === newDate.getTime() && slot.Time === time){
           found = true;
           return res.status(404).send("Already added Slot in your Schedule");
@@ -679,23 +676,60 @@ const addAvailableTimeSlots = async (req, res) => {
 
   // 51 schedule a follow-up for a patient
   const scheduleFollowUp = async (req, res) => {
-    const { DoctorUsername, PatientUsername, date } = req.body;
+    const { DoctorUsername, PatientUsername, timeSlot } = req.params;
   
     try {
       // Check if the doctor and patient are associated
-      const existingDoctor = await doctorSchema.findOne({ Username: DoctorUsername, PatientsUsernames: PatientUsername });
+      const doctor = await doctorSchema.findOne({ Username: DoctorUsername});
   
-      if (!existingDoctor) {
-        return res.status(404).json({ error: 'The specified doctor is not associated with the patient.' });
+      if (!doctor) {
+        return res.status(404).json({ error: 'DOCTOR NOT FOUND' });
       }
 
-      // Update the patient's status to 'Follow-up' in the appointment
-      await appointmentSchema.updateOne(
-        { DoctorUsername, PatientUsername, Status: 'Upcoming' },
-        { $set: { Status: 'Following' } }
-      );
-  
-      res.status(200).json({ message: 'Follow-up appointment created and patient status updated.' });
+      const patient = await patientSchema.findOne({ Username: PatientUsername});
+      
+      if(!patient){
+        return res.status(404).json({ error: 'Patient not found' });
+      }
+      
+      const availableSlots = doctor.AvailableTimeSlots;
+    
+      let slot;
+      var found = false;
+      for(const s of availableSlots){
+      if(!found){
+      if(s._id.equals(timeSlot)){
+        found = true;
+        slot = s;
+      }
+      }
+      }
+
+      if(slot.Status === "available"){
+        let newAppointment;
+        
+        newAppointment = await appointmentSchema.create({
+          Date: slot.Date,
+          Time: slot.Time,
+          DoctorUsername: DoctorUsername,
+          PatientUsername: PatientUsername,
+          Status: "Following",
+          PaymentMethod: null,
+          Price: 0,
+          Name: patient.Name
+        });
+
+        // Update the patient's status to 'Follow-up' in the appointment
+        await appointmentSchema.updateOne(
+          { DoctorUsername, PatientUsername, Status: 'Upcoming' },
+          { $set: { Status: 'Following' } }
+        );
+
+        res.status(200).send(newAppointment);
+      }
+      else{
+        return res.status(400).send("This slot is already booked");
+      }
     } catch (error) {
       res.status(500).json({ error: error.message });
     }

@@ -1365,6 +1365,7 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
     if (!doctor) {
       return res.status(404).send({ error: 'Doctor not found' });
     }
+
     const doctorRate = doctor.HourlyRate;
 
     const clinicMarkup = 0.10; // 10% markup
@@ -1382,142 +1383,155 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
         sessionPrice -= discountAmount;
       }
     }
+
     sessionPrice += sessionPrice * clinicMarkup;
 
     const availableSlots = doctor.AvailableTimeSlots;
-
-    //var appDate = new Date(date);
-    const booked = false;
-
-    let newAppointment = {};
-
-    for (const slot of availableSlots) {
-
-      //if((appDate.getTime() === slot.Date.getTime()) && (time === slot.Time) && slot.Status === "available"){
-      if (!booked && timeSlot === slot._id) {
-        console.log("weseellt");
-        slot.Status = "booked";
-        doctor.save();
-
-        newAppointment = appointmentSchema.create({
-          Date: date,
-          Time: time,
-          DoctorUsername: doctorUsername,
-          PatientUsername: patientUsername,
-          Status: 'Upcoming',
-          PaymentMethod: paymentMethod,
-          Price: sessionPrice
-        });
-
-        booked = true;
+    
+    let slot;
+    var found = false;
+    for(const s of availableSlots){
+      if(!found){
+      if(s._id.equals(timeSlot)){
+        found = true;
+        slot = s;
       }
     }
-
-    if (booked === false) {
-      return res.status(404).send({ error: 'Selected appointment date and time are not available' });
     }
 
-    // paying for appointment
-    const appId = newAppointment._id;
-    const app = await Appointment.findOne({ _id: appId });
+    if(slot.Status === "available"){
+      let newAppointment;
 
-    if (!app) {
-      return res.status(404).send({ error: 'Appointment not found' });
-    }
-
-    if (paymentMethod === "card") {
-
-      const paymentIntent = await stripe.paymentIntents.create({
-        amount: app.Price,
-        currency: 'egp',
-        customer: patient.StripeCustomerId,
-        description: "Paying for an appointment"
+      if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= sessionPrice)){
+      newAppointment = await appointmentSchema.create({
+        Date: slot.Date,
+        Time: slot.Time,
+        DoctorUsername: doctorUsername,
+        PatientUsername: patientUsername,
+        Status: 'Upcoming',
+        PaymentMethod: paymentMethod,
+        Price: sessionPrice,
+        Name: patient.Name
       });
 
-      await stripe.paymentIntents.confirm(paymentIntent);
-    }
-    else if (paymentMethod === "wallet") {
+        if (paymentMethod === "wallet") {
+          patient.WalletAmount = (patient.WalletAmount - sessionPrice),
+          patient.save();
+        }
 
-      if (patient.WalletAmount < app.Price)
-        return res.status(400).send("Your wallet amount won't cover the whole appointment price!")
-
-      if (patient.WalletAmount >= app.Price) {
-        const updatedPat = {
-          $set: {
-            WalletAmount: (WalletAmount - app.Price),
-          },
-        };
-
-        const update = await patientSchema.updateOne({ Username: app.PatientUsername }, updatedPat);
+      slot.Status = "booked";
+      doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
+      doctor.save();
       }
+      else{
+        return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
+      }
+        res.status(200).send(newAppointment);
+    }
+    else{
+      return res.status(400).send("This slot is already booked");
     }
 
-    const updatedDoc = {
-      $set: {
-        WalletAmount: (WalletAmount + app.Price),
-      },
-    };
-
-    const update = await doctorSchema.updateOne({ Username: app.DoctorUsername }, updatedDoc);
-
-    res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
 };
 
 
-const selectAppointmentDateTimeFamMem = async (req, res) => {
+const selectAppointmentDateTimeAndPayFam = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username } = req.params;
-  const { Date, Time, DoctorUsername, Name, RelationToPatient } = req.body;
+  const { patientUsername, timeSlot, doctorUsername } = req.params;
+  const { paymentMethod, familyId } = req.body;
 
   try {
-    const patient = await patientSchema.findOne({ Username: Username });
+
+    //Selecting the date and time and payment method of appointment
+    const patient = await patientSchema.findOne({ Username: patientUsername });
 
     if (!patient) {
       return res.status(404).send({ error: 'Patient not found' });
     }
 
-    const FamilyMember = await FamilyMember.findOne({
-      Name: Name,
-      RelationToPatient: RelationToPatient,
-      patientUsername: Username
+    const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
-    })
-
-    if (!FamilyMember) {
-
-      return res.status(404).send({ error: 'Family Member Not registered to this patient' });
+    if (!doctor) {
+      return res.status(404).send({ error: 'Doctor not found' });
     }
 
+    const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: patientUsername});
 
-    // Check if the selected date and time are available for the specified doctor
-    const isAppointmentAvailable = await appointmentSchema.exists({
-      DoctorUsername: DoctorUsername,
-      Date: Date,
-      Time: Time,
-      Status: { $in: ["Available", "available"] },
-    });
-
-    if (!isAppointmentAvailable) {
-      return res.status(400).send({ error: 'Selected appointment date and time are not available' });
+    if(!familyMem){
+      return res.status(404).send({ error: 'Family member not found' });
     }
 
-    // Create a new appointment for the patient
-    const newAppointment = new appointmentSchema({
-      Date: Date,
-      Time: Time,
-      DoctorUsername: DoctorUsername,
-      PatientUsername: Username,
-      Status: 'Upcoming',
-    });
+    const doctorRate = doctor.HourlyRate;
 
-    await newAppointment.save();
+    const clinicMarkup = 0.10; // 10% markup
 
-    res.status(200).send({ message: 'Appointment successfully scheduled', appointment: newAppointment });
+    let sessionPrice = doctorRate;
+
+    const healthPackages = patient.SubscribedHP;
+
+    for (const hp of healthPackages) {
+      if (hp.Status === "Subscribed") {
+        const discountPercentage = hp.doctorSessionDiscount || 0;
+
+        const discountAmount = (doctorRate * discountPercentage) / 100;
+
+        sessionPrice -= discountAmount;
+      }
+    }
+
+    sessionPrice += sessionPrice * clinicMarkup;
+
+    const availableSlots = doctor.AvailableTimeSlots;
+    
+    let slot;
+    var found = false;
+    for(const s of availableSlots){
+      if(!found){
+      if(s._id.equals(timeSlot)){
+        found = true;
+        slot = s;
+      }
+    }
+    }
+
+    if(slot.Status === "available"){
+      let newAppointment;
+
+      if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= sessionPrice)){
+      newAppointment = await appointmentSchema.create({
+        Date: slot.Date,
+        Time: slot.Time,
+        DoctorUsername: doctorUsername,
+        PatientUsername: patientUsername,
+        Status: 'Upcoming',
+        PaymentMethod: paymentMethod,
+        Price: sessionPrice,
+        Name: familyMem.Name
+      });
+
+        if (paymentMethod === "wallet") {
+          patient.WalletAmount = (patient.WalletAmount - sessionPrice),
+          patient.save();
+        }
+
+      slot.Status = "booked";
+      doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
+      doctor.save();
+      }
+      else{
+        return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
+      }
+        res.status(200).send(newAppointment);
+    }
+    else{
+      return res.status(400).send("This slot is already booked");
+    }
+
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -1756,7 +1770,7 @@ module.exports = {
   deleteMedicalHistoryDocument,
   viewMedicalHistoryDocuments,
   viewHealthRecords,
-  selectAppointmentDateTimeFamMem,
+  selectAppointmentDateTimeAndPayFam,
   selectAppointmentDateTimeAndPay,
   availableDoctorApps,
   patientUpcoming,

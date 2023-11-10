@@ -23,7 +23,7 @@ const appointmentSchema = new Schema({
     PaymentMethod: {
       type: String,
       default: "card",
-      enum: ["wallet","card"]
+      enum: ["wallet","card",null]
     },
     Price:{
       type: Number,
@@ -31,6 +31,10 @@ const appointmentSchema = new Schema({
     },
     Time:{
       type:Number,
+      required:true
+    },
+    Name:{
+      type: String,
       required:true
     }
 },{ timestamps: true })
@@ -41,7 +45,8 @@ appointmentSchema.statics.register = async function (
     PatientUsername,
     Status,
     Price,
-    Time
+    Time,
+    Name
   ) {
 
     // validation 
@@ -50,7 +55,8 @@ appointmentSchema.statics.register = async function (
       !DoctorUsername ||
       !Status ||
       !Price ||
-      !Time) { 
+      !Time ||
+      !Name) { 
     throw Error('All fields must be filled.');
 }
     const appointment = await this.create({
@@ -59,7 +65,8 @@ appointmentSchema.statics.register = async function (
       PatientUsername,
       Status,
       Price,
-      Time
+      Time,
+      Name
     });
   
     return appointment;
