@@ -2,6 +2,7 @@ const nodemailer = require ('nodemailer');
 const Patient = require('../Models/Patient');
 const Doctor = require('../Models/Doctor');
 const OTP = require('../Models/OTP');
+const Admin = require('../Models/Administrator');
 
 // Function to generate a random OTP
 function generateOTP() {
@@ -18,12 +19,17 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTP = async ({ body }, res) => {
-    const {Email} = body
+    const {Email} = body;
+    
   const isPatient = await Patient.findOne({ Email : Email});
   const isDoctor = await Doctor.findOne({ Email : Email });
+  const isAdmin = await Admin.findOne({ Email : Email });
+
   console.log('isPatient:', isPatient);
   console.log('isDoctor:', isDoctor);
-  if (!isPatient && !isDoctor ) {
+  console.log('isAdmin:', isAdmin);
+
+  if (!isPatient && !isDoctor && !isAdmin) {
     console.log('Invalid Email');
     res.status(400).json({ error: 'Invalid Email' });
     return;
@@ -92,8 +98,9 @@ const updatePassword = async ({ body }, res) => {
 
     const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
     const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
+    const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
 
-    if (updatedPatient || updatedDoctor) {
+    if (updatedPatient || updatedDoctor || updatedAdmin) {
       console.log(`Password updated for user with email: ${Email}`);
       res.status(200).json({ message: 'Password updated successfully' });
     } else {
@@ -115,15 +122,15 @@ const changePassword = async ({ body }, res) => {
 
     const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
     const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
+    const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
 
-    if (updatedPatient || updatedDoctor) {
+
+    if (updatedPatient || updatedDoctor || updatedAdmin) {
       res.status(200).json({ message: 'Password updated successfully' });
     } else {
-      console.log('Invalid email or password');
       res.status(401).json({ error: 'Invalid email or password' });
     }
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: 'Failed to change password' });
   }
 };
