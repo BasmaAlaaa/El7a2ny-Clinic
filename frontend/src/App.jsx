@@ -33,10 +33,7 @@ import HealthPackageInfo from './pages/healthPackageInfo';
 import ContractView from './pages/contractView';
 
 import AddMedicalHistoryDocument from './pages/addMedicalHistoryDocument';
-
-
-
-
+import ViewMedicalHistoryDocuments from './components/MedicalHistoryDocumentsList';
 
 function App() {
   return (
@@ -63,6 +60,9 @@ function App() {
           <Route exact path="/removeUser" element={<RemoveUser />} />
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
           <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />
+          <Route exact path="/viewMedicalHistoryDocuments/:username" element={<ViewMedicalHistoryDocuments />} />
+
+
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />
@@ -72,17 +72,6 @@ function App() {
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
           <Route exact path="/healthPackagesList/:username" element={<HealthPackagesList />} />
           <Route exact path="/healthPackageInfo/:username/:type" element={<HealthPackageInfo />} />
-
-
-
-
-
-
-
-
-
-
-
 
 
         </Routes>
