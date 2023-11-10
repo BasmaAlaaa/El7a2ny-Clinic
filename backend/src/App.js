@@ -92,7 +92,7 @@ const{
 
 app.post('/OtpResetPassword',sendOTP);
 app.get('/UpdatePassword',updatePassword);
-app.get('/ChangePassword',changePassword);
+app.post('/ChangePassword/:Username',changePassword);
 
 
 
