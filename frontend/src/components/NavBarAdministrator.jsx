@@ -1,7 +1,7 @@
 import MainBtn from './Button';
 import logo from '../assets/images/svg/logo.svg';
 import notify from '../assets/images/svg/notification.svg';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { showUserDrop } from '../features/userDropDown.js';
 import DropDown from './Dropdown.jsx';
@@ -9,6 +9,7 @@ import DropDown from './Dropdown.jsx';
 function NavBarAdministrator() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const {username} = useParams();
   const login = useSelector((state) => state.login.loggedIn);
 
   return (
@@ -24,7 +25,7 @@ function NavBarAdministrator() {
           <MainBtn
               txt="Home"
               style="green-btn"
-              action={() => navigate('/administratorView')}
+              action={() => navigate(`/administratorView/${username}`)}
               key="navBtn"
             />
             </div>
@@ -32,7 +33,7 @@ function NavBarAdministrator() {
           <MainBtn
               txt="Change Password"
               style="green-btn"
-              action={() => navigate('/changePassword')}
+              action={() => navigate(`/changePassword/${username}`)}
               key="navBtn"
             />
             </div>

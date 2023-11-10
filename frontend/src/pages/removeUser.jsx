@@ -2,6 +2,7 @@
 import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 import { useState } from 'react';
 import axios from 'axios'
+import { useParams } from 'react-router';
 
 function RemoveUser() {
   // let { errors, handleSubmit, register } = Validation('username')
@@ -22,6 +23,8 @@ function RemoveUser() {
   const [usernameAdmin, setUsernameAdmin] = useState('')
   const [usernamePatient, setUsernamePatient] = useState('')
   const [usernameDoctor, setUsernameDoctor] = useState('')
+  const {username} = useParams();
+
 
 
   const handleSubmitAdmin = (e) => {
@@ -44,7 +47,7 @@ function RemoveUser() {
 
   return (
     <div>
-      <NavBarAdministrator/>
+      <NavBarAdministrator username={username}/>
       {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
 <form onSubmit={handleSubmitAdmin}>
   <input  title= 'username' required placeholder= 'enter username' type= 'text' onChange={(e) => setUsernameAdmin(e.target.value)} />

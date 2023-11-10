@@ -1,6 +1,6 @@
 
 import TableRequests from '../components/TableRequests.jsx';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
@@ -9,6 +9,8 @@ import MainBtn from '../components/Button.jsx';
 function AdministratorView() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
+  const {username} = useParams();
+
 
 
   const[resultRequest, setResultRequest] = useState([]);
@@ -68,7 +70,7 @@ let navigate = useNavigate()
             <MainBtn
               txt="Add Administrator"
               style="green-btn"
-              action={() => navigate('/addAdministrator')}
+              action={() => navigate(`/addAdministrator/${username}`)}
               key="navBtn"
             />
           </div>
@@ -76,7 +78,7 @@ let navigate = useNavigate()
             <MainBtn
               txt="Manage Health Packages"
               style="green-btn"
-              action={() => navigate('/managePackages')}
+              action={() => navigate(`/managePackages/${username}`)}
               key="navBtn"
             />
           </div>
@@ -84,7 +86,7 @@ let navigate = useNavigate()
             <MainBtn
               txt="Remove User"
               style="green-btn"
-              action={() => navigate('/removeUser')}
+              action={() => navigate(`/removeUser/${username}`)}
               key="navBtn"
             />
             

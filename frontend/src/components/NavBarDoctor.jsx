@@ -7,6 +7,7 @@ function NavBarDoctor(props) {
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login.loggedIn);
 
+
   return (
     <nav className="navbar shadow-sm mb-4">
       <div className="d-flex flex-row justify-content-between w-100 align-items-center">
@@ -28,7 +29,7 @@ function NavBarDoctor(props) {
             <MainBtn
               txt="Change Password"
               style="green-btn"
-              action={() => navigate('/changePassword')}
+              action={() => navigate(`/changePassword/${props.username}`)}
               key="navBtn"
             />
           </div>

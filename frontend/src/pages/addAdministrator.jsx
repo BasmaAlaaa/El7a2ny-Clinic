@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Form from '../components/Form.jsx';
 import { useDispatch } from 'react-redux';
 import { loggedIn } from '../features/login.js';
@@ -23,15 +23,17 @@ function AddAdministrator() {
   //     action: handleSubmit(),
   //   },
   // ];
-  const [username, setUsername] = useState('')
+  const [usernameAd, setUsernameAd] = useState('')
   const [password, setPassword] = useState('')
   const [email, setEmail] = useState('')
+  const {username} = useParams();
+
 
 
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {Username:username, Password:password, Email: email}
+    const data = {Username:usernameAd, Password:password, Email: email}
     console.log(data)
     const response = axios.post('http://localhost:4000/Admin/createAdmin', data)
 .then(res =>console.log(res.data)).catch(err => console.log(err.request))
@@ -39,10 +41,10 @@ function AddAdministrator() {
 
   return (
     <div>
-      <NavBarAdministrator/>
+      <NavBarAdministrator username={username}/>
       {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
       <form onSubmit={handleSubmit}>
-  <input  title= 'username' required placeholder= 'enter username' type= 'text' onChange={(e) => setUsername(e.target.value)} />
+  <input  title= 'username' required placeholder= 'enter username' type= 'text' onChange={(e) => setUsernameAd(e.target.value)} />
   <input type="email" required title="email" placeholder="Enter Email" onChange={(e) => setEmail(e.target.value)}/>
   <input type="password" required title="password" placeholder="Enter Password" onChange={(e) => setPassword(e.target.value)}/>
   <button type="submit">Submit</button>

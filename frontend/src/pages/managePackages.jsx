@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'react-router';
+import NavBarAdministrator from '../components/NavBarAdministrator';
 
 function ManagePackages(){
     const [type, setType] = useState('')
@@ -9,6 +11,8 @@ function ManagePackages(){
     const [doctorSessionDiscount, setDoctorSessionDiscount] = useState(0)
     const [medicineDiscount, setMedicineDiscount] = useState(0)
     const [familySubscriptionDiscount, setFamilySubscriptionDiscount] = useState(0)
+    const {username} = useParams();
+
 
     const handleSubmit = () => {
 
@@ -54,7 +58,8 @@ function ManagePackages(){
     
 return(
     <div>
-              <form onSubmit={handleSubmit}>
+      <NavBarAdministrator username={username} />
+        <form onSubmit={handleSubmit}>
         <h3>
         <label>Type</label>
         <input required placeholder= 'enter package type' type= 'text' onChange={(e) => setType(e.target.value)} />

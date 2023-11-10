@@ -45,13 +45,13 @@ function App() {
         <Routes>
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/forgotPassword" element={<ForgotPassword />} />
-          <Route exact path="/changePassword" element={<ChangePassword />} />
+          <Route exact path="/changePassword/:username" element={<ChangePassword />} />
           <Route exact path="/resetPassword" element={<ResetPassword />} />
           <Route exact path="/registerPatient" element={<RegisterPatient />} />
           <Route exact path="/registerDoctor" element={<RegisterDoctor />} />
           <Route exact path="/patientView/:username" element={<PatientView />} />
-          <Route exact path="/administratorView" element={<AdministratorView />} />
-          <Route exact path="/addAdministrator" element={<AddAdministrator />} />
+          <Route exact path="/administratorView/:username" element={<AdministratorView />} />
+          <Route exact path="/addAdministrator/:username" element={<AddAdministrator />} />
           <Route exact path="/addFamilyMember/:username" element={<AddFamilyMember />} />
           <Route exact path="/patientInfo/:usernameDoctor/:usernamePatient" element={<PatientInfo />} />
           <Route exact path="/doctorInfo/:usernameDoctor/:usernamePatient" element={<DoctorInfo />} />

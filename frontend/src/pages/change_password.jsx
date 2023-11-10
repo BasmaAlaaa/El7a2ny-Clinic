@@ -4,6 +4,7 @@ import Form from '../components/Form.jsx';
 import Validation from '../validate/validate';
 import Input from '../components/Input.jsx';
 import { useState } from 'react';
+import NavBar from '../components/NavBar.jsx';
 
 function ChangePassword() {
   let {errors,handleSubmit,register} = Validation('changePassword')
@@ -14,6 +15,7 @@ function ChangePassword() {
 
   return (
     <div>
+      <NavBar />
       {/* <Form title="change password" inputArr={inputArr} btnArr={btnArr} /> */}
       <form
       className="d-flex justify-content-center"
