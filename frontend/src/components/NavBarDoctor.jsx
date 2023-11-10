@@ -1,12 +1,22 @@
 import MainBtn from './Button';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-
+import axios from 'axios';
 function NavBarDoctor(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const login = useSelector((state) => state.login.loggedIn);
-
+  const handleLogout = async (event) => {
+    event.preventDefault(); 
+    try {
+    const response = await axios.get('http://localhost:4000/logout');
+    localStorage.removeItem('token');
+    navigate(`/login`);}
+    catch (error) {
+      console.error(error.response ? error.response.data : error.message);
+      alert(error.response ? error.response.data.error : error.message);
+    }
+  };
 
   return (
     <nav className="navbar shadow-sm mb-4">
@@ -37,7 +47,7 @@ function NavBarDoctor(props) {
             <MainBtn
               txt="Logout"
               style="green-btn"
-              // action={() => navigate('/administratorView')}
+              action= {handleLogout}
               key="navBtn"
             />
           </div>
