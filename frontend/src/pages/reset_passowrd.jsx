@@ -1,53 +1,65 @@
-import { Link } from 'react-router-dom';
-import MainBtn from '../components/Button.jsx';
-import Form from '../components/Form.jsx';
-import Validation from '../validate/validate.js';
-import Input from '../components/Input.jsx';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+import axios from 'axios';
+import Input from '../components/Input.jsx';
+import MainBtn from '../components/Button.jsx';
 
 function ResetPassword() {
+  const [Email, setEmail] = useState('');
+  const [otp, setOTP] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  console.log(Email);
+
+  const handlePasswordChange = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`http://localhost:4000/UpdatePassword`, {
+        Email: Email,
+        otp: otp,
+        newPassword: newPassword,
+      });
 
 
-  let {errors,handleSubmit,register} = Validation('changePassword')
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
-
+      console.log('Password updated successfully');
+    } catch (error) {
+      console.error('Failed to update password', error);
+      alert('Failed to update password');
+    }
+  }
 
   return (
     <div>
-      {/* <Form title="change password" inputArr={inputArr} btnArr={btnArr} /> */}
-      <form
-      className="d-flex justify-content-center"
-    >
-      <div className="form-width">
-        <p className="text-capitalize fs-4">Reset Password</p>
- 
+      <form className="d-flex justify-content-center" onSubmit={handlePasswordChange}>
+        <div className="form-width">
+          <p className="text-capitalize fs-4">Reset Password</p>
+
           <Input
-            title='New password'
-            placeholder='enter new password'
-            type='password'
-            onChange={(e) => setPassword(e.target.value)}
+            title="Email"
+            placeholder="Enter Email"
+            type="email"
+            onChange={(e) => setEmail(e.target.value)}
           />
           <Input
-            title='confirm Password'
-            placeholder='confirm password'
-            type='confirmPassword'
-            onChange={(e) => setConfirmPassword(e.target.value)}
+            title="OTP"
+            placeholder="Enter OTP"
+            type="password"
+            onChange={(e) => setOTP(e.target.value)}
+          />
+          <Input
+            title="New password"
+            placeholder="Enter New Password"
+            type="password"
+            onChange={(e) => setNewPassword(e.target.value)}
           />
 
           <div className="mt-3">
-            <MainBtn
-              txt='save'
-              style='green-btn'
-              // action={handleSubmit(c)}
-              
-            />
+            <MainBtn txt="Save" style="green-btn" type="submit" />
           </div>
-      </div>
-    </form>
+        </div>
+      </form>
     </div>
   );
 }
-
 
 export default ResetPassword;

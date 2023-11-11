@@ -10,13 +10,13 @@ const Appointment = require("../Models/Appointment.js");
 
 require("dotenv").config();
 
-const stripe = require('stripe')(process.env.STRIPE_KEY);
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const {

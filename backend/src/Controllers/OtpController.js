@@ -1,4 +1,4 @@
-const nodemailer = require ('nodemailer');
+const nodemailer = require('nodemailer');
 const Patient = require('../Models/Patient');
 const Doctor = require('../Models/Doctor');
 const OTP = require('../Models/OTP');
@@ -19,28 +19,34 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendOTP = async ({ body }, res) => {
-    const {Email} = body;
-
-  const isPatient = await Patient.findOne({ Email : Email});
-  const isDoctor = await Doctor.findOne({ Email : Email });
-  const isAdmin = await Admin.findOne({ Email : Email });
-
-  console.log('isPatient:', isPatient);
-  console.log('isDoctor:', isDoctor);
-  console.log('isAdmin:', isAdmin);
-
-  if (!isPatient && !isDoctor && !isAdmin) {
-    console.log('Invalid Email');
-    res.status(400).json({ error: 'Invalid Email' });
-    return;
-  }
+  console.log('im here');
+  const { Email } = body;
 
   try {
+    const isPatient = await Patient.findOne({ Email: Email });
+    const isDoctor = await Doctor.findOne({ Email: Email });
+    const isAdmin = await Admin.findOne({ Email: Email });
+
+    console.log('isPatient:', isPatient);
+    console.log('isDoctor:', isDoctor);
+    console.log('isAdmin:', isAdmin);
+
+    if (!isPatient && !isDoctor && !isAdmin) {
+      console.log('Invalid Email');
+      res.status(400).json({ error: 'Invalid Email' });
+      return;
+    }
+
     // Generate OTP
     const otp = generateOTP();
+    console.log(otp);
 
     // Store the OTP in MongoDB
-    const otpDocument = await new OTP({ Email, otp });
+    const otpDocument = await new OTP({
+      Email: Email, // Set the Email property
+      otp: otp,
+    });
+    otpDocument.validateSync();
     await otpDocument.save();
 
     // Define the email options
@@ -58,13 +64,13 @@ const sendOTP = async ({ body }, res) => {
 
       If you didn't request this password reset, please ignore this email. Your account security is our top priority, and no changes will be made without your confirmation.
 
-      If you encounter any issues or have further questions, feel free to reach out to our support team at SuicideSquadGUC@gmail.com .
+      If you encounter any issues or have further questions, feel free to reach out to our support team at SuicideSquadGUC@gmail.com.
 
       Thank you for choosing Suicide Squad Clinic. We appreciate your trust in us.
 
       Best regards,
 
-      Suicide Squad Support Team `
+      Suicide Squad Support Team `,
     };
 
     // Send the email
@@ -79,8 +85,10 @@ const sendOTP = async ({ body }, res) => {
 };
 
 
+
 // Async function to update the user's password in MongoDB
 const updatePassword = async ({ body }, res) => {
+
   const { Email, otp, newPassword } = body;
   try {
     // Find the OTP document in the database
@@ -88,8 +96,7 @@ const updatePassword = async ({ body }, res) => {
 
     if (!otpDocument) {
       console.log(`Invalid OTP`);
-      res.status(400).json({ error: 'Invalid OTP' });
-      return;
+      return res.status(400).json({ error: 'Invalid OTP' });
     }
 
     // Update the user's password in MongoDB
@@ -108,17 +115,19 @@ const updatePassword = async ({ body }, res) => {
       res.status(404).json({ error: 'User not found' });
     }
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Failed to update password' });
-  }
+    console.error('Failed to update password', error);
+    res.status(500).json({ error: 'Failed to update password', details: error.message });
+  }  
 };
 
 const changePassword = async (req, res) => {
+
+  console.log('im here')
   const { Username } = req.params;
   const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
     // Find and update the password for patient or Doctor
-    if(newPassword === confirmPassword){
+    if (newPassword === confirmPassword) {
       const updateQuery = { Username: Username, Password: oldPassword };
       const updateField = { Password: newPassword };
 
@@ -130,11 +139,11 @@ const changePassword = async (req, res) => {
       if (updatedPatient || updatedDoctor || updatedAdmin) {
         res.status(200).json({ message: 'Password updated successfully' });
       } else {
-        res.status(401).json({ error: 'Invalid email or password' });
+        res.status(401).json({ error: 'Invalid username or password.' });
       }
     }
-    else{
-      return res.status(401).json({ error: 'New Password and Confirm Password do not match' });
+    else {
+      return res.status(401).json({ error: "'New Password' and 'Confirm Password' do not match." });
     }
   } catch (error) {
     res.status(500).json({ error: 'Failed to change password' });

@@ -23,10 +23,16 @@ const MongoURI = process.env.MONGO_URI ;
 
 //App variables
 const app = express();
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+}));
+
 
 app.use(express.json()); 
-app.use(cors());
+
 app.use(bodyParser.json());
+
 
 
 
@@ -91,8 +97,8 @@ const{
 
 
 app.post('/OtpResetPassword',sendOTP);
-app.get('/UpdatePassword',updatePassword);
-app.post('/ChangePassword/:Username',changePassword);
+app.post('/UpdatePassword',updatePassword); // forgot password
+app.put('/ChangePassword/:Username',changePassword); // resetting password normally
 
 
 
