@@ -15,6 +15,7 @@ function ForgotPassword() {
     console.log('Email:', Email);
     axios.post('http://localhost:4000/OtpResetPassword', { Email }, { withCredentials: true })
       .then(res => {
+		alert('Email sent.')
         navigate(`/resetPassword`);
         console.log(res.data);
       })

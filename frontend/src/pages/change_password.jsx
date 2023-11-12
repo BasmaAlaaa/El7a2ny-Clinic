@@ -18,7 +18,7 @@ function ChangePassword() {
     const data = { oldPassword: oldPassword, newPassword: password, confirmPassword: confirmPassword }
     console.log(data)
     const response = axios.put(`http://localhost:4000/ChangePassword/${username}`, data, { withCredentials: true })
-    .then(res => console.log(res.data))
+    .then(res => alert('Password updated successfully.'))
     .catch(err => console.log(err.request));
   }
   return (

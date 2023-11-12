@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Input from '../components/Input.jsx';
 import MainBtn from '../components/Button.jsx';
@@ -9,6 +9,7 @@ function ResetPassword() {
   const [otp, setOTP] = useState('');
   const [newPassword, setNewPassword] = useState('');
   console.log(Email);
+  const navigate = useNavigate();
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
@@ -21,7 +22,8 @@ function ResetPassword() {
       });
 
 
-      console.log('Password updated successfully');
+      alert('Password updated successfully');
+      navigate('/login');
     } catch (error) {
       console.error('Failed to update password', error);
       alert('Failed to update password');
