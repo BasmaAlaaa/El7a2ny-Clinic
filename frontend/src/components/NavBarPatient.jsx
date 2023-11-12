@@ -40,7 +40,7 @@ function NavBarPatient(props) {
             <MainBtn
               txt="Change Password"
               style="green-btn"
-              action={() => navigate(`/changePassword/{props.username}`)}
+              action={() => navigate(`/changePassword/${props.username}`)}
               key="navBtn"
             />
           </div>

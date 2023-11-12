@@ -123,13 +123,16 @@ const updatePassword = async ({ body }, res) => {
 const changePassword = async (req, res) => {
 
   console.log('im here')
-  const { Username } = req.params;
+  const { username } = req.params;
   const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
     // Find and update the password for patient or Doctor
     if (newPassword === confirmPassword) {
-      const updateQuery = { Username: Username, Password: oldPassword };
+      const updateQuery = { Username: username, Password: oldPassword };
       const updateField = { Password: newPassword };
+
+      console.log(updateQuery)
+      console.log(updateField)
 
       const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
       console.log('ppp', updatedPatient)

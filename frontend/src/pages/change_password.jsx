@@ -10,25 +10,27 @@ function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const {username} = useParams();
+  const { username } = useParams();
+  console.log(username)
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {oldPassword:oldPassword, newPassword:password, confirmPassword:confirmPassword}
+    const data = { oldPassword: oldPassword, newPassword: password, confirmPassword: confirmPassword }
     console.log(data)
-    const response = axios.post(`http://localhost:4000/ChangePassword/${username}`, data)
-    .then(res =>console.log(res.data)).catch(err => console.log(err.request))
+    const response = axios.put(`http://localhost:4000/ChangePassword/${username}`, data, { withCredentials: true })
+    .then(res => console.log(res.data))
+    .catch(err => console.log(err.request));
   }
   return (
     <div>
       <NavBar />
       {/* <Form title="change password" inputArr={inputArr} btnArr={btnArr} /> */}
       <form
-      className="d-flex justify-content-center"
-    >
-      <div className="form-width">
-        <p className="text-capitalize fs-4">Change Password</p>
- 
+        className="d-flex justify-content-center"
+      >
+        <div className="form-width">
+          <p className="text-capitalize fs-4">Change Password</p>
+
           <Input
             title='old password'
             placeholder='enter old password'
@@ -47,9 +49,9 @@ function ChangePassword() {
             type='password'
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
-      
 
-        {/* {type == 'register' && (
+
+          {/* {type == 'register' && (
           <p className="text-center mt-3 small-txt">
             By Creating an account you agree to our
             <a className="green-txt"> Terms of use </a>
@@ -63,11 +65,11 @@ function ChangePassword() {
               txt='save'
               style='green-btn'
               action={handleSubmit}
-              
+
             />
           </div>
-      </div>
-    </form>
+        </div>
+      </form>
     </div>
   );
 }
