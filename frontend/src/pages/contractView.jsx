@@ -27,15 +27,16 @@ function ContractView () {
     console.log("Accept contract button clicked");
     try {
       const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`);
+      alert(response.data.message)
       console.log('Contract accepted', response.data);
       setContractInfo(prevContract => ({
         ...prevContract,
         Status: 'accepted'
       }));
-      alert('Contract accepted');
+   //   alert('Contract accepted');
     } catch (error) {
-      // Handle the error
       console.error('Error accepting contract', error.response.data);
+      alert(error.response.data.error);
     }
   };
 

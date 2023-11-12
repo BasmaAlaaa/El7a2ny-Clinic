@@ -475,7 +475,14 @@ const viewContract = async (req, res) => {
 const acceptContract = async (req, res) => {
   try {
       const DoctorUsername = req.params.DoctorUsername; 
-      // Update the contract status to 'accepted' for the specific doctor
+      const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
+      if (!doctorExists) {
+          return res.status(404).json({ error: 'Doctor not found.' });
+      }
+      const contractDetails = await ContractSchema.findOne({ DoctorUsername });
+      if(contractDetails.Status === 'accepted'){
+          return res.status(404).json({ error: "Contract already accepted." });
+      }
       const updatedContract = await ContractSchema.findOneAndUpdate({ DoctorUsername: DoctorUsername }, { Status: 'accepted' }, { new: true });
 
       if (!updatedContract) {
