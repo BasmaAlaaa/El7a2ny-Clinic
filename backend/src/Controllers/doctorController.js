@@ -2,7 +2,8 @@ const { StatusFile } = require('git');
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
-const ContractSchema = require('../Models/Contract.js');
+const contractSchema = require('../Models/Contract.js');
+ 
 const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 //const Appointment = require ('../Models/Appointment.js');
 //const Doctor = require('../Models/Doctor'); 
@@ -301,17 +302,6 @@ const MyPatients = async (req,res) =>{
           return res.status(404).send('No patients found for this doctor');
         }
 
-        //const appointments = await appointmentSchema.find({DoctorUsername: Username, PatientUsername: { $in: patientsUsernames}});
-    
-        // Extract patient names and send them as an array
-        /*const patientNames = 
-        patients.map((patient) => 
-        ({Name: patient.Name,
-          Username: patient.Username,
-          Email: patient.Email,
-          DateOfBirth: patient.DateOfBirth,
-        }));*/
-
         const appointments = await appointmentSchema.find({PatientUsername: { $in: patientsUsernames}});
 
         const result = [];
@@ -328,7 +318,7 @@ const MyPatients = async (req,res) =>{
             }
           }
         }
-        res.status(200).send(result);
+        res.status(200).send(patients);
       } catch (error) {
         res.status(500).send({error: error.message});
       }
@@ -462,7 +452,7 @@ const viewContract = async (req, res) => {
       if (!doctorExists) {
           return res.status(404).json({ error: 'Doctor not found.' });
       }
-      const contractDetails = await ContractSchema.findOne({ DoctorUsername });
+      const contractDetails = await contractSchema.findOne({ DoctorUsername });
 
       if (!contractDetails) {
           return res.status(404).json({ error: "Contract not found for this doctor." });
@@ -479,11 +469,11 @@ const acceptContract = async (req, res) => {
       if (!doctorExists) {
           return res.status(404).json({ error: 'Doctor not found.' });
       }
-      const contractDetails = await ContractSchema.findOne({ DoctorUsername });
+      const contractDetails = await contractSchema.findOne({ DoctorUsername });
       if(contractDetails.Status === 'accepted'){
           return res.status(404).json({ error: "Contract already accepted." });
       }
-      const updatedContract = await ContractSchema.findOneAndUpdate({ DoctorUsername: DoctorUsername }, { Status: 'accepted' }, { new: true });
+      const updatedContract = await contractSchema.findOneAndUpdate({ DoctorUsername: DoctorUsername }, { Status: 'accepted' }, { new: true });
 
       if (!updatedContract) {
           return res.status(404).json({ error: "Contract not found for this doctor." });
@@ -618,8 +608,8 @@ const addAvailableTimeSlots = async (req, res) => {
 
     for(const slot of slots){
       if(!found){
-        if(slot.Date.getTime() === newDate.getTime() && slot.Time === time){
-          console.log("heey");
+
+        if(slot.Date.getTime() === newDate.getTime() && slot.Time === Number(time)){
           found = true;
           return res.status(404).send("Already added Slot in your Schedule");
         }
@@ -664,7 +654,7 @@ const addAvailableTimeSlots = async (req, res) => {
 
       for(const slot of slots){
         if(!found){
-          if((slot.Date.getTime() === newDate.getTime()) && (slot.Time === time) && (slot.Status === "available")){
+          if((slot.Date.getTime() === newDate.getTime()) && (slot.Time === Number(time)) && (slot.Status === "available")){
             found = true;
             slot.Status = "booked",
             doctor.save();

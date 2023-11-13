@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import NavBarAdministrator from "../components/NavBarAdministrator";
 import { useParams} from 'react-router-dom';
 import axios from "axios";
-import NavBar from "../components/NavBar";
+import NavBar from "../components/NavBarDoctor";
 import TableHealthRecords from "../components/TableHealthRecords";
 
 
@@ -116,7 +116,7 @@ function PatientInfo(){
     <h3>
     <input  type= 'number' placeholder="Time" onChange={(e) => setTime(e.target.value)} />
     </h3>
-    <button onClick={handleSubmit}>Add Appointment</button>
+    <button onClick={handleSubmit1}>Add Appointment</button>
   </form>
         </div>
     )

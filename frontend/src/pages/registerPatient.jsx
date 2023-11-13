@@ -45,10 +45,12 @@ function RegisterPatient() {
   const [emergencyName, setEmergencyName] = useState('')
   const [emergencyMobile, setEmergencyMobile] = useState('')
   const [emergencyRelation, setEmergencyRelation] = useState('')
+  let navigate = useNavigate();
 
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try{
     const data = { Username: username, 
       Name: name, 
       NationalID: nationalID,
@@ -60,8 +62,19 @@ function RegisterPatient() {
       EmergencyContactName: emergencyName,
       EmergencyContactMobile: emergencyMobile }
     console.log(data)
-    const response = axios.post('http://localhost:4000/Patient/registerPatient', data)
-      .then(res => console.log(res.data)).catch(err => console.log(err))
+    const response = await axios.post('http://localhost:4000/Patient/registerPatient', data)
+    
+        if (response.status === 200) {
+          alert(`Registered successfully`);
+          console.log(response.data.message);
+          navigate(`/login`);
+        } else {
+          alert(`Failed to register. Status: ${response.status}`);
+        }
+      } catch (error) {
+        alert(`Failed to update password. Error: ${error.message}`);
+        console.error('Error accepting request:', error);
+      }
   }
   return (
     <div>

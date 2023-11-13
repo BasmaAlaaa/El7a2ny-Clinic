@@ -55,4 +55,6 @@ const ContractSchema = new Schema(
         default: 'Pending'
     },}
 , { timestamps: true});
-module.exports= mongoose.model('Contract', ContractSchema);
+
+const Contract = mongoose.model('Contract', ContractSchema);
+module.exports = Contract;
