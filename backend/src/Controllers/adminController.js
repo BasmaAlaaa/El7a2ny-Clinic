@@ -9,7 +9,7 @@ const FamilyMemberSchema = require("../Models/FamilyMember");
 const Contract = require("../Models/Contract");
 const jwt = require ('jsonwebtoken');
 const Administrator = require("../Models/Administrator");
-//const isUsernameUnique = require('../utils');
+const { validatePassword } = require('../utils');
 
 async function isUsernameUnique(username) {
   const patientExists = await Patient.findOne({ Username: username });
@@ -149,6 +149,10 @@ const createAdmin = async (req, res) => {
 
     if (!(await isEmailUnique(Email))) {
       throw new Error("Email is already taken.");
+    }
+
+    if(!(await validatePassword(Password))){
+      return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
     }
 
     const newAdmin = new Admin({ Username, Password, Email });

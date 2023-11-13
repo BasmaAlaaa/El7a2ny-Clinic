@@ -3,6 +3,7 @@ const Patient = require('../Models/Patient');
 const Doctor = require('../Models/Doctor');
 const OTP = require('../Models/OTP');
 const Admin = require('../Models/Administrator');
+const {validatePassword} = require('../utils');
 
 // Function to generate a random OTP
 function generateOTP() {
@@ -91,6 +92,11 @@ const updatePassword = async ({ body }, res) => {
 
   const { Email, otp, newPassword } = body;
   try {
+
+    if (!(await validatePassword(newPassword))) {
+      return res.status(400).send("Password must contain at least a uppercase, lowercase, a number and must be at least 8 characters long");
+    }
+
     // Find the OTP document in the database
     const otpDocument = await OTP.findOneAndDelete({ Email: Email, otp: otp });
 
@@ -128,6 +134,10 @@ const changePassword = async (req, res) => {
   try {
     // Find and update the password for patient or Doctor
     if (newPassword === confirmPassword) {
+
+      if (!(await validatePassword(newPassword))) {
+        return res.status(400).send("Password must contain at least a uppercase, lowercase, a number and must be at least 8 characters long");
+      }
       const updateQuery = { Username: username, Password: oldPassword };
       const updateField = { Password: newPassword };
 

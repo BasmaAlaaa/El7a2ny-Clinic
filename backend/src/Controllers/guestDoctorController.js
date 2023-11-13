@@ -1,6 +1,6 @@
 const guestDoctorModel = require('../Models/GuestDoctor.js');
 const { default: mongoose } = require('mongoose');
-const { isEmailUnique, isUsernameUnique } = require('../utils.js');
+const { isEmailUnique, isUsernameUnique, validatePassword } = require('../utils.js');
 const upload = require('../Routes/multer-config');
 
 // Task 3 : register Doctor
@@ -32,6 +32,10 @@ const registerGuestDoctor = async (req, res) => {
         if (!(await isEmailUnique(Email))) {
             return res.status(400).json('Email is already in use.');
         }
+
+        if(!(await validatePassword(Password))){
+            return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
+          }
 
         if (!Username ||
             !Name ||

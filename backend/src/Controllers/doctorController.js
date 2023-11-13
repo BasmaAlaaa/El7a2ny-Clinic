@@ -751,15 +751,6 @@ const addAvailableTimeSlots = async (req, res) => {
     }
   };
   
-  
-
-
-
-
-
-
-
-
 
 module.exports = {
     docFilterAppsByDate,

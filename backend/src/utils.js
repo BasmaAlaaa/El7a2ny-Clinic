@@ -19,7 +19,14 @@ async function isEmailUnique(email) {
   return !patientExists && !guestDoctorExists && !doctorExists && !adminExists;
 }
 
+async function validatePassword(password) {
+  // Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/;
+  return passwordRegex.test(password);
+}
+
 module.exports = {
   isEmailUnique,
-  isUsernameUnique
+  isUsernameUnique,
+  validatePassword
 };

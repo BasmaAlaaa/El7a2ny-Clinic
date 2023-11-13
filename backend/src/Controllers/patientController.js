@@ -1,5 +1,5 @@
 const { default: mongoose } = require("mongoose");
-const { isEmailUnique, isUsernameUnique } = require("../utils.js")
+const { isEmailUnique, isUsernameUnique, validatePassword } = require("../utils.js")
 const patientSchema = require('../Models/Patient.js');
 const doctorSchema = require('../Models/Doctor.js');
 const prescriptionSchema = require('../Models/Prescription.js');
@@ -10,8 +10,25 @@ const Appointment = require("../Models/Appointment.js");
 
 require("dotenv").config();
 
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 
+//Function for Stripe
+async function createStripeCustomer({ Email, Name, Phone }) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      const Customer = await stripe.customers.create({
+        name: Name,
+        email: Email,
+        phone: Phone
+      });
+
+      resolve(Customer);
+    } catch (err) {
+      console.log(err);
+      reject(err);
+    }
+  });
+}
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
@@ -44,7 +61,11 @@ const registerPatient = async (req, res) => {
       throw new Error('Email is already in use.');
     }
 
-    const patientExists = await patientSchema.findOne({ NationalID: NationalID });
+    if(!(await validatePassword(Password))){
+      return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
+    }
+
+    const patientExists = await patientSchema.findOne({ Email: Email });
 
     if (patientExists) {
       return res.status(404).send("You already registered.");
@@ -76,24 +97,6 @@ const registerPatient = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
-//Function for Stripe
-async function createStripeCustomer({ Email, Name, Phone }) {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const Customer = await stripe.customers.create({
-        name: Name,
-        email: Email,
-        phone: Phone
-      });
-
-      resolve(Customer);
-    } catch (err) {
-      console.log(err);
-      reject(err);
-    }
-  });
-}
 
 
 // Req 18: app.post('/addFamMember/:Username')
@@ -1643,14 +1646,14 @@ const linkPatientAccountAsFam = async (req, res) => {
     var ageofFam1 = Math.abs(year - 1970);
 
     patient.FamilyMembers.push(famToBeLinked.NationalID);
-    const familyMem = await FamilyMember.create({
+    /*const familyMem = await FamilyMember.create({
       Name: famToBeLinked.Name,
       NationalID: famToBeLinked.NationalID,
       Age: ageofFam1,
       Gender: famToBeLinked.Gender,
       RelationToPatient: RelationToPatient,
       PatientUsername: PatientUsername
-    });
+    });*/
 
     patient.save();
 
@@ -1685,7 +1688,10 @@ const subscribeToAHealthPackage = async (req, res) => {
       return res.status(404).send({ error: 'Health Package not found' });
     }
     if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= healthPackage.AnnualFee)){
-
+      
+      if(paymentMethod === "wallet" && !(patient.WalletAmount >= healthPackage.AnnualFee)){
+        return res.status(404).send("Not enough cash in the wallet");
+      }
       const healthPackagesOfPatient = patient.SubscribedHP;
       var patSub = false;
 
@@ -1801,9 +1807,6 @@ const subscribeToAHealthPackage = async (req, res) => {
           }
         }
       }
-    }
-    else{
-      return res.status(404).send("Not enough cash in the wallet");
     }
     res.status(200).send({ message: 'Subscribed successfully', patient });
   } catch (error) {

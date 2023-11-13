@@ -4,6 +4,7 @@ import { useState } from 'react';
 import NavBar from '../components/NavBar.jsx';
 import axios from 'axios';
 import { useParams } from 'react-router';
+import { useNavigate} from 'react-router-dom';
 
 
 function ChangePassword() {
@@ -11,15 +12,36 @@ function ChangePassword() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { username } = useParams();
+  const navigate = useNavigate();
   console.log(username)
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const data = { oldPassword: oldPassword, newPassword: password, confirmPassword: confirmPassword }
-    console.log(data)
-    const response = axios.put(`http://localhost:4000/ChangePassword/${username}`, data, { withCredentials: true })
-    .then(res => alert('Password updated successfully.'))
-    .catch(err => console.log(err.request));
+    try {
+      const data = { oldPassword: oldPassword, newPassword: password, confirmPassword: confirmPassword };
+      const response = await axios.put(`http://localhost:4000/ChangePassword/${username}`, data, {
+        withCredentials: true,
+        auth: {
+          username: username, 
+          password: oldPassword, 
+        },
+      });
+  
+      if (response.status === 200) {
+        alert(`Password updated successfully`);
+        console.log(response.data.message);
+        const res = await axios.get('http://localhost:4000/logout');
+        localStorage.removeItem('token');
+        navigate(`/login`);
+      } else if (response.status === 401) {
+        alert(`Failed to update password. Invalid old password.`);
+      } else {
+        alert(`Failed to update password. Status: ${response.status}`);
+      }
+    } catch (error) {
+      alert(`Failed to update password. Error: ${error.message}`);
+      console.error('Error accepting request:', error);
+    }
   }
   return (
     <div>
@@ -65,7 +87,6 @@ function ChangePassword() {
               txt='save'
               style='green-btn'
               action={handleSubmit}
-
             />
           </div>
         </div>

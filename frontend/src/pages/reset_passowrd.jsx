@@ -20,10 +20,15 @@ function ResetPassword() {
         otp: otp,
         newPassword: newPassword,
       });
-
-
-      alert('Password updated successfully');
-      navigate('/login');
+      if (response.status === 200) {
+        alert(`Password updated successfully`);
+        console.log(response.data.message);
+        navigate(`/login`);
+      } else if (response.status === 401) {
+        alert(`Failed to update password. Invalid old password.`);
+      } else {
+        alert(`Failed to update password. Status: ${response.status}`);
+      }
     } catch (error) {
       console.error('Failed to update password', error);
       alert('Failed to update password');

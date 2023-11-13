@@ -51,7 +51,8 @@ function RegisterPatient() {
     e.preventDefault();
     const data = { Username: username, 
       Name: name, 
-      Email: email, 
+      NationalID: nationalID,
+      Email: email,
       Password: password, 
       DateOfBirth: dateOfBirth, 
       Gender: gender, 
