@@ -619,6 +619,7 @@ const addAvailableTimeSlots = async (req, res) => {
     for(const slot of slots){
       if(!found){
         if(slot.Date.getTime() === newDate.getTime() && slot.Time === time){
+          console.log("heey");
           found = true;
           return res.status(404).send("Already added Slot in your Schedule");
         }

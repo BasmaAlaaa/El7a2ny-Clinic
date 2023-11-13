@@ -11,10 +11,8 @@ function CaseTableBody({ data }) {
     {data.Date && <th>{data.Date.substring(0,10)}</th>}
     {data.DoctorUsername && <td>{data.DoctorUsername}</td>}
     {data.PatientUsername && <td>{data.PatientUsername}</td>}
+    {data.Name && <td>{data.Name}</td>}
     {data.Status && <td>{data.Status}</td>}
-
-    
-      
 
     </>
   );

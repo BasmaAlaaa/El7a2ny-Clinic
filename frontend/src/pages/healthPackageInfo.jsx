@@ -25,10 +25,29 @@ function HealthPackageInfo(){
 
   console.log(result)
 
-  const handleSubscribe = () =>{
-    const response = axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`)
-  .then(res =>alert('subscribed')).catch(err => alert(err.message))
-  window.location.reload(true);
+  const handleSubscribe = async () =>{
+    
+
+  try {
+
+    const data = {paymentMethod: typePay};
+    const response = await axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`, data)
+
+    if (response.status === 200) {
+      alert(`Subscribed successfully`);
+      console.log(response.data.message);
+    } else if (response.status === 400) {
+      alert(`Failed to subscribe, not enough money in the waller`);
+    } else if (response.status === 404) {
+      alert(`Failed to subscribe, you are already subscribed`);
+    } else {
+      alert(`Failed to subscribe. Status: ${response.status}`);
+    }
+    //window.location.reload(true);
+  } catch (error) {
+    alert(`Failed to subscribe. Error: ${error.message}`);
+    console.error('Error accepting request:', error);
+  }
 
   }
   const handleCancel = () =>{
@@ -65,8 +84,12 @@ return (
             <h3>Medicine Discount: {result.MedicineDiscount}</h3>
             <h3>Family Subscription Discount: {result.FamilySubscriptionDiscount}</h3>
             <h3>Status: {result.Status}</h3>
-
-
+            {result.Status === "Subscribed" &&
+              <h3> Renewal Date: {result.RenewalDate}</h3>
+            }
+            {result.Status === "Cancelled" &&
+              <h3> Cancellation Date: {result.CancellationDate}</h3>
+            }
         </ul>
         
         <div>

@@ -91,18 +91,6 @@ const deleteEntity = async (req, res) => {
           }
         }
         //const deletedFams = await FamilyMemberSchema.deleteMany({NationalID:{ $in: famMembersIds}});
-
-        const healthPacks = await HealthPackage.find();
-        for (const hp of healthPacks) {
-          const index = hp.PatientsUsernames.indexOf(Username);
-          if (!index) {
-            const update = await HealthPackage.updateOne(
-              { Type: hp.Type },
-              { $pull: { PatientsUsernames: Username } }
-            );
-          }
-        }
-
         const docs = await Doctor.find();
         for (const doc of docs) {
           const index = doc.PatientsUsernames.indexOf(Username);

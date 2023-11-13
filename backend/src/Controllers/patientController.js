@@ -1674,7 +1674,6 @@ const subscribeToAHealthPackage = async (req, res) => {
   const { paymentMethod } = req.body;
 
   try {
-
     //Selecting the date and time and payment method of appointment
     const patient = await patientSchema.findOne({ Username: patientUsername });
 
@@ -1687,23 +1686,27 @@ const subscribeToAHealthPackage = async (req, res) => {
     if (!healthPackage) {
       return res.status(404).send({ error: 'Health Package not found' });
     }
+
     if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= healthPackage.AnnualFee)){
-      
+
       if(paymentMethod === "wallet" && !(patient.WalletAmount >= healthPackage.AnnualFee)){
-        return res.status(404).send("Not enough cash in the wallet");
+        return res.status(400).send("Not enough cash in the wallet");
       }
       const healthPackagesOfPatient = patient.SubscribedHP;
       var patSub = false;
-
+      console.log(healthPackagesOfPatient);
       const aYearFromNow = new Date();
       aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
 
       for (const hp of healthPackagesOfPatient) {
-        if (hp.Status === "Subscribed" && !patSub) {
+        if (hp.Status === "Subscribed") {
           patSub = true;
           return res.status(404).send("You are already subscribed to a health package");
         }
-        else if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
+      }
+
+      for (const hp of healthPackagesOfPatient) {
+        if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
           hp.Status = "Subscribed";
           hp.RenewalDate = aYearFromNow;
           hp.CancellationDate = null;
@@ -1727,7 +1730,6 @@ const subscribeToAHealthPackage = async (req, res) => {
           patient.save();
           patSub = true;
         }
-        
       }
       if (!patSub) {
         patient.SubscribedHP.push({
@@ -1737,6 +1739,7 @@ const subscribeToAHealthPackage = async (req, res) => {
           SubscriptionStartDate: Date.now(),
           RenewalDate: aYearFromNow
         });
+
         if(paymentMethod === "wallet"){
           patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
         }        
