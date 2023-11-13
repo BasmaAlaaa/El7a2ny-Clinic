@@ -5,8 +5,8 @@ const Patient = require("../Models/Patient");
 
 // create json web token
 const maxAge = 3 * 24 * 60 * 60;
-const createToken = (name) => {
-    return jwt.sign({ name }, 'supersecret', {
+const createToken = (name, email) => {
+    return jwt.sign({ name, email }, 'supersecret', {
         expiresIn: maxAge
     });
 };
@@ -19,7 +19,7 @@ const login = async (req, res) => {
       const userAdmin = await Admin.findOne({ Username: Username });
       if (userDoctor && !userPatient && !userAdmin) {
         if (password===userDoctor.Password) {
-          const token = createToken(userDoctor.Username);
+          const token = createToken(userDoctor.Username,userDoctor.Email);
           res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
           res.status(200).json({ userDoctor, token });
         } else {
@@ -27,7 +27,7 @@ const login = async (req, res) => {
         }
       } else if (!userDoctor && userPatient && !userAdmin) {
           if (password===userPatient.Password) {
-            const token = createToken(userPatient.Username);
+            const token = createToken(userPatient.Username,userPatient.Email);
             res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
             res.status(200).json({ userPatient, token });
           }
@@ -37,7 +37,7 @@ const login = async (req, res) => {
         }
       else if (!userDoctor && !userPatient&& userAdmin) {
         if (password===userAdmin.Password) {
-            const token = createToken(userAdmin.Username);
+            const token = createToken(userAdmin.Username,userAdmin.Email);
             res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
             res.status(200).json({ userAdmin, token });
           } else {

@@ -5,7 +5,7 @@ mongoose.set('strictQuery', false);
 require("dotenv").config();
 const cors = require("cors");
 const bodyParser = require('body-parser');
-
+const cookieParser = require('cookie-parser');
 
 const patientRoutes = require("../src/Routes/Patient"); // Require Patient
 const adminRoutes = require('../src/Routes/Administrator'); //require admin
@@ -16,6 +16,9 @@ const familyMemberRoutes = require('../src/Routes/FamilyMember');
 const prescriptionRoutes = require('../src/Routes/Prescription');
 const doctorRoutes = require('../src/Routes/Doctor'); //
 const Admin = require("../src/Models/Administrator");
+const {requireAuthusername,
+  requireAuthEmail} = require('../src/Middleware/authMiddleware');
+
 
 const MongoURI = process.env.MONGO_URI;
 
@@ -29,7 +32,6 @@ app.use(cors({
 
 
 app.use(express.json());
-
 app.use(bodyParser.json());
 
 
@@ -78,6 +80,8 @@ app.get("/home", (req, res) => {
   res.status(200).send("You have everything installed!");
 });
 
+app.use(cookieParser());
+
 const {
   login,
   logout
@@ -95,10 +99,9 @@ const {
 } = require('../src/Controllers/OtpController')
 
 
-app.post('/OtpResetPassword', sendOTP);
-app.post('/UpdatePassword', updatePassword); // forgot password
-app.put('/ChangePassword/:username', changePassword); // resetting password normally
-
+app.post('/OtpResetPassword',requireAuthEmail, sendOTP);
+app.post('/UpdatePassword', requireAuthEmail, updatePassword); // forgot password
+app.put('/ChangePassword/:username', requireAuthusername, changePassword); // resetting password normally
 
 
 // Registering Routes

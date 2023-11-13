@@ -128,7 +128,6 @@ const updatePassword = async ({ body }, res) => {
 
 const changePassword = async (req, res) => {
 
-  console.log('im here')
   const { username } = req.params;
   const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
@@ -145,7 +144,6 @@ const changePassword = async (req, res) => {
       console.log(updateField)
 
       const updatedPatient = await Patient.findOneAndUpdate(updateQuery, updateField, { new: true });
-      console.log('ppp', updatedPatient)
       const updatedDoctor = await Doctor.findOneAndUpdate(updateQuery, updateField, { new: true });
       const updatedAdmin = await Admin.findOneAndUpdate(updateQuery, updateField, { new: true });
 
