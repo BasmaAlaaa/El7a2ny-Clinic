@@ -99,9 +99,9 @@ const {
 } = require('../src/Controllers/OtpController')
 
 
-app.post('/OtpResetPassword',requireAuthEmail, sendOTP);
-app.post('/UpdatePassword', requireAuthEmail, updatePassword); // forgot password
-app.put('/ChangePassword/:username', requireAuthusername, changePassword); // resetting password normally
+app.post('/OtpResetPassword', sendOTP);
+app.post('/UpdatePassword', updatePassword); // forgot password
+app.put('/ChangePassword/:username', changePassword); // resetting password normally
 
 
 // Registering Routes
