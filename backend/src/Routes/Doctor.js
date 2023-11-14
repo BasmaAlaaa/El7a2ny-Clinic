@@ -42,7 +42,7 @@ router.post('/Register', upload.fields([
   ]), registerDoctor) ;
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
-router.put('/updateDoctorByAffiliation/:Username', requireAuthUsername ,updateDoctorByAffiliation);
+router.put('/updateDoctorByAffiliation/:Username' ,updateDoctorByAffiliation);
 router.put('/updateDoctorByEmail/:Username', updateDoctorByEmail);
 router.put('/updateDoctorByHourlyRate/:Username', updateDoctorByHourlyRate);
 
