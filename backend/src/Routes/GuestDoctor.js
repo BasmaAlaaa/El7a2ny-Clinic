@@ -3,7 +3,9 @@ const router = express.Router();
 const upload = require('./multer-config');
 
 // controller functions
-const registerGuestDoctor= require('../Controllers/guestDoctorController')
+const registerGuestDoctor= require('../Controllers/guestDoctorController');
+const { verify } = require('../Controllers/loginController');
+
 
 // register route
 router.post('/Register', upload.fields([

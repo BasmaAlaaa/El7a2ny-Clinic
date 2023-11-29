@@ -10,6 +10,8 @@ const mongoose = require('mongoose');
 const registerPrescription = require('../Controllers/prescriptionController')
 const router = express.Router();
 
-router.post('/Register', registerPrescription)
+const { verify } = require('../Controllers/loginController');
+
+router.post('/Register', registerPrescription);
 
 module.exports = router

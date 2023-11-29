@@ -3,6 +3,9 @@ const healthPackageController = require("../Controllers/healthPackageController"
 const router = express.Router();
 //const authorizeAdmin = require("../middleware/authorizeAdmin");
 
+const { verify } = require('../Controllers/loginController');
+
+
 router.get("/packages", healthPackageController.getAllPackages);
 router.post("/subscribe", healthPackageController.subscribeToPackage);
 router.post("/create", healthPackageController.createPackage);

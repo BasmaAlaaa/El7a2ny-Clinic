@@ -5,11 +5,6 @@ const bodyParser = require('body-parser');
 const router = express.Router(); // Make sure you are creating a router object
 const upload = require('../Routes/multer-config');
 
-const {requireAuthusername,
-  requireAuthEmail,
-  requireAuthUsername} = require('../Middleware/authMiddleware');
-
-
 const { registerDoctor,
     viewInfoAndRecords,
     MyPatients,
@@ -34,6 +29,9 @@ const { registerDoctor,
     createAvailableApps
 } = require('../Controllers/doctorController'); // Import the function
 
+const { verify } = require('../Controllers/loginController');
+
+
 // register route
 router.post('/Register', upload.fields([
     { name: 'IDDocument', maxCount: 1 },
@@ -42,7 +40,7 @@ router.post('/Register', upload.fields([
   ]), registerDoctor) ;
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
-router.put('/updateDoctorByAffiliation/:Username', requireAuthUsername ,updateDoctorByAffiliation);
+router.put('/updateDoctorByAffiliation/:Username' ,updateDoctorByAffiliation);
 router.put('/updateDoctorByEmail/:Username', updateDoctorByEmail);
 router.put('/updateDoctorByHourlyRate/:Username', updateDoctorByHourlyRate);
 

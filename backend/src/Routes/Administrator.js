@@ -12,6 +12,9 @@ const router = express.Router();
 
 router.use(express.json());
 
+const { verify } = require('../Controllers/loginController');
+
+
 router.post("/createAdmin", adminController.createAdmin);
 router.delete("/deleteEntity/:entityType/:Username", adminController.deleteEntity);
 router.delete("/deleteEntity2/:Username", adminController.deleteEntity2);

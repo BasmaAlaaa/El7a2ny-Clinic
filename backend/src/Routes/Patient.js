@@ -45,6 +45,9 @@ const {
 
 const router = express.Router();
 
+const { verify } = require('../Controllers/loginController');
+
+
 // register route
 
 router.post('/registerPatient', registerPatient)

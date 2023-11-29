@@ -15,10 +15,7 @@ const appointmentRoutes = require('../src/Routes/Appointment');
 const familyMemberRoutes = require('../src/Routes/FamilyMember');
 const prescriptionRoutes = require('../src/Routes/Prescription');
 const doctorRoutes = require('../src/Routes/Doctor'); //
-const Admin = require("../src/Models/Administrator");
-const {requireAuthusername,
-  requireAuthEmail} = require('../src/Middleware/authMiddleware');
-
+const Admin = require('../src/Models/Administrator')
 
 const MongoURI = process.env.MONGO_URI;
 
@@ -82,14 +79,17 @@ app.get("/home", (req, res) => {
 
 app.use(cookieParser());
 
+//login + loout + token
 const {
+  refresh,
+  verify, 
   login,
   logout
-} = require("../src/Controllers/loginController")
+} = require('./Controllers/loginController');
 
-
-app.post("/login", login);
-app.get("/logout", logout);
+app.post("/refresh",refresh);
+app.post("/login",login);
+app.post("/logout/:username",verify, logout);
 
 //OTP + Change password routes
 const {
