@@ -905,15 +905,15 @@ const rejectFollowUpRequest = async (req, res) => {
   }
 };
 
-const ViewAllPres = async(req,res) =>{
-  const {DoctorUsername} = req.params;
-  try{
-    const doctor = await doctorSchema.findOne({Username: DoctorUsername});
-    if(!doctor){
+const ViewAllPres = async (req, res) => {
+  const { DoctorUsername } = req.params;
+  try {
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+    if (!doctor) {
       return res.status(404).send("No doctor found");
     }
-    const prescriptions = await Prescription.find({DoctorUsername: DoctorUsername});
-    if(!prescriptions || prescriptions.length === 0){
+    const prescriptions = await Prescription.find({ DoctorUsername: DoctorUsername });
+    if (!prescriptions || prescriptions.length === 0) {
       return res.status(404).send("No prescriptions found for this patient");
     }
     res.status(200).send(prescriptions);
@@ -924,7 +924,7 @@ const ViewAllPres = async(req,res) =>{
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
-  
+
   try {
     const { doctorUsername } = req.params;
     const { patientUsername, description, date, appointmentID, dose } = req.body;
@@ -952,7 +952,7 @@ const addPatientPrescription = async (req, res) => {
       Filled: false,
       Dose: dose,
     });
-    
+
     patient.PatientPrescriptions.push(prescription._id);
     await patient.save();
 
@@ -966,12 +966,8 @@ const addPatientPrescription = async (req, res) => {
 // update a patient's prescription
 const updatePatientPrescription = async (req, res) => {
   try {
-    const { doctorUsername, patientUsername, prescriptionId} = req.params;
+    const { doctorUsername, patientUsername, prescriptionId } = req.params;
     const { updatedDescription, updatedDose } = req.body;
-
-    // if (!doctorUsername || !patientUsername || !prescriptionId || !updatedDescription || !updatedDose) {
-    //   return res.status(400).json({ error: 'All fields must be filled.' });
-    // }
 
     const doctor = await doctorSchema.findOne({ Username: doctorUsername });
     if (!doctor) {
@@ -993,8 +989,14 @@ const updatePatientPrescription = async (req, res) => {
       return res.status(404).json({ error: 'Prescription not found or does not belong to the specified doctor and patient.' });
     }
 
-    prescription.Description = updatedDescription;
-    prescription.Dose = updatedDose;
+    if (updatedDescription) {
+      prescription.Description = updatedDescription;
+    }
+
+    if (updatedDose) {
+      prescription.Dose = updatedDose;
+    }
+
     const updatedPrescription = await prescription.save();
 
     return res.status(200).json({ success: 'Prescription updated successfully.', updatedPrescription });
@@ -1003,7 +1005,6 @@ const updatePatientPrescription = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-
 
 module.exports = {
   docFilterAppsByDate,
