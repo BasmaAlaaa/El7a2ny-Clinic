@@ -2065,7 +2065,6 @@ const ViewPresDetails = async (req, res) => {
   try {
     const { PatientUsername , id } = req.params;
     const prescription = await Prescription.findById(id);
-
     if (!prescription) {
         return res.status(404).json({ error: 'Prescription not found' });
     }
