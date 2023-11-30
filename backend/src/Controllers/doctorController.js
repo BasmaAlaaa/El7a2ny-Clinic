@@ -910,7 +910,7 @@ const ViewAllPres = async(req,res) =>{
   try{
     const doctor = await doctorSchema.findOne({Username: DoctorUsername});
     if(!doctor){
-      return res.status(404).send("No Doctor found");
+      return res.status(404).send("No doctor found");
     }
     const prescriptions = await Prescription.find({DoctorUsername: DoctorUsername});
     if(!prescriptions || prescriptions.length === 0){
@@ -993,5 +993,6 @@ module.exports = {
   downloadPrescriptionPDF,
   acceptFollowUpRequest,
   rejectFollowUpRequest,
-  addPatientPrescription
+  addPatientPrescription,
+  ViewAllPres
 };
