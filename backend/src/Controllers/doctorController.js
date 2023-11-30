@@ -3,6 +3,12 @@ const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
+const Prescription = require('../Models/Prescription.js');
+
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+
  
 const {isEmailUnique, isUsernameUnique} = require('../utils.js');
 //const Appointment = require ('../Models/Appointment.js');
@@ -741,6 +747,90 @@ const addAvailableTimeSlots = async (req, res) => {
       res.status(500).json({ error: error.message });
     }
   };
+
+
+
+  //Req 53: add/update dosage for each medicine added to the prescription 
+  const updateDosage = async (req, res) => {
+    try {
+        const { doctorUsername, newDosage } = req.body;
+
+        if (!doctorUsername || newDosage === undefined || newDosage === null) {
+            return res.status(400).json({ error: 'doctorUsername and newDosage are required parameters.' });
+        }
+
+        const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
+
+        if (!prescriptions || prescriptions.length === 0) {
+            return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+        }
+
+        const updatedPrescriptions = await Promise.all(prescriptions.map(async (prescription) => {
+            prescription.Dose = newDosage;
+            return await prescription.save();
+        }));
+
+        return res.status(200).json({ updatedPrescriptions });
+    } catch (error) {
+        return res.status(500).json({ error: `Error updating dosage: ${error.message}` });
+    }
+};
+
+//Req 59: download selected prescription (PDF) 
+const downloadPrescriptionPDF = async (req, res) => {
+  try {
+      const { doctorUsername } = req.params;
+
+      if (!doctorUsername) {
+          return res.status(400).json({ error: 'doctorUsername is a required parameter.' });
+      }
+
+      const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
+
+      if (!prescriptions || prescriptions.length === 0) {
+          return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+      }
+
+      // Ensure the directory exists
+      const directoryPath = path.join(__dirname, 'pdfs');
+      if (!fs.existsSync(directoryPath)) {
+          fs.mkdirSync(directoryPath);
+      }
+
+      // Resolve the full file path
+      const filePath = path.resolve(directoryPath, 'prescription.pdf');
+
+      const pdfDoc = new PDFDocument();
+      pdfDoc.pipe(fs.createWriteStream(filePath));
+
+      // Customize the content of the PDF based on your prescription data
+      prescriptions.forEach((prescription) => {
+          pdfDoc.text(`Prescription ID: ${prescription._id}`);
+          pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+          pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+          pdfDoc.text(`Description: ${prescription.Description}`);
+          pdfDoc.text(`Date: ${prescription.Date}`);
+          pdfDoc.text(`Dose: ${prescription.Dose}`);
+          pdfDoc.text('-----------------------------------------');
+      });
+
+      pdfDoc.end();
+
+      // Download the PDF
+      res.download(filePath, 'prescription.pdf', (err) => {
+          if (err) {
+              return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
+          }
+
+          // Clean up the temporary PDF file after download
+          fs.unlinkSync(filePath);
+      });
+  } catch (error) {
+      return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
+  }
+};
+
+
   
 
 module.exports = {
@@ -765,5 +855,7 @@ module.exports = {
     addAvailableTimeSlots ,
     scheduleFollowUp,
     doctorPastApp,
-    createAvailableApps
+    createAvailableApps,
+    updateDosage,
+    downloadPrescriptionPDF
 };

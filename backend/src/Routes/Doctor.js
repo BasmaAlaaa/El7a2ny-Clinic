@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 const router = express.Router(); // Make sure you are creating a router object
 const upload = require('../Routes/multer-config');
 
+
+
 const { registerDoctor,
     viewInfoAndRecords,
     MyPatients,
@@ -26,7 +28,9 @@ const { registerDoctor,
     addAvailableTimeSlots ,
     scheduleFollowUp, 
     doctorPastApp,
-    createAvailableApps
+    createAvailableApps,
+    updateDosage,
+    downloadPrescriptionPDF
 } = require('../Controllers/doctorController'); // Import the function
 
 const { verify } = require('../Controllers/loginController');
@@ -84,6 +88,11 @@ router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername', scheduleFollow
 router.get('/doctorPastApp/:Username', doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 
+//Req 53: add/update dosage for each medicine added to the prescription 
+router.post('/updateDosage', updateDosage);
+
+// Define a route to trigger the download
+router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
 
 const log =require("../Controllers/loginController")
 

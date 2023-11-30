@@ -8,6 +8,12 @@ const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
 
+const PDFDocument = require('pdfkit');
+const fs = require('fs');
+const path = require('path');
+
+const Prescription = require('../Models/Prescription.js');
+
 require("dotenv").config();
 
 const stripe = require('stripe')(process.env.STRIPE_KEY);
@@ -1817,6 +1823,60 @@ const subscribeToAHealthPackage = async (req, res) => {
   }
 };
 
+//Req 59: download selected prescription (PDF) 
+const downloadPrescriptionPDF = async (req, res) => {
+  try {
+      const { doctorUsername } = req.params;
+
+      if (!doctorUsername) {
+          return res.status(400).json({ error: 'doctorUsername is a required parameter.' });
+      }
+
+      const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
+
+      if (!prescriptions || prescriptions.length === 0) {
+          return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+      }
+
+      // Ensure the directory exists
+      const directoryPath = path.join(__dirname, 'pdfs');
+      if (!fs.existsSync(directoryPath)) {
+          fs.mkdirSync(directoryPath);
+      }
+
+      // Resolve the full file path
+      const filePath = path.resolve(directoryPath, 'prescription.pdf');
+
+      const pdfDoc = new PDFDocument();
+      pdfDoc.pipe(fs.createWriteStream(filePath));
+
+      // Customize the content of the PDF based on your prescription data
+      prescriptions.forEach((prescription) => {
+          pdfDoc.text(`Prescription ID: ${prescription._id}`);
+          pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+          pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+          pdfDoc.text(`Description: ${prescription.Description}`);
+          pdfDoc.text(`Date: ${prescription.Date}`);
+          pdfDoc.text(`Dose: ${prescription.Dose}`);
+          pdfDoc.text('-----------------------------------------');
+      });
+
+      pdfDoc.end();
+
+      // Download the PDF
+      res.download(filePath, 'prescription.pdf', (err) => {
+          if (err) {
+              return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
+          }
+
+          // Clean up the temporary PDF file after download
+          fs.unlinkSync(filePath);
+      });
+  } catch (error) {
+      return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
+  }
+};
+
 
 module.exports = {
   registerPatient,
@@ -1856,5 +1916,6 @@ module.exports = {
   patientUpcoming,
   patientPastApp,
   linkPatientAccountAsFam,
-  subscribeToAHealthPackage
+  subscribeToAHealthPackage,
+  downloadPrescriptionPDF
 }

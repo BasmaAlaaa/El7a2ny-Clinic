@@ -40,7 +40,8 @@ const {
     selectAppointmentDateTimeAndPayFam,
     linkPatientAccountAsFam,
     selectAppointmentDateTimeAndPay,
-    subscribeToAHealthPackage
+    subscribeToAHealthPackage,
+    downloadPrescriptionPDF
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -106,11 +107,16 @@ router.post('/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctor
 // router.get('/availableDoctorApps/:Username', availableDoctorApps);
 // router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
+// Define a route to trigger the download
+router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
+
 router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
 const log =require("../Controllers/loginController")
 
 router.post('/login',log.login);
 router.get('/logout',log.logout);
+
+
 
 
 
