@@ -124,6 +124,7 @@ router.get('/ViewPresDetails/:PatientUsername/:id', ViewPresDetails);
 
 const log =require("../Controllers/loginController")
 
+
 router.post('/login',log.login);
 router.get('/logout',log.logout);
 
