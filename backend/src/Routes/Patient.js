@@ -41,7 +41,10 @@ const {
     linkPatientAccountAsFam,
     selectAppointmentDateTimeAndPay,
     subscribeToAHealthPackage,
-    downloadPrescriptionPDF
+    downloadPrescriptionPDF ,
+    AddRefundForPatient ,
+    requestFollowUpAppointment,
+    requestFollowUpForFamilyMember
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -109,6 +112,11 @@ router.post('/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctor
 
 // Define a route to trigger the download
 router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
+
+router.post('/AddRefundForPatient/:patientId/:appointmentId',AddRefundForPatient);
+router.post('/requestFollowUpAppointment/:username/:appointmentId',requestFollowUpAppointment);
+router.post('/requestFollowUpForFamilyMember/:username/:appointmentId',requestFollowUpForFamilyMember);
+
 
 router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
 const log =require("../Controllers/loginController")

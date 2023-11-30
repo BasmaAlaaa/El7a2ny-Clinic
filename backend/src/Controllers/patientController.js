@@ -1877,6 +1877,170 @@ const downloadPrescriptionPDF = async (req, res) => {
   }
 };
 
+// Req 66 
+
+const AddRefundForPatient = async (req, res) => {
+  try {
+    const { patientId, appointmentId } = req.params;
+
+    // Find the patient by ID
+    const patient = await patientSchema.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found.' });
+    }
+
+    // Find the appointment by ID
+    const appointment = await appointmentSchema.findById(appointmentId);
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    // Check if the patient is associated with the appointment
+    if (appointment.PatientUsername !== patient.Username) {
+      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    }
+
+    // Check if the doctor is associated with the appointment
+   // if (appointment.DoctorUsername !== patient.DoctorUsername) {
+     // return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
+   // }
+
+    // Check if the appointment is canceled
+    if (appointment.Status.toLowerCase() !== 'canceled') {
+      return res.status(400).json({ success: false, message: 'Refund can only be processed for canceled appointments.' });
+    }
+
+    // Calculate the refund amount based on your business logic
+    const refundAmount = appointment.Price * 0.8; // Assuming 80% refund
+
+    // Update the WalletAmount directly in the database using $inc
+    await patientSchema.updateOne({ _id: patientId }, { $inc: { WalletAmount: refundAmount } });
+
+    return res.status(200).json({
+      success: true,
+      message: 'Refund processed successfully.',
+      updatedWalletAmount: patient.WalletAmount + refundAmount
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
+// Req 64 Requesting a follow-up for a previous app (himself)
+
+const requestFollowUpAppointment = async (req, res) => {
+  try {
+    const { username, appointmentId } = req.params;
+    const { Date, Time } = req.body;
+
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username: username });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found.' });
+    }
+
+    // Find the previous appointment by ID
+    const previousAppointment = await appointmentSchema.findById(appointmentId);
+
+    if (!previousAppointment) {
+      return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
+    }
+
+    // Check if the patient is associated with the previous appointment
+    if (previousAppointment.PatientUsername !== patient.Username) {
+      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    }
+
+    // Check if the previous appointment is completed or following
+    if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
+      // Save the follow-up request details in the database
+      previousAppointment.FollowUpRequest = {
+        Date,
+        Time,
+        Status: 'A new follow-up is Requested'
+      };
+
+      // Update the patient's status to 'Requested' 
+      previousAppointment.Status = 'requesting';
+
+      // Save the updated patient and appointment
+      previousAppointment.save();
+    
+
+      return res.status(200).json({ success: true, message: 'A new Follow-up appointment is requested successfully.' });
+    } else {
+      return res.status(400).json({ success: false, message: 'Follow-up appointment can only be requested for completed or following appointments.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+// Req 64 Requesting a follow-up for a previous appointment (family member)
+const requestFollowUpForFamilyMember = async (req, res) => {
+  try {
+    const { username, appointmentId } = req.params;
+    const { Date, Time } = req.body;
+
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username: username });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found.' });
+    }
+
+    // Check if the patient has family members
+    if (patient.FamilyMembers.length === 0) {
+      return res.status(403).json({ success: false, message: 'Patient has no family members.' });
+    }
+
+    // Get the first family member associated with the patient
+    const familyMember = patient.FamilyMembers[0]; // Assuming the first family member is the one to request the follow-up
+
+    // Find the previous appointment by ID
+    const previousAppointment = await appointmentSchema.findById(appointmentId);
+
+    if (!previousAppointment) {
+      return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
+    }
+
+    // Check if the patient or family member is associated with the previous appointment
+    if (previousAppointment.PatientUsername !== patient.Username && previousAppointment.PatientUsername !== familyMember.Username) {
+      return res.status(403).json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
+    }
+
+    // Check if the previous appointment is completed or following
+    if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
+      // Save the follow-up request details in the database
+      previousAppointment.FollowUpRequest = {
+        Date,
+        Time,
+        Status: 'Requested'
+      };
+
+      // Update the appointment's status to 'Requested'
+      previousAppointment.Status = 'Requesting';
+
+      // Save the updated appointment
+      await previousAppointment.save();
+
+      return res.status(200).json({ success: true, message: 'Follow-up appointment requested successfully.' });
+    } else {
+      return res.status(400).json({ success: false, message: 'Follow-up appointment can only be requested for completed or following appointments.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
 
 module.exports = {
   registerPatient,
@@ -1917,5 +2081,8 @@ module.exports = {
   patientPastApp,
   linkPatientAccountAsFam,
   subscribeToAHealthPackage,
-  downloadPrescriptionPDF
+  downloadPrescriptionPDF ,
+  requestFollowUpAppointment,
+  requestFollowUpForFamilyMember ,
+  AddRefundForPatient
 }
