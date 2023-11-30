@@ -82,14 +82,14 @@ app.use(cookieParser());
 //login + loout + token
 const {
   refresh,
-  verify, 
+  verify,
   login,
   logout
 } = require('./Controllers/loginController');
 
-app.post("/refresh",refresh);
-app.post("/login",login);
-app.post("/logout/:username",verify, logout);
+app.post("/refresh", refresh);
+app.post("/login", login);
+app.post("/logout/:username", verify, logout);
 
 //OTP + Change password routes
 const {

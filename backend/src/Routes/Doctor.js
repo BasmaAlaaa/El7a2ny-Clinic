@@ -1,135 +1,117 @@
 // External variables
 const express = require("express");
-const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const router = express.Router(); // Make sure you are creating a router object
-const upload = require("../Routes/multer-config");
+const upload = require('../Routes/multer-config');
 
-const {
-  registerDoctor,
-  viewInfoAndRecords,
-  MyPatients,
-  PatientByName,
-  PatientsUpcoming,
-  selectPatientWithHisName,
-  addDoctor,
-  updateDoctorByAffiliation,
-  updateDoctorByHourlyRate,
-  updateDoctorByEmail,
-  docFilterAppsByDate,
-  docFilterAppsByStatus,
-  allAppointments,
-  viewContract,
-  acceptContract,
-  viewWalletAmountByDoc,
-  addHealthRecordForPatient,
-  viewHealthRecords,
-  addAvailableTimeSlots,
-  scheduleFollowUp,
-  doctorPastApp,
-  createAvailableApps,
-  updateDosage,
-  downloadPrescriptionPDF,
-  acceptFollowUpRequest,
-  rejectFollowUpRequest,
-  ViewAllPres,
-} = require("../Controllers/doctorController"); // Import the function
 
-const { verify } = require("../Controllers/loginController");
+
+const { registerDoctor,
+    viewInfoAndRecords,
+    MyPatients,
+    PatientByName,
+    PatientsUpcoming,
+    selectPatientWithHisName,
+    addDoctor,
+    updateDoctorByAffiliation,
+    updateDoctorByHourlyRate,
+    updateDoctorByEmail,
+    docFilterAppsByDate,
+    docFilterAppsByStatus,
+    allAppointments,
+    viewContract,
+    acceptContract,
+    viewWalletAmountByDoc ,
+    addHealthRecordForPatient,
+    viewHealthRecords ,
+    addAvailableTimeSlots ,
+    scheduleFollowUp, 
+    doctorPastApp,
+    createAvailableApps,
+    updateDosage,
+    downloadPrescriptionPDF ,
+    acceptFollowUpRequest,
+    rejectFollowUpRequest,
+    addPatientPrescription,
+    ViewAllPres
+} = require('../Controllers/doctorController');
+
+const { verify } = require('../Controllers/loginController');
+
 
 // register route
-router.post(
-  "/Register",
-  upload.fields([
-    { name: "IDDocument", maxCount: 1 },
-    { name: "MedicalDegreeDocument", maxCount: 1 },
-    { name: "WorkingLicenseDocument", maxCount: 1 },
-  ]),
-  registerDoctor
-);
+router.post('/Register', upload.fields([
+    { name: 'IDDocument', maxCount: 1 },
+    { name: 'MedicalDegreeDocument', maxCount: 1 },
+    { name: 'WorkingLicenseDocument', maxCount: 1 },
+  ]), registerDoctor) ;
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
-router.put("/updateDoctorByAffiliation/:Username", updateDoctorByAffiliation);
-router.put("/updateDoctorByEmail/:Username", updateDoctorByEmail);
-router.put("/updateDoctorByHourlyRate/:Username", updateDoctorByHourlyRate);
+router.put('/updateDoctorByAffiliation/:Username' ,updateDoctorByAffiliation);
+router.put('/updateDoctorByEmail/:Username', updateDoctorByEmail);
+router.put('/updateDoctorByHourlyRate/:Username', updateDoctorByHourlyRate);
 
 //Req 23 (filter appointments by date/status)
-router.get("/docFilterAppsByDate/:Username/:Date", docFilterAppsByDate);
-router.get("/docFilterAppsByStatus/:Username/:Status", docFilterAppsByStatus);
-router.get("/allAppointments/:Username", allAppointments);
+router.get('/docFilterAppsByDate/:Username/:Date',docFilterAppsByDate)
+router.get('/docFilterAppsByStatus/:Username/:Status',docFilterAppsByStatus)
+router.get('/allAppointments/:Username', allAppointments);
 
 //Req 25 (view information and health records of patient registered with me)
-router.get(
-  "/viewInfoAndRecords/:DoctorUsername/:PatientUsername",
-  viewInfoAndRecords
-);
+router.get('/viewInfoAndRecords/:DoctorUsername/:PatientUsername',viewInfoAndRecords)
 
 //Req 33 (view a list of all my patients)
-router.get("/MyPatients/:Username", MyPatients);
+router.get('/MyPatients/:Username',MyPatients)
 
 //Req 34 (search for a patient by name)
-router.get("/PatientByName/:Username/:Name", PatientByName);
+router.get('/PatientByName/:Username/:Name',PatientByName)
 
 //Req 35 (filter patients based on upcoming appointments)
-router.get("/PatientsUpcoming/:Username", PatientsUpcoming);
+router.get('/PatientsUpcoming/:Username',PatientsUpcoming)
 
 //Req 36 (select a patient from the list of patients)
-router.get(
-  "/selectPatientWithHisName/:DoctorId/:Username",
-  selectPatientWithHisName
-);
+router.get('/selectPatientWithHisName/:DoctorId/:Username',selectPatientWithHisName)
 
-router.post("/addDoc", addDoctor);
-router.get("/viewContract/:DoctorUsername", viewContract);
-router.post("/acceptContract/:DoctorUsername", acceptContract);
+router.post('/addDoc', addDoctor);
+router.get('/viewContract/:DoctorUsername', viewContract);
+router.post('/acceptContract/:DoctorUsername', acceptContract);
 
-router.get("/viewWalletAmountByDoc/:DoctorUsername", viewWalletAmountByDoc);
+router.get('/viewWalletAmountByDoc/:DoctorUsername', viewWalletAmountByDoc);
 
 // route to show the uploaded health records
-router.get(
-  "/viewHealthRecords/:DoctorUsername/:PatientUsername",
-  viewHealthRecords
-);
+router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', viewHealthRecords);
 
 // Define the route for adding a health record for a patient
-router.post(
-  "/addHealthRecord/:DoctorUsername/:PatientUsername",
-  addHealthRecordForPatient
-);
+router.post('/addHealthRecord/:DoctorUsername/:PatientUsername',addHealthRecordForPatient);
 
-// Route to add available time slots
-router.post("/addAvailableTimeSlots/:DoctorUsername", addAvailableTimeSlots);
+// Route to add available time slots 
+router.post('/addAvailableTimeSlots/:DoctorUsername',addAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
-router.post(
-  "/scheduleFollowUp/:DoctorUsername/:PatientUsername",
-  scheduleFollowUp
-);
-router.get("/doctorPastApp/:Username", doctorPastApp);
-router.post("/createAvailableApps/:DoctorUsername", createAvailableApps);
+router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername', scheduleFollowUp);
+router.get('/doctorPastApp/:Username', doctorPastApp);
+router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 
-//Req 53: add/update dosage for each medicine added to the prescription
-router.post("/updateDosage", updateDosage);
+//Req 53: add/update dosage for each medicine added to the prescription 
+router.post('/updateDosage', updateDosage);
 
 // Define route for accepting follow-up request
-router.post(
-  "/acceptFollowUpRequest/:doctorUsername/:patientUsername",
-  acceptFollowUpRequest
-);
+router.post('/acceptFollowUpRequest/:doctorUsername/:patientUsername',acceptFollowUpRequest);
 
 // Define route for accepting follow-up request
-router.post(
-  "/rejectFollowUpRequest/:doctorUsername/:patientUsername",
-  rejectFollowUpRequest
-);
+router.post('/rejectFollowUpRequest/:doctorUsername/:patientUsername',rejectFollowUpRequest);
+
 
 // Define a route to trigger the download
-router.get("/downloadPrescriptionPDF/:doctorUsername", downloadPrescriptionPDF);
+router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
+
+// add patient prescription
+router.post('/addPatientPrescription/:doctorUsername', addPatientPrescription);
 
 router.get("/viewAllPres/:DoctorUsername", ViewAllPres);
 
-const log = require("../Controllers/loginController");
+const log =require("../Controllers/loginController")
 
-router.post("/login", log.login);
-router.get("/logout", log.logout);
-module.exports = router;
+router.post('/login',log.login);
+router.get('/logout',log.logout);
+module.exports = router

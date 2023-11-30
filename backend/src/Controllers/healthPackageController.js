@@ -2,7 +2,7 @@
 const HealthPackage = require("../Models/HealthPackage");
 
 const getAllPackages = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -15,7 +15,7 @@ const getAllPackages = async (req, res) => {
 };
 
 const subscribeToPackage = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -29,10 +29,10 @@ const subscribeToPackage = async (req, res) => {
 
 //Task 11 : Add health package
 const createPackage = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
+
   try {
     // Destructure fields from request body.
     const {
@@ -56,7 +56,7 @@ const createPackage = async (req, res) => {
     const existsName = await HealthPackage.findOne({ Type: Type });
     if (existsName) {
       return res.status(400).json({ error: "Package already Exists." });
-    }    
+    }
 
     // Create a new health package instance with the provided data.
     const newPackage = new HealthPackage({
@@ -71,7 +71,7 @@ const createPackage = async (req, res) => {
     await newPackage.save();
 
     // If successful, respond with a 201 status code and the data of the new package.
-    res.status(200).json({ message: "New package created", HealthPackage: newPackage});
+    res.status(200).json({ message: "New package created", HealthPackage: newPackage });
   } catch (error) {
     // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
     res.status(500).json({ error: error.message });
@@ -80,14 +80,14 @@ const createPackage = async (req, res) => {
 
 // Task 11: update a health package
 const updatePackageByAnnualFee = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
-  try {
-    const {Type} = req.params;
 
-    const pack = await HealthPackage.findOne({Type:Type});
+  try {
+    const { Type } = req.params;
+
+    const pack = await HealthPackage.findOne({ Type: Type });
 
     if (!pack) {
       return res.status(404).json({ error: "Package not found" });
@@ -95,34 +95,34 @@ const updatePackageByAnnualFee = async (req, res) => {
 
     const updatedPack = {
       $set: {
-          AnnualFee: req.body.AnnualFee
+        AnnualFee: req.body.AnnualFee
       }
     };
-    
+
     const updatedPackage = await HealthPackage.updateOne(
-      {Type: Type}, // filter
+      { Type: Type }, // filter
       updatedPack // update
     );
 
     if (!updatedPackage) {
       return res.status(404).json({ error: "Package not found" });
     }
-    const newPack = await HealthPackage.findOne({Type:Type});
+    const newPack = await HealthPackage.findOne({ Type: Type });
     res.status(200).json(newPack);
   } catch (error) {
-    res.status(500).json({ error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 const updatePackageByDoctorSessionDiscount = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
-  try {
-    const {Type} = req.params;
 
-    const pack = await HealthPackage.findOne({Type:Type});
+  try {
+    const { Type } = req.params;
+
+    const pack = await HealthPackage.findOne({ Type: Type });
 
     if (!pack) {
       return res.status(404).json({ error: "Package not found" });
@@ -130,11 +130,11 @@ const updatePackageByDoctorSessionDiscount = async (req, res) => {
 
     const updatedPack = {
       $set: {
-          DoctorSessionDiscount: req.body.DoctorSessionDiscount
+        DoctorSessionDiscount: req.body.DoctorSessionDiscount
       }
-  };
+    };
     const updatedPackage = await HealthPackage.updateOne(
-      {Type: Type}, // filter
+      { Type: Type }, // filter
       updatedPack // update
     );
 
@@ -142,23 +142,23 @@ const updatePackageByDoctorSessionDiscount = async (req, res) => {
       return res.status(404).json({ error: "Package not found" });
     }
 
-    const newPack = await HealthPackage.findOne({Type:Type});
+    const newPack = await HealthPackage.findOne({ Type: Type });
 
     res.status(200).json(newPack);
   } catch (error) {
-    res.status(500).json({ error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 const updatePackageByMedicineDiscount = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
-  try {
-    const {Type} = req.params;
 
-    const pack = await HealthPackage.findOne({Type:Type});
+  try {
+    const { Type } = req.params;
+
+    const pack = await HealthPackage.findOne({ Type: Type });
 
     if (!pack) {
       return res.status(404).json({ error: "Package not found" });
@@ -166,11 +166,11 @@ const updatePackageByMedicineDiscount = async (req, res) => {
 
     const updatedPack = {
       $set: {
-          MedicineDiscount: req.body.MedicineDiscount
+        MedicineDiscount: req.body.MedicineDiscount
       }
-  };
+    };
     const updatedPackage = await HealthPackage.updateOne(
-      {Type: Type}, // filter
+      { Type: Type }, // filter
       updatedPack // update
     );
 
@@ -178,23 +178,23 @@ const updatePackageByMedicineDiscount = async (req, res) => {
       return res.status(404).json({ error: "Package not found" });
     }
 
-    const newPack = await HealthPackage.findOne({Type:Type});
+    const newPack = await HealthPackage.findOne({ Type: Type });
 
     res.status(200).json(newPack);
   } catch (error) {
-    res.status(500).json({ error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
-  try {
-    const {Type} = req.params;
 
-    const pack = await HealthPackage.findOne({Type:Type});
+  try {
+    const { Type } = req.params;
+
+    const pack = await HealthPackage.findOne({ Type: Type });
 
     if (!pack) {
       return res.status(404).json({ error: "Package not found" });
@@ -202,11 +202,11 @@ const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
 
     const updatedPack = {
       $set: {
-          FamilySubscriptionDiscount: req.body.FamilySubscriptionDiscount
+        FamilySubscriptionDiscount: req.body.FamilySubscriptionDiscount
       }
-  };
+    };
     const updatedPackage = await HealthPackage.updateOne(
-      {Type: Type}, // filter
+      { Type: Type }, // filter
       updatedPack // update
     );
 
@@ -214,21 +214,21 @@ const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
       return res.status(404).json({ error: "Package not found" });
     }
 
-    const newPack = await HealthPackage.findOne({Type:Type});
+    const newPack = await HealthPackage.findOne({ Type: Type });
 
     res.status(200).json(newPack);
   } catch (error) {
-    res.status(500).json({ error: error.message});
+    res.status(500).json({ error: error.message });
   }
 };
 
 
 // Task 11: delete a health package
 const deletePackage = async (req, res) => {
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  
+
   try {
 
     const { Type } = req.params;
@@ -243,24 +243,22 @@ const deletePackage = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
- const viewHealthPackageInfo = async(req,res) =>{
+const viewHealthPackageInfo = async (req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  try{
-    const {Type} = req.params;
-    const pack = await HealthPackage.findOne({Type:Type});
-    if(!pack){
-      return res.status(404).json({error: "Package not found"});
+  try {
+    const { Type } = req.params;
+    const pack = await HealthPackage.findOne({ Type: Type });
+    if (!pack) {
+      return res.status(404).json({ error: "Package not found" });
     }
     res.status(200).json(pack);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 
- }
-
-
+}
 
 module.exports = {
   subscribeToPackage,
@@ -268,7 +266,7 @@ module.exports = {
   deletePackage,
   updatePackageByAnnualFee,
   updatePackageByDoctorSessionDiscount,
-  updatePackageByFamilySubscriptionDiscount, 
+  updatePackageByFamilySubscriptionDiscount,
   updatePackageByMedicineDiscount,
   createPackage,
   viewHealthPackageInfo,

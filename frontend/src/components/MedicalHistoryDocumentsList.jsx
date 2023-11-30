@@ -10,15 +10,21 @@ function MedicalHistoryDocumentsList() {
     const [filterText, setFilterText] = useState('');
     const [result, setResult] = useState([]);
 
-
     useEffect(() => {
-        const response = axios.get(`http://localhost:4000/Patient/viewMedicalHistoryDocuments/${username}`)
-        .then(res => {
-            setResult(res.data.MedicalHistoryDocuments);
-        })
-            .catch(err => console.log(err));
-    }, [username]);
+        const fetchMedicalHistoryDocuments = async () => {
+          try {
+            const response = await axios.get(`http://localhost:4000/Patient/viewMedicalHistoryDocuments/${username}`);
+            const documents = response.data.MedicalHistoryDocuments;
+            setResult(documents);
+          } catch (error) {
+            console.error('Error fetching medical history documents:', error);
+          }
+        };
+    
+        fetchMedicalHistoryDocuments();
+      }, [username]);
 
+    
     console.log(filterText)
     let navigate = useNavigate()
 
@@ -26,7 +32,6 @@ function MedicalHistoryDocumentsList() {
 
     return (
         <div>
-
             <TableMedicalHistoryDocuments tHead={tHead} data={result} username={username} searchText={searchText} filterText={filterText} />
         </div>
     );

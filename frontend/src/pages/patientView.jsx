@@ -68,7 +68,7 @@ function PatientView() {
           key="navBtn"
         />
         <MainBtn
-          txt="Delete Medical History Documents"
+          txt="View/Delete Medical History Documents"
           style="green-btn"
           action={() => navigate(`/viewMedicalHistoryDocuments/${username}`)}
           key="navBtn"
