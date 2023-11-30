@@ -2061,6 +2061,20 @@ const ViewAllPres = async (req, res) => {
     res.status(500).send({ error: error.message });
   }
 }
+const ViewPresDetails = async (req, res) => {
+  try {
+    const { PatientUsername , id } = req.params;
+    const prescription = await Prescription.findById(id);
+
+    if (!prescription) {
+        return res.status(404).json({ error: 'Prescription not found' });
+    }
+
+    res.status(200).json(prescription);
+} catch (error) {
+    res.status(500).json({ error: error.message });
+}
+};
 
 
 module.exports = {
@@ -2106,5 +2120,5 @@ module.exports = {
   requestFollowUpAppointment,
   requestFollowUpForFamilyMember ,
   AddRefundForPatient,
-  ViewAllPres
+  ViewAllPres,ViewPresDetails
 }
