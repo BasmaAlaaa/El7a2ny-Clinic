@@ -44,7 +44,7 @@ const {
     downloadPrescriptionPDF ,
     AddRefundForPatient ,
     requestFollowUpAppointment,
-    requestFollowUpForFamilyMember
+    requestFollowUpForFamilyMember,ViewAllPres
 } = require('../Controllers/patientController');
 
 const router = express.Router();
@@ -119,6 +119,7 @@ router.post('/requestFollowUpForFamilyMember/:username/:appointmentId',requestFo
 
 
 router.post('/linkPatientAccountAsFam/:PatientUsername', linkPatientAccountAsFam);
+router.get('/ViewAllPres/:PatientUsername', ViewAllPres);
 const log =require("../Controllers/loginController")
 
 router.post('/login',log.login);

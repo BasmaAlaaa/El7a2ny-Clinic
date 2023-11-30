@@ -2040,6 +2040,27 @@ const requestFollowUpForFamilyMember = async (req, res) => {
   }
 };
 
+const ViewAllPres = async (req, res) => {
+  try {
+    const { PatientUsername } = req.params;
+
+    const patient = await patientSchema.findOne({ Username: PatientUsername });
+
+    if (!patient) {
+      return res.status(404).send({ error: 'Patient not found' });
+    }
+
+    const prescriptions = await prescriptionSchema.find({ PatientUsername: PatientUsername });
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).send({ error: 'No prescriptions found for the specified patient.' });
+    }
+
+    res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+  }
+}
 
 
 module.exports = {
@@ -2084,5 +2105,6 @@ module.exports = {
   downloadPrescriptionPDF ,
   requestFollowUpAppointment,
   requestFollowUpForFamilyMember ,
-  AddRefundForPatient
+  AddRefundForPatient,
+  ViewAllPres
 }
