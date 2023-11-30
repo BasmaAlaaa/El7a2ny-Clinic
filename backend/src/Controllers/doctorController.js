@@ -905,6 +905,23 @@ const rejectFollowUpRequest = async (req, res) => {
   }
 };
 
+const ViewAllPres = async(req,res) =>{
+  const {DoctorUsername} = req.params;
+  try{
+    const doctor = await doctorSchema.findOne({Username: DoctorUsername});
+    if(!doctor){
+      return res.status(404).send("No Doctor found");
+    }
+    const prescriptions = await Prescription.find({DoctorUsername: DoctorUsername});
+    if(!prescriptions || prescriptions.length === 0){
+      return res.status(404).send("No prescriptions found for this patient");
+    }
+    res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+}
+
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
