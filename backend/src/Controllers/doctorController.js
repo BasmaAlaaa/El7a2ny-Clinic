@@ -922,7 +922,6 @@ const ViewAllPres = async(req,res) =>{
   }
 }
 
-
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
   
@@ -953,7 +952,6 @@ const addPatientPrescription = async (req, res) => {
       Filled: false,
       Dose: dose,
     });
-
     
     patient.PatientPrescriptions.push(prescription._id);
     await patient.save();
@@ -964,6 +962,47 @@ const addPatientPrescription = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 }
+
+// update a patient's prescription
+const updatePatientPrescription = async (req, res) => {
+  try {
+    const { doctorUsername, patientUsername, prescriptionId} = req.params;
+    const { updatedDescription, updatedDose } = req.body;
+
+    // if (!doctorUsername || !patientUsername || !prescriptionId || !updatedDescription || !updatedDose) {
+    //   return res.status(400).json({ error: 'All fields must be filled.' });
+    // }
+
+    const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
+    }
+
+    const patient = await patientSchema.findOne({ Username: patientUsername });
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const prescription = await Prescription.findOne({
+      _id: prescriptionId,
+      DoctorUsername: doctorUsername,
+      PatientUsername: patientUsername,
+    });
+
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found or does not belong to the specified doctor and patient.' });
+    }
+
+    prescription.Description = updatedDescription;
+    prescription.Dose = updatedDose;
+    const updatedPrescription = await prescription.save();
+
+    return res.status(200).json({ success: 'Prescription updated successfully.', updatedPrescription });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error.' });
+  }
+};
 
 
 module.exports = {
@@ -994,5 +1033,6 @@ module.exports = {
   acceptFollowUpRequest,
   rejectFollowUpRequest,
   addPatientPrescription,
-  ViewAllPres
+  ViewAllPres,
+  updatePatientPrescription
 };

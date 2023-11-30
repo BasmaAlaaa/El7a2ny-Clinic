@@ -69,10 +69,6 @@ prescriptionSchema.statics.register = async function (
     }
 
 
-
-
-
-
     const prescription = await this.create({
         DoctorUsername,
         PatientUsername,

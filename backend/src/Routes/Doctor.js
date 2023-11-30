@@ -34,7 +34,8 @@ const { registerDoctor,
     acceptFollowUpRequest,
     rejectFollowUpRequest,
     addPatientPrescription,
-    ViewAllPres
+    ViewAllPres,
+    updatePatientPrescription
 } = require('../Controllers/doctorController');
 
 const { verify } = require('../Controllers/loginController');
@@ -109,6 +110,9 @@ router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
 router.post('/addPatientPrescription/:doctorUsername', addPatientPrescription);
 
 router.get("/viewAllPres/:DoctorUsername", ViewAllPres);
+
+// update patient prescription
+router.put('/updatePatientPrescription/:doctorUsername/:patientUsername/:prescriptionId', updatePatientPrescription);
 
 const log =require("../Controllers/loginController")
 
