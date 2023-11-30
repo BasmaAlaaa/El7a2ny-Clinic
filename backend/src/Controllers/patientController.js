@@ -838,7 +838,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
       }
     }
     
-    return res.status(404).send("The patient is not subscribed to any healthPackage at the moment");
+    return res.status(404).send("The patient is not subscribed to any health package at the moment");
 
     // Send the list of subscribed health packages as a response
   } catch (error) {
@@ -1228,12 +1228,13 @@ const addMedicalHistoryDocument = async (req, res) => {
 
     await patient.save();
 
-    return res.status(200).json({ message: 'Document uploaded successfully' });
+    return res.status(200).json({ message: 'Document uploaded successfully', document: newDocument });
   } catch (error) {
     console.error('Error in addMedicalHistoryDocument:', error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
 
 
 
@@ -1272,7 +1273,6 @@ const deleteMedicalHistoryDocument = async (req, res) => {
 };
 
 
-
 // view medical history documents
 const viewMedicalHistoryDocuments = async (req, res) => {
   const { Username } = req.params;
@@ -1287,13 +1287,13 @@ const viewMedicalHistoryDocuments = async (req, res) => {
     const medicalHistoryDocuments = patient.MedicalHistoryDocuments;
 
     if (medicalHistoryDocuments.length === 0) {
-      return res.status(404).json({ message: 'No health records found for the patient.' });
+      return res.status(404).json({ message: 'No medical history documents found for the patient.' });
     }
 
-    // Extract relevant information for response
     const formattedMedicalHistoryDocuments = medicalHistoryDocuments.map(doc => ({
       contentType: doc.contentType,
-      _id: doc._id
+      _id: doc._id,
+      documentHex: doc.document.toString('hex')
     }));
 
     res.status(200).json({ MedicalHistoryDocuments: formattedMedicalHistoryDocuments });
