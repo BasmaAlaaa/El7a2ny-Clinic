@@ -161,7 +161,7 @@ router.post(
 router.get("/downloadPrescriptionPDF/:doctorUsername", downloadPrescriptionPDF);
 
 router.post(
-  "/AddRefundForPatient/:patientId/:appointmentId",
+  "/AddRefundForPatient/:username/:appointmentId",
   AddRefundForPatient
 );
 router.post(

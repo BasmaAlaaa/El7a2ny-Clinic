@@ -1879,12 +1879,13 @@ const downloadPrescriptionPDF = async (req, res) => {
 
 // Req 66 
 
+
 const AddRefundForPatient = async (req, res) => {
   try {
-    const { patientId, appointmentId } = req.params;
+    const { username, appointmentId } = req.params;
 
-    // Find the patient by ID
-    const patient = await patientSchema.findById(patientId);
+    // Find the patient by username
+    const patient = await patientSchema.findOne({ Username: username });
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Patient not found.' });
@@ -1902,11 +1903,6 @@ const AddRefundForPatient = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
     }
 
-    // Check if the doctor is associated with the appointment
-   // if (appointment.DoctorUsername !== patient.DoctorUsername) {
-     // return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
-   // }
-
     // Check if the appointment is canceled
     if (appointment.Status.toLowerCase() !== 'canceled') {
       return res.status(400).json({ success: false, message: 'Refund can only be processed for canceled appointments.' });
@@ -1916,12 +1912,15 @@ const AddRefundForPatient = async (req, res) => {
     const refundAmount = appointment.Price * 0.8; // Assuming 80% refund
 
     // Update the WalletAmount directly in the database using $inc
-    await patientSchema.updateOne({ _id: patientId }, { $inc: { WalletAmount: refundAmount } });
+    await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+
+    // Fetch the updated patient data after the update
+    const updatedPatient = await patientSchema.findOne({ Username: username });
 
     return res.status(200).json({
       success: true,
       message: 'Refund processed successfully.',
-      updatedWalletAmount: patient.WalletAmount + refundAmount
+      updatedWalletAmount: updatedPatient.WalletAmount,
     });
   } catch (error) {
     console.error(error);
