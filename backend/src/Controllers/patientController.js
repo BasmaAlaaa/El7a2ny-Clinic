@@ -1966,7 +1966,7 @@ const requestFollowUpAppointment = async (req, res) => {
       };
 
       // Update the patient's status to 'Requested' 
-      previousAppointment.Status = 'requesting';
+      previousAppointment.Status = 'Requesting';
 
       // Save the updated patient and appointment
       previousAppointment.save();

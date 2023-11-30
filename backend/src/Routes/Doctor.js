@@ -30,7 +30,9 @@ const { registerDoctor,
     doctorPastApp,
     createAvailableApps,
     updateDosage,
-    downloadPrescriptionPDF
+    downloadPrescriptionPDF ,
+    acceptFollowUpRequest,
+    rejectFollowUpRequest
 } = require('../Controllers/doctorController'); // Import the function
 
 const { verify } = require('../Controllers/loginController');
@@ -90,6 +92,14 @@ router.post('/createAvailableApps/:DoctorUsername', createAvailableApps);
 
 //Req 53: add/update dosage for each medicine added to the prescription 
 router.post('/updateDosage', updateDosage);
+
+// Define route for accepting follow-up request
+router.post('/acceptFollowUpRequest/:doctorUsername/:patientUsername',acceptFollowUpRequest);
+
+// Define route for accepting follow-up request
+router.post('/rejectFollowUpRequest/:doctorUsername/:patientUsername',rejectFollowUpRequest);
+
+
 
 // Define a route to trigger the download
 router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);

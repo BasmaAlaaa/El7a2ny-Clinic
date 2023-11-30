@@ -830,6 +830,82 @@ const downloadPrescriptionPDF = async (req, res) => {
   }
 };
 
+// Req 65 Accept a follow-up request
+
+const acceptFollowUpRequest = async (req, res) => {
+  try {
+    const { doctorUsername, patientUsername } = req.params;
+
+    // Find the doctor by username
+    const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    // Find the appointment by patient username
+    const appointment = await appointmentSchema.findOne({ PatientUsername: patientUsername });
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    // Check if the appointment is in the 'Requesting' status
+    if (appointment.Status === 'Requesting' || appointment.Status === 'requesting') {
+      // Update the appointment status to 'Upcoming' or any appropriate status
+      appointment.Status = 'Upcoming'; // You can set it to 'Upcoming' or any other status as needed
+      // Save the updated appointment
+      await appointment.save();
+
+      return res.status(200).json({ success: true, message: 'Follow-up appointment request accepted successfully.' });
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the requesting status.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
+// Req 65 reject a follow-up request
+
+const rejectFollowUpRequest = async (req, res) => {
+  try {
+    const { doctorUsername, patientUsername } = req.params;
+
+    // Find the doctor by username
+    const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    // Find the appointment by patient username
+    const appointment = await appointmentSchema.findOne({ PatientUsername: patientUsername });
+
+    if (!appointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    // Check if the appointment is in the 'Requesting' status
+    if (appointment.Status === 'Requesting' || appointment.Status === 'requesting') {
+      // Update the appointment status to 'Canceled' or any appropriate status
+      appointment.Status = 'Canceled'; // You can set it to 'Canceled' or any other status as needed
+      // Save the updated appointment
+      await appointment.save();
+
+      return res.status(200).json({ success: true, message: 'Follow-up appointment request rejected successfully.' });
+    } else {
+      return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the requesting status.' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
 
   
 
@@ -857,5 +933,7 @@ module.exports = {
     doctorPastApp,
     createAvailableApps,
     updateDosage,
-    downloadPrescriptionPDF
+    downloadPrescriptionPDF ,
+    acceptFollowUpRequest ,
+    rejectFollowUpRequest
 };
