@@ -32,7 +32,7 @@ const { registerDoctor,
     updateDosage,
     downloadPrescriptionPDF ,
     acceptFollowUpRequest,
-    rejectFollowUpRequest
+    rejectFollowUpRequest,ViewAllPres
 } = require('../Controllers/doctorController'); // Import the function
 
 const { verify } = require('../Controllers/loginController');
@@ -103,6 +103,8 @@ router.post('/rejectFollowUpRequest/:doctorUsername/:patientUsername',rejectFoll
 
 // Define a route to trigger the download
 router.get('/downloadPrescriptionPDF/:doctorUsername', downloadPrescriptionPDF);
+
+router.get('/viewAllPres/:DoctorUsername', ViewAllPres);
 
 const log =require("../Controllers/loginController")
 
