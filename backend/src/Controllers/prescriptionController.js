@@ -12,7 +12,8 @@ const registerPrescription = async (req, res) => {
         Description,
         Date,
         Appointment_ID,
-        Filled
+        Filled,
+        Dose
     } = req.body
 
     try {
@@ -33,7 +34,8 @@ const registerPrescription = async (req, res) => {
             Description,
             Date,
             Appointment_ID,
-            Filled
+            Filled,
+            Dose
         )
 
         await prescription.save();

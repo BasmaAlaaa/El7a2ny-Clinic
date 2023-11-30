@@ -33,6 +33,10 @@ const prescriptionSchema = new Schema({
         type: String,
         default: false
         //required: true,
+    },
+    Dose:{
+        type: Number,
+        required: true
     }
 
 }, { timestamps: true });
@@ -49,7 +53,8 @@ prescriptionSchema.statics.register = async function (
     Description,
     Date,
     Appointment_ID,
-    Filled
+    Filled,
+    Dose
 
 ) {
 
@@ -57,7 +62,8 @@ prescriptionSchema.statics.register = async function (
     if (!DoctorUsername ||
         !PatientUsername ||
         !Date ||
-        !Description
+        !Description||
+        !Dose
         ) {
         throw Error('All fields must be filled.');
     }
@@ -73,7 +79,8 @@ prescriptionSchema.statics.register = async function (
         Description,
         Date,
         Appointment_ID,
-        Filled
+        Filled,
+        Dose
     });
 
     return prescription;
