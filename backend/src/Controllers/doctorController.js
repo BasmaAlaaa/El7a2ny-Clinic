@@ -852,6 +852,7 @@ const createAvailableApps = async (req, res) => {
 
 
 //Req 53: add/update dosage for each medicine added to the prescription 
+
 const updateDosage = async (req, res) => {
   const { DoctorUsername } = req.params;
 
@@ -929,7 +930,7 @@ const downloadPrescriptionPDF = async (req, res) => {
       });
 
       pdfDoc.end();
-
+      
       // Download the PDF
       res.download(filePath, 'prescription.pdf', (err) => {
         if (err) {
@@ -1102,8 +1103,6 @@ const addPatientPrescription = async (req, res) => {
     }
   }
 }
-
-
 
 
 // update a patient's prescription
