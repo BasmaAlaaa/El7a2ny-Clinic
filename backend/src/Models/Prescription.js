@@ -37,7 +37,11 @@ const prescriptionSchema = new Schema({
     Dose:{
         type: Number,
         required: true
-    }
+    },
+    medecine: [{
+        type: Object
+
+    }]
 
 }, { timestamps: true });
 
