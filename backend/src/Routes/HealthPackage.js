@@ -6,16 +6,16 @@ const router = express.Router();
 const { verify } = require('../Controllers/loginController');
 
 
-router.get("/packages", healthPackageController.getAllPackages);
-router.post("/subscribe", healthPackageController.subscribeToPackage);
-router.post("/create", healthPackageController.createPackage);
+router.get("/packages/:username", verify, healthPackageController.getAllPackages);
+router.post("/subscribe/:username", verify, healthPackageController.subscribeToPackage);
+router.post("/create/:username", verify, healthPackageController.createPackage);
 
-router.put("/updateAnnualFee/:Type", healthPackageController.updatePackageByAnnualFee);
-router.put("/updateDoctorSessionDiscount/:Type", healthPackageController.updatePackageByDoctorSessionDiscount);
-router.put("/updateFamilySubscriptionDiscount/:Type", healthPackageController.updatePackageByFamilySubscriptionDiscount);
-router.put("/updateMedicineDiscount/:Type", healthPackageController.updatePackageByMedicineDiscount);
+router.put("/updateAnnualFee/:username/:Type", verify, healthPackageController.updatePackageByAnnualFee);
+router.put("/updateDoctorSessionDiscount/:username/:Type", verify, healthPackageController.updatePackageByDoctorSessionDiscount);
+router.put("/updateFamilySubscriptionDiscount/:username/:Type", verify, healthPackageController.updatePackageByFamilySubscriptionDiscount);
+router.put("/updateMedicineDiscount/:username/:Type", verify, healthPackageController.updatePackageByMedicineDiscount);
 
-router.delete("/delete/:Type", healthPackageController.deletePackage);
-router.get("/view/:Type", healthPackageController.viewHealthPackageInfo);
+router.delete("/delete/:username/:Type", verify, healthPackageController.deletePackage);
+router.get("/view/:username/:Type", verify, healthPackageController.viewHealthPackageInfo);
 
 module.exports = router;

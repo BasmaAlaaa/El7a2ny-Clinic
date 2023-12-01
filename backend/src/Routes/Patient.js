@@ -57,99 +57,91 @@ const { verify } = require("../Controllers/loginController");
 
 router.post("/registerPatient", registerPatient);
 
-router.post("/addFamMember/:Username", addFamMember);
+router.post("/addFamMember/:Username", verify, addFamMember);
 
-router.get("/getFamMembers/:Username", getFamMembers);
+router.get("/getFamMembers/:Username", verify, getFamMembers);
 
-router.get("/findDocBySpeciality/:Username/:Speciality", findDocBySpecality);
-router.get("/findDocByAvailability/:Date/:Time", findDocByAvailability);
+router.get("/findDocBySpeciality/:Username/:Speciality", verify, findDocBySpecality);
+router.get("/findDocByAvailability/:Username/:Date/:Time", verify, findDocByAvailability);
 
-router.get("/searchDocByName/:Username/:Name", searchDocByName);
-router.get("/searchDocBySpec/:Username/:Speciality", searchDocBySpec);
+router.get("/searchDocByName/:Username/:Name", verify, searchDocByName);
+router.get("/searchDocBySpec/:Username/:Speciality", verify, searchDocBySpec);
 
-router.post("/addPresToPatient/:Username/:id", addPresToPatient);
+router.post("/addPresToPatient/:Username/:id", verify, addPresToPatient);
 
-router.get("/viewMyPres/:id", viewMyPres);
+router.get("/viewMyPres/:id", verify, viewMyPres);
 
-router.get("/filterMyPresBasedOnDate/:Username/:Date", filterMyPresBasedOnDate);
-router.get(
-  "/filterMyPresBasedOnDoctor/:Username/:DoctorUsername",
-  filterMyPresBasedOnDoctor
-);
-router.get(
-  "/filterMyPresBasedOnFilled/:Username/:Filled",
-  filterMyPresBasedOnFilled
-);
+router.get("/filterMyPresBasedOnDate/:Username/:Date", verify, filterMyPresBasedOnDate);
+router.get("/filterMyPresBasedOnDoctor/:Username/:DoctorUsername", verify, filterMyPresBasedOnDoctor);
 
-router.get("/viewAllDoctors/:Username", viewDoctorsWithSessionPrices);
+router.get("/filterMyPresBasedOnFilled/:Username/:Filled", verify, filterMyPresBasedOnFilled);
 
-router.get("/viewDoctorInfo/:DoctorUsername/:PatientUsername", viewDoctorInfo);
+router.get("/viewAllDoctors/:Username", verify, viewDoctorsWithSessionPrices);
 
-router.get("/viewAllMyPres/:Username", viewAllMyPres);
+router.get("/viewDoctorInfo/:DoctorUsername/:PatientUsername", verify, viewDoctorInfo);
 
-router.get("/patientFilterAppsByDate/:Username/:Date", patientFilterAppsByDate);
-router.get(
-  "/patientFilterAppsByStatus/:Username/:Status",
-  patientFilterAppsByStatus
-);
-router.get("/allAppointments/:Username", allAppointments);
+router.get("/viewAllMyPres/:Username", verify, viewAllMyPres);
 
-router.put(
-  "/choosePaymentMethodForHP/:type/:PatientUsername",
+router.get("/patientFilterAppsByDate/:Username/:Date", verify, patientFilterAppsByDate);
+router.get("/patientFilterAppsByStatus/:Username/:Status", verify, patientFilterAppsByStatus);
+
+router.get("/allAppointments/:Username", verify, allAppointments);
+
+router.put("/choosePaymentMethodForHP/:type/:PatientUsername", verify, 
   choosePaymentMethodForHP
 );
 
 router.get(
-  "/viewWalletAmountByPatient/:PatientUsername",
+  "/viewWalletAmountByPatient/:PatientUsername",verify, 
   viewWalletAmountByPatient
 );
-router.get("/health-packages", viewHealthPackages);
+router.get("/health-packages/:Username", verify, viewHealthPackages);
 router.get(
-  "/viewSubscribedHealthPackages/:Username",
+  "/viewSubscribedHealthPackages/:Username",verify, 
   viewSubscribedHealthPackages
 );
 router.post(
-  "/cancelHealthCarePackageSubscription/:Username/:Type",
+  "/cancelHealthCarePackageSubscription/:Username/:Type",verify, 
   cancelHealthCarePackageSubscription
 );
-router.get("/viewHealthPackages/:Username", viewSubscribedHealthPackages);
+router.get("/viewHealthPackages/:Username", verify, viewSubscribedHealthPackages);
 router.post(
-  "/subscribeToAHealthPackage/:patientUsername/:healthPackageType",
+  "/subscribeToAHealthPackage/:patientUsername/:healthPackageType",verify, 
   subscribeToAHealthPackage
 );
 router.get(
-  "/viewHealthCarePackageStatus/:Username/:healthPackageType",
+  "/viewHealthCarePackageStatus/:Username/:healthPackageType",verify, 
   viewHealthCarePackageStatus
 );
 router.get(
-  "/viewHealthPackageStatus/:Username/:healthPackageType",
+  "/viewHealthPackageStatus/:Username/:healthPackageType",verify, 
   viewHealthPackageStatus
 );
 
 router.post(
-  "/addMedicalHistoryDocument/:Username",
+  "/addMedicalHistoryDocument/:Username",verify, 
   upload.single("MedicalHistoryDocuments"),
   addMedicalHistoryDocument
 );
 router.delete(
-  "/deleteMedicalHistoryDocument/:Username/:filePathToRemove",
+  "/deleteMedicalHistoryDocument/:Username/:filePathToRemove",verify, 
   deleteMedicalHistoryDocument
 );
 router.get(
-  "/viewMedicalHistoryDocuments/:Username",
+  "/viewMedicalHistoryDocuments/:Username",verify, 
   viewMedicalHistoryDocuments
 );
-router.get("/viewHealthRecords/:Username", viewHealthRecords);
+router.get("/viewHealthRecords/:Username", verify, viewHealthRecords);
 
-router.get("/patientPastApp/:Username", patientPastApp);
-router.get("/patientUpcoming/:Username", patientUpcoming);
-router.get("/availableDoctorApps/:Username", availableDoctorApps);
+router.get("/patientPastApp/:Username", verify, patientPastApp);
+router.get("/patientUpcoming/:Username", verify, patientUpcoming);
+router.get("/availableDoctorApps/:Username", verify,availableDoctorApps);
 router.post(
-  "/selectAppointment/:patientUsername/:timeSlot/:doctorUsername",
+  "/selectAppointment/:patientUsername/:timeSlot/:doctorUsername",verify, 
   selectAppointmentDateTimeAndPay
 );
 router.post(
-  "/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctorUsername",
+  "/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctorUsername",verify, 
   selectAppointmentDateTimeAndPayFam
 );
 // router.get('/patientPastApp/:Username', patientPastApp);
@@ -158,27 +150,27 @@ router.post(
 // router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 // Define a route to trigger the download
-router.get("/downloadPrescriptionPDF/:doctorUsername", downloadPrescriptionPDF);
+router.get("/downloadPrescriptionPDF/:patientUsername/:doctorUsername", verify, downloadPrescriptionPDF);
 
 router.post(
-  "/AddRefundForPatient/:username/:appointmentId",
+  "/AddRefundForPatient/:username/:appointmentId",verify, 
   AddRefundForPatient
 );
 router.post(
-  "/requestFollowUpAppointment/:username/:appointmentId",
+  "/requestFollowUpAppointment/:username/:appointmentId",verify, 
   requestFollowUpAppointment
 );
 router.post(
-  "/requestFollowUpForFamilyMember/:username/:appointmentId",
+  "/requestFollowUpForFamilyMember/:username/:appointmentId",verify, 
   requestFollowUpForFamilyMember
 );
 
 router.post(
-  "/linkPatientAccountAsFam/:PatientUsername",
+  "/linkPatientAccountAsFam/:PatientUsername",verify, 
   linkPatientAccountAsFam
 );
-router.get("/ViewAllPres/:PatientUsername", ViewAllPres);
-router.get("/ViewPresDetails/:PatientUsername/:id", ViewPresDetails);
+router.get("/ViewAllPres/:PatientUsername", verify, ViewAllPres);
+router.get("/ViewPresDetails/:PatientUsername/:id", verify, ViewPresDetails);
 
 const log = require("../Controllers/loginController");
 
