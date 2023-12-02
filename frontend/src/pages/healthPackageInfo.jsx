@@ -19,7 +19,9 @@ function HealthPackageInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Patient/viewHealthCarePackageStatus/${username}/${type}`)
+  const response = axios.get(`http://localhost:4000/Patient/viewHealthCarePackageStatus/${username}/${type}`,{
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
@@ -31,7 +33,9 @@ function HealthPackageInfo(){
   try {
 
     const data = {paymentMethod: typePay};
-    const response = await axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`, data)
+    const response = await axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`, data, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
 
     if (response.status === 200) {
       alert(`Subscribed successfully`);
@@ -51,7 +55,9 @@ function HealthPackageInfo(){
 
   }
   const handleCancel = () =>{
-    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`)
+    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
   .then(res =>alert('Cancelled')).catch(err => alert(err))
   window.location.reload(true);
   }

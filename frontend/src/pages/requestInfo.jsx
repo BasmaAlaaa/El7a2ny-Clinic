@@ -11,7 +11,9 @@ function RequestInfo(){
     let navigate = useNavigate();
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Admin/InfosOfAPharmacistRequest/${username}`)
+  const response = axios.get(`http://localhost:4000/Admin/InfosOfAPharmacistRequest/${username}`,{
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
@@ -40,13 +42,13 @@ return (
             <MainBtn
               txt="Accept request"
               style="green-btn"
-              action={() => navigate('/administratorView')}
+              action={() => navigate(`/administratorView/${username}`)}
               key="navBtn"
             />
              <MainBtn
               txt="Reject Request"
               style="white-btn"
-              action={() => navigate('/administratorView')}
+              action={() => navigate(`/administratorView/${username}`)}
               key="navBtn"
             />
           </div>

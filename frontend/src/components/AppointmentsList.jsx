@@ -18,7 +18,9 @@ function AppointmentsList() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Patient/allAppointments/${username}`)
+const response = axios.get(`http://localhost:4000/Patient/allAppointments/${username}`, {
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data.filteredAppointments)).catch(err => console.log(err))
   }, [])
 console.log('hayouya', result)

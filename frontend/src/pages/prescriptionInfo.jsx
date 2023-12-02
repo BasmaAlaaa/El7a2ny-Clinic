@@ -6,16 +6,17 @@ import NavBarPatient from "../components/NavBarPatient";
 
 
 function PrescriptionInfo(){
-    const {id} = useParams();
+    const {username} = useParams();
     const[result, setResult] = useState([]);
 
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${id}`)
+  const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${username}`, {
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
-
 
 
 //   result.map((e) => {

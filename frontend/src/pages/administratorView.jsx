@@ -18,7 +18,9 @@ function AdministratorView() {
   const acceptOrRejectDoctorRequest = async (Username, action) => {
     try {
       
-      const response = await axios.post(`http://localhost:4000/Admin/acceptOrRejectDoctorRequest/${Username}`, { action });
+      const response = await axios.post(`http://localhost:4000/Admin/acceptOrRejectDoctorRequest/${Username}`, { action },{
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      });
       if (response.status === 200) {
         console.log(response.data.message);
         setResultRequest(prevRequests => prevRequests.filter(doctor => doctor.Username !== Username));
@@ -37,7 +39,9 @@ function AdministratorView() {
   };
 
   useEffect(() => {
-    const response = axios.get('http://localhost:4000/Admin/viewUnapprovedDoctors')
+    const response = axios.get(`http://localhost:4000/Admin/viewUnapprovedDoctors/${username}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
     .then(res =>setResultRequest(res.data.doctors)).catch(err => console.log(err))
       }, [])
     console.log(resultRequest)

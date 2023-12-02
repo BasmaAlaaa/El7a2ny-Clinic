@@ -25,13 +25,17 @@ function DoctorsList() {
   //    }
 
   useEffect(() => {
-     axios.get(`http://localhost:4000/Patient/findDocByAvailability/${searchDate}/${searchTime}`)
+     axios.get(`http://localhost:4000/Patient/findDocByAvailability/${username}/${searchDate}/${searchTime}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
      .then(res =>setResultDateTime(res.data)).catch(err => console.log(err))
    console.log("hena", resultDateTime)
   }, [searchDate, searchTime])
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Patient/viewAllDoctors/${username}`)
+const response = axios.get(`http://localhost:4000/Patient/viewAllDoctors/${username}`,{
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
 console.log(result)

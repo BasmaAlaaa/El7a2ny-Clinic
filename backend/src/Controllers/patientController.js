@@ -476,7 +476,7 @@ const viewDoctorInfo = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  if (!(req.user.Username === DoctorUsername)) {
+  if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
   }else{
     try {
@@ -2314,5 +2314,6 @@ module.exports = {
   requestFollowUpAppointment,
   requestFollowUpForFamilyMember ,
   AddRefundForPatient,
-  ViewAllPres,ViewPresDetails
+  ViewAllPres,
+  ViewPresDetails
 }

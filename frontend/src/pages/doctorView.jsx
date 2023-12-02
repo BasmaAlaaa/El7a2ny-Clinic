@@ -30,7 +30,9 @@ function DoctorView(){
 
     const viewContract = async (DoctorUsername) => {
       try {
-        const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${DoctorUsername}`);
+        const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${DoctorUsername}`,{
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        });
         setContractInfo(response.data.contract, () => {
           console.log("Contract info set:", contractInfo);
           setShowContract(true);

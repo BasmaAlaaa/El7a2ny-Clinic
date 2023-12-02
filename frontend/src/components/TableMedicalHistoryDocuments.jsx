@@ -5,7 +5,9 @@ function CaseTableBody({ data, username }) {
     let navigate = useNavigate();
     const handleDelete = async () => {
         try {
-            const response = await axios.delete(`http://localhost:4000/Patient/deleteMedicalHistoryDocument/${username}/${data._id}`);
+            const response = await axios.delete(`http://localhost:4000/Patient/deleteMedicalHistoryDocument/${username}/${data._id}`,{
+                headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+              });
             // .then(res =>setResult(res)).catch(err => console.log(err))
             if (response.status === 200) {
                 alert(response.data.message);

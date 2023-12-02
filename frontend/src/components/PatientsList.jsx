@@ -19,7 +19,9 @@ function PatientsList() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${username}`)
+const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${username}`,{
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
 console.log(result)
@@ -64,6 +66,7 @@ let navigate = useNavigate()
         <option value='upcoming'>Upcoming</option> 
         <option value='finished'>Finished</option> 
         <option value='running'>Running</option> 
+        <option value='following'>Following</option> 
 
 
         </select>

@@ -20,7 +20,9 @@ function PrescriptionsList() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Patient/viewAllMyPres/${username}`)
+const response = axios.get(`http://localhost:4000/Patient/viewAllMyPres/${username}`,{
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data)).catch(err => console.log(err.request))
   }, [])
 console.log(result)

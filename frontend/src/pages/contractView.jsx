@@ -15,7 +15,9 @@ function ContractView () {
   useEffect(() => {
     const fetchContract = async () => {
       try {
-        const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${username}`);
+        const response = await axios.get(`http://localhost:4000/Doctor/viewContract/${username}`,{
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        });
         setContractInfo(response.data.contract);
       } catch (error) {
         console.error("Failed to fetch contract details:", error);
@@ -26,7 +28,9 @@ function ContractView () {
   const handleAcceptContract = async () => {
     console.log("Accept contract button clicked");
     try {
-      const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`);
+      const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`,{
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      });
       alert(response.data.message)
       console.log('Contract accepted', response.data);
       setContractInfo(prevContract => ({

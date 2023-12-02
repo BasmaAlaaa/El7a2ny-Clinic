@@ -13,7 +13,9 @@ function MedicalHistoryDocumentsList() {
     useEffect(() => {
         const fetchMedicalHistoryDocuments = async () => {
           try {
-            const response = await axios.get(`http://localhost:4000/Patient/viewMedicalHistoryDocuments/${username}`);
+            const response = await axios.get(`http://localhost:4000/Patient/viewMedicalHistoryDocuments/${username}`,{
+              headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+            });
             const documents = response.data.MedicalHistoryDocuments;
             setResult(documents);
           } catch (error) {

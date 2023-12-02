@@ -31,7 +31,9 @@ function PayAppointmentFamily(){
         //   }, [])
         const handleBook = () =>{
             const data = {paymentMethod:typePay}
-         const response = axios.post(`http://localhost:4000/Patient/selectAppointmentDateTimeFamMem/${usernamePatient}/${id}/${usernameDoctor}`, data)
+         const response = axios.post(`http://localhost:4000/Patient/selectAppointmentDateTimeFamMem/${usernamePatient}/${id}/${usernameDoctor}`, data,  {
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
          .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
         }
 

@@ -22,24 +22,32 @@ function PatientInfo(){
     const handleSubmit = () => {
       const data = {Date:healthRecordDate, Description:healthRecordDescription, Diagnosis:healthRecordDiagnosis, Medication:healthRecordMedication}
       console.log(data)
-      const response = axios.post(`http://localhost:4000/Doctor/addHealthRecord/${usernameDoctor}/${usernamePatient}`, data)
+      const response = axios.post(`http://localhost:4000/Doctor/addHealthRecord/${usernameDoctor}/${usernamePatient}`, data, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
       .then(res =>setResultAdd(res)).catch(err => console.log(err))
     }
 
     const handleSubmit1 = () => {
       const data = {date:date, time:time}
       console.log(data)
-      const response = axios.post(`http://localhost:4000/Doctor/scheduleFollowUp/${usernameDoctor}/${usernamePatient}`, data)
+      const response = axios.post(`http://localhost:4000/Doctor/scheduleFollowUp/${usernameDoctor}/${usernamePatient}`, data, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
       .then(res =>setResultAdd(res)).catch(err => console.log(err))
     }
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`)
+  const response = axios.get(`http://localhost:4000/Doctor/viewInfoAndRecords/${usernameDoctor}/${usernamePatient}`, {
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
     console.log(result);
     useEffect(() => {
-      const response = axios.get(`http://localhost:4000/Doctor/viewHealthRecords/${usernameDoctor}/${usernamePatient}`)
+      const response = axios.get(`http://localhost:4000/Doctor/viewHealthRecords/${usernameDoctor}/${usernamePatient}`, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
       .then(res =>setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
         }, [])
     console.log(healthRecord);

@@ -21,16 +21,20 @@ function Login() {
   const handleLogin = async (event) => {
     event.preventDefault(); 
     try {
-      const response = await axios.post('http://localhost:4000/login', { Username: username, password: password });
-      localStorage.setItem('token', response.data.token); 
+      const response = await axios.post('http://localhost:4000/login', 
+      { Username: username, password: password });
       if (response.data.userDoctor) {
+        sessionStorage.setItem("token", response.data.userDoctor.accessToken);
         navigate(`/doctorView/${username}`);
       } else if (response.data.userPatient) {
+        sessionStorage.setItem("token", response.data.userPatient.accessToken);
         navigate(`/patientView/${username}`);
       } else if (response.data.userAdmin) {
+        sessionStorage.setItem("token", response.data.userAdmin.accessToken);
         navigate(`/administratorView/${username}`);
       } else {
         console.error('User role not recognized');
+        alert("User role not recognized");
       }
     } catch (error) {
       console.error(error.response ? error.response.data : error.message);

@@ -33,8 +33,10 @@ function ChangePassword() {
       if (response.status === 200) {
         alert(`Password updated successfully`);
         console.log(response.data.message);
-        const res = await axios.get('http://localhost:4000/logout');
-        localStorage.removeItem('token');
+        const res = await axios.post(`http://localhost:8000/logout/${username}`,"",{
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        });
+        sessionStorage.removeItem('token');
         navigate(`/login`);
       } else if (response.status === 401) {
         alert(`Failed to update password. Invalid old password.`);

@@ -18,13 +18,17 @@ function ManagePackages(){
 
         const data = {Type:type, AnnualFee:annualFee, DoctorSessionDiscount:doctorSessionDiscount, MedicineDiscount:medicineDiscount, FamilySubscriptionDiscount:familySubscriptionDiscount}
         console.log(data)
-        const response = axios.post('http://localhost:4000/HealthPackage/create', data)
+        const response = axios.post(`http://localhost:4000/HealthPackage/create/${username}`, data,{
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
     .then(res =>console.log(res.data)).catch(err => console.log(err.request))
       }
 
       const handleDelete = () => {
 
-        const response = axios.delete(`http://localhost:4000/HealthPackage/delete/${typeDelete}`)
+        const response = axios.delete(`http://localhost:4000/HealthPackage/delete/${username}/${typeDelete}`,{
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
     .then(res =>console.log(res.data)).catch(err => console.log(err))
       }
     //   const handleUpdate = (e) => {
@@ -37,20 +41,32 @@ function ManagePackages(){
     const handleUpdate = () => {
       
       if(annualFee){
-      const response = axios.put(`http://localhost:4000/HealthPackage/updateAnnualFee/${typeUpdate}`, {AnnualFee:annualFee})
+      const response = axios.put(`http://localhost:4000/HealthPackage/updateAnnualFee/${username}/${typeUpdate}`,
+      {AnnualFee:annualFee}, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
       .then(res =>console.log(res.data)).catch(err => console.log(err))
       console.log(annualFee)
       }
       if(doctorSessionDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateDoctorSessionDiscount/${typeUpdate}`, {DoctorSessionDiscount:doctorSessionDiscount})
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateDoctorSessionDiscount/${username}/${typeUpdate}`, 
+        {DoctorSessionDiscount:doctorSessionDiscount}, {
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
         .then(res =>console.log(res.data)).catch(err => console.log(err))
         }
       if(medicineDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateMedicineDiscount/${typeUpdate}`, {MedicineDiscount:medicineDiscount})
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateMedicineDiscount/${username}/${typeUpdate}`,
+        {MedicineDiscount:medicineDiscount}, {
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
         .then(res =>console.log(res.data)).catch(err => console.log(err))
         }
       if(familySubscriptionDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateFamilySubscriptionDiscount/${typeUpdate}`, {FamilySubscriptionDiscount:familySubscriptionDiscount})
+        const response = axios.put(`http://localhost:4000/HealthPackage/updateFamilySubscriptionDiscount/${username}/${typeUpdate}`, 
+        {FamilySubscriptionDiscount:familySubscriptionDiscount}, {
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+        })
         .then(res =>console.log(res.data)).catch(err => console.log(err))
         }
     }

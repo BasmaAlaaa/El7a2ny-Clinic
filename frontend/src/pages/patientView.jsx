@@ -16,13 +16,17 @@ function PatientView() {
   let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewHealthRecords/${username}`)
+    const response = axios.get(`http://localhost:4000/Patient/viewHealthRecords/${username}`,{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
       .then(res => setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
   }, [])
   console.log(healthRecord);
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewWalletAmountByPatient/${username}`)
+    const response = axios.get(`http://localhost:4000/Patient/viewWalletAmountByPatient/${username}`,{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
       .then(res => setWallet(res.data)).catch(err => console.log(err))
     console.log('w', wallet)
   }, []);

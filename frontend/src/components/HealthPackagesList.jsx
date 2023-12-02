@@ -12,11 +12,15 @@ function HealthPackagesList(){
   
   
     useEffect(() => {
-  const response = axios.get('http://localhost:4000/Patient/health-packages')
+  const response = axios.get(`http://localhost:4000/Patient/health-packages/${username}`,{
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
     useEffect(() => {
-      const response = axios.get(`http://localhost:4000/Patient/viewSubscribedHealthPackages/${username}`)
+      const response = axios.get(`http://localhost:4000/Patient/viewSubscribedHealthPackages/${username}`,{
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
       .then(res =>setResultSub(res.data)).catch(err => console.log(err))
         }, [])
   console.log('hayouya', result)

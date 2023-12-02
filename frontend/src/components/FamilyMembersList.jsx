@@ -15,7 +15,9 @@ function FamilyMembersList() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Patient/getFamMembers/${username}`)
+const response = axios.get(`http://localhost:4000/Patient/getFamMembers/${username}`, {
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
 console.log(result)

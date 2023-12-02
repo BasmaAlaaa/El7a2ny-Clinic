@@ -19,7 +19,9 @@ function AppointmentsListDoctor() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Doctor/allAppointments/${username}`)
+const response = axios.get(`http://localhost:4000/Doctor/allAppointments/${username}`, {
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
 console.log('hayouya', result)
