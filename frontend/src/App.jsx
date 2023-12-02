@@ -36,6 +36,8 @@ import AddMedicalHistoryDocument from './pages/addMedicalHistoryDocument';
 import ViewMedicalHistoryDocuments from './components/MedicalHistoryDocumentsList';
 import PayAppointment from './pages/payAppointment';
 import PayAppointmentFamily from './pages/payAppointmentFamily';
+import HealthPackagesListFam from './components/HealthPackagesListFam';
+import HealthPackageInfoFam from './pages/healthPackageInfoFam';
 
 function App() {
   return (
@@ -73,7 +75,9 @@ function App() {
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
           <Route exact path="/healthPackagesList/:username" element={<HealthPackagesList />} />
+          <Route exact path="/healthPackagesListFam/:username/:id" element={<HealthPackagesListFam />} />
           <Route exact path="/healthPackageInfo/:username/:type" element={<HealthPackageInfo />} />
+          <Route exact path="/healthPackageInfoFam/:username/:type/:id" element={<HealthPackageInfoFam />} />
           <Route exact path="/payAppointment/:usernamePatient/:id/:usernameDoctor" element={<PayAppointment />} />
           <Route exact path="/payAppointmentFamily/:usernamePatient/:id/:usernameDoctor" element={<PayAppointmentFamily />} />
 

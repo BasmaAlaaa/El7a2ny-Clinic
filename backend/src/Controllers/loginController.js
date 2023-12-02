@@ -117,6 +117,8 @@ const generateRefreshToken = (user) => {
 };
 
 const login = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   const { username, password } = req.body;
   const patient = await Patient.findOne({Username: username, Password: password});
   const admin = await Administrator.findOne({Username: username, Password: password});

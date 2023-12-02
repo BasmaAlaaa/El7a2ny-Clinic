@@ -20,6 +20,8 @@ function Login() {
   
   const handleLogin = async (event) => {
     event.preventDefault(); 
+    console.log('uuu', username);
+    console.log('ppp', password);
     try {
       const response = await axios.post('http://localhost:4000/login', { username: username, password: password });
       if (response.data.userDoctor) {

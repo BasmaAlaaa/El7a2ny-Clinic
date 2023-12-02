@@ -8,8 +8,8 @@ import Input from "../components/Input";
 
 
 
-function HealthPackageInfo(){
-    const {username, type} = useParams();
+function HealthPackageInfoFam(){
+    const {username, type, id} = useParams();
     const[result, setResult] = useState([]);
     let navigate = useNavigate();
     const [cardNumber, setCardNumber] = useState('');
@@ -19,13 +19,13 @@ function HealthPackageInfo(){
 
 
     useEffect(() => {
-  const response = axios.get(`http://localhost:4000/Patient/viewHealthCarePackageStatus/${username}/${type}`,{
+  const response = axios.get(`http://localhost:4000/Patient/viewHealthPackageStatusOfFamilyMember/${username}/${type}/${id}`,{
     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
   })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
-  console.log(result)
+  console.log('elsub', result.Status)
 
   const handleSubscribe = async () =>{
     
@@ -33,12 +33,13 @@ function HealthPackageInfo(){
   try {
 
     const data = {paymentMethod: typePay};
-    const response = await axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackage/${username}/${type}`, data, {
+    const response = await axios.post(`http://localhost:4000/Patient/subscribeToAHealthPackageForFamilyMember/${username}/${type}/${id}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
 
     if (response.status === 200) {
       alert(`Subscribed successfully`);
+      navigate(`/healthPackagesListFam/${username}/${id}`);
       console.log(response.data.message);
     } else if (response.status === 400) {
       alert(`Failed to subscribe, not enough money in the wallet`);
@@ -55,7 +56,7 @@ function HealthPackageInfo(){
 
   }
   const handleCancel = () =>{
-    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`, "", {
+    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscriptionOfFamMember/${username}/${type}/${id}`, "", {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
   .then(res =>alert('Cancelled')).catch(err => alert(err))
@@ -137,16 +138,7 @@ return (
            onChange={(e) => setCardCVV(e.target.value)}
           />
 
-          <div className="mt-3">
-            <MainBtn
-              txt='Add Card'
-              style='green-btn'
-              action={handleAdd}
-              
-            />
-            </div>
-
-            </div>
+        </div>
 }       
         
         <div>
@@ -170,4 +162,4 @@ return (
         </div>
 )
 }
-export default HealthPackageInfo;
+export default HealthPackageInfoFam;

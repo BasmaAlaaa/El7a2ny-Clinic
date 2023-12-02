@@ -12,6 +12,8 @@ import NavBarPatient from './NavBarPatient.jsx';
 function FamilyMembersList() {
   const {username} = useParams();
   const[result, setResult] = useState([]);
+  const[resultSub, setResultSub] = useState([]);
+
 
 
   useEffect(() => {
@@ -20,13 +22,14 @@ const response = axios.get(`http://localhost:4000/Patient/getFamMembers/${userna
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
+
 console.log(result)
 result.map((e) => {
   console.log(e)
 })
 
 
-  let tHead = ['Name', 'Age', 'National ID', 'Gender', 'Relation to Patient'];
+  let tHead = ['Name', 'Age', 'National ID', 'Gender', 'Relation to Patient', 'Health Package Subscription'];
 
   return (
     <div>
@@ -35,7 +38,7 @@ result.map((e) => {
       <div className="d-flex justify-content-between flex-row">
       <p className="text-capitalize fs-4 w-25">Family Members</p>
     </div>
-      <TableFamilyMembers tHead={tHead} data={result}/>
+      <TableFamilyMembers tHead={tHead} data={result} username={username}/>
     </div>
   );
 }

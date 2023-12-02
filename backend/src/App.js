@@ -23,7 +23,7 @@ const MongoURI = process.env.MONGO_URI;
 //App variables
 const app = express();
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: "*",
   credentials: true,
 }));
 
