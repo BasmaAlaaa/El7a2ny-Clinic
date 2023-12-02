@@ -28,7 +28,7 @@ function ContractView () {
   const handleAcceptContract = async () => {
     console.log("Accept contract button clicked");
     try {
-      const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`,{
+      const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`, "",{
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       });
       alert(response.data.message)

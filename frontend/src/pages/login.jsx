@@ -21,8 +21,7 @@ function Login() {
   const handleLogin = async (event) => {
     event.preventDefault(); 
     try {
-      const response = await axios.post('http://localhost:4000/login', 
-      { Username: username, password: password });
+      const response = await axios.post('http://localhost:4000/login', { username: username, password: password });
       if (response.data.userDoctor) {
         sessionStorage.setItem("token", response.data.userDoctor.accessToken);
         navigate(`/doctorView/${username}`);

@@ -57,7 +57,9 @@ const handleAddAppointment = (e) => {
   if(date && from){
   const data = {date: date, time:from}
  // try{
-    const response = axios.post(`http://localhost:4000/Doctor/addAvailableTimeSlots/${username}`, data)
+    const response = axios.post(`http://localhost:4000/Doctor/addAvailableTimeSlots/${username}`, data, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
     .then(res =>alert('added')).catch(err => alert('error'))
   }
       // if (response.status === 200) {
@@ -78,17 +80,24 @@ const handleAddAppointment = (e) => {
 
     
   const updateEmail=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email})
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email},
+    {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
   const updateHourlyRate=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate})
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate},{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
   const updateAffiliation=() => {
-    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation})
+    const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation},{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
   .then(res =>setResult(res.data)).catch(err => console.log(err))
   console.log(result)
   }
@@ -100,7 +109,9 @@ const handleAddAppointment = (e) => {
   }, [contractInfo]); 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/viewWalletAmountByDoc/${username}`)
+    const response = axios.get(`http://localhost:4000/Doctor/viewWalletAmountByDoc/${username}`,{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
     .then(res =>setWallet(res.data)).catch(err => console.log(err))
     console.log('w',wallet)
   }, []); 

@@ -33,7 +33,7 @@ function ChangePassword() {
       if (response.status === 200) {
         alert(`Password updated successfully`);
         console.log(response.data.message);
-        const res = await axios.post(`http://localhost:8000/logout/${username}`,"",{
+        const res = await axios.post(`http://localhost:4000/logout/${username}`,"",{
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         });
         sessionStorage.removeItem('token');

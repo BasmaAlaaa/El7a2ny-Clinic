@@ -134,27 +134,32 @@ const createAdmin = async (req, res) => {
       res.status(403).json("You are not logged in!");
   }else{
     try {
-      const { Username, Password, Email} = req.body;
+      const {Username, Password, Email} = req.body;
       // Validate input, ensure admin does not already exist
 
-      if (!Username || !Password || Email) {
+      if (!Username || !Password || !Email) {
         throw Error("All fields must be filled.");
       }
+      console.log(Username);
 
       if (!(await isUsernameUnique(Username))) {
         throw new Error("Username is already taken.");
       }
+      console.log(Password);
 
       if (!(await isEmailUnique(Email))) {
         throw new Error("Email is already taken.");
       }
+      console.log(Email);
 
       if(!(await validatePassword(Password))){
         return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
       }
+      console.log("hey??");
 
       const newAdmin = new Admin({ Username, Password, Email });
       await newAdmin.save();
+      console.log("hey???");
 
       res.status(200).json({ message: "New admin created", admin: newAdmin });
     } catch (error) {

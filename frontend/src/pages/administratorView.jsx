@@ -18,7 +18,7 @@ function AdministratorView() {
   const acceptOrRejectDoctorRequest = async (Username, action) => {
     try {
       
-      const response = await axios.post(`http://localhost:4000/Admin/acceptOrRejectDoctorRequest/${Username}`, { action },{
+      const response = await axios.post(`http://localhost:4000/Admin/acceptOrRejectDoctorRequest/${username}/${Username}`, {action},{
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       });
       if (response.status === 200) {

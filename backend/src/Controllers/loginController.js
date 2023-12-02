@@ -152,13 +152,13 @@ const login = async (req, res) => {
     const accessToken = generateAccessToken(doctor);
     const refreshToken = generateRefreshToken(doctor);
     refreshTokens.push(refreshToken);
-    const userdoctor = {
+    const userDoctor = {
       _id: doctor._id,
       Username: doctor.Username,
       accessToken,
       refreshToken,
     }
-    res.json({userdoctor});
+    res.json({userDoctor});
   } 
   else {
     res.status(400).json("Username or password incorrect!");

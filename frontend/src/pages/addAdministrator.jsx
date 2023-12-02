@@ -33,12 +33,11 @@ function AddAdministrator() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {Username:usernameAd, Password:password, Email: email}
+    const data = {Username:usernameAd , Password:password, Email: email}
     console.log(data)
     const response = axios.post(`http://localhost:4000/Admin/createAdmin/${username}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    })
-.then(res =>console.log(res.data)).catch(err => console.log(err.request))
+    }).then(res =>console.log(res.data)).catch(err => console.log(err.request))
   }
 
   return (
