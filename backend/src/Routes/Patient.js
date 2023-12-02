@@ -47,6 +47,10 @@ const {
   requestFollowUpForFamilyMember,
   ViewAllPres,
   ViewPresDetails,
+  cancelHealthCarePackageSubscriptionOfFamMember,
+  viewHealthPackageStatusOfFamilyMember,
+  viewSubscribedHealthPackagesOfFamilyMember,
+  subscribeToAHealthPackageForFamilyMember
 } = require("../Controllers/patientController");
 
 const router = express.Router();
@@ -100,6 +104,15 @@ router.get(
   "/viewSubscribedHealthPackages/:Username",verify, 
   viewSubscribedHealthPackages
 );
+router.get(
+    "/viewSubscribedHealthPackagesOfFamilyMember/:Username/NationalID",verify, 
+    viewSubscribedHealthPackagesOfFamilyMember
+  );
+router.post(
+    "/cancelHealthCarePackageSubscriptionOfFamMember/:Username/:Type/:NationalID",verify, 
+    cancelHealthCarePackageSubscriptionOfFamMember
+  );
+
 router.post(
   "/cancelHealthCarePackageSubscription/:Username/:Type",verify, 
   cancelHealthCarePackageSubscription
@@ -109,14 +122,22 @@ router.post(
   "/subscribeToAHealthPackage/:patientUsername/:healthPackageType",verify, 
   subscribeToAHealthPackage
 );
+router.post(
+    "/subscribeToAHealthPackageForFamilyMember/:patientUsername/:healthPackageType/:NationalID",verify, 
+    subscribeToAHealthPackageForFamilyMember
+  );
 router.get(
   "/viewHealthCarePackageStatus/:Username/:healthPackageType",verify, 
   viewHealthCarePackageStatus
 );
 router.get(
+    "/viewHealthPackageStatusOfFamilyMember/:Username/:healthPackageType/:NationalID",verify, 
+    viewHealthPackageStatusOfFamilyMember
+  );
+/*router.get(
   "/viewHealthPackageStatus/:Username/:healthPackageType",verify, 
   viewHealthPackageStatus
-);
+);*/
 
 router.post(
   "/addMedicalHistoryDocument/:Username",verify, 

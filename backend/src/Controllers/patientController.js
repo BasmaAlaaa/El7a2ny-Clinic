@@ -907,6 +907,46 @@ const viewSubscribedHealthPackages = async (req, res) => {
   }
 };
 
+// Req 30: view subscribed health packages for the patient and family members
+const viewSubscribedHealthPackagesOfFamilyMember = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { Username, NationalID} = req.params;
+  if (!(req.user.Username === Username)) {
+    res.status(403).json("You are not logged in!");
+  }else{
+
+    try {
+      // Find the patient by username
+      const patient = await patientSchema.findOne({ Username });
+
+      if (!patient) {
+        return res.status(404).send('Patient not found');
+      }      
+      
+      const famMember = await FamilyMember.findOne({NationalID});
+
+      if (!famMember || !(famMember.PatientUsername === Username)) {
+        return res.status(404).send('Family member not found');
+      }
+
+      const subscribedHPs = famMember.SubscribedHP;
+
+      for( const hp of subscribedHPs){
+        if(hp.Status === "Subscribed"){
+          return res.status(200).send([hp]);
+        }
+      }
+      return res.status(404).send("The patient is not subscribed to any health package at the moment");
+
+      // Send the list of subscribed health packages as a response
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+};
+
 //req 21 : pay for appointment
 const payForAppointment = async (res, req) => {
 
@@ -1001,7 +1041,7 @@ const viewHealthCarePackageStatus = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, healthPackageType } = req.params;
+  const { Username, healthPackageType} = req.params;
 
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
@@ -1085,11 +1125,11 @@ const viewHealthCarePackageStatus = async (req, res) => {
   }
 };
 
-const viewHealthPackageStatus = async (req, res) => {
+const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, healthPackageType } = req.params;
+  const { Username, healthPackageType, NationalID} = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
   }else{
@@ -1108,11 +1148,17 @@ const viewHealthPackageStatus = async (req, res) => {
         return res.status(404).send('Health Package not found');
       }
 
+      // Find the patient by username
+      const famMember = await FamilyMember.findOne({ NationalID });
+
+      if (!famMember) {
+        return res.status(404).send('Family member not found');
+      }
       // Get the health care package status for the patient
-      const patientSubscription = patient.SubscribedHP;
+      const famSubscription = famMember.SubscribedHP;
       var result ={};
 
-      if(patientSubscription.length === 0){
+      if(famSubscription.length === 0){
         result  = {
           Type: healthPackageType,
           AnnualFee: healthPackage.AnnualFee,
@@ -1123,7 +1169,7 @@ const viewHealthPackageStatus = async (req, res) => {
         }
       }
       else{
-        for(const hp of patientSubscription){
+        for(const hp of famSubscription){
           if(hp.Type === healthPackageType){
             if(hp.Status === "Cancelled"){
               result  = {
@@ -1205,7 +1251,6 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
           hp.CancellationDate = new Date();
           hp.RenewalDate = null;
 
-          patient.WalletAmount = patient.WalletAmount+healthPackage.AnnualFee;
           // Save the updated patient
           await patient.save();
         }
@@ -1213,40 +1258,66 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
           return res.status(404).send('You are not subscribed to this health package');
         }
       }
-      
-      // Check if the patient has family members
-      if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
-        // Get the family members' usernames
-        const familyMemberIds = patient.FamilyMembers;
 
-        for (const familyMemberId of familyMemberIds) {
-          // Find the family member by username
-          const familyMember = await patientSchema.findOne({NationalID: familyMemberId});
+      return res.status(200).send('Health package subscription has been cancelled for the patient and family members.');
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+};
 
-          if (familyMember) {
-            // Get the associated PatientUsername from the FamilyMember model
-            const subscription = familyMember.SubscribedHP;
-            if(subscription.length <= 0){
-              console.log('Your family member is not subscribed to any health package');
-            }
+// Req 32: Cancel a subscription of a health package for the patient and family members
+const cancelHealthCarePackageSubscriptionOfFamMember = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
 
-            for(const hp of subscription){
-              if (hp.Type === Type && hp.Status === "Subscribed") {
-                // Cancel the patient's subscription
-                hp.Status = 'Cancelled';
-                hp.CancellationDate = new Date();
-                hp.RenewalDate = null;
+  const { Username, Type, NationalID} = req.params;
+  if (!(req.user.Username === Username)) {
+    res.status(403).json("You are not logged in!");
+  }else{
+    
+    try {
+      // Find the patient by username
+      const patient = await patientSchema.findOne({ Username });
 
-                familyMember.WalletAmount = familyMember.WalletAmount+healthPackage.AnnualFee;
-
-                // Save the updated patient
-                await familyMember.save();
-              }
-            }
-          }
-        }
+      if (!patient) {
+        return res.status(404).send('Patient not found');
       }
 
+      const healthPackage = await HealthPackage.findOne({ Type });
+
+      if (!healthPackage) {
+        return res.status(404).send('Health Package not found');
+      }
+
+      // Find the patient by username
+      const famMember = await FamilyMember.findOne({ NationalID });
+
+      if (!famMember) {
+        return res.status(404).send('Family member not found');
+      }
+
+      // Check if the patient has a subscription for the specified health package type
+      const subscription = famMember.SubscribedHP;
+      if(subscription.length === 0){
+        return res.status(404).send('You are not subscribed to any health package');
+      }
+
+      for(const hp of subscription){
+        if (hp.Type === Type && hp.Status === "Subscribed") {
+          // Cancel the patient's subscription
+          hp.Status = 'Cancelled';
+          hp.CancellationDate = new Date();
+          hp.RenewalDate = null;
+
+          // Save the updated patient
+          await famMember.save();
+        }
+        else if (hp.Type === Type && (hp.Status === "Cancelled" || hp.Status === "Unsubscribed")){
+          return res.status(404).send('You are not subscribed to this health package');
+        }
+      }
+      
       return res.status(200).send('Health package subscription has been cancelled for the patient and family members.');
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -1885,69 +1956,106 @@ const subscribeToAHealthPackage = async (req, res) => {
           patient.save();
         }
 
-        // Check if the patient has family members
-        if (patient.FamilyMembers && patient.FamilyMembers.length > 0) {
-          // Get the family members' usernames
-          const familyMemberIds = patient.FamilyMembers;
+      }
+      res.status(200).send({ message: 'Subscribed successfully', patient });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  }
+};
 
-          for (const familyMemberId of familyMemberIds) {
-            // Find the family member by username
-            const familyMember = await patientSchema.findOne({NationalID: familyMemberId});
+const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
 
-            if (familyMember) {
-              // Get the associated PatientUsername from the FamilyMember model
-              const healthPackagesOfFam = familyMember.SubscribedHP;
-              var patSub1 = false;
+  const { patientUsername, healthPackageType, NationalID} = req.params;
+  const { paymentMethod } = req.body;
+  if (!(req.user.Username === patientUsername)) {
+    res.status(403).json("You are not logged in!");
+  }else{
 
-              const aYearFromNow = new Date();
-              aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+    try {
+      //Selecting the date and time and payment method of appointment
+      const patient = await patientSchema.findOne({ Username: patientUsername });
 
-              for (const hp of healthPackagesOfFam) {
-                if (hp.Status === "Subscribed" && !patSub1) {
-                  patSub1 = true;
-                  console.log("Your family member is already subscribed to a health package");
-                }
-                else if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub1){
-                  hp.Status = "Subscribed";
-                  hp.RenewalDate = aYearFromNow;
-                  hp.CancellationDate = null;
-                  hp.PaymentMethod = paymentMethod;
-                  hp.SubscriptionStartDate = new Date();
-                  if(paymentMethod === "wallet"){
-                    familyMember.WalletAmount = familyMember.WalletAmount-(healthPackage.AnnualFee*(1-((healthPackage.FamilySubscriptionDiscount)/100)));
-                  }
+      if (!patient) {
+        return res.status(404).send({ error: 'Patient not found' });
+      }
 
-                  familyMember.save();
-                  patSub1 = true;
-                }
-                else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub1){
-                  hp.Status = "Subscribed";
-                  hp.RenewalDate = aYearFromNow;
-                  hp.CancellationDate = null;
-                  hp.PaymentMethod = paymentMethod;
-                  hp.SubscriptionStartDate = new Date();
-                  if(paymentMethod === "wallet"){
-                    familyMember.WalletAmount = familyMember.WalletAmount-(healthPackage.AnnualFee*(1-((healthPackage.FamilySubscriptionDiscount)/100)));
-                  }
-                  familyMember.save();
-                  patSub1 = true;
-                }
-              }
-              if (!patSub1) {
-                familyMember.SubscribedHP.push({
-                  Type: healthPackageType,
-                  PaymentMethod: paymentMethod,
-                  Status: "Subscribed",
-                  SubscriptionStartDate: Date.now(),
-                  RenewalDate: aYearFromNow
-                });
-                if(paymentMethod === "wallet"){
-                  familyMember.WalletAmount = familyMember.WalletAmount-(healthPackage.AnnualFee*(1-((healthPackage.FamilySubscriptionDiscount)/100)));
-                }
-                familyMember.save();
-              }
-            }
+      const healthPackage = await HealthPackage.findOne({ Type: healthPackageType });
+
+      if (!healthPackage) {
+        return res.status(404).send({ error: 'Health Package not found' });
+      }
+
+      // Find the patient by username
+      const famMember = await FamilyMember.findOne({ NationalID });
+
+      if (!famMember) {
+        return res.status(404).send('Family member not found');
+      }
+
+      const totalPrice = healthPackage.AnnualFee * (1 - healthPackage.FamilySubscriptionDiscount/100);
+
+      if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= totalPrice)){
+
+        if(paymentMethod === "wallet" && !(patient.WalletAmount >= totalPrice)){
+          return res.status(400).send("Not enough cash in the wallet");
+        }
+
+        const healthPackagesOfFam = famMember.SubscribedHP;
+        var patSub = false;
+        console.log(healthPackagesOfFam);
+        const aYearFromNow = new Date();
+        aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
+
+        for (const hp of healthPackagesOfFam) {
+          if (hp.Status === "Subscribed") {
+            patSub = true;
+            return res.status(404).send("He is already subscribed to a health package");
           }
+        }
+
+        for (const hp of healthPackagesOfFam) {
+          if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
+            hp.Status = "Subscribed";
+            hp.RenewalDate = aYearFromNow;
+            hp.CancellationDate = null;
+            hp.PaymentMethod = paymentMethod;
+            hp.SubscriptionStartDate = new Date();
+            if(paymentMethod === "wallet"){
+              patient.WalletAmount = patient.WalletAmount-totalPrice;
+            }
+            patient.save();
+            patSub = true;
+          }
+          else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub){
+            hp.Status = "Subscribed";
+            hp.RenewalDate = aYearFromNow;
+            hp.CancellationDate = null;
+            hp.PaymentMethod = paymentMethod;
+            hp.SubscriptionStartDate = new Date();
+            if(paymentMethod === "wallet"){
+              patient.WalletAmount = patient.WalletAmount-totalPrice;
+            }          
+            patient.save();
+            patSub = true;
+          }
+        }
+        if (!patSub) {
+          famMember.SubscribedHP.push({
+            Type: healthPackageType,
+            PaymentMethod: paymentMethod,
+            Status: "Subscribed",
+            SubscriptionStartDate: Date.now(),
+            RenewalDate: aYearFromNow
+          });
+
+          if(paymentMethod === "wallet"){
+            patient.WalletAmount = patient.WalletAmount-totalPrice;
+          }        
+          patient.save();
+          famMember.save();
         }
       }
       res.status(200).send({ message: 'Subscribed successfully', patient });
@@ -2298,7 +2406,7 @@ module.exports = {
   viewSubscribedHealthPackages,
   cancelHealthCarePackageSubscription,
   viewHealthCarePackageStatus,
-  viewHealthPackageStatus,
+  viewHealthPackageStatusOfFamilyMember,
   addMedicalHistoryDocument,
   deleteMedicalHistoryDocument,
   viewMedicalHistoryDocuments,
@@ -2310,10 +2418,13 @@ module.exports = {
   patientPastApp,
   linkPatientAccountAsFam,
   subscribeToAHealthPackage,
+  subscribeToAHealthPackageForFamilyMember,
   downloadPrescriptionPDF ,
   requestFollowUpAppointment,
   requestFollowUpForFamilyMember ,
   AddRefundForPatient,
   ViewAllPres,
-  ViewPresDetails
+  ViewPresDetails,
+  viewSubscribedHealthPackagesOfFamilyMember,
+  cancelHealthCarePackageSubscriptionOfFamMember
 }

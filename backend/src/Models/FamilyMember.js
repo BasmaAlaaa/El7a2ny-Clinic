@@ -34,6 +34,39 @@ const FamilyMemberSchema = new Schema({
         ref: 'Patient',
         required: false, // Make it not required
     },
+    SubscribedHP: [{
+        Type: {
+          type: String,
+          required: false,
+          ref: 'HealthPackage'
+        },
+        PaymentMethod: {
+          type: String,
+          default: "card",
+          enum: ["wallet", "card"]
+        },
+        Status: {
+          type: String,
+          enum: ['Subscribed', 'Unsubscribed', 'Cancelled'],
+          default: 'Unsubscribed',
+        },
+        SubscriptionStartDate: {
+          type: Date,
+          default: null,
+        },
+        SubscriptionEndDate: {
+          type: Date,
+          default: null,
+        },
+        CancellationDate: {
+          type: Date,
+          default: null,
+        },
+        RenewalDate: {
+          type: Date,
+          required: false
+        },
+    }],
 },
     { timestamps: true });
 
