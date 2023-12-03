@@ -50,7 +50,11 @@ const {
   cancelHealthCarePackageSubscriptionOfFamMember,
   viewHealthPackageStatusOfFamilyMember,
   viewSubscribedHealthPackagesOfFamilyMember,
-  subscribeToAHealthPackageForFamilyMember
+  subscribeToAHealthPackageForFamilyMember,
+  rescheduleAppointment,
+  rescheduleAppointmentFamMem,
+  cancelAppointment,
+
 } = require("../Controllers/patientController");
 
 const router = express.Router();
@@ -192,6 +196,11 @@ router.post(
 );
 router.get("/ViewAllPres/:PatientUsername", verify, ViewAllPres);
 router.get("/ViewPresDetails/:PatientUsername/:id", verify, ViewPresDetails);
+
+router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointment);
+router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentFamMem);
+router.post('/cancelAppointment/:username/:appointmentId', verify, cancelAppointment);
+
 
 const log = require("../Controllers/loginController");
 

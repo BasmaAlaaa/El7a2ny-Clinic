@@ -37,7 +37,11 @@ const { registerDoctor,
     ViewAllPres,
     updatePatientPrescription,
     addMedicineToPrescription,
-    DeleteMedecineFromPrescription
+    DeleteMedecineFromPrescription,
+    rescheduleAppointmentPatient,
+    cancelAppointmentPatient
+
+
 } = require('../Controllers/doctorController');
 
 const { verify } = require('../Controllers/loginController');
@@ -118,7 +122,13 @@ router.get("/viewAllPres/:DoctorUsername", verify, ViewAllPres);
 // update patient prescription
 router.put('/updatePatientPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
 
-router.post('/DeleteMedecineFromPrescription',DeleteMedecineFromPrescription)
+router.post('/DeleteMedecineFromPrescription',DeleteMedecineFromPrescription);
+
+router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentPatient);
+
+router.post('/cancelAppointmentPatient/:username/:appointmentId', verify, cancelAppointmentPatient);
+
+
 
 const log =require("../Controllers/loginController")
 

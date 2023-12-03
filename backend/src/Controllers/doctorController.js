@@ -1234,6 +1234,203 @@ const DeleteMedecineFromPrescription = async (req, res) => {
 };
 
 
+const rescheduleAppointmentPatient = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { username, appointmentId , timeSlot } = req.params;
+
+  if (!(req.user.Username === username)) {
+    res.status(403).json("You are not logged in!");
+  }else{
+    try {
+      //const { newDate, newTime } = req.body;
+
+      // Find the patient by username
+      const doctor = await patientSchema.findOne({ Username: username });
+
+      if (!doctor) {
+        return res.status(404).json({ success: false, message: 'doctor not found.' });
+      }
+
+      // Find the selected appointment by ID
+      const selectedAppointment = await appointmentSchema.findById(appointmentId);
+
+      if (!selectedAppointment) {
+        return res.status(404).json({ success: false, message: ' appointment not found.' });
+      }
+
+      // Check if the docotr is associated with the selected appointment
+      if (selectedAppointment.DoctorUsername !== doctor.Username) {
+        return res.status(403).json({ success: false, message: 'doctor is not associated with this appointment.' });
+      }
+
+      // Check if the selected appointment is upcoming or following
+      if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
+
+        
+
+      // Fetch the patient's details using DoctorUsername
+        const patientUsername = selectedAppointment.PatientUsername;
+        const patient = await patientSchema.findOne({ Username: patientUsername });
+
+        if (!patient) {
+          return res.status(404).json({ success: false, message: 'Patient not found.' });
+        }
+
+        // Access doctor's available time slots
+        const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+        // Match the appointment date and time with the doctor's available time slots
+        const selectedAppointmentDate = selectedAppointment.date;
+        const selectedAppointmentTime = selectedAppointment.time;
+
+        const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+          slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+          slot.Time === selectedAppointmentTime &&
+          slot.Status === 'booked'
+        );
+
+        if (matchingTimeSlot) {
+          matchingTimeSlot.Status = 'available';
+         } else {
+          return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
+        }
+      
+        let slot;
+        var found = false;
+        for(const s of doctorAvailableTimeSlots){
+          if(!found){
+          if(s._id.equals(timeSlot)){
+            found = true;
+            slot = s;
+          }
+        }
+        }
+
+        if(slot.Status === "available"){
+          let newAppointment;
+  
+          
+          newAppointment = await appointmentSchema.create({
+            Date: slot.Date,
+            Time: slot.Time,
+            DoctorUsername: selectedAppointment.doctorUsername,
+            PatientUsername: selectedAppointment.patientUsername,
+            Status: selectedAppointment.status,
+            PaymentMethod: selectedAppointment.paymentMethod,
+            Price: selectedAppointment.Price,
+            Name: selectedAppointment.Name
+          });
+  
+            
+          slot.Status = "booked";
+          await doctor.save();
+          res.status(200).send(newAppointment);
+        }
+        else{
+          return res.status(400).send("This slot is already booked");
+        }
+ 
+        // Update the App status to 'Rescheduled' 
+        selectedAppointment.Status = 'Rescheduled';
+
+        // Save the updated appointment
+        await selectedAppointment.save();
+
+      
+        return res.status(200).json({ success: true, message: 'Appointment is rescheduled' });
+      } else {
+        return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ success: false, message: 'Internal server error.' });
+    }
+  }
+};
+
+
+const cancelAppointmentPatient = async (req, res) => {
+  try {
+    const { username, appointmentId } = req.params;
+
+    if (req.user.Username !== username) {
+      return res.status(403).json({ success: false, message: 'You are not logged in!' });
+    }
+
+    const doctor = await doctorSchema.findOne({ Username: username });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    const selectedAppointment = await appointmentSchema.findById(appointmentId);
+
+    if (!selectedAppointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    if (selectedAppointment.DoctorUsername !== doctor.Username) {
+      return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
+    }
+
+    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    }
+
+    const appointmentDateTime = new Date(selectedAppointment.Date);
+    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
+
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds between the current time and appointment time
+    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to hours
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    const patient = await patientSchema.findOne({ Username: selectedAppointment.patientUsername });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    if (hoursDifference >= 24) {
+      // Calculate the refund amount based on your business logic
+      const refundAmount = selectedAppointment.Price;
+
+      // Update the WalletAmount directly in the database using $inc
+      await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
+    }
+
+   
+    const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
+      slot.Date.getTime() === selectedAppointment.Date.getTime() &&
+      slot.Time === selectedAppointment.Time &&
+      slot.Status === 'booked'
+    );
+
+    if (matchingTimeSlot) {
+      matchingTimeSlot.Status = 'available';
+    }
+
+    // Update existing appointment status to 'canceled'
+    selectedAppointment.Status = 'Canceled';
+
+    // Save changes to appointment and doctor
+    await selectedAppointment.save();
+    await doctor.save();
+    //await Promise.all([selectedAppointment.save(), doctor.save()]);
+
+    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
 
 
 
@@ -1268,5 +1465,8 @@ module.exports = {
   ViewAllPres,
   updatePatientPrescription,
   addMedicineToPrescription,
-  DeleteMedecineFromPrescription
+  DeleteMedecineFromPrescription,
+  rescheduleAppointmentPatient,
+  cancelAppointmentPatient
+
 };
