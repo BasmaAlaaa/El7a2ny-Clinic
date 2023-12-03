@@ -2700,6 +2700,91 @@ const cancelAppointment = async (req, res) => {
 };
 
 
+const cancelAppointmentFamMem = async (req, res) => {
+  try {
+    const { username, appointmentId , familyId } = req.params;
+
+    if (req.user.Username !== username) {
+      return res.status(403).json({ success: false, message: 'You are not logged in!' });
+    }
+
+    const patient = await patientSchema.findOne({ Username: username });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found.' });
+    }
+
+    const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: username});
+
+      if(!familyMem){
+        return res.status(404).send({ error: 'Family member not found' });
+      }
+
+    const selectedAppointment = await appointmentSchema.findById(appointmentId);
+
+    if (!selectedAppointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    if (selectedAppointment.PatientUsername !== patient.Username) {
+      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    }
+
+    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    }
+
+    const appointmentDateTime = new Date(selectedAppointment.Date);
+    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
+
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds between the current time and appointment time
+    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to hours
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    if (hoursDifference >= 24) {
+      // Calculate the refund amount based on your business logic
+      const refundAmount = selectedAppointment.Price;
+
+      // Update the WalletAmount directly in the database using $inc
+      await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+    }
+
+    const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
+      slot.Date.getTime() === selectedAppointment.Date.getTime() &&
+      slot.Time === selectedAppointment.Time &&
+      slot.Status === 'booked'
+    );
+
+    if (matchingTimeSlot) {
+      matchingTimeSlot.Status = 'available';
+    }
+
+    // Update existing appointment status to 'canceled'
+    selectedAppointment.Status = 'Canceled';
+
+    // Save changes to appointment and doctor
+    await selectedAppointment.save();
+    await doctor.save();
+    //await Promise.all([selectedAppointment.save(), doctor.save()]);
+
+    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: 'Internal server error.' });
+  }
+};
+
+
 module.exports = {
   registerPatient,
   addFamMember,
@@ -2751,5 +2836,6 @@ module.exports = {
   rescheduleAppointment,
   rescheduleAppointmentFamMem,
   cancelAppointment,
+  cancelAppointmentFamMem
 
 }

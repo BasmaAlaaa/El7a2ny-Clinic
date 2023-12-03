@@ -39,7 +39,8 @@ const { registerDoctor,
     addMedicineToPrescription,
     DeleteMedecineFromPrescription,
     rescheduleAppointmentPatient,
-    cancelAppointmentPatient
+    cancelAppointmentPatient,
+    cancelAppointmentPatientFamMem
 
 
 } = require('../Controllers/doctorController');
@@ -127,6 +128,9 @@ router.post('/DeleteMedecineFromPrescription',DeleteMedecineFromPrescription);
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentPatient);
 
 router.post('/cancelAppointmentPatient/:username/:appointmentId', verify, cancelAppointmentPatient);
+
+router.post('/cancelAppointmentPatientFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentPatientFamMem);
+
 
 
 

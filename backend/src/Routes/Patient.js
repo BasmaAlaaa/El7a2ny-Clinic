@@ -54,6 +54,7 @@ const {
   rescheduleAppointment,
   rescheduleAppointmentFamMem,
   cancelAppointment,
+  cancelAppointmentFamMem
 
 } = require("../Controllers/patientController");
 
@@ -200,6 +201,8 @@ router.get("/ViewPresDetails/:PatientUsername/:id", verify, ViewPresDetails);
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointment);
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentFamMem);
 router.post('/cancelAppointment/:username/:appointmentId', verify, cancelAppointment);
+
+router.post('/cancelAppointmentFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentFamMem);
 
 
 const log = require("../Controllers/loginController");
