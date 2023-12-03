@@ -135,7 +135,8 @@ const addFamMember = async (req, res) => {
         NationalID,
         Age,
         Gender,
-        RelationToPatient
+        RelationToPatient,
+        PatientUsername: patient.Username
       });
 
       patient.FamilyMembers.push(newFamilyMember.NationalID);
@@ -916,26 +917,26 @@ const viewSubscribedHealthPackagesOfFamilyMember = async (req, res) => {
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
   }else{
-
     try {
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username });
 
       if (!patient) {
         return res.status(404).send('Patient not found');
-      }      
-      
+      }            
       const famMember = await FamilyMember.findOne({NationalID});
+      console.log(famMember.PatientUsername);
 
       if (!famMember || !(famMember.PatientUsername === Username)) {
         return res.status(404).send('Family member not found');
       }
 
       const subscribedHPs = famMember.SubscribedHP;
+      console.log("hello");
 
-      for( const hp of subscribedHPs){
+      for(const hp of subscribedHPs){
         if(hp.Status === "Subscribed"){
-          return res.status(200).send([hp]);
+          return res.status(200).send([hp]); 
         }
       }
       return res.status(404).send("The patient is not subscribed to any health package at the moment");

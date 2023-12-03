@@ -110,7 +110,7 @@ router.get(
   viewSubscribedHealthPackages
 );
 router.get(
-    "/viewSubscribedHealthPackagesOfFamilyMember/:Username/NationalID",verify, 
+    "/viewSubscribedHealthPackagesOfFamilyMember/:Username/:NationalID",verify, 
     viewSubscribedHealthPackagesOfFamilyMember
   );
 router.post(
