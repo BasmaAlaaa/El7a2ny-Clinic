@@ -1397,13 +1397,13 @@ const cancelAppointmentPatient = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });
     }
 
-    if (hoursDifference >= 24) {
+    
       // Calculate the refund amount based on your business logic
       const refundAmount = selectedAppointment.Price;
 
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-    }
+  
 
    
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
@@ -1483,13 +1483,13 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
         return res.status(404).send({ error: 'Family member not found' });
       }
 
-    if (hoursDifference >= 24) {
+
       // Calculate the refund amount based on your business logic
       const refundAmount = selectedAppointment.Price;
 
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-    }
+    
 
    
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
