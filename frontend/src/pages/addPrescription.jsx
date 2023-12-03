@@ -64,30 +64,6 @@ function AddPrescription() {
             alert('Error adding prescription. Please check console for details.');
         }
     };
-    
-
-    // const handleSubmit = (e) => {
-    //     e.preventDefault();
-    //     const data = { description: description, date: date,  dose: dose } //appointmentID: appointmentID,
-    //     console.log(data)
-    //     const response = axios.post(`http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`, data, {
-    //         headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
-    //     })
-    //         .then(res => {
-    //             alert('Prescription added successfully');
-    //             navigate(`/patientsList/${username}`);
-    //             console.log(res.data);
-    //         }).catch(err => console.log(err))
-    // }
-    // const handleSubmitLink = (e) => {
-    //     e.preventDefault();
-    //     const data = { Email: email, RelationToPatient: relationToPatientLink }
-    //     console.log(data)
-    //     const response = axios.post(`http://localhost:4000/Patient/linkPatientAccountAsFam/${username}`, data, {
-    //         headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
-    //     })
-    //         .then(res => alert('Added successfully')).catch(err => alert(err))
-    // }
 
     return (
         <div>
@@ -113,13 +89,6 @@ function AddPrescription() {
 
                 <h3><button type="submit">Submit</button></h3>
             </form>
-            {/* <form onSubmit={handleSubmitLink}>
-                <h2>Link Patient as Family Member</h2>
-                <h3><input required placeholder='enter Email' type='email' onChange={(e) => setEmail(e.target.value)} /></h3>
-                <h3><input required placeholder='enter relation to patient' type='text' onChange={(e) => setRelationToPatientLink(e.target.value)} /></h3>
-
-                <h3><button type="submit">Submit</button></h3>
-            </form> */}
 
         </div>
     );
