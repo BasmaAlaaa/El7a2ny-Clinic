@@ -5,17 +5,17 @@ const notificationSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  MedicineName: {
-    type: String,
-    required: true
-  }, 
-  message: {
+  username: {
     type: String,
     required: true
   },
-  createdAt: {
-    type: Date,
-    default: Date.now
+  PatientMessage: {
+    type: String,
+    required: false
+  }, 
+  DoctorMessage: {
+    type: String,
+    required: false
   }
 });
 
