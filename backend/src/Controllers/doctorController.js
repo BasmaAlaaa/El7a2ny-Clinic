@@ -1283,8 +1283,8 @@ const rescheduleAppointmentPatient = async (req, res) => {
         const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
 
         // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.date;
-        const selectedAppointmentTime = selectedAppointment.time;
+        const selectedAppointmentDate = selectedAppointment.Date;
+        const selectedAppointmentTime = selectedAppointment.Time;
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointmentDate.getTime() &&
@@ -1316,10 +1316,10 @@ const rescheduleAppointmentPatient = async (req, res) => {
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
-            DoctorUsername: selectedAppointment.doctorUsername,
-            PatientUsername: selectedAppointment.patientUsername,
-            Status: selectedAppointment.status,
-            PaymentMethod: selectedAppointment.paymentMethod,
+            DoctorUsername: selectedAppointment.DoctorUsername,
+            PatientUsername: selectedAppointment.PatientUsername,
+            Status: selectedAppointment.Status,
+            PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
             Name: selectedAppointment.Name
           });
@@ -1391,7 +1391,7 @@ const cancelAppointmentPatient = async (req, res) => {
     // Convert milliseconds to hours
     const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-    const patient = await patientSchema.findOne({ Username: selectedAppointment.patientUsername });
+    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });
@@ -1471,7 +1471,7 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
     // Convert milliseconds to hours
     const hoursDifference = timeDifference / (1000 * 60 * 60);
 
-    const patient = await patientSchema.findOne({ Username: selectedAppointment.patientUsername });
+    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });

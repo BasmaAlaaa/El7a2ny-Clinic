@@ -2427,8 +2427,8 @@ const rescheduleAppointment = async (req, res) => {
         const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
 
         // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.date;
-        const selectedAppointmentTime = selectedAppointment.time;
+        const selectedAppointmentDate = selectedAppointment.Date;
+        const selectedAppointmentTime = selectedAppointment.Time;
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointmentDate.getTime() &&
@@ -2460,10 +2460,10 @@ const rescheduleAppointment = async (req, res) => {
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
-            DoctorUsername: selectedAppointment.doctorUsername,
-            PatientUsername: selectedAppointment.patientUsername,
-            Status: selectedAppointment.status,
-            PaymentMethod: selectedAppointment.paymentMethod,
+            DoctorUsername: selectedAppointment.DoctorUsername,
+            PatientUsername: selectedAppointment.PatientUsername,
+            Status: selectedAppointment.Status,
+            PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
             Name: selectedAppointment.Name
           });
@@ -2552,8 +2552,8 @@ const rescheduleAppointmentFamMem = async (req, res) => {
         const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
 
         // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.date;
-        const selectedAppointmentTime = selectedAppointment.time;
+        const selectedAppointmentDate = selectedAppointment.Date;
+        const selectedAppointmentTime = selectedAppointment.Time;
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointmentDate.getTime() &&
@@ -2585,10 +2585,10 @@ const rescheduleAppointmentFamMem = async (req, res) => {
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
-            DoctorUsername: selectedAppointment.doctorUsername,
-            PatientUsername: selectedAppointment.patientUsername,
-            Status: selectedAppointment.status,
-            PaymentMethod: selectedAppointment.paymentMethod,
+            DoctorUsername: selectedAppointment.DoctorUsername,
+            PatientUsername: selectedAppointment.PatientUsername,
+            Status: selectedAppointment.Status,
+            PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
             Name: familyMem.Name
           });
