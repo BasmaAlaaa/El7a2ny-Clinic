@@ -121,7 +121,7 @@ router.post('/addMedicineToPrescription',addMedicineToPrescription)
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
 
-router.get("/viewAllPres/:DoctorUsername", verify, ViewAllPres);
+router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
 
 // update patient prescription
 router.put('/updatePatientPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);

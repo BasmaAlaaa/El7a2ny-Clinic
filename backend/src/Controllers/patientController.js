@@ -249,6 +249,35 @@ const patientFilterAppsByStatus = async (req, res) => {
   }
 }
 
+const allFamilyMemberAppointments = async (req, res) => {
+  const {Username} = req.params;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (!(req.user.Username === Username)) {
+    res.status(403).json("You are not logged in!");
+  }else{
+
+    try {
+      const user = await patientSchema.findOne({ Username: Username });
+      if (!user) {
+        return res.status(404).send('No patient found');
+      }
+      const familyMembers = await FamilyMember.find({PatientUsername: Username});
+      // Use the filter object to query the appointment collection
+      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, Name: {$in : familyMembers.Name}});
+
+      if (filteredAppointments.length === 0) {
+        return res.status(404).send('No matching appointments found');
+      }
+
+      // Send the list of matching appointments as a response
+      res.status(200).send({ filteredAppointments });
+    } catch (error) {
+      res.status(500).send({ error: error.message });
+    }
+  }
+}
+
 const allAppointments = async (req, res) => {
   const {Username} = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -2422,13 +2451,25 @@ const rescheduleAppointment = async (req, res) => {
         // Match the appointment date and time with the doctor's available time slots
         const selectedAppointmentDate = selectedAppointment.Date;
         const selectedAppointmentTime = selectedAppointment.Time;
+        
+        console.log(selectedAppointment.Time);
+        console.log(selectedAppointment.Date);
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-          slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-          slot.Time === selectedAppointmentTime &&
+          slot.Date.getTime() === selectedAppointment.Date.getTime() &&
+          slot.Time === selectedAppointment.Time &&
           slot.Status === 'booked'
         );
 
+        /*let matchingTimeSlot;
+        for (const slot of doctorAvailableTimeSlots){
+          if(slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+          slot.Time === selectedAppointmentTime &&
+          slot.Status === 'booked')
+          matchingTimeSlot = slot;
+        }*/
+        
+        console.log(matchingTimeSlot);
         if (matchingTimeSlot) {
           matchingTimeSlot.Status = 'available';
          } else {
@@ -2445,11 +2486,10 @@ const rescheduleAppointment = async (req, res) => {
           }
         }
         }
+        let newAppointment;
 
         if(slot.Status === "available"){
-          let newAppointment;
   
-          
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
@@ -2464,7 +2504,6 @@ const rescheduleAppointment = async (req, res) => {
             
           slot.Status = "booked";
           await doctor.save();
-          res.status(200).send(newAppointment);
         }
         else{
           return res.status(400).send("This slot is already booked");
@@ -2476,14 +2515,13 @@ const rescheduleAppointment = async (req, res) => {
          // Save the updated patient and appointment
          await selectedAppointment.save();
 
-      
-        return res.status(200).json({ success: true, message: 'Appointment is rescheduled' });
+        res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
       } else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
@@ -2494,8 +2532,8 @@ const rescheduleAppointmentFamMem = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId , timeSlot } = req.params;
-  const { familyId } = req.body;
+  const { username, appointmentId , timeSlot, familyId} = req.params;
+  //const { familyId } = req.body;
 
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -2530,8 +2568,6 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-
-       
 
       // Fetch the doctor's details using DoctorUsername
         const doctorUsername = selectedAppointment.DoctorUsername;
@@ -2570,11 +2606,9 @@ const rescheduleAppointmentFamMem = async (req, res) => {
           }
         }
         }
+        let newAppointment;
 
-        if(slot.Status === "available"){
-          let newAppointment;
-  
-          
+        if(slot.Status === "available"){          
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
@@ -2589,7 +2623,6 @@ const rescheduleAppointmentFamMem = async (req, res) => {
             
           slot.Status = "booked";
           await doctor.save();
-          res.status(200).send(newAppointment);
         }
         else{
           return res.status(400).send("This slot is already booked");
@@ -2602,19 +2635,22 @@ const rescheduleAppointmentFamMem = async (req, res) => {
          await selectedAppointment.save();
 
       
-        return res.status(200).json({ success: true, message: 'Appointment is rescheduled' });
+        return res.status(200).json({ success: true, message: 'Appointment is rescheduled' , newAppointment});
       } else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
 
 
 const cancelAppointment = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   try {
     const { username, appointmentId } = req.params;
 
@@ -2638,8 +2674,8 @@ const cancelAppointment = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
     }
 
-    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    if (!['Upcoming', 'upcoming', 'Following', 'following', 'Rescheduled', 'rescheduled'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following or rescheduled appointments.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -2688,7 +2724,7 @@ const cancelAppointment = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message});
   }
 };
 
@@ -2723,8 +2759,8 @@ const cancelAppointmentFamMem = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
     }
 
-    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    if (!['Upcoming', 'upcoming', 'Following', 'following', 'Rescheduled', 'rescheduled'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following or rescheduled appointments.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -2773,7 +2809,7 @@ const cancelAppointmentFamMem = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 const createAppointmentNotifications = async () => {
@@ -3064,6 +3100,7 @@ module.exports = {
   createAppointmentNotifications,
   removeAppointmentNotifications,
   displayNotifications,
+  allFamilyMemberAppointments,
   sendAppointmentPatientRescheduleNotificationEmail,
   sendAppointmentPatientCancelledNotificationEmail
 }
