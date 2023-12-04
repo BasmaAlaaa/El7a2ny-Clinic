@@ -1266,25 +1266,24 @@ const rescheduleAppointmentPatient = async (req, res) => {
         return res.status(403).json({ success: false, message: 'doctor is not associated with this appointment.' });
       }
 
+              // Fetch the patient's details using DoctorUsername
+              const patientUsername = selectedAppointment.PatientUsername;
+              const patient = await patientSchema.findOne({ Username: patientUsername });
+      
+              if (!patient) {
+                return res.status(404).json({ success: false, message: 'Patient not found.' });
+              }
+      
+              // Access doctor's available time slots
+              const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      
+              // Match the appointment date and time with the doctor's available time slots
+              const selectedAppointmentDate = selectedAppointment.Date;
+              const selectedAppointmentTime = selectedAppointment.Time;
+
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-
-
-
-        // Fetch the patient's details using DoctorUsername
-        const patientUsername = selectedAppointment.PatientUsername;
-        const patient = await patientSchema.findOne({ Username: patientUsername });
-
-        if (!patient) {
-          return res.status(404).json({ success: false, message: 'Patient not found.' });
-        }
-
-        // Access doctor's available time slots
-        const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
-
-        // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.Date;
-        const selectedAppointmentTime = selectedAppointment.Time;
+        if(['Upcoming', 'upcoming'].includes(selectedAppointment.Status)){
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointmentDate.getTime() &&
@@ -1308,9 +1307,9 @@ const rescheduleAppointmentPatient = async (req, res) => {
             }
           }
         }
+        let newAppointment;
 
         if (slot.Status === "available") {
-          let newAppointment;
 
 
           newAppointment = await appointmentSchema.create({
@@ -1327,7 +1326,6 @@ const rescheduleAppointmentPatient = async (req, res) => {
 
           slot.Status = "booked";
           await doctor.save();
-          res.status(200).send(newAppointment);
         }
         else {
           return res.status(400).send("This slot is already booked");
@@ -1340,7 +1338,35 @@ const rescheduleAppointmentPatient = async (req, res) => {
         await selectedAppointment.save();
 
 
-        return res.status(200).json({ success: true, message: 'Appointment is rescheduled' });
+        return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment});
+      } else if(['Following', 'following'].includes(selectedAppointment.Status)){
+        let newAppointment1;
+        const found = false;
+        for(const slot of doctorAvailableTimeSlots){
+          if(slot._id.equals(timeSlot) && slot.Status === "available" && !found){
+            newAppointment1 = await appointmentSchema.create({
+              Date: slot.Date,
+              Time: slot.Time,
+              DoctorUsername: selectedAppointment.DoctorUsername,
+              PatientUsername: selectedAppointment.PatientUsername,
+              Status: selectedAppointment.Status,
+              PaymentMethod: selectedAppointment.PaymentMethod,
+              Price: selectedAppointment.Price,
+              Name: selectedAppointment.Name,
+              ForPatient: true
+            });
+            slot.Status = "booked";
+            await doctor.save();
+            selectedAppointment.Status = 'Rescheduled';
+            found = true;
+            await selectedAppointment.save();
+            return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment1 });
+          }
+        }
+        if(!found){
+          return res.status(400).json({ success: false, message: 'No available time slots for the doctor' });
+        }
+      } 
       } else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
       }

@@ -2443,40 +2443,34 @@ const rescheduleAppointment = async (req, res) => {
         return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
       }
 
+            // Fetch the doctor's details using DoctorUsername
+            const doctorUsername = selectedAppointment.DoctorUsername;
+            const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+    
+            if (!doctor) {
+              return res.status(404).json({ success: false, message: 'Doctor not found.' });
+            }
+    
+            // Access doctor's available time slots
+            const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+            console.log(doctorAvailableTimeSlots);
+            // Match the appointment date and time with the doctor's available time slots
+            const selectedAppointmentDate = selectedAppointment.Date;
+            const selectedAppointmentTime = selectedAppointment.Time;
+            
+            console.log(selectedAppointment.Time);
+            console.log(selectedAppointment.Date);
+
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
+        if(['Upcoming', 'upcoming'].includes(selectedAppointment.Status)){
 
-      // Fetch the doctor's details using DoctorUsername
-        const doctorUsername = selectedAppointment.DoctorUsername;
-        const doctor = await doctorSchema.findOne({ Username: doctorUsername });
-
-        if (!doctor) {
-          return res.status(404).json({ success: false, message: 'Doctor not found.' });
-        }
-
-        // Access doctor's available time slots
-        const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
-
-        // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.Date;
-        const selectedAppointmentTime = selectedAppointment.Time;
-        
-        console.log(selectedAppointment.Time);
-        console.log(selectedAppointment.Date);
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointment.Date.getTime() &&
           slot.Time === selectedAppointment.Time &&
           slot.Status === 'booked'
         );
-
-        /*let matchingTimeSlot;
-        for (const slot of doctorAvailableTimeSlots){
-          if(slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-          slot.Time === selectedAppointmentTime &&
-          slot.Status === 'booked')
-          matchingTimeSlot = slot;
-        }*/
         
         console.log(matchingTimeSlot);
         if (matchingTimeSlot) {
@@ -2525,8 +2519,36 @@ const rescheduleAppointment = async (req, res) => {
          // Save the updated patient and appointment
          await selectedAppointment.save();
 
-        res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
-      } else {
+        return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
+      } else if(['Following', 'following'].includes(selectedAppointment.Status)){
+        let newAppointment1;
+        const found = false;
+        for(const slot of doctorAvailableTimeSlots){
+          if(slot._id.equals(timeSlot) && slot.Status === "available" && !found){
+            newAppointment1 = await appointmentSchema.create({
+              Date: slot.Date,
+              Time: slot.Time,
+              DoctorUsername: selectedAppointment.DoctorUsername,
+              PatientUsername: selectedAppointment.PatientUsername,
+              Status: selectedAppointment.Status,
+              PaymentMethod: selectedAppointment.PaymentMethod,
+              Price: selectedAppointment.Price,
+              Name: selectedAppointment.Name,
+              ForPatient: true
+            });
+            slot.Status = "booked";
+            await doctor.save();
+            selectedAppointment.Status = 'Rescheduled';
+            found = true;
+            await selectedAppointment.save();
+            return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment1 });
+          }
+        }
+        if(!found){
+          return res.status(400).json({ success: false, message: 'No available time slots for the doctor' });
+        }
+      } 
+    }else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
       }
     } catch (error) {
@@ -2542,7 +2564,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId , timeSlot, familyId} = req.params;
+  const { username, appointmentId , timeSlot} = req.params;
   //const { familyId } = req.body;
 
   if (!(req.user.Username === username)) {
@@ -2558,7 +2580,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: username});
+      const familyMem = await FamilyMember.findOne({PatientUsername: username});
 
       if(!familyMem){
         return res.status(404).send({ error: 'Family member not found' });
@@ -2576,23 +2598,23 @@ const rescheduleAppointmentFamMem = async (req, res) => {
         return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
       }
 
+      // Fetch the doctor's details using DoctorUsername
+      const doctorUsername = selectedAppointment.DoctorUsername;
+      const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+
+      if (!doctor) {
+        return res.status(404).json({ success: false, message: 'Doctor not found.' });
+      }
+
+      // Access doctor's available time slots
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+      // Match the appointment date and time with the doctor's available time slots
+      const selectedAppointmentDate = selectedAppointment.Date;
+      const selectedAppointmentTime = selectedAppointment.Time;
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-
-      // Fetch the doctor's details using DoctorUsername
-        const doctorUsername = selectedAppointment.DoctorUsername;
-        const doctor = await doctorSchema.findOne({ Username: doctorUsername });
-
-        if (!doctor) {
-          return res.status(404).json({ success: false, message: 'Doctor not found.' });
-        }
-
-        // Access doctor's available time slots
-        const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
-
-        // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.Date;
-        const selectedAppointmentTime = selectedAppointment.Time;
+        if(['Upcoming', 'upcoming'].includes(selectedAppointment.Status)){
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
           slot.Date.getTime() === selectedAppointmentDate.getTime() &&
@@ -2647,6 +2669,32 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
       
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled' , newAppointment});
+      } else if(['Following', 'following'].includes(selectedAppointment.Status)){
+        let newAppointment1;
+        const found = false;
+        for(const slot of doctorAvailableTimeSlots){
+          if(slot._id.equals(timeSlot) && slot.Status === "available" && !found){
+            newAppointment1 = await appointmentSchema.create({
+              Date: slot.Date,
+              Time: slot.Time,
+              DoctorUsername: selectedAppointment.DoctorUsername,
+              PatientUsername: selectedAppointment.PatientUsername,
+              Status: selectedAppointment.Status,
+              PaymentMethod: selectedAppointment.PaymentMethod,
+              Price: selectedAppointment.Price,
+              Name: selectedAppointment.Name,
+              ForPatient: true
+            });
+            selectedAppointment.Status = 'Rescheduled';
+            found = true;
+            await selectedAppointment.save();
+            return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment1 });
+          }
+        }
+        if(!found){
+          return res.status(400).json({ success: false, message: 'No available time slots for the doctor' });
+        }
+      } 
       } else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
       }
@@ -2742,7 +2790,7 @@ const cancelAppointment = async (req, res) => {
 
 const cancelAppointmentFamMem = async (req, res) => {
   try {
-    const { username, appointmentId , familyId } = req.params;
+    const { username, appointmentId} = req.params;
 
     if (req.user.Username !== username) {
       return res.status(403).json({ success: false, message: 'You are not logged in!' });
@@ -2754,7 +2802,7 @@ const cancelAppointmentFamMem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Patient not found.' });
     }
 
-    const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: username});
+    const familyMem = await FamilyMember.findOne({PatientUsername: username});
 
       if(!familyMem){
         return res.status(404).send({ error: 'Family member not found' });
