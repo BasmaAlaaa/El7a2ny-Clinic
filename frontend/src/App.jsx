@@ -26,6 +26,8 @@ import FamilyMembersList from './components/FamilyMembersList';
 import PatientsList from './components/PatientsList';
 import AddFamilyMember from './pages/addFamilyMember';
 import AppointmentsListDoctor from './components/AppointmentsListDoctor';
+import PresDoctorsList from './components/PresDoctorsList';
+
 import ForgotPassword from './pages/forgot_password';
 import ChangePassword from './pages/change_password';
 import ResetPassword from './pages/reset_passowrd'
@@ -74,6 +76,7 @@ function App() {
           <Route exact path="/appointmentsList/:username" element={<AppointmentsList />} />
           <Route exact path="/appointmentsListDoctor/:username" element={<AppointmentsListDoctor />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
+          <Route exact path="/presDoctorsList/:DoctorUsername/:PatientUsername" element={<PresDoctorsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
           <Route exact path="/healthPackagesList/:username" element={<HealthPackagesList />} />
           <Route exact path="/healthPackagesListFam/:username/:id" element={<HealthPackagesListFam />} />
