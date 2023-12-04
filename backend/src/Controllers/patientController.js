@@ -67,7 +67,7 @@ const registerPatient = async (req, res) => {
       throw new Error('Email is already in use.');
     }
 
-    if(!(await validatePassword(Password))){
+    if (!(await validatePassword(Password))) {
       return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
     }
 
@@ -108,12 +108,12 @@ const registerPatient = async (req, res) => {
 // Req 18: app.post('/addFamMember/:Username')
 const addFamMember = async (req, res) => {
 
-  const {Username} = req.params;
+  const { Username } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     const {
       Name,
@@ -153,12 +153,12 @@ const addFamMember = async (req, res) => {
 // Req 22 app.get('/getFamMembers/:Username')
 
 const getFamMembers = async (req, res) => {
-  const {Username} = req.params;
+  const { Username } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: Username });
 
@@ -192,12 +192,12 @@ const getFamMembers = async (req, res) => {
 
 const patientFilterAppsByDate = async (req, res) => {
 
-  const {Username, Date} = req.params;
+  const { Username, Date } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const user = await patientSchema.findOne({ Username: Username });
@@ -221,12 +221,12 @@ const patientFilterAppsByDate = async (req, res) => {
 
 const patientFilterAppsByStatus = async (req, res) => {
 
-  const {Username, Status} = req.params;
+  const { Username, Status } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const user = await patientSchema.findOne({ Username: Username });
 
@@ -298,9 +298,10 @@ const allAppointments = async (req, res) => {
       if (!user) {
         return res.status(404).send('No patient found');
       }
-
+      
+      const familyMembers = await FamilyMember.find({PatientUsername: Username});
       // Use the filter object to query the appointment collection
-      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, ForPatient: true});
+      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username });
 
       if (filteredAppointments.length === 0) {
         return res.status(404).send('No matching appointments found');
@@ -317,12 +318,12 @@ const allAppointments = async (req, res) => {
 // Req 37: view a list of all doctors
 const viewDoctorsWithSessionPrices = async (req, res) => {
 
-  const {Username} = req.params;
+  const { Username } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -379,7 +380,7 @@ const findDocBySpecality = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       const patient = await patientSchema.findOne({ Username: Username });
@@ -405,12 +406,12 @@ const findDocBySpecality = async (req, res) => {
 };
 
 const findDocByAvailability = async (req, res) => {
-  const {Username, Date, Time} = req.params;
+  const { Username, Date, Time } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       // const patient = await patientSchema.findOne({Username: Username});
@@ -452,12 +453,12 @@ const findDocByAvailability = async (req, res) => {
 // Req 38 : app.get('/searchDocByNameAndSpec')
 const searchDocByName = async (req, res) => {
 
-  const {Username, Name} = req.params;
+  const { Username, Name } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       const patient = await patientSchema.findOne({ Username: Username });
@@ -480,12 +481,12 @@ const searchDocByName = async (req, res) => {
 
 const searchDocBySpec = async (req, res) => {
 
-  const {Username, Speciality} = req.params;
+  const { Username, Speciality } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -515,7 +516,7 @@ const viewDoctorInfo = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: PatientUsername });
 
@@ -552,8 +553,8 @@ const viewDoctorInfo = async (req, res) => {
       const slots = doctor.AvailableTimeSlots;
       const availableSlots = [];
 
-      for( const slot of slots){
-        if(slot.Status === "available"){
+      for (const slot of slots) {
+        if (slot.Status === "available") {
           availableSlots.push(slot);
         }
       }
@@ -590,7 +591,7 @@ const addPresToPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: Username });
 
@@ -613,14 +614,14 @@ const addPresToPatient = async (req, res) => {
 
 // Req 54: app.get('/viewMyPres/:Username')
 const viewAllMyPres = async (req, res) => {
-  const {Username} = req.params;
+  const { username } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  if (!(req.user.Username === Username)) {
+  if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
-      const patient = await patientSchema.findOne({ Username: Username });
+      const patient = await patientSchema.findOne({ Username: username });
 
       if (!patient) {
         return res.status(404).send({ error: 'Patient not found' });
@@ -666,7 +667,7 @@ const filterMyPresBasedOnDate = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: Username });
 
@@ -706,7 +707,7 @@ const filterMyPresBasedOnFilled = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -746,7 +747,7 @@ const filterMyPresBasedOnDoctor = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -788,15 +789,15 @@ const viewMyPres = async (req, res) => {
 
   const prescription = await prescriptionSchema.findById(id);
 
-    if (!prescription) {
-      return res.status(404).send({ error: 'Prescription not found' });
-    }
+  if (!prescription) {
+    return res.status(404).send({ error: 'Prescription not found' });
+  }
 
   if (!(req.user.Username === prescription.PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
-      
+
       const patient = await patientSchema.findOne({ Username: prescription.PatientUsername });
 
       const doctor = await doctorSchema.findOne({ Username: prescription.DoctorUsername });
@@ -856,7 +857,7 @@ const choosePaymentMethodForHP = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       const hp = await HealthPackage.findOne({ Type: type });
@@ -893,7 +894,7 @@ const viewWalletAmountByPatient = async (req, res) => {
   const { PatientUsername } = req.params;
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: PatientUsername });
 
@@ -916,7 +917,7 @@ const viewSubscribedHealthPackages = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Find the patient by username
@@ -929,12 +930,12 @@ const viewSubscribedHealthPackages = async (req, res) => {
       // Get the subscribed health packages for the patient
       const subscribedHPs = patient.SubscribedHP;
 
-      for( const hp of subscribedHPs){
-        if(hp.Status === "Subscribed"){
+      for (const hp of subscribedHPs) {
+        if (hp.Status === "Subscribed") {
           return res.status(200).send([hp]);
         }
       }
-      
+
       return res.status(404).send("The patient is not subscribed to any health package at the moment");
 
       // Send the list of subscribed health packages as a response
@@ -949,18 +950,18 @@ const viewSubscribedHealthPackagesOfFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, NationalID} = req.params;
+  const { Username, NationalID } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username });
 
       if (!patient) {
         return res.status(404).send('Patient not found');
-      }            
-      const famMember = await FamilyMember.findOne({NationalID});
+      }
+      const famMember = await FamilyMember.findOne({ NationalID });
 
       if (!famMember || !(famMember.PatientUsername === Username)) {
         return res.status(404).send('Family member not found');
@@ -968,9 +969,9 @@ const viewSubscribedHealthPackagesOfFamilyMember = async (req, res) => {
 
       const subscribedHPs = famMember.SubscribedHP;
 
-      for(const hp of subscribedHPs){
-        if(hp.Status === "Subscribed"){
-          return res.status(200).send([hp]); 
+      for (const hp of subscribedHPs) {
+        if (hp.Status === "Subscribed") {
+          return res.status(200).send([hp]);
         }
       }
       return res.status(404).send("The patient is not subscribed to any health package at the moment");
@@ -1076,11 +1077,11 @@ const viewHealthCarePackageStatus = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, healthPackageType} = req.params;
+  const { Username, healthPackageType } = req.params;
 
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Find the patient by username
@@ -1090,7 +1091,7 @@ const viewHealthCarePackageStatus = async (req, res) => {
         return res.status(404).send('Patient not found');
       }
 
-      const healthPackage = await HealthPackage.findOne({Type: healthPackageType});
+      const healthPackage = await HealthPackage.findOne({ Type: healthPackageType });
 
       if (!healthPackage) {
         return res.status(404).send('Health Package not found');
@@ -1098,12 +1099,12 @@ const viewHealthCarePackageStatus = async (req, res) => {
 
       // Get the health care package status for the patient
       const patientSubscription = patient.SubscribedHP;
-      var result ={};
+      var result = {};
 
       var found = false;
 
-      if(patientSubscription.length === 0){
-        result  = {
+      if (patientSubscription.length === 0) {
+        result = {
           Type: healthPackageType,
           AnnualFee: healthPackage.AnnualFee,
           DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1113,11 +1114,11 @@ const viewHealthCarePackageStatus = async (req, res) => {
         }
         found = true;
       }
-      else{
-        for(const hp of patientSubscription){
-          if(hp.Type === healthPackageType && !found){
-            if(hp.Status === "Cancelled"){
-              result  = {
+      else {
+        for (const hp of patientSubscription) {
+          if (hp.Type === healthPackageType && !found) {
+            if (hp.Status === "Cancelled") {
+              result = {
                 Type: healthPackageType,
                 AnnualFee: healthPackage.AnnualFee,
                 DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1127,8 +1128,8 @@ const viewHealthCarePackageStatus = async (req, res) => {
                 CancellationDate: hp.CancellationDate
               }
             }
-            else if(hp.Status === "Subscribed"){
-              result  = {
+            else if (hp.Status === "Subscribed") {
+              result = {
                 Type: healthPackageType,
                 AnnualFee: healthPackage.AnnualFee,
                 DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1141,16 +1142,16 @@ const viewHealthCarePackageStatus = async (req, res) => {
             found = true;
           }
         }
-          if(!found){
-            result  = {
-              Type: healthPackageType,
-              AnnualFee: healthPackage.AnnualFee,
-              DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
-              MedicineDiscount: healthPackage.MedicineDiscount,
-              FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
-              Status: 'Unsubscribed',
-            }
+        if (!found) {
+          result = {
+            Type: healthPackageType,
+            AnnualFee: healthPackage.AnnualFee,
+            DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
+            MedicineDiscount: healthPackage.MedicineDiscount,
+            FamilySubscriptionDiscount: healthPackage.FamilySubscriptionDiscount,
+            Status: 'Unsubscribed',
           }
+        }
       }
       // Send the health care package status as a response
       res.status(200).send(result);
@@ -1164,10 +1165,10 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, healthPackageType, NationalID} = req.params;
+  const { Username, healthPackageType, NationalID } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Find the patient by username
@@ -1177,7 +1178,7 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
         return res.status(404).send('Patient not found');
       }
 
-      const healthPackage = await HealthPackage.findOne({Type: healthPackageType});
+      const healthPackage = await HealthPackage.findOne({ Type: healthPackageType });
 
       if (!healthPackage) {
         return res.status(404).send('Health Package not found');
@@ -1191,10 +1192,10 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
       }
       // Get the health care package status for the patient
       const famSubscription = famMember.SubscribedHP;
-      var result ={};
+      var result = {};
 
-      if(famSubscription.length === 0){
-        result  = {
+      if (famSubscription.length === 0) {
+        result = {
           Type: healthPackageType,
           AnnualFee: healthPackage.AnnualFee,
           DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1203,11 +1204,11 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
           Status: 'Unsubscribed',
         }
       }
-      else{
-        for(const hp of famSubscription){
-          if(hp.Type === healthPackageType){
-            if(hp.Status === "Cancelled"){
-              result  = {
+      else {
+        for (const hp of famSubscription) {
+          if (hp.Type === healthPackageType) {
+            if (hp.Status === "Cancelled") {
+              result = {
                 Type: healthPackageType,
                 AnnualFee: healthPackage.AnnualFee,
                 DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1217,8 +1218,8 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
                 CancellationDate: hp.CancellationDate
               }
             }
-            else if(hp.Status === "Subscribed"){
-              result  = {
+            else if (hp.Status === "Subscribed") {
+              result = {
                 Type: healthPackageType,
                 AnnualFee: healthPackage.AnnualFee,
                 DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1229,8 +1230,8 @@ const viewHealthPackageStatusOfFamilyMember = async (req, res) => {
               }
             }
           }
-          else{
-            result  = {
+          else {
+            result = {
               Type: healthPackageType,
               AnnualFee: healthPackage.AnnualFee,
               DoctorSessionDiscount: healthPackage.DoctorSessionDiscount,
@@ -1257,8 +1258,8 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
   const { Username, Type } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
-    
+  } else {
+
     try {
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username });
@@ -1275,11 +1276,11 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
 
       // Check if the patient has a subscription for the specified health package type
       const subscription = patient.SubscribedHP;
-      if(subscription.length === 0){
+      if (subscription.length === 0) {
         return res.status(404).send('You are not subscribed to any health package');
       }
 
-      for(const hp of subscription){
+      for (const hp of subscription) {
         if (hp.Type === Type && hp.Status === "Subscribed") {
           // Cancel the patient's subscription
           hp.Status = 'Cancelled';
@@ -1289,7 +1290,7 @@ const cancelHealthCarePackageSubscription = async (req, res) => {
           // Save the updated patient
           await patient.save();
         }
-        else if (hp.Type === Type && (hp.Status === "Cancelled" || hp.Status === "Unsubscribed")){
+        else if (hp.Type === Type && (hp.Status === "Cancelled" || hp.Status === "Unsubscribed")) {
           return res.status(404).send('You are not subscribed to this health package');
         }
       }
@@ -1306,11 +1307,11 @@ const cancelHealthCarePackageSubscriptionOfFamMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { Username, Type, NationalID} = req.params;
+  const { Username, Type, NationalID } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
-    
+  } else {
+
     try {
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username });
@@ -1334,11 +1335,11 @@ const cancelHealthCarePackageSubscriptionOfFamMember = async (req, res) => {
 
       // Check if the patient has a subscription for the specified health package type
       const subscription = famMember.SubscribedHP;
-      if(subscription.length === 0){
+      if (subscription.length === 0) {
         return res.status(404).send('You are not subscribed to any health package');
       }
 
-      for(const hp of subscription){
+      for (const hp of subscription) {
         if (hp.Type === Type && hp.Status === "Subscribed") {
           // Cancel the patient's subscription
           hp.Status = 'Cancelled';
@@ -1348,11 +1349,11 @@ const cancelHealthCarePackageSubscriptionOfFamMember = async (req, res) => {
           // Save the updated patient
           await famMember.save();
         }
-        else if (hp.Type === Type && (hp.Status === "Cancelled" || hp.Status === "Unsubscribed")){
+        else if (hp.Type === Type && (hp.Status === "Cancelled" || hp.Status === "Unsubscribed")) {
           return res.status(404).send('You are not subscribed to this health package');
         }
       }
-      
+
       return res.status(200).send('Health package subscription has been cancelled for the patient and family members.');
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -1368,7 +1369,7 @@ const viewHealthPackages = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const healthPackages = await HealthPackage.find();
 
@@ -1399,7 +1400,7 @@ const addMedicalHistoryDocument = async (req, res) => {
   const { username } = req.params;
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: username });
 
@@ -1438,7 +1439,7 @@ const deleteMedicalHistoryDocument = async (req, res) => {
   const { Username, filePathToRemove } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username });
@@ -1477,7 +1478,7 @@ const viewMedicalHistoryDocuments = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username });
 
@@ -1512,7 +1513,7 @@ const viewHealthRecords = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -1542,7 +1543,7 @@ const patientPastApp = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
 
@@ -1580,7 +1581,7 @@ const patientUpcoming = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
 
@@ -1617,7 +1618,7 @@ const availableDoctorApps = async (req, res) => {
   const { Username } = req.params;
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     const { DoctorUsername } = req.body;
     try {
       const patient = await patientSchema.findOne({ Username: Username });
@@ -1634,8 +1635,8 @@ const availableDoctorApps = async (req, res) => {
 
       let result = [];
       const slots = doctor.AvailableTimeSlots;
-      for(const slot of slots){
-        if(slot.Status === "available"){
+      for (const slot of slots) {
+        if (slot.Status === "available") {
           result.push(slot);
         }
       }
@@ -1657,7 +1658,7 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
 
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
 
@@ -1695,19 +1696,19 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
       sessionPrice += sessionPrice * clinicMarkup;
 
       const availableSlots = doctor.AvailableTimeSlots;
-      
+
       let slot;
       var found = false;
-      for(const s of availableSlots){
-        if(!found){
-        if(s._id.equals(timeSlot)){
-          found = true;
-          slot = s;
+      for (const s of availableSlots) {
+        if (!found) {
+          if (s._id.equals(timeSlot)) {
+            found = true;
+            slot = s;
+          }
         }
       }
-      }
 
-      if(slot.Status === "available"){
+      if (slot.Status === "available") {
         let newAppointment;
 
         if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= sessionPrice)){
@@ -1725,19 +1726,19 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
 
           if (paymentMethod === "wallet") {
             patient.WalletAmount = (patient.WalletAmount - sessionPrice),
-            patient.save();
+              patient.save();
           }
 
-        slot.Status = "booked";
-        doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
-        doctor.save();
+          slot.Status = "booked";
+          doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
+            doctor.save();
         }
-        else{
+        else {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
-          res.status(200).send(newAppointment);
+        res.status(200).send(newAppointment);
       }
-      else{
+      else {
         return res.status(400).send("This slot is already booked");
       }
 
@@ -1757,7 +1758,7 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
 
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
 
@@ -1774,9 +1775,9 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
         return res.status(404).send({ error: 'Doctor not found' });
       }
 
-      const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: patientUsername});
+      const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: patientUsername });
 
-      if(!familyMem){
+      if (!familyMem) {
         return res.status(404).send({ error: 'Family member not found' });
       }
 
@@ -1801,19 +1802,19 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
       sessionPrice += sessionPrice * clinicMarkup;
 
       const availableSlots = doctor.AvailableTimeSlots;
-      
+
       let slot;
       var found = false;
-      for(const s of availableSlots){
-        if(!found){
-        if(s._id.equals(timeSlot)){
-          found = true;
-          slot = s;
+      for (const s of availableSlots) {
+        if (!found) {
+          if (s._id.equals(timeSlot)) {
+            found = true;
+            slot = s;
+          }
         }
       }
-      }
 
-      if(slot.Status === "available"){
+      if (slot.Status === "available") {
         let newAppointment;
 
         if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= sessionPrice)){
@@ -1831,19 +1832,19 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
 
           if (paymentMethod === "wallet") {
             patient.WalletAmount = (patient.WalletAmount - sessionPrice),
-            patient.save();
+              patient.save();
           }
 
-        slot.Status = "booked";
-        doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
-        doctor.save();
+          slot.Status = "booked";
+          doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
+            doctor.save();
         }
-        else{
+        else {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
-          res.status(200).send(newAppointment);
+        res.status(200).send(newAppointment);
       }
-      else{
+      else {
         return res.status(400).send("This slot is already booked");
       }
 
@@ -1862,7 +1863,7 @@ const linkPatientAccountAsFam = async (req, res) => {
 
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const patient = await patientSchema.findOne({ Username: PatientUsername });
@@ -1918,7 +1919,7 @@ const subscribeToAHealthPackage = async (req, res) => {
   const { paymentMethod } = req.body;
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       //Selecting the date and time and payment method of appointment
@@ -1934,9 +1935,9 @@ const subscribeToAHealthPackage = async (req, res) => {
         return res.status(404).send({ error: 'Health Package not found' });
       }
 
-      if(paymentMethod === "card" || paymentMethod === "wallet"){
+      if (paymentMethod === "card" || paymentMethod === "wallet") {
 
-        if(paymentMethod === "wallet" && !(patient.WalletAmount >= healthPackage.AnnualFee)){
+        if (paymentMethod === "wallet" && !(patient.WalletAmount >= healthPackage.AnnualFee)) {
           return res.status(400).send("Not enough cash in the wallet");
         }
         const healthPackagesOfPatient = patient.SubscribedHP;
@@ -1953,27 +1954,27 @@ const subscribeToAHealthPackage = async (req, res) => {
         }
 
         for (const hp of healthPackagesOfPatient) {
-          if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
+          if (hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub) {
             hp.Status = "Subscribed";
             hp.RenewalDate = aYearFromNow;
             hp.CancellationDate = null;
             hp.PaymentMethod = paymentMethod;
             hp.SubscriptionStartDate = new Date();
-            if(paymentMethod === "wallet"){
-              patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
+            if (paymentMethod === "wallet") {
+              patient.WalletAmount = patient.WalletAmount - healthPackage.AnnualFee;
             }
             patient.save();
             patSub = true;
           }
-          else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub){
+          else if (hp.Type === healthPackageType && hp.Status === "Unsubscribed" && !patSub) {
             hp.Status = "Subscribed";
             hp.RenewalDate = aYearFromNow;
             hp.CancellationDate = null;
             hp.PaymentMethod = paymentMethod;
             hp.SubscriptionStartDate = new Date();
-            if(paymentMethod === "wallet"){
-              patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
-            }          
+            if (paymentMethod === "wallet") {
+              patient.WalletAmount = patient.WalletAmount - healthPackage.AnnualFee;
+            }
             patient.save();
             patSub = true;
           }
@@ -1987,9 +1988,9 @@ const subscribeToAHealthPackage = async (req, res) => {
             RenewalDate: aYearFromNow
           });
 
-          if(paymentMethod === "wallet"){
-            patient.WalletAmount = patient.WalletAmount-healthPackage.AnnualFee;
-          }        
+          if (paymentMethod === "wallet") {
+            patient.WalletAmount = patient.WalletAmount - healthPackage.AnnualFee;
+          }
           patient.save();
         }
 
@@ -2005,11 +2006,11 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { patientUsername, healthPackageType, NationalID} = req.params;
+  const { patientUsername, healthPackageType, NationalID } = req.params;
   const { paymentMethod } = req.body;
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       //Selecting the date and time and payment method of appointment
@@ -2028,11 +2029,11 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
         return res.status(404).send('Family member not found');
       }
 
-      const totalPrice = healthPackage.AnnualFee * (1 - healthPackage.FamilySubscriptionDiscount/100);
+      const totalPrice = healthPackage.AnnualFee * (1 - healthPackage.FamilySubscriptionDiscount / 100);
 
-      if(paymentMethod === "card" || paymentMethod === "wallet"){
+      if (paymentMethod === "card" || paymentMethod === "wallet") {
 
-        if(paymentMethod === "wallet" && !(patient.WalletAmount >= totalPrice)){
+        if (paymentMethod === "wallet" && !(patient.WalletAmount >= totalPrice)) {
           return res.status(400).send("Not enough cash in the wallet");
         }
         const healthPackagesOfFam = famMember.SubscribedHP;
@@ -2041,36 +2042,36 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
         aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
 
         for (const hp of healthPackagesOfFam) {
-          if (hp.Status === "Subscribed") {  
+          if (hp.Status === "Subscribed") {
             patSub = true;
             return res.status(404).send("He is already subscribed to a health package");
           }
         }
 
         for (const hp of healthPackagesOfFam) {
-          if(hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub){
+          if (hp.Type === healthPackageType && hp.Status === "Cancelled" && !patSub) {
             hp.Status = "Subscribed";
             hp.RenewalDate = aYearFromNow;
             hp.CancellationDate = null;
             hp.PaymentMethod = paymentMethod;
             hp.SubscriptionStartDate = new Date();
-            if(paymentMethod === "wallet"){
-              patient.WalletAmount = patient.WalletAmount-totalPrice;
+            if (paymentMethod === "wallet") {
+              patient.WalletAmount = patient.WalletAmount - totalPrice;
             }
             famMember.save();
             patient.save();
             patSub = true;
           }
-          else if(hp.Type === healthPackageType && hp.Status === "Unsubscribed"  && !patSub){
+          else if (hp.Type === healthPackageType && hp.Status === "Unsubscribed" && !patSub) {
             hp.Status = "Subscribed";
             hp.RenewalDate = aYearFromNow;
             hp.CancellationDate = null;
             hp.PaymentMethod = paymentMethod;
             hp.SubscriptionStartDate = new Date();
-            if(paymentMethod === "wallet"){
-              patient.WalletAmount = patient.WalletAmount-totalPrice;
+            if (paymentMethod === "wallet") {
+              patient.WalletAmount = patient.WalletAmount - totalPrice;
             }
-            famMember.save();          
+            famMember.save();
             patient.save();
             patSub = true;
           }
@@ -2084,9 +2085,9 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
             RenewalDate: aYearFromNow
           });
 
-          if(paymentMethod === "wallet"){
-            patient.WalletAmount = patient.WalletAmount-totalPrice;
-          }        
+          if (paymentMethod === "wallet") {
+            patient.WalletAmount = patient.WalletAmount - totalPrice;
+          }
           patient.save();
           famMember.save();
         }
@@ -2103,57 +2104,57 @@ const downloadPrescriptionPDF = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { patientUsername, doctorUsername} = req.params;
+  const { patientUsername, doctorUsername } = req.params;
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
-        if (!doctorUsername) {
-            return res.status(400).json({ error: 'doctorUsername is a required parameter.' });
+      if (!doctorUsername) {
+        return res.status(400).json({ error: 'doctorUsername is a required parameter.' });
+      }
+
+      const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
+
+      if (!prescriptions || prescriptions.length === 0) {
+        return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+      }
+
+      // Ensure the directory exists
+      const directoryPath = path.join(__dirname, 'pdfs');
+      if (!fs.existsSync(directoryPath)) {
+        fs.mkdirSync(directoryPath);
+      }
+
+      // Resolve the full file path
+      const filePath = path.resolve(directoryPath, 'prescription.pdf');
+
+      const pdfDoc = new PDFDocument();
+      pdfDoc.pipe(fs.createWriteStream(filePath));
+
+      // Customize the content of the PDF based on your prescription data
+      prescriptions.forEach((prescription) => {
+        pdfDoc.text(`Prescription ID: ${prescription._id}`);
+        pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+        pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+        pdfDoc.text(`Description: ${prescription.Description}`);
+        pdfDoc.text(`Date: ${prescription.Date}`);
+        pdfDoc.text(`Dose: ${prescription.Dose}`);
+        pdfDoc.text('-----------------------------------------');
+      });
+
+      pdfDoc.end();
+
+      // Download the PDF
+      res.download(filePath, 'prescription.pdf', (err) => {
+        if (err) {
+          return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
         }
 
-        const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
-
-        if (!prescriptions || prescriptions.length === 0) {
-            return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
-        }
-
-        // Ensure the directory exists
-        const directoryPath = path.join(__dirname, 'pdfs');
-        if (!fs.existsSync(directoryPath)) {
-            fs.mkdirSync(directoryPath);
-        }
-
-        // Resolve the full file path
-        const filePath = path.resolve(directoryPath, 'prescription.pdf');
-
-        const pdfDoc = new PDFDocument();
-        pdfDoc.pipe(fs.createWriteStream(filePath));
-
-        // Customize the content of the PDF based on your prescription data
-        prescriptions.forEach((prescription) => {
-            pdfDoc.text(`Prescription ID: ${prescription._id}`);
-            pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
-            pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
-            pdfDoc.text(`Description: ${prescription.Description}`);
-            pdfDoc.text(`Date: ${prescription.Date}`);
-            pdfDoc.text(`Dose: ${prescription.Dose}`);
-            pdfDoc.text('-----------------------------------------');
-        });
-
-        pdfDoc.end();
-
-        // Download the PDF
-        res.download(filePath, 'prescription.pdf', (err) => {
-            if (err) {
-                return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
-            }
-
-            // Clean up the temporary PDF file after download
-            fs.unlinkSync(filePath);
-        });
+        // Clean up the temporary PDF file after download
+        fs.unlinkSync(filePath);
+      });
     } catch (error) {
-        return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
+      return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
     }
   }
 };
@@ -2165,10 +2166,10 @@ const AddRefundForPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId} = req.params;
+  const { username, appointmentId } = req.params;
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username: username });
@@ -2225,7 +2226,7 @@ const requestFollowUpAppointment = async (req, res) => {
   const { username, appointmentId } = req.params;
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const { Date, Time } = req.body;
 
@@ -2262,7 +2263,7 @@ const requestFollowUpAppointment = async (req, res) => {
 
         // Save the updated patient and appointment
         previousAppointment.save();
-      
+
 
         return res.status(200).json({ success: true, message: 'A new Follow-up appointment is requested successfully.' });
       } else {
@@ -2281,83 +2282,83 @@ const requestFollowUpForFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const {patientusername, doctorUsername } = req.params;
+  const { patientusername, doctorUsername } = req.params;
 
-  
-   if (!(req.user.Username === username)) {
-   res.status(403).json("You are not logged in!");
-   } else {
-  try {
-    const { familyMemberName, Date, Time } = req.body;
 
-    // Find the patient by username
-    const patient = await patientSchema.findOne({ Username: patientusername });
+  if (!(req.user.Username === username)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+    try {
+      const { familyMemberName, Date, Time } = req.body;
 
-    if (!patient) {
-      return res.status(404).json({ success: false, message: 'Patient not found.' });
+      // Find the patient by username
+      const patient = await patientSchema.findOne({ Username: patientusername });
+
+      if (!patient) {
+        return res.status(404).json({ success: false, message: 'Patient not found.' });
+      }
+
+      // Check if the patient has family members
+      if (patient.FamilyMembers.length === 0) {
+        return res.status(403).json({ success: false, message: 'Patient has no family members.' });
+      }
+
+      // Check if the specified family member exists for the patient
+      const familyMember = patient.FamilyMembers.find(member => member.Name === familyMemberName);
+
+      if (!familyMember) {
+        return res.status(404).json({ success: false, message: 'Family member not found for the patient.' });
+      }
+
+      // Find the previous appointment by doctor's username and patient's username
+      const previousAppointment = await appointmentSchema.findOne({
+        DoctorUsername: doctorUsername,
+        PatientUsername: patient.Username,
+      });
+
+      if (!previousAppointment) {
+        return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
+      }
+
+      // Check if the patient or family member is associated with the previous appointment
+      if (
+        previousAppointment.PatientUsername !== patient.Username &&
+        previousAppointment.PatientUsername !== familyMember.Name
+      ) {
+        return res
+          .status(403)
+          .json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
+      }
+
+      // Check if the previous appointment is completed or following
+      if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
+        // Save the follow-up request details in the database
+        previousAppointment.FollowUpRequest = {
+          Date,
+          Time,
+          Status: 'Requested',
+          RequestingFamilyMember: familyMember.Name,
+        };
+
+        // Update the appointment's status to 'Requested'
+        previousAppointment.Status = 'Requesting';
+
+        // Save the updated appointment
+        await previousAppointment.save();
+
+        return res.status(200).json({ success: true, message: 'Follow-up appointment requested successfully.' });
+      } else {
+        return res
+          .status(400)
+          .json({
+            success: false,
+            message: 'Follow-up appointment can only be requested for completed or following appointments.',
+          });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ success: false, message: 'Internal server error.' });
     }
-
-    // Check if the patient has family members
-    if (patient.FamilyMembers.length === 0) {
-      return res.status(403).json({ success: false, message: 'Patient has no family members.' });
-    }
-
-    // Check if the specified family member exists for the patient
-    const familyMember = patient.FamilyMembers.find(member => member.Name === familyMemberName);
-
-    if (!familyMember) {
-      return res.status(404).json({ success: false, message: 'Family member not found for the patient.' });
-    }
-
-    // Find the previous appointment by doctor's username and patient's username
-    const previousAppointment = await appointmentSchema.findOne({
-      DoctorUsername: doctorUsername,
-      PatientUsername: patient.Username,
-    });
-
-    if (!previousAppointment) {
-      return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
-    }
-
-    // Check if the patient or family member is associated with the previous appointment
-    if (
-      previousAppointment.PatientUsername !== patient.Username &&
-      previousAppointment.PatientUsername !== familyMember.Name
-    ) {
-      return res
-        .status(403)
-        .json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
-    }
-
-    // Check if the previous appointment is completed or following
-    if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
-      // Save the follow-up request details in the database
-      previousAppointment.FollowUpRequest = {
-        Date,
-        Time,
-        Status: 'Requested',
-        RequestingFamilyMember: familyMember.Name,
-      };
-
-      // Update the appointment's status to 'Requested'
-      previousAppointment.Status = 'Requesting';
-
-      // Save the updated appointment
-      await previousAppointment.save();
-
-      return res.status(200).json({ success: true, message: 'Follow-up appointment requested successfully.' });
-    } else {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: 'Follow-up appointment can only be requested for completed or following appointments.',
-        });
-    }
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
-  }
   }
 };
 
@@ -2369,7 +2370,7 @@ const ViewAllPres = async (req, res) => {
   const { PatientUsername } = req.params;
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const patient = await patientSchema.findOne({ Username: PatientUsername });
 
@@ -2394,19 +2395,19 @@ const ViewPresDetails = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { PatientUsername , id } = req.params;
+  const { PatientUsername, id } = req.params;
   if (!(req.user.Username === PatientUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const prescription = await Prescription.findById(id);
       if (!prescription) {
-          return res.status(404).json({ error: 'Prescription not found' });
+        return res.status(404).json({ error: 'Prescription not found' });
       }
 
       res.status(200).json(prescription);
     } catch (error) {
-        res.status(500).json({ error: error.message });
+      res.status(500).json({ error: error.message });
     }
   }
 };
@@ -2416,11 +2417,11 @@ const rescheduleAppointment = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId , timeSlot } = req.params;
+  const { username, appointmentId, timeSlot } = req.params;
 
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       //const { newDate, newTime } = req.body;
 
@@ -2446,7 +2447,7 @@ const rescheduleAppointment = async (req, res) => {
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
 
-      // Fetch the doctor's details using DoctorUsername
+        // Fetch the doctor's details using DoctorUsername
         const doctorUsername = selectedAppointment.DoctorUsername;
         const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
@@ -2481,19 +2482,19 @@ const rescheduleAppointment = async (req, res) => {
         console.log(matchingTimeSlot);
         if (matchingTimeSlot) {
           matchingTimeSlot.Status = 'available';
-         } else {
+        } else {
           return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
         }
-      
+
         let slot;
         var found = false;
-        for(const s of doctorAvailableTimeSlots){
-          if(!found){
-          if(s._id.equals(timeSlot)){
-            found = true;
-            slot = s;
+        for (const s of doctorAvailableTimeSlots) {
+          if (!found) {
+            if (s._id.equals(timeSlot)) {
+              found = true;
+              slot = s;
+            }
           }
-        }
         }
         let newAppointment;
 
@@ -2510,20 +2511,20 @@ const rescheduleAppointment = async (req, res) => {
             Name: selectedAppointment.Name,
             ForPatient: true
           });
-  
-            
+
+
           slot.Status = "booked";
           await doctor.save();
         }
-        else{
+        else {
           return res.status(400).send("This slot is already booked");
         }
 
-         // Update the patient's status to 'Rescheduled' 
-         selectedAppointment.Status = 'Rescheduled';
+        // Update the patient's status to 'Rescheduled' 
+        selectedAppointment.Status = 'Rescheduled';
 
-         // Save the updated patient and appointment
-         await selectedAppointment.save();
+        // Save the updated patient and appointment
+        await selectedAppointment.save();
 
         res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
       } else {
@@ -2547,7 +2548,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       //const { newDate, newTime } = req.body;
 
@@ -2558,9 +2559,9 @@ const rescheduleAppointmentFamMem = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: username});
+      const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: username });
 
-      if(!familyMem){
+      if (!familyMem) {
         return res.status(404).send({ error: 'Family member not found' });
       }
 
@@ -2579,7 +2580,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
 
-      // Fetch the doctor's details using DoctorUsername
+        // Fetch the doctor's details using DoctorUsername
         const doctorUsername = selectedAppointment.DoctorUsername;
         const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
@@ -2602,19 +2603,19 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
         if (matchingTimeSlot) {
           matchingTimeSlot.Status = 'available';
-         } else {
+        } else {
           return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
         }
-      
+
         let slot;
         var found = false;
-        for(const s of doctorAvailableTimeSlots){
-          if(!found){
-          if(s._id.equals(timeSlot)){
-            found = true;
-            slot = s;
+        for (const s of doctorAvailableTimeSlots) {
+          if (!found) {
+            if (s._id.equals(timeSlot)) {
+              found = true;
+              slot = s;
+            }
           }
-        }
         }
         let newAppointment;
 
@@ -2630,20 +2631,20 @@ const rescheduleAppointmentFamMem = async (req, res) => {
             Name: familyMem.Name,
             ForPatient: false
           });
-  
-            
+
+
           slot.Status = "booked";
           await doctor.save();
         }
-        else{
+        else {
           return res.status(400).send("This slot is already booked");
         }
 
-         // Update the patient's status to 'Rescheduled' 
-         selectedAppointment.Status = 'Rescheduled';
+        // Update the patient's status to 'Rescheduled' 
+        selectedAppointment.Status = 'Rescheduled';
 
-         // Save the updated patient and appointment
-         await selectedAppointment.save();
+        // Save the updated patient and appointment
+        await selectedAppointment.save();
 
       
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled' , newAppointment});
@@ -2742,7 +2743,7 @@ const cancelAppointment = async (req, res) => {
 
 const cancelAppointmentFamMem = async (req, res) => {
   try {
-    const { username, appointmentId , familyId } = req.params;
+    const { username, appointmentId, familyId } = req.params;
 
     if (req.user.Username !== username) {
       return res.status(403).json({ success: false, message: 'You are not logged in!' });
@@ -2754,11 +2755,11 @@ const cancelAppointmentFamMem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Patient not found.' });
     }
 
-    const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: username});
+    const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: username });
 
-      if(!familyMem){
-        return res.status(404).send({ error: 'Family member not found' });
-      }
+    if (!familyMem) {
+      return res.status(404).send({ error: 'Family member not found' });
+    }
 
     const selectedAppointment = await appointmentSchema.findById(appointmentId);
 
@@ -2903,15 +2904,15 @@ const removeAppointmentNotifications = async () => {
         console.log('Appointment notification does not exist');
       }
     }
-   
+
   } catch (error) {
     console.error(error);
-};
+  };
 }
 const displayNotifications = async (req, res) => {
   try {
     await createAppointmentNotifications(req);
-    const {Username} = req.params;
+    const { Username } = req.params;
     console.log(Username);
     const notifications = await Notification.find({ username: Username });
     const patientMessages = notifications.map(notification => notification.PatientMessage);
@@ -2923,7 +2924,7 @@ const displayNotifications = async (req, res) => {
 const nodemailer = require('nodemailer');
 const sendAppointmentPatientRescheduleNotificationEmail = async (req) => {
   try {
-    const {AppointmentId} = req.params;
+    const { AppointmentId } = req.params;
     console.log('AppointmentId:', AppointmentId);
 
     if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
@@ -2939,7 +2940,7 @@ const sendAppointmentPatientRescheduleNotificationEmail = async (req) => {
     }
 
     const { PatientUsername, DoctorUsername, Date, RescheduleReason } = appointment;
-    const Patient= require('../Models/Patient');
+    const Patient = require('../Models/Patient');
     const patient = await Patient.findOne({ Username: PatientUsername });
 
     if (!patient) {
@@ -2989,7 +2990,7 @@ const sendAppointmentPatientRescheduleNotificationEmail = async (req) => {
 
 const sendAppointmentPatientCancelledNotificationEmail = async (req) => {
   try {
-    const {AppointmentId} = req.params;
+    const { AppointmentId } = req.params;
     console.log('AppointmentId:', AppointmentId);
 
     if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
@@ -3005,7 +3006,7 @@ const sendAppointmentPatientCancelledNotificationEmail = async (req) => {
     }
 
     const { PatientUsername, DoctorUsername, Date, RescheduleReason } = appointment;
-    const Patient= require('../Models/Patient');
+    const Patient = require('../Models/Patient');
     const patient = await Patient.findOne({ Username: PatientUsername });
 
     if (!patient) {
@@ -3096,9 +3097,9 @@ module.exports = {
   linkPatientAccountAsFam,
   subscribeToAHealthPackage,
   subscribeToAHealthPackageForFamilyMember,
-  downloadPrescriptionPDF ,
+  downloadPrescriptionPDF,
   requestFollowUpAppointment,
-  requestFollowUpForFamilyMember ,
+  requestFollowUpForFamilyMember,
   AddRefundForPatient,
   ViewAllPres,
   ViewPresDetails,

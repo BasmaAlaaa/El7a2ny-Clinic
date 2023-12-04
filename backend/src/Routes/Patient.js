@@ -83,7 +83,7 @@ router.get("/searchDocBySpec/:Username/:Speciality", verify, searchDocBySpec);
 
 router.post("/addPresToPatient/:Username/:id", verify, addPresToPatient);
 
-router.get("/viewMyPres/:Username", verify, viewMyPres);
+router.get("/viewMyPres/:id", verify, viewMyPres);
 
 router.get("/filterMyPresBasedOnDate/:Username/:Date", verify, filterMyPresBasedOnDate);
 router.get("/filterMyPresBasedOnDoctor/:Username/:DoctorUsername", verify, filterMyPresBasedOnDoctor);
@@ -94,7 +94,7 @@ router.get("/viewAllDoctors/:Username", verify, viewDoctorsWithSessionPrices);
 
 router.get("/viewDoctorInfo/:DoctorUsername/:PatientUsername", verify, viewDoctorInfo);
 
-router.get("/viewAllMyPres/:Username", verify, viewAllMyPres);
+router.get("/viewAllMyPres/:username", verify, viewAllMyPres);
 
 router.get("/patientFilterAppsByDate/:Username/:Date", verify, patientFilterAppsByDate);
 router.get("/patientFilterAppsByStatus/:Username/:Status", verify, patientFilterAppsByStatus);

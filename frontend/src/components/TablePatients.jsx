@@ -53,19 +53,6 @@ function CaseTableBody({ data, username }) {
   );
 }
 
-// function NoramlTableBody({ data }) {
-//   let arr = [];
-//   for (let key in data) arr.push(data[key]);
-
-//   return (
-//     <>
-//       {arr.map((e) => (
-//         <td>{e}</td>
-//       ))}
-//     </>
-//   );
-// }
-
 function TablePatients({ tHead, data, searchText, filterText, username }) {
   console.log("filterr", filterText)
   return (

@@ -66,7 +66,7 @@ function PatientView() {
           key="navBtn"
         />
         <MainBtn
-          txt="View All of my Prescriptions"
+          txt="View My Prescriptions"
           style="green-btn"
           action={() => navigate(`/prescriptionsList/${username}`)}
           key="navBtn"
