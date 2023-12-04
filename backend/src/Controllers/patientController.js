@@ -925,14 +925,12 @@ const viewSubscribedHealthPackagesOfFamilyMember = async (req, res) => {
         return res.status(404).send('Patient not found');
       }            
       const famMember = await FamilyMember.findOne({NationalID});
-      console.log(famMember.PatientUsername);
 
       if (!famMember || !(famMember.PatientUsername === Username)) {
         return res.status(404).send('Family member not found');
       }
 
       const subscribedHPs = famMember.SubscribedHP;
-      console.log("hello");
 
       for(const hp of subscribedHPs){
         if(hp.Status === "Subscribed"){
@@ -1898,7 +1896,7 @@ const subscribeToAHealthPackage = async (req, res) => {
         return res.status(404).send({ error: 'Health Package not found' });
       }
 
-      if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= healthPackage.AnnualFee)){
+      if(paymentMethod === "card" || paymentMethod === "wallet"){
 
         if(paymentMethod === "wallet" && !(patient.WalletAmount >= healthPackage.AnnualFee)){
           return res.status(400).send("Not enough cash in the wallet");
@@ -1958,7 +1956,7 @@ const subscribeToAHealthPackage = async (req, res) => {
         }
 
       }
-      res.status(200).send({ message: 'Subscribed successfully', patient });
+      return res.status(200).send({ message: 'Subscribed successfully', patient });
     } catch (error) {
       res.status(500).send({ error: error.message });
     }
@@ -1978,40 +1976,34 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
     try {
       //Selecting the date and time and payment method of appointment
       const patient = await patientSchema.findOne({ Username: patientUsername });
-
       if (!patient) {
         return res.status(404).send({ error: 'Patient not found' });
       }
 
       const healthPackage = await HealthPackage.findOne({ Type: healthPackageType });
-
       if (!healthPackage) {
         return res.status(404).send({ error: 'Health Package not found' });
       }
 
-      // Find the patient by username
       const famMember = await FamilyMember.findOne({ NationalID });
-
       if (!famMember) {
         return res.status(404).send('Family member not found');
       }
 
       const totalPrice = healthPackage.AnnualFee * (1 - healthPackage.FamilySubscriptionDiscount/100);
 
-      if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= totalPrice)){
+      if(paymentMethod === "card" || paymentMethod === "wallet"){
 
         if(paymentMethod === "wallet" && !(patient.WalletAmount >= totalPrice)){
           return res.status(400).send("Not enough cash in the wallet");
         }
-
         const healthPackagesOfFam = famMember.SubscribedHP;
         var patSub = false;
-        console.log(healthPackagesOfFam);
         const aYearFromNow = new Date();
         aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
 
         for (const hp of healthPackagesOfFam) {
-          if (hp.Status === "Subscribed") {
+          if (hp.Status === "Subscribed") {  
             patSub = true;
             return res.status(404).send("He is already subscribed to a health package");
           }
@@ -2027,6 +2019,7 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
             if(paymentMethod === "wallet"){
               patient.WalletAmount = patient.WalletAmount-totalPrice;
             }
+            famMember.save();
             patient.save();
             patSub = true;
           }
@@ -2038,7 +2031,8 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
             hp.SubscriptionStartDate = new Date();
             if(paymentMethod === "wallet"){
               patient.WalletAmount = patient.WalletAmount-totalPrice;
-            }          
+            }
+            famMember.save();          
             patient.save();
             patSub = true;
           }
@@ -2059,9 +2053,9 @@ const subscribeToAHealthPackageForFamilyMember = async (req, res) => {
           famMember.save();
         }
       }
-      res.status(200).send({ message: 'Subscribed successfully', patient });
+      return res.status(200).send({ message: 'Subscribed successfully', patient });
     } catch (error) {
-      res.status(500).send({ error: error.message });
+      return res.status(500).send({ error: error.message });
     }
   }
 };
@@ -2413,8 +2407,6 @@ const rescheduleAppointment = async (req, res) => {
 
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-
-       
 
       // Fetch the doctor's details using DoctorUsername
         const doctorUsername = selectedAppointment.DoctorUsername;
