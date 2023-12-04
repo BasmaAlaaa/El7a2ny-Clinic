@@ -5,15 +5,19 @@ import { Navigate, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import TableHealthRecords from "../components/TableHealthRecords";
+import TableNotifications from "../components/TableNotifications";
 
 function PatientView() {
   const navigate = useNavigate();
   const { username } = useParams();
   const [healthRecord, setHealthRecord] = useState([]);
   const [wallet, setWallet] = useState('');
+  const [notifications, setNotifications] = useState([]);
+
 
 
   let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
+  let tHeadNot = ['Message'];
 
   useEffect(() => {
     const response = axios.get(`http://localhost:4000/Patient/viewHealthRecords/${username}`,{
@@ -30,6 +34,14 @@ function PatientView() {
       .then(res => setWallet(res.data)).catch(err => console.log(err))
     console.log('w', wallet)
   }, []);
+
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Patient/displayNotifications/${username}`,{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+      .then(res => setNotifications(res.data.patientMessages)).catch(err => console.log(err))
+  }, [])
+  console.log('notif', notifications);
 
   return (
     <div>
@@ -86,6 +98,9 @@ function PatientView() {
           <h1>Wallet Amount: {wallet}</h1>
         </div>
       }
+        <h1>Notifications</h1>
+        <TableNotifications tHead={tHeadNot} data={notifications} />
+
 
 
     </div>
