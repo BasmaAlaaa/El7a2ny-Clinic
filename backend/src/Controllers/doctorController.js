@@ -1,11 +1,13 @@
 const { StatusFile } = require('git');
+const { default: mongoose } = require("mongoose");
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
 const Prescription = require('../Models/Prescription.js');
 const FamilyMember = require('../Models/FamilyMember.js');
-
+const Appointment = require("../Models/Appointment.js");
+const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -98,7 +100,7 @@ const updateDoctorByEmail = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctor = await doctorSchema.findOne({ Username: Username });
 
@@ -129,7 +131,7 @@ const updateDoctorByHourlyRate = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       const doctor = await doctorSchema.findOne({ Username: Username });
@@ -161,7 +163,7 @@ const updateDoctorByAffiliation = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctor = await doctorSchema.findOne({ Username: Username });
 
@@ -187,13 +189,13 @@ const updateDoctorByAffiliation = async (req, res) => {
 //Req 23 (filter appointments by date/status)
 const docFilterAppsByDate = async (req, res) => {
 
-  const { Username, Date} = req.params;
+  const { Username, Date } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctor = await doctorSchema.findOne({ Username: Username });
 
@@ -216,13 +218,13 @@ const docFilterAppsByDate = async (req, res) => {
 
 const docFilterAppsByStatus = async (req, res) => {
 
-  const { Username, Status} = req.params;
+  const { Username, Status } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       const user = await doctorSchema.findOne({ Username: Username });
@@ -246,13 +248,13 @@ const docFilterAppsByStatus = async (req, res) => {
 }
 
 const allAppointments = async (req, res) => {
-  const { Username} = req.params;
+  const { Username } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const user = await doctorSchema.findOne({ Username: Username });
       if (!user) {
@@ -283,7 +285,7 @@ const viewInfoAndRecords = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
 
       // Find the doctor by ID
@@ -319,7 +321,7 @@ const MyPatients = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Find the doctor by ID
@@ -372,7 +374,7 @@ const PatientByName = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Find patients with the given name
@@ -404,7 +406,7 @@ const PatientsUpcoming = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the doctor by ID
       const doctor = await doctorSchema.findOne({ Username: Username });
@@ -451,15 +453,15 @@ const selectPatientWithHisName = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   const { DoctorId, Username } = req.params;
 
-      // Find the doctor by ID
-      const doctor = await doctorSchema.findById(DoctorId);
+  // Find the doctor by ID
+  const doctor = await doctorSchema.findById(DoctorId);
 
-      if (!doctor) {
-        return res.status(404).send('Doctor not found');
-      }
+  if (!doctor) {
+    return res.status(404).send('Doctor not found');
+  }
   if (!(req.user.Username === doctor.Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find patients with the given name
       const patient = await patientSchema.findOne({ Username: Username });
@@ -506,7 +508,7 @@ const viewContract = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
       if (!doctorExists) {
@@ -531,7 +533,7 @@ const acceptContract = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
       if (!doctorExists) {
@@ -563,7 +565,7 @@ const viewWalletAmountByDoc = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const doc = await doctorSchema.findOne({ Username: DoctorUsername });
@@ -588,7 +590,7 @@ const viewHealthRecords = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
 
@@ -633,7 +635,7 @@ const addHealthRecordForPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Check if the doctor exists
@@ -684,7 +686,7 @@ const addAvailableTimeSlots = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
@@ -730,7 +732,7 @@ const scheduleFollowUp = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
 
     try {
       // Check if the doctor and patient are associated
@@ -789,7 +791,7 @@ const doctorPastApp = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the doctor by ID
       const doctor = await doctorSchema.findOne({ Username: Username });
@@ -827,7 +829,7 @@ const createAvailableApps = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
 
@@ -861,7 +863,7 @@ const updateDosage = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const { newDosage } = req.body;
 
@@ -895,7 +897,7 @@ const downloadPrescriptionPDF = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       if (!DoctorUsername) {
         return res.status(400).json({ error: 'DoctorUsername is a required parameter.' });
@@ -931,7 +933,7 @@ const downloadPrescriptionPDF = async (req, res) => {
       });
 
       pdfDoc.end();
-      
+
       // Download the PDF
       res.download(filePath, 'prescription.pdf', (err) => {
         if (err) {
@@ -956,7 +958,7 @@ const acceptFollowUpRequest = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the doctor by username
       const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
@@ -1000,7 +1002,7 @@ const rejectFollowUpRequest = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       // Find the doctor by username
       const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
@@ -1035,28 +1037,26 @@ const rejectFollowUpRequest = async (req, res) => {
 };
 
 const ViewAllPres = async (req, res) => {
-  const { DoctorUsername } = req.params;
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  const { DoctorUsername, PatientUsername } = req.params;
   if (!(req.user.Username === DoctorUsername)) {
-    res.status(403).json("You are not logged in!");
-  }else{
-    try {
-      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
-      if (!doctor) {
-        return res.status(404).send("No doctor found");
-      }
-      const prescriptions = await Prescription.find({ DoctorUsername: DoctorUsername });
-      if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).send("No prescriptions found for this patient");
-      }
-      res.status(200).send(prescriptions);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
+    return res.status(403).json("You are not logged in!");
   }
-}
+
+  try {
+    const prescriptions = await Prescription.find({
+      DoctorUsername: DoctorUsername,
+      PatientUsername: PatientUsername,
+    });
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).send("No prescriptions found for this patient");
+    }
+
+    res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
@@ -1066,7 +1066,7 @@ const addPatientPrescription = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const { description, date, appointmentID, dose } = req.body;
 
@@ -1114,7 +1114,7 @@ const updatePatientPrescription = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       const { updatedDescription, updatedDose } = req.body;
 
@@ -1239,11 +1239,11 @@ const rescheduleAppointmentPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId , timeSlot } = req.params;
+  const { username, appointmentId, timeSlot } = req.params;
 
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
-  }else{
+  } else {
     try {
       //const { newDate, newTime } = req.body;
 
@@ -1269,9 +1269,9 @@ const rescheduleAppointmentPatient = async (req, res) => {
       // Check if the selected appointment is upcoming or following
       if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
 
-        
 
-      // Fetch the patient's details using DoctorUsername
+
+        // Fetch the patient's details using DoctorUsername
         const patientUsername = selectedAppointment.PatientUsername;
         const patient = await patientSchema.findOne({ Username: patientUsername });
 
@@ -1294,25 +1294,25 @@ const rescheduleAppointmentPatient = async (req, res) => {
 
         if (matchingTimeSlot) {
           matchingTimeSlot.Status = 'available';
-         } else {
+        } else {
           return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
         }
-      
+
         let slot;
         var found = false;
-        for(const s of doctorAvailableTimeSlots){
-          if(!found){
-          if(s._id.equals(timeSlot)){
-            found = true;
-            slot = s;
+        for (const s of doctorAvailableTimeSlots) {
+          if (!found) {
+            if (s._id.equals(timeSlot)) {
+              found = true;
+              slot = s;
+            }
           }
         }
-        }
 
-        if(slot.Status === "available"){
+        if (slot.Status === "available") {
           let newAppointment;
-  
-          
+
+
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
@@ -1323,23 +1323,23 @@ const rescheduleAppointmentPatient = async (req, res) => {
             Price: selectedAppointment.Price,
             Name: selectedAppointment.Name
           });
-  
-            
+
+
           slot.Status = "booked";
           await doctor.save();
           res.status(200).send(newAppointment);
         }
-        else{
+        else {
           return res.status(400).send("This slot is already booked");
         }
- 
+
         // Update the App status to 'Rescheduled' 
         selectedAppointment.Status = 'Rescheduled';
 
         // Save the updated appointment
         await selectedAppointment.save();
 
-      
+
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled' });
       } else {
         return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
@@ -1397,15 +1397,15 @@ const cancelAppointmentPatient = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });
     }
 
-    
-      // Calculate the refund amount based on your business logic
-      const refundAmount = selectedAppointment.Price;
 
-      // Update the WalletAmount directly in the database using $inc
-      await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-  
+    // Calculate the refund amount based on your business logic
+    const refundAmount = selectedAppointment.Price;
 
-   
+    // Update the WalletAmount directly in the database using $inc
+    await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
+
+
+
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
       slot.Date.getTime() === selectedAppointment.Date.getTime() &&
       slot.Time === selectedAppointment.Time &&
@@ -1434,7 +1434,7 @@ const cancelAppointmentPatient = async (req, res) => {
 
 const cancelAppointmentPatientFamMem = async (req, res) => {
   try {
-    const { username, appointmentId , familyId } = req.params;
+    const { username, appointmentId, familyId } = req.params;
 
     if (req.user.Username !== username) {
       return res.status(403).json({ success: false, message: 'You are not logged in!' });
@@ -1477,21 +1477,21 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });
     }
 
-    const familyMem = await FamilyMember.findOne({NationalID: familyId, PatientUsername: patient.Username});
+    const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: patient.Username });
 
-      if(!familyMem){
-        return res.status(404).send({ error: 'Family member not found' });
-      }
+    if (!familyMem) {
+      return res.status(404).send({ error: 'Family member not found' });
+    }
 
 
-      // Calculate the refund amount based on your business logic
-      const refundAmount = selectedAppointment.Price;
+    // Calculate the refund amount based on your business logic
+    const refundAmount = selectedAppointment.Price;
 
-      // Update the WalletAmount directly in the database using $inc
-      await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-    
+    // Update the WalletAmount directly in the database using $inc
+    await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
 
-   
+
+
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
       slot.Date.getTime() === selectedAppointment.Date.getTime() &&
       slot.Time === selectedAppointment.Time &&
@@ -1517,6 +1517,239 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
   }
 };
 
+
+
+
+
+const createDoctorAppointmentNotifications = async () => {
+  try {
+    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following","following","upcoming"] } });
+    const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
+    const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
+
+    // Handle upcoming appointments
+    for (const appointment of upcomingAppointments) {
+      const existingDoctorNotificationUP = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}` });
+
+      if (!existingDoctorNotificationUP) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}`,
+        });
+        console.log(newNotification);
+        await newNotification.save();
+        console.log('Appointment notification added');
+      } else {
+        console.log('Appointment notification already exists');
+      }
+    }
+
+    // Handle canceled appointments
+    for (const appointment of canceledAppointments) {
+      const existingDoctorNotificationCa = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.` });
+      if (!existingDoctorNotificationCa) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.`,
+        });
+        await newNotification.save();
+        console.log('Canceled appointment notification added');
+      } else {
+        console.log('Canceled appointment notification already exists');
+      }
+    }
+
+    // Handle rescheduled appointments
+    for (const appointment of rescheduledAppointments) {
+      const existingDoctorNotificationRe = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.` });
+
+      if (!existingDoctorNotificationRe) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.`,
+        });
+
+        await newNotification.save();
+        console.log('Rescheduled appointment notification added');
+      } else {
+        console.log('Rescheduled appointment notification already exists');
+      }
+    }
+    await removeDoctorAppointmentNotifications();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const removeDoctorAppointmentNotifications = async () => {
+  try {
+    const pastAppointments = await Appointment.find({ Date: { $lt: new Date() } });
+    for (const appointment of pastAppointments) {
+      const existingDoctorNotification = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}` });
+      if (existingDoctorNotification) {
+        await existingDoctorNotification.remove();
+        console.log('Appointment notification removed');
+
+      } else {
+        console.log('Appointment notification does not exist');
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const displayDoctorNotifications = async (req, res) => {
+  try {
+    await createDoctorAppointmentNotifications(req);
+    const { Username } = req.params;
+    console.log(Username);
+    const notifications = await Notification.find({ username: Username });
+    const doctorMessages = notifications.map(notification => notification.DoctorMessage);
+    res.status(200).json({ success: true, doctorMessages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+};
+
+const nodemailer = require('nodemailer');
+
+const sendAppointmentDoctorRescheduleNotificationEmail = async (req) => {
+  try {
+    const { AppointmentId } = req.params;
+    console.log('AppointmentId:', AppointmentId);
+
+    if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+      console.error('Invalid ObjectId format for AppointmentId');
+      return;
+    }
+
+    const appointment = await Appointment.findById(AppointmentId);
+
+    if (!appointment) {
+      console.error('Appointment not found for the given appointmentId');
+      return;
+    }
+
+    const { PatientUsername, DoctorUsername, Date} = appointment;
+    const Doctor = require('../Models/Doctor'); 
+    const doctor = await Doctor.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      console.error(`Doctor not found for the given username: ${DoctorUsername}`);
+      return;
+    }
+
+    const doctorEmail = doctor.Email; // Adjust the attribute accordingly
+
+    console.log(doctor);
+    console.log(doctorEmail);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'SuicideSquadGUC@gmail.com',
+        pass: 'wryq ofjx rybi hpom',
+      },
+    });
+
+    const subject = 'Appointment Rescheduled';
+    const text = `Dear ${DoctorUsername},
+
+    We would like to inform you that the following appointment has been rescheduled:
+
+    - Patient: ${PatientUsername}
+    - Date: ${Date}
+
+    Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+    Best regards,
+    Your Clinic`;
+
+    const mailOptions = {
+      from: 'SuicideSquadGUC@gmail.com',
+      to: doctorEmail,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification email sent successfully');
+  } catch (error) {
+    console.error('Failed to send appointment notification email:', error);
+  }
+};
+
+
+
+const sendAppointmentDoctorCancelledNotificationEmail = async (req) => {
+  try {
+    const { AppointmentId } = req.params;
+    console.log('AppointmentId:', AppointmentId);
+
+    if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+      console.error('Invalid ObjectId format for AppointmentId');
+      return;
+    }
+
+    const appointment = await Appointment.findById(AppointmentId);
+
+    if (!appointment) {
+      console.error('Appointment not found for the given appointmentId');
+      return;
+    }
+
+    const { PatientUsername, DoctorUsername, Date, RescheduleReason } = appointment;
+    const Doctor = require('../Models/Doctor'); // Adjust the model path accordingly
+    const doctor = await Doctor.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      console.error(`Doctor not found for the given username: ${DoctorUsername}`);
+      return;
+    }
+
+    const doctorEmail = doctor.Email; // Adjust the attribute accordingly
+
+    console.log(doctor);
+    console.log(doctorEmail);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'SuicideSquadGUC@gmail.com',
+        pass: 'wryq ofjx rybi hpom',
+      },
+    });
+
+    const subject = 'Appointment Cancelled';
+    const text = `Dear ${DoctorUsername},
+
+    We're sorry to inform you that the following appointment has been Cancelled:
+
+    - Patient: ${PatientUsername}
+    - Date: ${Date}
+
+    If you have any questions, feel free to contact us.
+
+    Best regards,
+    Your Clinic`;
+
+    const mailOptions = {
+      from: 'SuicideSquadGUC@gmail.com',
+      to: doctorEmail,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification email sent successfully');
+  } catch (error) {
+    console.error('Failed to send appointment notification email:', error);
+  }
+};
 
 
 
@@ -1555,6 +1788,8 @@ module.exports = {
   DeleteMedecineFromPrescription,
   rescheduleAppointmentPatient,
   cancelAppointmentPatient,
-  cancelAppointmentPatientFamMem
-
+  cancelAppointmentPatientFamMem,
+  displayDoctorNotifications,
+  sendAppointmentDoctorRescheduleNotificationEmail,
+  sendAppointmentDoctorCancelledNotificationEmail
 };

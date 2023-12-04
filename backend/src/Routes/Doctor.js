@@ -40,7 +40,10 @@ const { registerDoctor,
     DeleteMedecineFromPrescription,
     rescheduleAppointmentPatient,
     cancelAppointmentPatient,
-    cancelAppointmentPatientFamMem
+    cancelAppointmentPatientFamMem,
+    displayDoctorNotifications,
+    sendAppointmentDoctorRescheduleNotificationEmail,
+    sendAppointmentDoctorCancelledNotificationEmail,
 
 
 } = require('../Controllers/doctorController');
@@ -118,7 +121,7 @@ router.post('/addMedicineToPrescription',addMedicineToPrescription)
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
 
-router.get("/viewAllPres/:DoctorUsername", verify, ViewAllPres);
+router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
 
 // update patient prescription
 router.put('/updatePatientPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
@@ -131,8 +134,10 @@ router.post('/cancelAppointmentPatient/:username/:appointmentId', verify, cancel
 
 router.post('/cancelAppointmentPatientFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentPatientFamMem);
 
+router.get('/displayDoctorNotifications/:Username', verify, displayDoctorNotifications);
 
-
+router.post('/sendAppointmentDoctorRescheduleNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorRescheduleNotificationEmail);
+router.post('/sendAppointmentDoctorCancelledNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorCancelledNotificationEmail);
 
 const log =require("../Controllers/loginController")
 

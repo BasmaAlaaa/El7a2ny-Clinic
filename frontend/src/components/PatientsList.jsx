@@ -12,67 +12,67 @@ import NavBarDoctor from './NavBarDoctor.jsx';
 
 
 function PatientsList() {
-  const[searchText, setSearchText] = useState('');
-  const[filterText, setFilterText] = useState('');
-  const[result, setResult] = useState([]);
-  const {username} = useParams();
+  const [searchText, setSearchText] = useState('');
+  const [filterText, setFilterText] = useState('');
+  const [result, setResult] = useState([]);
+  const { username } = useParams();
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${username}`,{
-  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-})
-.then(res =>setResult(res.data)).catch(err => console.log(err))
+    const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${username}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+    })
+      .then(res => setResult(res.data)).catch(err => console.log(err))
   }, [])
-console.log(result)
-result.map((e) => {
-  console.log(e)
-})
+  console.log(result)
+  result.map((e) => {
+    console.log(e)
+  })
 
-const onFilterValueChanged=(event)=>{
-  setFilterText(event.target.value);
-}
-console.log(filterText)
-let navigate = useNavigate()
+  const onFilterValueChanged = (event) => {
+    setFilterText(event.target.value);
+  }
+  console.log(filterText)
+  let navigate = useNavigate()
 
-  let tHead = ['Name', 'Username', 'Email', 'View', 'Add Prescription'];
+  let tHead = ['Name', 'Username', 'Email', 'View', 'Add Prescription', 'View Prescriptions'];
 
   return (
     <div>
-      <NavBarDoctor username={username}/>
+      <NavBarDoctor username={username} />
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
-      <p className="text-capitalize fs-4 w-25">Patients</p>
-      <div className="d-flex flex-row w-75 justify-content-end">
-        <div className="input-group w-50">
-          <span
-            className="input-group-text bg-white border-end-0 search"
-          >
-            <img src={search} alt="search" />
-          </span>
-          <input
-            type="text"
-            className="form-control border-start-0 search ps-0"
-            placeholder="Search"
-            onChange={(e) => setSearchText(e.target.value)}
-          />
-        </div>
-        {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
+        <p className="text-capitalize fs-4 w-25">Patients</p>
+        <div className="d-flex flex-row w-75 justify-content-end">
+          <div className="input-group w-50">
+            <span
+              className="input-group-text bg-white border-end-0 search"
+            >
+              <img src={search} alt="search" />
+            </span>
+            <input
+              type="text"
+              className="form-control border-start-0 search ps-0"
+              placeholder="Search"
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </div>
+          {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='upcomingAppointments' onChange={onFilterValueChanged}>
-        <option value='all'>All</option>
-        <option value='upcoming'>Upcoming</option> 
-        <option value='finished'>Finished</option> 
-        <option value='running'>Running</option> 
-        <option value='following'>Following</option> 
+          <select name='upcomingAppointments' onChange={onFilterValueChanged}>
+            <option value='all'>All</option>
+            <option value='upcoming'>Upcoming</option>
+            <option value='finished'>Finished</option>
+            <option value='running'>Running</option>
+            <option value='following'>Following</option>
 
 
-        </select>
+          </select>
+        </div>
       </div>
-    </div>
-      <TablePatients username={username} tHead={tHead} data={result} searchText={searchText} filterText={filterText}/>
+      <TablePatients username={username} tHead={tHead} data={result} searchText={searchText} filterText={filterText} />
     </div>
   );
 }
