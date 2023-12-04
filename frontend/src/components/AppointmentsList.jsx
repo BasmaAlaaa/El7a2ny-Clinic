@@ -8,11 +8,14 @@ import filter from '../assets/images/svg/filter.svg';
 import NavBar from './NavBar.jsx';
 import TableAppointments from './TableAppointments.jsx';
 import NavBarPatient from './NavBarPatient.jsx';
+import TableAppointmentsFamily from './TableAppointmentsFamily.jsx';
 
 
 function AppointmentsList() {
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
+  const[resultFamily, setResultFamily] = useState([]);
+
   const {username} = useParams();
   const[searchDate, setSearchDate] = useState('');
 
@@ -23,7 +26,13 @@ const response = axios.get(`http://localhost:4000/Patient/allAppointments/${user
 })
 .then(res =>setResult(res.data.filteredAppointments)).catch(err => console.log(err))
   }, [])
-console.log('hayouya', result)
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Patient/allFamilyMemberAppointments/${username}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+    .then(res =>setResultFamily(res.data.filteredAppointments)).catch(err => console.log(err))
+      }, [])
+console.log('hayouya', resultFamily)
 result.map((e) => {
   console.log(e)
 })
@@ -68,6 +77,9 @@ let navigate = useNavigate()
       </div>
     </div>
       <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText}/>
+      <h3>Family Members Appointments</h3>
+      <TableAppointmentsFamily tHead={tHead} data={resultFamily} searchDate={searchDate} filterText={filterText}/>
+
     </div>
   );
 }
