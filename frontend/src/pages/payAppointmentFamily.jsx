@@ -30,7 +30,7 @@ function PayAppointmentFamily(){
         // .then(res =>console.log(res)).catch(err => console.log(err))
         //   }, [])
         const handleBook = () =>{
-            const data = {paymentMethod:typePay}
+            const data = {paymentMethod:typePay, familyId: nationalID}
          const response = axios.post(`http://localhost:4000/Patient/selectAppointmentDateTimeFamMem/${usernamePatient}/${id}/${usernameDoctor}`, data,  {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })

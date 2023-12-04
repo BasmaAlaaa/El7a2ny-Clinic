@@ -56,7 +56,8 @@ const {
   cancelAppointment,
   cancelAppointmentFamMem,
   createAppointmentNotifications,
-  displayNotifications
+  displayNotifications,
+  allFamilyMemberAppointments
 } = require("../Controllers/patientController");
 
 const router = express.Router();
@@ -97,6 +98,7 @@ router.get("/patientFilterAppsByDate/:Username/:Date", verify, patientFilterApps
 router.get("/patientFilterAppsByStatus/:Username/:Status", verify, patientFilterAppsByStatus);
 
 router.get("/allAppointments/:Username", verify, allAppointments);
+router.get("/allFamilyMemberAppointments/:Username", verify, allFamilyMemberAppointments);
 
 router.put("/choosePaymentMethodForHP/:type/:PatientUsername", verify, 
   choosePaymentMethodForHP
@@ -200,10 +202,10 @@ router.post(
 router.get("/ViewAllPres/:PatientUsername", verify, ViewAllPres);
 router.get("/ViewPresDetails/:PatientUsername/:id", verify, ViewPresDetails);
 
+//Req 47 and 49 : Rescheduling and cancelling appointments
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointment);
-router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentFamMem);
+router.post('/rescheduleAppointmentFamMem/:username/:appointmentId/:timeSlot/:familyId', verify, rescheduleAppointmentFamMem);
 router.post('/cancelAppointment/:username/:appointmentId', verify, cancelAppointment);
-
 router.post('/cancelAppointmentFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentFamMem);
 
 
