@@ -206,9 +206,9 @@ router.get("/ViewPresDetails/:PatientUsername/:id", verify, ViewPresDetails);
 
 //Req 47 and 49 : Rescheduling and cancelling appointments
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointment);
-router.post('/rescheduleAppointmentFamMem/:username/:appointmentId/:timeSlot/:familyId', verify, rescheduleAppointmentFamMem);
+router.post('/rescheduleAppointmentFamMem/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentFamMem);
 router.post('/cancelAppointment/:username/:appointmentId', verify, cancelAppointment);
-router.post('/cancelAppointmentFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentFamMem);
+router.post('/cancelAppointmentFamMem/:username/:appointmentId', verify, cancelAppointmentFamMem);
 
 
 const log = require("../Controllers/loginController");
