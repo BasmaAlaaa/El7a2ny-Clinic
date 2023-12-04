@@ -7,6 +7,7 @@ import MainBtn from "../components/Button";
 import Contract from '../components/Contract'; 
 
 import { useNavigate } from 'react-router-dom';
+import TableNotifications from "../components/TableNotifications";
 
 
 function DoctorView(){
@@ -22,11 +23,12 @@ function DoctorView(){
     const [contractInfo, setContractInfo] = useState(null);
     const [showContract, setShowContract] = useState(false);
     const[wallet, setWallet] = useState('');
+    const [notifications, setNotifications] = useState([]);
 
 
 
+    let tHeadNot = ['Message'];
     let navigate = useNavigate()
-
 
     const viewContract = async (DoctorUsername) => {
       try {
@@ -115,6 +117,13 @@ const handleAddAppointment = (e) => {
     .then(res =>setWallet(res.data)).catch(err => console.log(err))
     console.log('w',wallet)
   }, []); 
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Doctor/displayDoctorNotifications/${username}`,{
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+      .then(res => setNotifications(res.data.doctorMessages)).catch(err => console.log(err))
+  }, [])
+  console.log('notif', notifications);
   
 
     return (
@@ -172,7 +181,8 @@ const handleAddAppointment = (e) => {
   <h1>Wallet Amount: {wallet}</h1>
   </div>
   }
-          
+  <h1>Notifications</h1>
+    <TableNotifications tHead={tHeadNot} data={notifications} />       
       
         </div>
     )
