@@ -262,9 +262,16 @@ const allFamilyMemberAppointments = async (req, res) => {
       if (!user) {
         return res.status(404).send('No patient found');
       }
+      
       const familyMembers = await FamilyMember.find({PatientUsername: Username});
       // Use the filter object to query the appointment collection
-      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, Name: {$in : familyMembers.Name}});
+      let result = [];
+
+      for(const mem of familyMembers){
+        result.push(mem.Name);
+      }
+      console.log(result);
+      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, Name: {$in: result}, ForPatient: false});
 
       if (filteredAppointments.length === 0) {
         return res.status(404).send('No matching appointments found');
@@ -293,7 +300,7 @@ const allAppointments = async (req, res) => {
       }
 
       // Use the filter object to query the appointment collection
-      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username });
+      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, ForPatient: true});
 
       if (filteredAppointments.length === 0) {
         return res.status(404).send('No matching appointments found');
@@ -1712,7 +1719,8 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
           Status: 'Upcoming',
           PaymentMethod: paymentMethod,
           Price: sessionPrice,
-          Name: patient.Name
+          Name: patient.Name,
+          ForPatient: true
         });
 
           if (paymentMethod === "wallet") {
@@ -1817,7 +1825,8 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
           Status: 'Upcoming',
           PaymentMethod: paymentMethod,
           Price: sessionPrice,
-          Name: familyMem.Name
+          Name: familyMem.Name,
+          ForPatient: false
         });
 
           if (paymentMethod === "wallet") {
@@ -2498,7 +2507,8 @@ const rescheduleAppointment = async (req, res) => {
             Status: selectedAppointment.Status,
             PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
-            Name: selectedAppointment.Name
+            Name: selectedAppointment.Name,
+            ForPatient: true
           });
   
             
@@ -2617,7 +2627,8 @@ const rescheduleAppointmentFamMem = async (req, res) => {
             Status: selectedAppointment.Status,
             PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
-            Name: familyMem.Name
+            Name: familyMem.Name,
+            ForPatient: false
           });
   
             
@@ -2714,7 +2725,7 @@ const cancelAppointment = async (req, res) => {
     }
 
     // Update existing appointment status to 'canceled'
-    selectedAppointment.Status = 'Canceled';
+    selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
@@ -2799,7 +2810,7 @@ const cancelAppointmentFamMem = async (req, res) => {
     }
 
     // Update existing appointment status to 'canceled'
-    selectedAppointment.Status = 'Canceled';
+    selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
@@ -2815,7 +2826,7 @@ const cancelAppointmentFamMem = async (req, res) => {
 const createAppointmentNotifications = async () => {
   try {
     const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following"] } });
-    const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
+    const canceledAppointments = await Appointment.find({ Status: { $in: ["Cancelled"] } });
     const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
 
     // Handle upcoming appointments
@@ -2849,10 +2860,10 @@ const createAppointmentNotifications = async () => {
         });
 
         await newNotification.save();
-        console.log('Canceled appointment notification added');
+        console.log('Cancelled appointment notification added');
         console.log(canceledAppointments);
       } else {
-        console.log('Canceled appointment notification already exists');
+        console.log('Cancelled appointment notification already exists');
       }
     }
 

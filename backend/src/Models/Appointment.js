@@ -36,6 +36,11 @@ const appointmentSchema = new Schema({
     Name:{
       type: String,
       required:true
+    },
+    ForPatient:{
+      type: Boolean,
+      default: false,
+      required: true
     }
 },{ timestamps: true })
 
