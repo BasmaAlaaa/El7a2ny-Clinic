@@ -1060,21 +1060,21 @@ const ViewAllPres = async (req, res) => {
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
-  const { DoctorUsername } = req.params;
-
+  const { username } = req.params; // doctor username
+  const { PatientUsername } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
-  if (!(req.user.Username === DoctorUsername)) {
+  if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
   }else{
     try {
-      const { PatientUsername, description, date, appointmentID, dose } = req.body;
+      const { description, date, appointmentID, dose } = req.body;
 
-      if (!DoctorUsername || !PatientUsername || !description || !date || !appointmentID || !dose) {
+      if (!username || !PatientUsername || !description || !date || !appointmentID || !dose) {
         return res.status(400).json({ error: 'All fields must be filled.' });
       }
 
-      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+      const doctor = await doctorSchema.findOne({ Username: username });
       if (!doctor) {
         return res.status(404).json({ error: 'Doctor not found.' });
       }
@@ -1085,7 +1085,7 @@ const addPatientPrescription = async (req, res) => {
       }
 
       const prescription = await Prescription.create({
-        DoctorUsername: DoctorUsername,
+        DoctorUsername: username,
         PatientUsername: PatientUsername,
         Description: description,
         Date: date,
@@ -1161,7 +1161,7 @@ const pharmacyAPIUrl = 'http://localhost:8001';
 
 // Method to add medicine to a prescription
 const addMedicineToPrescription = async (req, res) => {
-  const { DoctorUsername,PatientUsername, medicineName } = req.body;
+  const { DoctorUsername, PatientUsername, medicineName } = req.body;
 
   try {
     // Fetch the prescription from the clinic database

@@ -54,15 +54,17 @@ const {
   rescheduleAppointment,
   rescheduleAppointmentFamMem,
   cancelAppointment,
-  cancelAppointmentFamMem
-
+  cancelAppointmentFamMem,
+  createAppointmentNotifications,
+  displayNotifications
 } = require("../Controllers/patientController");
 
 const router = express.Router();
 
 const { verify } = require("../Controllers/loginController");
 
-// register route
+
+
 
 router.post("/registerPatient", registerPatient);
 
@@ -209,5 +211,8 @@ const log = require("../Controllers/loginController");
 
 router.post("/login", log.login);
 router.get("/logout", log.logout);
+
+router.post("/createAppointmentNotifications/:Username", verify, createAppointmentNotifications);
+router.get("/displayNotifications/:Username", verify, displayNotifications);
 
 module.exports = router;

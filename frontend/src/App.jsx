@@ -13,6 +13,7 @@ import PatientInfo from './pages/patientInfo';
 import DoctorInfo from './pages/doctorInfo';
 import RequestInfo from './pages/requestInfo';
 import PrescriptionInfo from './pages/prescriptionInfo';
+import AddPrescription from './pages/addPrescription';
 
 import DoctorView from './pages/doctorView';
 import ManagePackages from './pages/managePackages';
@@ -65,7 +66,7 @@ function App() {
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
           <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />
           <Route exact path="/viewMedicalHistoryDocuments/:username" element={<ViewMedicalHistoryDocuments />} />
-
+          <Route exact path="/addPrescription/:username/:PatientUsername" element={<AddPrescription />} />
 
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />

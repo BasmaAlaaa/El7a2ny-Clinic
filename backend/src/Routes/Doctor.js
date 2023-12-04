@@ -116,7 +116,7 @@ router.get('/downloadPrescriptionPDF/:DoctorUsername', verify, downloadPrescript
 router.post('/addMedicineToPrescription',addMedicineToPrescription)
 
 // add patient prescription
-router.post('/addPatientPrescription/:DoctorUsername', verify, addPatientPrescription);
+router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
 
 router.get("/viewAllPres/:DoctorUsername", verify, ViewAllPres);
 

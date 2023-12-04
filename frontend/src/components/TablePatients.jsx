@@ -4,6 +4,8 @@ import { useNavigate } from 'react-router-dom';
 function CaseTableBody({ data, username }) {
   let navigate = useNavigate()
   console.log("username doctor:", username)
+  const PatientUsername = `${data.Username}`;
+
   return (
     <>
       
@@ -24,7 +26,16 @@ function CaseTableBody({ data, username }) {
       </div>
       </td>
     
-      
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate(`/addPrescription/${username}/${PatientUsername}`)} 
+      >
+        Add Prescription
+      </button>
+      </div>
+      </td>
 
     </>
   );

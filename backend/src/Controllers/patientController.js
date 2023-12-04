@@ -7,7 +7,7 @@ const FamilyMember = require('../Models/FamilyMember.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
-
+const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -2776,6 +2776,160 @@ const cancelAppointmentFamMem = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Internal server error.' });
   }
 };
+const createAppointmentNotifications = async (req, res) => {
+  try {
+    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following"] } });
+    const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
+    const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
+
+    // Handle upcoming appointments
+    for (const appointment of upcomingAppointments) {
+      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date}` });
+
+      if (!existingPatientNotification) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.PatientUsername}`,
+          PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date}`,
+        });
+
+        await newNotification.save();
+        console.log('Appointment notification added');
+        console.log(upcomingAppointments);
+      } else {
+        console.log('Appointment notification already exists');
+      }
+    }
+
+    // Handle canceled appointments
+    for (const appointment of canceledAppointments) {
+      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date} has been canceled.` });
+
+      if (!existingPatientNotification) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.PatientUsername}`,
+          PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date} has been canceled.`,
+        });
+
+        await newNotification.save();
+        console.log('Canceled appointment notification added');
+        console.log(canceledAppointments);
+      } else {
+        console.log('Canceled appointment notification already exists');
+      }
+    }
+
+    // Handle rescheduled appointments
+    for (const appointment of rescheduledAppointments) {
+      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date} has been rescheduled.` });
+
+      if (!existingPatientNotification) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.PatientUsername}`,
+          PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date} has been rescheduled.`,
+        });
+
+        await newNotification.save();
+        console.log('Rescheduled appointment notification added');
+        console.log(rescheduledAppointments);
+      } else {
+        console.log('Rescheduled appointment notification already exists');
+      }
+    }
+
+    res.status(200).json({ success: true, message: 'Appointment notifications created successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Failed to create appointment notifications' });
+  }
+};
+const removeAppointmentNotifications = async (req, res) => {
+  try {
+    const pastAppointments = await Appointment.find({ Date: { $lt: new Date() } });
+    for (const appointment of pastAppointments) {
+      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date}` });
+      if (existingPatientNotification) {
+        await existingPatientNotification.remove();
+        console.log('Appointment notification removed');
+        console.log(pastAppointments);
+      } else {
+        console.log('Appointment notification does not exist');
+      }
+    }
+    res.status(200).json({ success: true, message: 'Appointment notifications removed successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to remove appointment notifications' });
+  }
+};
+const displayNotifications = async (req, res) => {
+  try {
+    const {Username} = req.params;
+    console.log(Username);
+    const notifications = await Notification.find({ username: Username });
+    const patientMessages = notifications.map(notification => notification.PatientMessage);
+    res.status(200).json({ success: true, patientMessages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+};
+
+
+
+
+// // Check if any medicine quantity is out of stock and send an email notification to all pharmacists
+// const checkMedicineQuantityEmailNotification = async () => {
+//   try {
+//     const outOfStockMedicines = await Medicine.find({ Quantity: 0 });
+
+//     if (outOfStockMedicines.length > 0) {
+//       const pharmacists = await Pharmacist.find();
+//       const transporter = nodemailer.createTransport({
+//         service: 'gmail',
+//         auth: {
+//           user: 'SuicideSquadGUC@gmail.com',
+//           pass: 'wryq ofjx rybi hpom'
+//         }
+//       });
+
+//       for (const pharmacist of pharmacists) {
+//         const mailOptions = {
+          
+//           from: 'SuicideSquadGUC@gmail.com',
+//           to: pharmacist.Email, // Send email to each pharmacist
+//           subject: 'Medicine out of stock',
+//           text: `Dear ${pharmacist.Name},
+
+//           I hope this message finds you well. We wanted to inform you that the following medicines in your pharmacy are currently out of stock:
+          
+//           ${outOfStockMedicines.map((medicine) => `- ${medicine.Name}`).join('\n')}
+          
+//           As a valued partner, we understand the importance of maintaining a steady supply of essential medications for your customers.
+          
+//           To address this issue promptly, we recommend placing a restocking order at your earliest convenience to ensure that these medicines remain available to meet the needs of your customers.
+          
+//           If you encounter any challenges or require assistance in the ordering process, please don't hesitate to reach out to our support team at SuicideSquadGUC@gmail.com.
+          
+//           Thank you for your attention to this matter, and we appreciate your continued partnership.
+
+//           Best regards,
+//           Suicide Squad Support Team`
+//         };
+//         console.log('Email sent to:', pharmacist.Email);
+//         transporter.sendMail(mailOptions, function(error, info){
+//           if (error) {
+//             console.error(error);
+//           } else {
+//             console.log('Email sent: ' + info.response);
+//           }
+//         });
+//       }
+//     }
+//   } catch (error) {
+//     console.error(error);
+//   }
+// };
 
 
 module.exports = {
@@ -2829,6 +2983,8 @@ module.exports = {
   rescheduleAppointment,
   rescheduleAppointmentFamMem,
   cancelAppointment,
-  cancelAppointmentFamMem
-
+  cancelAppointmentFamMem,
+  createAppointmentNotifications,
+  removeAppointmentNotifications,
+  displayNotifications
 }
