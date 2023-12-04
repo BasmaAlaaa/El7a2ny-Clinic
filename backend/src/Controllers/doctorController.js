@@ -1,11 +1,13 @@
 const { StatusFile } = require('git');
+const { default: mongoose } = require("mongoose");
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
 const Prescription = require('../Models/Prescription.js');
 const FamilyMember = require('../Models/FamilyMember.js');
-
+const Appointment = require("../Models/Appointment.js");
+const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -1520,10 +1522,10 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
 
 
 
-// Req : view all notifications for a patient
-const createAppointmentNotifications = async () => {
+
+const createDoctorAppointmentNotifications = async () => {
   try {
-    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following"] } });
+    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following","following","upcoming"] } });
     const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
     const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
 
@@ -1537,8 +1539,9 @@ const createAppointmentNotifications = async () => {
           username: `${appointment.DoctorUsername}`,
           DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}`,
         });
-
+        console.log(newNotification);
         await newNotification.save();
+        console.log('Appointment notification added');
       } else {
         console.log('Appointment notification already exists');
       }
@@ -1547,15 +1550,14 @@ const createAppointmentNotifications = async () => {
     // Handle canceled appointments
     for (const appointment of canceledAppointments) {
       const existingDoctorNotificationCa = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.` });
-
       if (!existingDoctorNotificationCa) {
         const newNotification = await Notification.create({
           type: "Appointment",
           username: `${appointment.DoctorUsername}`,
           DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.`,
         });
-
         await newNotification.save();
+        console.log('Canceled appointment notification added');
       } else {
         console.log('Canceled appointment notification already exists');
       }
@@ -1569,49 +1571,185 @@ const createAppointmentNotifications = async () => {
         const newNotification = await Notification.create({
           type: "Appointment",
           username: `${appointment.DoctorUsername}`,
-          PatientMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.`,
         });
 
         await newNotification.save();
         console.log('Rescheduled appointment notification added');
-        console.log(rescheduledAppointments);
       } else {
         console.log('Rescheduled appointment notification already exists');
+      }
+    }
+    await removeDoctorAppointmentNotifications();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const removeDoctorAppointmentNotifications = async () => {
+  try {
+    const pastAppointments = await Appointment.find({ Date: { $lt: new Date() } });
+    for (const appointment of pastAppointments) {
+      const existingDoctorNotification = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}` });
+      if (existingDoctorNotification) {
+        await existingDoctorNotification.remove();
+        console.log('Appointment notification removed');
+
+      } else {
+        console.log('Appointment notification does not exist');
       }
     }
   } catch (error) {
     console.error(error);
   }
 };
-const removeAppointmentNotifications = async () => {
+
+const displayDoctorNotifications = async (req, res) => {
   try {
-    const pastAppointments = await Appointment.find({ Date: { $lt: new Date() } });
-    for (const appointment of pastAppointments) {
-      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date}` });
-      if (existingPatientNotification) {
-        await existingPatientNotification.remove();
-        console.log('Appointment notification removed');
-        console.log(pastAppointments);
-      } else {
-        console.log('Appointment notification does not exist');
-      }
-    }
-   
-  } catch (error) {
-    console.error(error);
-};
-}
-const displayNotifications = async (req, res) => {
-  try {
-    await createAppointmentNotifications(req);
-    await removeAppointmentNotifications();
-    const {Username} = req.params;
+    await createDoctorAppointmentNotifications(req);
+    const { Username } = req.params;
     console.log(Username);
     const notifications = await Notification.find({ username: Username });
-    const patientMessages = notifications.map(notification => notification.PatientMessage);
-    res.status(200).json({ success: true, patientMessages });
+    const doctorMessages = notifications.map(notification => notification.DoctorMessage);
+    res.status(200).json({ success: true, doctorMessages });
   } catch (error) {
     res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+};
+
+const nodemailer = require('nodemailer');
+
+const sendAppointmentDoctorRescheduleNotificationEmail = async (req) => {
+  try {
+    const { AppointmentId } = req.params;
+    console.log('AppointmentId:', AppointmentId);
+
+    if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+      console.error('Invalid ObjectId format for AppointmentId');
+      return;
+    }
+
+    const appointment = await Appointment.findById(AppointmentId);
+
+    if (!appointment) {
+      console.error('Appointment not found for the given appointmentId');
+      return;
+    }
+
+    const { PatientUsername, DoctorUsername, Date} = appointment;
+    const Doctor = require('../Models/Doctor'); 
+    const doctor = await Doctor.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      console.error(`Doctor not found for the given username: ${DoctorUsername}`);
+      return;
+    }
+
+    const doctorEmail = doctor.Email; // Adjust the attribute accordingly
+
+    console.log(doctor);
+    console.log(doctorEmail);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'SuicideSquadGUC@gmail.com',
+        pass: 'wryq ofjx rybi hpom',
+      },
+    });
+
+    const subject = 'Appointment Rescheduled';
+    const text = `Dear ${DoctorUsername},
+
+    We would like to inform you that the following appointment has been rescheduled:
+
+    - Patient: ${PatientUsername}
+    - Date: ${Date}
+
+    Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+    Best regards,
+    Your Clinic`;
+
+    const mailOptions = {
+      from: 'SuicideSquadGUC@gmail.com',
+      to: doctorEmail,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification email sent successfully');
+  } catch (error) {
+    console.error('Failed to send appointment notification email:', error);
+  }
+};
+
+
+
+const sendAppointmentDoctorCancelledNotificationEmail = async (req) => {
+  try {
+    const { AppointmentId } = req.params;
+    console.log('AppointmentId:', AppointmentId);
+
+    if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+      console.error('Invalid ObjectId format for AppointmentId');
+      return;
+    }
+
+    const appointment = await Appointment.findById(AppointmentId);
+
+    if (!appointment) {
+      console.error('Appointment not found for the given appointmentId');
+      return;
+    }
+
+    const { PatientUsername, DoctorUsername, Date, RescheduleReason } = appointment;
+    const Doctor = require('../Models/Doctor'); // Adjust the model path accordingly
+    const doctor = await Doctor.findOne({ Username: DoctorUsername });
+
+    if (!doctor) {
+      console.error(`Doctor not found for the given username: ${DoctorUsername}`);
+      return;
+    }
+
+    const doctorEmail = doctor.Email; // Adjust the attribute accordingly
+
+    console.log(doctor);
+    console.log(doctorEmail);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'SuicideSquadGUC@gmail.com',
+        pass: 'wryq ofjx rybi hpom',
+      },
+    });
+
+    const subject = 'Appointment Cancelled';
+    const text = `Dear ${DoctorUsername},
+
+    We're sorry to inform you that the following appointment has been Cancelled:
+
+    - Patient: ${PatientUsername}
+    - Date: ${Date}
+
+    If you have any questions, feel free to contact us.
+
+    Best regards,
+    Your Clinic`;
+
+    const mailOptions = {
+      from: 'SuicideSquadGUC@gmail.com',
+      to: doctorEmail,
+      subject,
+      text,
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification email sent successfully');
+  } catch (error) {
+    console.error('Failed to send appointment notification email:', error);
   }
 };
 
@@ -1652,6 +1790,8 @@ module.exports = {
   DeleteMedecineFromPrescription,
   rescheduleAppointmentPatient,
   cancelAppointmentPatient,
-  cancelAppointmentPatientFamMem
-
+  cancelAppointmentPatientFamMem,
+  displayDoctorNotifications,
+  sendAppointmentDoctorRescheduleNotificationEmail,
+  sendAppointmentDoctorCancelledNotificationEmail
 };

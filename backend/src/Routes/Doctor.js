@@ -40,7 +40,10 @@ const { registerDoctor,
     DeleteMedecineFromPrescription,
     rescheduleAppointmentPatient,
     cancelAppointmentPatient,
-    cancelAppointmentPatientFamMem
+    cancelAppointmentPatientFamMem,
+    displayDoctorNotifications,
+    sendAppointmentDoctorRescheduleNotificationEmail,
+    sendAppointmentDoctorCancelledNotificationEmail,
 
 
 } = require('../Controllers/doctorController');
@@ -131,8 +134,10 @@ router.post('/cancelAppointmentPatient/:username/:appointmentId', verify, cancel
 
 router.post('/cancelAppointmentPatientFamMem/:username/:appointmentId/:familyId', verify, cancelAppointmentPatientFamMem);
 
+router.get('/displayDoctorNotifications/:Username', verify, displayDoctorNotifications);
 
-
+router.post('/sendAppointmentDoctorRescheduleNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorRescheduleNotificationEmail);
+router.post('/sendAppointmentDoctorCancelledNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorCancelledNotificationEmail);
 
 const log =require("../Controllers/loginController")
 
