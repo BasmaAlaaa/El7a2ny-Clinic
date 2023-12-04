@@ -2423,138 +2423,87 @@ const rescheduleAppointment = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      //const { newDate, newTime } = req.body;
-
-      // Find the patient by username
       const patient = await patientSchema.findOne({ Username: username });
 
       if (!patient) {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      // Find the selected appointment by ID
       const selectedAppointment = await appointmentSchema.findById(appointmentId);
 
       if (!selectedAppointment) {
-        return res.status(404).json({ success: false, message: ' appointment not found.' });
+        return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
-      // Check if the patient is associated with the selected appointment
       if (selectedAppointment.PatientUsername !== patient.Username) {
         return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
       }
 
-        // Fetch the doctor's details using DoctorUsername
-        const doctorUsername = selectedAppointment.DoctorUsername;
-        const doctor = await doctorSchema.findOne({ Username: doctorUsername });
+      const doctorUsername = selectedAppointment.DoctorUsername;
+      const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
-        if (!doctor) {
-          return res.status(404).json({ success: false, message: 'Doctor not found.' });
-        }
-
-        // Access doctor's available time slots
-        const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
-
-        // Match the appointment date and time with the doctor's available time slots
-        const selectedAppointmentDate = selectedAppointment.Date;
-        const selectedAppointmentTime = selectedAppointment.Time;
-        
-        console.log(selectedAppointment.Time);
-        console.log(selectedAppointment.Date);
-
-        const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-          slot.Date.getTime() === selectedAppointment.Date.getTime() &&
-          slot.Time === selectedAppointment.Time &&
-          slot.Status === 'booked'
-        );
-        
-        console.log(matchingTimeSlot);
-        if (matchingTimeSlot) {
-          matchingTimeSlot.Status = 'available';
-        } else {
-          return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
-        }
-
-        let slot;
-        var found = false;
-        for (const s of doctorAvailableTimeSlots) {
-          if (!found) {
-            if (s._id.equals(timeSlot)) {
-              found = true;
-              slot = s;
-            }
-          }
-        }
-        let newAppointment;
-
-        if(slot.Status === "available"){
-  
-          newAppointment = await appointmentSchema.create({
-            Date: slot.Date,
-            Time: slot.Time,
-            DoctorUsername: selectedAppointment.DoctorUsername,
-            PatientUsername: selectedAppointment.PatientUsername,
-            Status: selectedAppointment.Status,
-            PaymentMethod: selectedAppointment.PaymentMethod,
-            Price: selectedAppointment.Price,
-            Name: selectedAppointment.Name,
-            ForPatient: true
-          });
-
-
-          slot.Status = "booked";
-          await doctor.save();
-        }
-        else {
-          return res.status(400).send("This slot is already booked");
-        }
-
-        // Update the patient's status to 'Rescheduled' 
-        selectedAppointment.Status = 'Rescheduled';
-
-        // Save the updated patient and appointment
-        await selectedAppointment.save();
-
-        return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
-      } else if(['Following', 'following'].includes(selectedAppointment.Status)){
-        let newAppointment1;
-        const found = false;
-        for(const slot of doctorAvailableTimeSlots){
-          if(slot._id.equals(timeSlot) && slot.Status === "available" && !found){
-            newAppointment1 = await appointmentSchema.create({
-              Date: slot.Date,
-              Time: slot.Time,
-              DoctorUsername: selectedAppointment.DoctorUsername,
-              PatientUsername: selectedAppointment.PatientUsername,
-              Status: selectedAppointment.Status,
-              PaymentMethod: selectedAppointment.PaymentMethod,
-              Price: selectedAppointment.Price,
-              Name: selectedAppointment.Name,
-              ForPatient: true
-            });
-            slot.Status = "booked";
-            await doctor.save();
-            selectedAppointment.Status = 'Rescheduled';
-            found = true;
-            await selectedAppointment.save();
-            return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment1 });
-          }
-        }
-        if(!found){
-          return res.status(400).json({ success: false, message: 'No available time slots for the doctor' });
-        }
-      } 
-    }else {
-        return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
+      if (!doctor) {
+        return res.status(404).json({ success: false, message: 'Doctor not found.' });
       }
+
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      const selectedAppointmentDate = selectedAppointment.Date;
+      const selectedAppointmentTime = selectedAppointment.Time;
+
+      const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+        slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+        slot.Time === selectedAppointmentTime &&
+        slot.Status === 'booked'
+      );
+
+      if (matchingTimeSlot) {
+        matchingTimeSlot.Status = 'available';
+      } else {
+        return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
+      }
+
+      let slot;
+      let found = false;
+      for (const s of doctorAvailableTimeSlots) {
+        if (!found) {
+          if (s._id.equals(timeSlot)) {
+            found = true;
+            slot = s;
+          }
+        }
+      }
+
+      let newAppointment;
+
+      if (slot.Status === "available") {
+        newAppointment = await appointmentSchema.create({
+          Date: slot.Date,
+          Time: slot.Time,
+          DoctorUsername: selectedAppointment.DoctorUsername,
+          PatientUsername: selectedAppointment.PatientUsername,
+          Status: selectedAppointment.Status,
+          PaymentMethod: selectedAppointment.PaymentMethod,
+          Price: selectedAppointment.Price,
+          Name: selectedAppointment.Name,
+          ForPatient: true
+        });
+
+        slot.Status = "booked";
+        await doctor.save();
+      } else {
+        return res.status(400).json({ success: false, message: 'This slot is already booked' });
+      }
+
+      selectedAppointment.Status = 'Rescheduled';
+      await selectedAppointment.save();
+
+      return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
     } catch (error) {
       console.error(error);
       return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
-
-
 
 const rescheduleAppointmentFamMem = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
