@@ -151,7 +151,7 @@ router.get(
 );*/
 
 router.post(
-  "/addMedicalHistoryDocument/:Username",verify, 
+  "/addMedicalHistoryDocument/:username",verify, 
   upload.single("MedicalHistoryDocuments"),
   addMedicalHistoryDocument
 );

@@ -23,9 +23,10 @@ function AddMedicalHistoryDocument() {
 
     console.log(data)
     try {
-      axios.post(`http://localhost:4000/Patient/addMedicalHistoryDocument/${username}`, data,{
+      axios.post(`http://localhost:4000/Patient/addMedicalHistoryDocument/${username}`, data, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
+      
         .then(response => {
           if (response.status === 200) {
             return response.data;
