@@ -39,6 +39,7 @@ import PayAppointment from './pages/payAppointment';
 import PayAppointmentFamily from './pages/payAppointmentFamily';
 import HealthPackagesListFam from './components/HealthPackagesListFam';
 import HealthPackageInfoFam from './pages/healthPackageInfoFam';
+import RescheduleAppointment from './pages/rescheduleAppointment';
 
 function App() {
   return (
@@ -81,6 +82,8 @@ function App() {
           <Route exact path="/healthPackageInfoFam/:username/:type/:id" element={<HealthPackageInfoFam />} />
           <Route exact path="/payAppointment/:usernamePatient/:id/:usernameDoctor" element={<PayAppointment />} />
           <Route exact path="/payAppointmentFamily/:usernamePatient/:id/:usernameDoctor" element={<PayAppointmentFamily />} />
+          <Route exact path="/rescheduleAppointment/:usernamePatient/:usernameDoctor/:appID" element={<RescheduleAppointment />} />
+
 
 
 

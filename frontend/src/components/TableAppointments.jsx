@@ -1,9 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import moment from 'moment';
+import axios from 'axios';
+import { useState } from 'react';
 
 
 function CaseTableBody({ data }) {
-  let navigate = useNavigate()
+  let navigate = useNavigate();
+  const[searchDate, setSearchDate] = useState('');
+
 
   return (
     <>
@@ -13,6 +17,30 @@ function CaseTableBody({ data }) {
     {data.PatientUsername && <td>{data.PatientUsername}</td>}
     {data.Name && <td>{data.Name}</td>}
     {data.Status && <td>{data.Status}</td>}
+
+    <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+      >
+        Reschedule
+      </button>
+      </div>
+      </td>
+
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        onClick={()=>axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`
+        ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
+        .then(res =>console.log(res)).catch(err => console.log(err))}
+      >
+        Cancel
+      </button>
+      </div>
+      </td>
 
     </>
   );

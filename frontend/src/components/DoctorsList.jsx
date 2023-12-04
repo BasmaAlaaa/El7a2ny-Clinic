@@ -38,7 +38,7 @@ const response = axios.get(`http://localhost:4000/Patient/viewAllDoctors/${usern
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
-console.log(result)
+console.log("all doctors", result)
 result.map((e) => {
   console.log(e)
 })
