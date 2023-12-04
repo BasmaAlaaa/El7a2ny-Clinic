@@ -1520,6 +1520,103 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
 
 
 
+// Req : view all notifications for a patient
+const createAppointmentNotifications = async () => {
+  try {
+    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following"] } });
+    const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
+    const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
+
+    // Handle upcoming appointments
+    for (const appointment of upcomingAppointments) {
+      const existingDoctorNotificationUP = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}` });
+
+      if (!existingDoctorNotificationUP) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date}`,
+        });
+
+        await newNotification.save();
+      } else {
+        console.log('Appointment notification already exists');
+      }
+    }
+
+    // Handle canceled appointments
+    for (const appointment of canceledAppointments) {
+      const existingDoctorNotificationCa = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.` });
+
+      if (!existingDoctorNotificationCa) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.`,
+        });
+
+        await newNotification.save();
+      } else {
+        console.log('Canceled appointment notification already exists');
+      }
+    }
+
+    // Handle rescheduled appointments
+    for (const appointment of rescheduledAppointments) {
+      const existingDoctorNotificationRe = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.` });
+
+      if (!existingDoctorNotificationRe) {
+        const newNotification = await Notification.create({
+          type: "Appointment",
+          username: `${appointment.DoctorUsername}`,
+          PatientMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been rescheduled.`,
+        });
+
+        await newNotification.save();
+        console.log('Rescheduled appointment notification added');
+        console.log(rescheduledAppointments);
+      } else {
+        console.log('Rescheduled appointment notification already exists');
+      }
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+const removeAppointmentNotifications = async () => {
+  try {
+    const pastAppointments = await Appointment.find({ Date: { $lt: new Date() } });
+    for (const appointment of pastAppointments) {
+      const existingPatientNotification = await Notification.findOne({ type: "Appointment", PatientMessage: `Appointment with doctor ${appointment.DoctorUsername} on ${appointment.Date}` });
+      if (existingPatientNotification) {
+        await existingPatientNotification.remove();
+        console.log('Appointment notification removed');
+        console.log(pastAppointments);
+      } else {
+        console.log('Appointment notification does not exist');
+      }
+    }
+   
+  } catch (error) {
+    console.error(error);
+};
+}
+const displayNotifications = async (req, res) => {
+  try {
+    await createAppointmentNotifications(req);
+    await removeAppointmentNotifications();
+    const {Username} = req.params;
+    console.log(Username);
+    const notifications = await Notification.find({ username: Username });
+    const patientMessages = notifications.map(notification => notification.PatientMessage);
+    res.status(200).json({ success: true, patientMessages });
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
+  }
+};
+
+
+
 
 module.exports = {
   docFilterAppsByDate,
