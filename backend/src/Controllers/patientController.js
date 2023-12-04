@@ -2486,9 +2486,9 @@ const rescheduleAppointment = async (req, res) => {
           }
         }
         }
+        let newAppointment;
 
         if(slot.Status === "available"){
-          let newAppointment;
   
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
@@ -2606,11 +2606,9 @@ const rescheduleAppointmentFamMem = async (req, res) => {
           }
         }
         }
+        let newAppointment;
 
-        if(slot.Status === "available"){
-          let newAppointment;
-  
-          
+        if(slot.Status === "available"){          
           newAppointment = await appointmentSchema.create({
             Date: slot.Date,
             Time: slot.Time,
@@ -2643,7 +2641,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
@@ -2726,7 +2724,7 @@ const cancelAppointment = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message});
   }
 };
 
@@ -2811,7 +2809,7 @@ const cancelAppointmentFamMem = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 const createAppointmentNotifications = async () => {
