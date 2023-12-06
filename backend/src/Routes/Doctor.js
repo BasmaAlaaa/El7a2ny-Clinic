@@ -44,6 +44,7 @@ const { registerDoctor,
     displayDoctorNotifications,
     sendAppointmentDoctorRescheduleNotificationEmail,
     sendAppointmentDoctorCancelledNotificationEmail,
+    sendAppointmentDoctorNotificationEmail
 
 
 } = require('../Controllers/doctorController');
@@ -138,6 +139,7 @@ router.get('/displayDoctorNotifications/:Username', verify, displayDoctorNotific
 
 router.post('/sendAppointmentDoctorRescheduleNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorRescheduleNotificationEmail);
 router.post('/sendAppointmentDoctorCancelledNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorCancelledNotificationEmail);
+router.post('/sendAppointmentDoctorNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorNotificationEmail);
 
 const log =require("../Controllers/loginController")
 

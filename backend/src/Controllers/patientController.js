@@ -3065,7 +3065,71 @@ const updatePrescriptionPaymentMethod = async (req, res) => {
   }
 };
 
+const sendAppointmentNotificationEmail = async (req) => {
+  try {
+    const { AppointmentId } = req.params;
+    console.log('AppointmentId:', AppointmentId);
 
+    if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+      console.error('Invalid ObjectId format for AppointmentId');
+      return;
+    }
+
+    const appointment = await Appointment.findById(AppointmentId);
+
+    if (!appointment) {
+      console.error('Appointment not found for the given appointmentId');
+      return;
+    }
+
+    const { PatientUsername, DoctorUsername, Date} = appointment;
+    const Patient = require('../Models/Patient');
+    const patient = await Patient.findOne({ Username: PatientUsername });
+
+    if (!patient) {
+      console.error(`Patient not found for the given username: ${PatientUsername}`);
+      return;
+    }
+
+    const patientEmail = patient.Email;
+
+    console.log(patient);
+    console.log(patientEmail);
+
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'SuicideSquadGUC@gmail.com',
+        pass: 'wryq ofjx rybi hpom'
+      }
+    });
+
+    const subject = 'Appointment Confirmed';
+    const text = `Dear ${PatientUsername},
+
+    We're pleased to confirm your upcoming appointment with:
+
+    - Doctor: ${DoctorUsername}
+    - Date: ${Date}
+
+    If you have any questions or need to reschedule, please contact us.
+
+    Best regards,
+    Your Clinic`;
+
+    const mailOptions = {
+      from: 'SuicideSquadGUC@gmail.com',
+      to: patientEmail,
+      subject,
+      text
+    };
+
+    await transporter.sendMail(mailOptions);
+    console.log('Appointment notification email sent successfully');
+  } catch (error) {
+    console.error('Failed to send appointment notification email:', error);
+  }
+};
 
 
 module.exports = {
@@ -3126,5 +3190,6 @@ module.exports = {
   allFamilyMemberAppointments,
   sendAppointmentPatientRescheduleNotificationEmail,
   sendAppointmentPatientCancelledNotificationEmail,
-  updatePrescriptionPaymentMethod
+  updatePrescriptionPaymentMethod,
+  sendAppointmentNotificationEmail
 }
