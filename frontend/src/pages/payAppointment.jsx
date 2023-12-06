@@ -23,16 +23,33 @@ function PayAppointment(){
         e.preventDefault();
       }
 
+      const sendNotification = () =>{
+        const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
+         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+       })
+        .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
+       }
+      const createNotification = () =>{
+     const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+     .then(res =>sendNotification).catch(err => alert('error booking appointment'))
+    }
     //useEffect(() => {
         // const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`)
         // .then(res =>console.log(res)).catch(err => console.log(err))
         //   }, [])
         const handleBook = () =>{
             const data = {paymentMethod:typePay}
+            if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
+              alert('Missing fields')
+            }
+            else{
          const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`, data, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
          .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
+      }
         }
 
     return (
@@ -76,15 +93,6 @@ function PayAppointment(){
             required={true}
            onChange={(e) => setCardCVV(e.target.value)}
           />
-
-          <div className="mt-3">
-            <MainBtn
-              txt='Add Card'
-              style='green-btn'
-              action={handleAdd}
-              
-            />
-            </div>
 
             </div>
 }       
