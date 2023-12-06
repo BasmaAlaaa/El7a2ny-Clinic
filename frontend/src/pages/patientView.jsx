@@ -48,25 +48,25 @@ function PatientView() {
       <NavBarPatient username={username} />
       <div>
         <MainBtn
-          txt="View All Appointments"
+          txt="My Appointments"
           style="green-btn"
           action={() => navigate(`/appointmentsList/${username}`)}
           key="navBtn"
         />
         <MainBtn
-          txt="View Health Packages"
+          txt="Health Packages"
           style="green-btn"
           action={() => navigate(`/healthPackagesList/${username}`)}
           key="navBtn"
         />
         <MainBtn
-          txt="View All Registered Family Members"
+          txt="Registered Family Members"
           style="green-btn"
           action={() => navigate(`/familyMembersList/${username}`)}
           key="navBtn"
         />
         <MainBtn
-          txt="View My Prescriptions"
+          txt="My Prescriptions"
           style="green-btn"
           action={() => navigate(`/prescriptionsList/${username}`)}
           key="navBtn"

@@ -12,18 +12,24 @@ function PayAppointment(){
     const [cardDate, setCardDate] = useState('');
     const [cardCVV, setCardCVV] = useState('');
     const [typePay, setTypePay] = useState('');
-
+    
+    const sendNotificationDoctor = () =>{
+      axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorNotificationEmail/${usernameDoctor}/${id}`, "", {
+       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+     })
+      .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error sending doctor notification'))
+     }
       const sendNotification = () =>{
         const response = axios.post(`http://localhost:4000/Patient/sendAppointmentNotificationEmail/${usernamePatient}/${id}`, "", {
          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
        })
-        .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error booking appointment'))
+        .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
        }
       const createNotification = () =>{
      const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-     .then(res =>sendNotification).catch(err => alert('error booking appointment'))
+     .then(res =>sendNotification).catch(err => alert('error creating notification'))
     }
     //useEffect(() => {
         // const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`)
@@ -40,7 +46,6 @@ function PayAppointment(){
         })
          .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
          createNotification();
-
       }
         }
 
