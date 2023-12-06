@@ -13,21 +13,11 @@ function PayAppointment(){
     const [cardCVV, setCardCVV] = useState('');
     const [typePay, setTypePay] = useState('');
 
-    const handleAdd = (e) => {
-        if(cardCVV && cardDate && cardNumber){
-        alert('Card added successfully')
-        }
-        else{
-          alert('Missing fields')
-        }
-        e.preventDefault();
-      }
-
       const sendNotification = () =>{
-        const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
+        const response = axios.post(`http://localhost:4000/Patient/sendAppointmentNotificationEmail/${usernamePatient}/${id}`, "", {
          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
        })
-        .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
+        .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error booking appointment'))
        }
       const createNotification = () =>{
      const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
@@ -45,10 +35,12 @@ function PayAppointment(){
               alert('Missing fields')
             }
             else{
-         const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`, data, {
+         axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`, data, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
          .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
+         createNotification();
+
       }
         }
 

@@ -36,7 +36,7 @@ let tHead = ['Date', 'Time', 'Status', 'Book'];
         <div>
         <NavBarPatient username={usernamePatient}/>
         <h1>Available Appointments: </h1>
-            <TableScheduleReschedule tHead={tHead} data={result.AvailableTimeSlots} appID={appID} patientUsername={usernamePatient}/>
+            <TableScheduleReschedule tHead={tHead} data={result.AvailableTimeSlots} appID={appID} patientUsername={usernamePatient} doctorUsername={usernameDoctor}/>
         </div>
     )
     }

@@ -93,14 +93,13 @@ function PatientView() {
       <DoctorsList />
       <h1>Health Records</h1>
       <TableHealthRecords tHead={tHead} data={healthRecord} />
-      {wallet &&
+        <h1>Notifications</h1>
+        <TableNotifications tHead={tHeadNot} data={notifications} />
+        {wallet &&
         <div>
           <h1>Wallet Amount: {wallet}</h1>
         </div>
       }
-        <h1>Notifications</h1>
-        <TableNotifications tHead={tHeadNot} data={notifications} />
-
 
 
     </div>
