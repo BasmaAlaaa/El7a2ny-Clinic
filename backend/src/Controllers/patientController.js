@@ -3046,6 +3046,25 @@ const sendAppointmentPatientCancelledNotificationEmail = async (req) => {
   }
 };
 
+const updatePrescriptionPaymentMethod = async (req, res) => {
+  const { patientUsername } = req.params;
+  const { paymentMethod } = req.body;
+
+  try {
+    const patient = await patientSchema.findOne({ username: patientUsername });
+    if (!patient) {
+      return res.status(404).send('Patient not found');
+    }
+
+    patient.prescriptionPaymentMethod = paymentMethod;
+    await patient.save();
+
+    res.status(200).send('Prescription payment method updated successfully');
+  } catch (error) {
+    res.status(500).send('Internal Server Error');
+  }
+};
+
 
 
 
@@ -3106,5 +3125,6 @@ module.exports = {
   displayNotifications,
   allFamilyMemberAppointments,
   sendAppointmentPatientRescheduleNotificationEmail,
-  sendAppointmentPatientCancelledNotificationEmail
+  sendAppointmentPatientCancelledNotificationEmail,
+  updatePrescriptionPaymentMethod
 }

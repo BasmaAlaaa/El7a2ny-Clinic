@@ -59,7 +59,8 @@ const {
   displayNotifications,
   allFamilyMemberAppointments,
   sendAppointmentPatientRescheduleNotificationEmail,
-  sendAppointmentPatientCancelledNotificationEmail
+  sendAppointmentPatientCancelledNotificationEmail,
+  updatePrescriptionPaymentMethod
 } = require("../Controllers/patientController");
 
 const router = express.Router();
@@ -221,6 +222,6 @@ router.get("/displayNotifications/:Username", verify, displayNotifications);
 
 router.post("/sendAppointmentPatientRescheduleNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientRescheduleNotificationEmail);
 router.post("/sendAppointmentPatientCancelledNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientCancelledNotificationEmail);
-
+router.put('/updatePrescriptionPaymentMethod/:patientUsername', verify,updatePrescriptionPaymentMethod);
 
 module.exports = router;
