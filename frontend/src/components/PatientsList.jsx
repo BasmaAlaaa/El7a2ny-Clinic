@@ -1,42 +1,59 @@
-import Search from './Search.jsx';
-import Table from './TableRequests.jsx';
-import { useNavigate, useParams } from 'react-router-dom';
-import axios from 'axios';
-import { useEffect, useState } from 'react';
-import search from '../assets/images/svg/search.svg';
-import filter from '../assets/images/svg/filter.svg';
-import NavBar from './NavBar.jsx';
-import TablePatients from './TablePatients.jsx';
-import NavBarDoctor from './NavBarDoctor.jsx';
-
-
+import Search from "./Search.jsx";
+import Table from "./TableRequests.jsx";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import search from "../assets/images/svg/search.svg";
+import filter from "../assets/images/svg/filter.svg";
+import NavBar from "./NavBar.jsx";
+import TablePatients from "./TablePatients.jsx";
+import NavBarDoctor from "./NavBarDoctor.jsx";
+import { set } from "react-hook-form";
 
 function PatientsList() {
-  const [searchText, setSearchText] = useState('');
-  const [filterText, setFilterText] = useState('');
+  const [searchText, setSearchText] = useState("");
+  const [filterText, setFilterText] = useState("");
   const [result, setResult] = useState([]);
   const { username } = useParams();
-
+  const [isLoading, setIsLoading] = useState(true); // New state for loading
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/MyPatients/${username}`, {
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
-    })
-      .then(res => setResult(res.data)).catch(err => console.log(err))
-  }, [])
-  console.log(result)
+    setIsLoading(true); // When the request starts, set isLoading to true
+    const response = axios
+      .get(`http://localhost:4000/Doctor/MyPatients/${username}`, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+      })
+      .then((res) => {
+        setResult(res.data);
+        setIsLoading(false); // Stop loading after data is received
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsLoading(false); // Stop loading if there's an error
+      });
+  }, [username]);
+  console.log(result);
   result.map((e) => {
-    console.log(e)
-  })
+    console.log(e);
+  });
 
   const onFilterValueChanged = (event) => {
     setFilterText(event.target.value);
+  };
+  console.log(filterText);
+  let navigate = useNavigate();
+
+  let tHead = [
+    "Name",
+    "Username",
+    "Email",
+    "View",
+    "Add Prescription",
+    "View Prescriptions",
+  ];
+  if (isLoading) {
+    return <div>Loading...</div>; // Or any other loading indicator like a spinner
   }
-  console.log(filterText)
-  let navigate = useNavigate()
-
-  let tHead = ['Name', 'Username', 'Email', 'View', 'Add Prescription', 'View Prescriptions'];
-
   return (
     <div>
       <NavBarDoctor username={username} />
@@ -45,9 +62,7 @@ function PatientsList() {
         <p className="text-capitalize fs-4 w-25">Patients</p>
         <div className="d-flex flex-row w-75 justify-content-end">
           <div className="input-group w-50">
-            <span
-              className="input-group-text bg-white border-end-0 search"
-            >
+            <span className="input-group-text bg-white border-end-0 search">
               <img src={search} alt="search" />
             </span>
             <input
@@ -61,18 +76,22 @@ function PatientsList() {
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-          <select name='upcomingAppointments' onChange={onFilterValueChanged}>
-            <option value='all'>All</option>
-            <option value='upcoming'>Upcoming</option>
-            <option value='finished'>Finished</option>
-            <option value='running'>Running</option>
-            <option value='following'>Following</option>
-
-
+          <select name="upcomingAppointments" onChange={onFilterValueChanged}>
+            <option value="all">All</option>
+            <option value="upcoming">Upcoming</option>
+            <option value="finished">Finished</option>
+            <option value="running">Running</option>
+            <option value="following">Following</option>
           </select>
         </div>
       </div>
-      <TablePatients username={username} tHead={tHead} data={result} searchText={searchText} filterText={filterText} />
+      <TablePatients
+        username={username}
+        tHead={tHead}
+        data={result}
+        searchText={searchText}
+        filterText={filterText}
+      />
     </div>
   );
 }

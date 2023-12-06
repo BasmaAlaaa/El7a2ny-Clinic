@@ -25,6 +25,7 @@ function DoctorView(){
     const [showContract, setShowContract] = useState(false);
     const[wallet, setWallet] = useState('');
     const [notifications, setNotifications] = useState([]);
+    const [isLoadingNotifications, setIsLoadingNotifications] = useState(true); // State to track loading of notifications
 
 
 
@@ -143,14 +144,28 @@ const handleAddAppointment = (e) => {
     console.log('w',wallet)
   }, []); 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/displayDoctorNotifications/${username}`,{
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    setIsLoadingNotifications(true); // Start loading notifications
+    axios.get(`http://localhost:4000/Doctor/displayDoctorNotifications/${username}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
-      .then(res => setNotifications(res.data.doctorMessages)).catch(err => console.log(err))
-  }, [])
-  console.log('notif', notifications);
+    .then(res => {
+      setNotifications(res.data.doctorMessages);
+      setIsLoadingNotifications(false); // Stop loading after data is received
+    })
+    .catch(err => {
+      console.error(err);
+      setIsLoadingNotifications(false); // Stop loading if there's an error
+    });
+  }, [username]);
+  const renderNotificationsSection = () => {
+    if (isLoadingNotifications) {
+      return <div>Loading notifications...</div>; // Or any loading spinner component
+    } else {
+      return <TableNotifications tHead={tHeadNot} data={notifications} />;
+    }
+  };
 
-
+ 
     return (
         <div>
         <NavBarDoctor username={username}/>
@@ -219,7 +234,8 @@ const handleAddAppointment = (e) => {
   </div>
   }
   <h1>Notifications</h1>
-    <TableNotifications tHead={tHeadNot} data={notifications} />       
+  {renderNotificationsSection()}
+ 
       
         </div>
     )
