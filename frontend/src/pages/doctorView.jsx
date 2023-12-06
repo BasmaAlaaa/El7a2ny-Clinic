@@ -5,7 +5,8 @@ import axios from "axios";
 import NavBarDoctor from "../components/NavBarDoctor";
 import MainBtn from "../components/Button";
 import Contract from '../components/Contract'; 
-
+import Form from '../components/Form.jsx';
+import Validation from '../validate/validate';
 import { useNavigate } from 'react-router-dom';
 import TableNotifications from "../components/TableNotifications";
 
@@ -56,6 +57,7 @@ function DoctorView(){
     // };
     console.log('date format', date)
 const handleAddAppointment = (e) => {
+  e.preventDefault();
   if(date && from){
   const data = {date: date, time:from}
  // try{
@@ -81,27 +83,50 @@ const handleAddAppointment = (e) => {
     };
 
     
-  const updateEmail=() => {
+  const updateEmail=(e) => {
+    e.preventDefault();
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email},
     {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-  .then(res =>setResult(res.data)).catch(err => console.log(err))
-  console.log(result)
+    .then(res => {
+      setResult(res.data);
+      alert('Email updated successfully.');
+    })
+    .catch(err => {
+      console.log(err);
+      alert('Failed to update email.');
+    });
+    console.log(result)
   }
-  const updateHourlyRate=() => {
+  const updateHourlyRate=(e) => {
+    e.preventDefault();
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate},{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-  .then(res =>setResult(res.data)).catch(err => console.log(err))
-  console.log(result)
+    .then(res => {
+      setResult(res.data);
+      alert('Hourly rate updated successfully.');
+    })
+    .catch(err => {
+      console.log(err);
+      alert('Failed to update hourly rate.');
+    });
+      console.log(result)
   }
-  const updateAffiliation=() => {
+  const updateAffiliation=(e) => {
+    e.preventDefault();
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation},{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-  .then(res =>setResult(res.data)).catch(err => console.log(err))
-  console.log(result)
+    .then(res => {
+      setResult(res.data);
+      alert('Affiliation updated successfully.');
+    })
+    .catch(err => {
+      console.log(err);
+      alert('Failed to update affiliation.');
+    });  console.log(result)
   }
   useEffect(() => {
     if (contractInfo) {
@@ -124,7 +149,7 @@ const handleAddAppointment = (e) => {
       .then(res => setNotifications(res.data.doctorMessages)).catch(err => console.log(err))
   }, [])
   console.log('notif', notifications);
-  
+
 
     return (
         <div>
@@ -157,25 +182,37 @@ const handleAddAppointment = (e) => {
               <Contract contract={contractInfo} />
             )}
             
-              
-  <h3><input  type= 'email'  placeholder= 'Enter New Email'  onChange={(e) => setEmail(e.target.value)} />
-  <button onClick={updateEmail}>Update Email</button></h3>
-  <h3><input type="number"  placeholder="Enter New Hourly Rate" onChange={(e) => setHourlyRate(e.target.value)}/>
-  <button onClick={updateHourlyRate}>Update Hourly Rate</button></h3>
-  <h3><input type="text"  placeholder="Enter New Affiliation" onChange={(e) => setAffiliation(e.target.value)}/>
-  <button onClick={updateAffiliation}>Update Affiliation</button></h3>
-  <form>
-    <h3>
-      Add Appointment
-    </h3>
-    <h3>
-    <input  type= 'date' required onChange={(e) => setDate(e.target.value)} />
-    </h3>
-    <h3>
-    <input  type= 'number' placeholder="Time" required onChange={(e) => setFrom(e.target.value)} />
-    </h3>
-    <button onClick={handleAddAppointment}>Add Appointment</button>
-  </form>
+  
+  <form onSubmit={updateEmail}>
+  <h3>
+    <input type='email' required placeholder='Enter New Email' onChange={(e) => setEmail(e.target.value)} />
+    <button type="submit">Update Email</button>
+  </h3>
+</form>
+
+<form onSubmit={updateHourlyRate}>
+  <h3>
+    <input type="number" required placeholder="Enter New Hourly Rate" onChange={(e) => setHourlyRate(e.target.value)} />
+    <button type="submit">Update Hourly Rate</button>
+  </h3>
+</form>
+
+<form onSubmit={updateAffiliation}>
+  <h3>
+    <input type="text" required placeholder="Enter New Affiliation" onChange={(e) => setAffiliation(e.target.value)} />
+    <button type="submit">Update Affiliation</button>
+  </h3>
+</form>
+<form onSubmit={handleAddAppointment}>
+  <h3>
+    <input type='date' required onChange={(e) => setDate(e.target.value)} />
+  </h3>
+  <h3>
+    <input type='number' placeholder="Time" required onChange={(e) => setFrom(e.target.value)} />
+  </h3>
+  <button type="submit">Add Appointment</button>
+</form>
+
   {wallet &&
   <div>
   <h1>Wallet Amount: {wallet}</h1>
