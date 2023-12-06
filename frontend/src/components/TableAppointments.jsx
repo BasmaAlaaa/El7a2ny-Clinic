@@ -6,7 +6,32 @@ import { useState } from 'react';
 
 function CaseTableBody({ data }) {
   let navigate = useNavigate();
-  const[searchDate, setSearchDate] = useState('');
+  
+  const sendNotificationDoctor = () =>{
+    axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorCancelledNotificationEmail/${data.DoctorUsername}/${data._id}`, "", {
+     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+   })
+    .then(res =>navigate(`/appointmentsList/${data.PatientUsername}`)).catch(err => alert('error sending doctor notification'))
+   }
+  const sendNotification = () =>{
+    axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
+     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+   })
+    .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
+   }
+  const createNotification = () =>{
+   axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${data.PatientUsername}`, "", {
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
+ .then(res =>sendNotification).catch(err => alert('error creating notification'))
+}
+const cancelAppointment = () =>{
+   axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
+   headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+ })
+  .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
+  createNotification();
+ }
 
 
   return (
@@ -33,9 +58,7 @@ function CaseTableBody({ data }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        onClick={()=>axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`
-        ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-        .then(res =>console.log(res)).catch(err => console.log(err))}
+        onClick={()=>cancelAppointment}
       >
         Cancel
       </button>

@@ -14,6 +14,24 @@ function PayAppointmentFamily(){
     const [typePay, setTypePay] = useState('');
     const [nationalID, setNationalID] = useState('');
 
+    const sendNotificationDoctor = () =>{
+      axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorNotificationEmail/${usernameDoctor}/${id}`, "", {
+       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+     })
+      .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error sending doctor notification'))
+     }
+      const sendNotification = () =>{
+        const response = axios.post(`http://localhost:4000/Patient/sendAppointmentNotificationEmail/${usernamePatient}/${id}`, "", {
+         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+       })
+        .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
+       }
+      const createNotification = () =>{
+     const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+     .then(res =>sendNotification).catch(err => alert('error creating notification'))
+    }
 
     const handleAdd = (e) => {
         if(cardCVV && cardDate && cardNumber){
@@ -31,11 +49,17 @@ function PayAppointmentFamily(){
         //   }, [])
         const handleBook = () =>{
             const data = {paymentMethod:typePay, familyId: nationalID}
+            if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
+              alert('Missing fields')
+            }
+            else{
          const response = axios.post(`http://localhost:4000/Patient/selectAppointmentDateTimeFamMem/${usernamePatient}/${id}/${usernameDoctor}`, data,  {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
          .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
+         createNotification();
         }
+      }
 
     return (
         <div>
@@ -89,15 +113,6 @@ function PayAppointmentFamily(){
             required={true}
            onChange={(e) => setCardCVV(e.target.value)}
           />
-
-          <div className="mt-3">
-            <MainBtn
-              txt='Add Card'
-              style='green-btn'
-              action={handleAdd}
-              
-            />
-            </div>
 
             </div>
 }       

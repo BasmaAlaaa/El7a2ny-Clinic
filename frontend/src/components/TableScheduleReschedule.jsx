@@ -1,10 +1,35 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function CaseTableBody({ data, appID, patientUsername }) {
+function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
   let navigate = useNavigate();
   console.log('app id', appID);
   console.log('time slot', data._id);
+
+  const sendNotificationDoctor = () =>{
+    axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorRescheduleNotificationEmail/${doctorUsername}/${appID}`, "", {
+     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+   })
+    .then(res =>navigate(`/appointmentsList/${data.PatientUsername}`)).catch(err => alert('error sending doctor notification'))
+   }
+  const sendNotification = () =>{
+    axios.post(`http://localhost:4000/Patient/sendAppointmentPatientRescheduleNotificationEmail/${patientUsername}/${appID}`, "", {
+     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+   })
+    .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
+   }
+  const createNotification = () =>{
+   axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${patientUsername}`, "", {
+  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+})
+ .then(res =>sendNotification).catch(err => alert('error creating notification'))
+}
+const rescheduleAppointment = () =>{
+  axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
+  ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
+  .then(res =>alert('appointment rescheduled')).catch(err => alert('error rescheduling appointment'));
+  createNotification();
+}
 
   return (
     <>
@@ -17,9 +42,7 @@ function CaseTableBody({ data, appID, patientUsername }) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        onClick={()=>axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
-        ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-        .then(res =>console.log(res)).catch(err => console.log(err))}
+        onClick={()=>rescheduleAppointment}
       >
         Book
       </button>
@@ -44,7 +67,7 @@ function CaseTableBody({ data, appID, patientUsername }) {
 //   );
 // }
 
-function TableScheduleReschedule({ tHead, data, appID, patientUsername }) {
+function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUsername }) {
   console.log('haayaa', data)
 
   return (
@@ -61,7 +84,7 @@ function TableScheduleReschedule({ tHead, data, appID, patientUsername }) {
           {data && data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} appID={appID} patientUsername={patientUsername}/>
+                <CaseTableBody data={e} appID={appID} patientUsername={patientUsername} doctorUsername={doctorUsername}/>
             </tr>
           ))}
         </tbody>
