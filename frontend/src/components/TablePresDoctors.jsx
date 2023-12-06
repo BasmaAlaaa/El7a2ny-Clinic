@@ -1,13 +1,30 @@
+import { useNavigate, useParams } from 'react-router-dom';
+
 function CaseTableBody({ data }) {
+  const navigate = useNavigate();
+  console.log("pres id", data._id);
+  console.log("Data object:", data);
+
+  const updateLink = data.Filled === 'false' ? (
+    <span
+      style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+      onClick={() =>
+        navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)
+      }
+    >
+      Update
+    </span>
+  ) : (
+    <span style={{ color: 'gray' }}>Update (Filled)</span>
+  );
 
   return (
     <>
       {data.PatientUsername && <th>{data.PatientUsername}</th>}
       {data.Date && <td>{data.Date.substring(0, 10)}</td>}
       {data.Description && <td>{data.Description}</td>}
-      {data.Filled && (
-        <td>{data.Filled === "true" ? "Filled" : "Unfilled"}</td>
-      )}
+      {data.Filled && <td>{data.Filled === 'true' ? 'Filled' : 'Unfilled'}</td>}
+      <td>{updateLink}</td>
     </>
   );
 }
@@ -30,9 +47,9 @@ function TablePresDoctors({ tHead, data, searchText, filterText, searchDate }) {
             .filter((e) => {
               return (
                 filterText === "" ||
-                filterText.toLowerCase() === "all" ?
-                e :
-                filterText.toLowerCase() === "filled" ? e.Filled : !e.Filled
+                  filterText.toLowerCase() === "all" ?
+                  e :
+                  filterText.toLowerCase() === "filled" ? e.Filled : !e.Filled
               );
             })
             .filter((e) => {
