@@ -131,7 +131,7 @@ const handleAddAppointment = (e) => {
         <NavBarDoctor username={username}/>
         <div>
             <MainBtn
-              txt="View All Patients"
+              txt="My Patients"
               style="green-btn"
               action={() => navigate(`/patientsList/${username}`)}
               key="navBtn"
@@ -139,7 +139,7 @@ const handleAddAppointment = (e) => {
           </div>
           <div>
             <MainBtn
-              txt="View All Appointments"
+              txt="My Appointments"
               style="green-btn"
               action={() => navigate(`/appointmentsListDoctor/${username}`)}
               key="navBtn"
