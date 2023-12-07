@@ -1059,6 +1059,7 @@ const ViewAllPres = async (req, res) => {
   }
 };
 
+
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
   const { username,PatientUsername } = req.params; // doctor username
@@ -1105,6 +1106,7 @@ const addPatientPrescription = async (req, res) => {
     }
   }
 }
+
 
 
 // update a patient's prescription
@@ -1172,6 +1174,7 @@ const updatePatientPrescription = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error.' });
   }
 };
+
 
 const pharmacyAPIUrl = 'http://localhost:8001';
 
