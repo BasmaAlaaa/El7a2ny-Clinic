@@ -105,7 +105,7 @@ router.get('/doctorPastApp/:Username', verify, doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps);
 
 //Req 53: add/update dosage for each medicine added to the prescription 
-router.post('/updateDosage/:DoctorUsername', verify, updateDosage);
+router.post('/updateDosage/:DoctorUsername/:prescriptionId', verify, updateDosage);
 
 // Define route for accepting follow-up request
 

@@ -855,37 +855,43 @@ const createAvailableApps = async (req, res) => {
 
 
 //Req 53: add/update dosage for each medicine added to the prescription 
-
 const updateDosage = async (req, res) => {
-  const { DoctorUsername } = req.params;
+  const { DoctorUsername, prescriptionId } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  // Check if the logged-in user is the same as the DoctorUsername
   if (!(req.user.Username === DoctorUsername)) {
-    res.status(403).json("You are not logged in!");
-  } else {
-    try {
-      const { newDosage } = req.body;
+    return res.status(403).json("You are not authorized to perform this action!");
+  }
 
-      if (!DoctorUsername || newDosage === undefined || newDosage === null) {
-        return res.status(400).json({ error: 'DoctorUsername and newDosage are required parameters.' });
-      }
+  try {
+    const { newDosage } = req.body;
 
-      const prescriptions = await Prescription.find({ DoctorUsername: DoctorUsername });
-
-      if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
-      }
-
-      const updatedPrescriptions = await Promise.all(prescriptions.map(async (prescription) => {
-        prescription.Dose = newDosage;
-        return await prescription.save();
-      }));
-
-      return res.status(200).json({ updatedPrescriptions });
-    } catch (error) {
-      return res.status(500).json({ error: `Error updating dosage: ${error.message}` });
+    // Check if the necessary parameters are provided
+    if (!DoctorUsername || !prescriptionId || newDosage === undefined || newDosage === null) {
+      return res.status(400).json({ error: 'Required parameters are missing.' });
     }
+
+    // Find the specific prescription
+    const prescription = await Prescription.findOne({
+      _id: prescriptionId,
+      DoctorUsername: DoctorUsername
+    });
+
+    // Check if the prescription exists
+    if (!prescription) {
+      return res.status(404).json({ error: 'Prescription not found.' });
+    }
+
+    // Update the dosage
+    prescription.Dose = newDosage;
+    const updatedPrescription = await prescription.save();
+
+    return res.status(200).json({ success: 'Dosage updated successfully.', updatedPrescription });
+  } catch (error) {
+    return res.status(500).json({ error: `Error updating dosage: ${error.message}` });
   }
 };
 
