@@ -110,9 +110,9 @@ router.post('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName
 
 // Define route for accepting follow-up request
 
-router.post('/acceptFollowUpRequest/:AppointmentId/:DoctorUsername',verify, acceptFollowUpRequest);
+router.post('/acceptFollowUpRequest/:DoctorUsername/:AppointmentId',verify, acceptFollowUpRequest);
 // Define route for accepting follow-up request
-router.post('/rejectFollowUpRequest/:AppointmentId/:DoctorUsername',verify, rejectFollowUpRequest);
+router.post('/rejectFollowUpRequest/:DoctorUsername/:AppointmentId',verify, rejectFollowUpRequest);
 
 
 // Define a route to trigger the download
