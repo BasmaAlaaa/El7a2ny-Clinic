@@ -420,7 +420,7 @@ const PatientsUpcoming = async (req, res) => {
       // Find upcoming appointments for the doctor
       const upcomingAppointments = await appointmentSchema.find({
         DoctorUsername: Username,
-        Status: { $in: ["Upcoming", "Following", "upcoming", "following"] }, // Adjust this condition based on your schema
+        Status: { $in: ["Upcoming", "Follow-up", "upcoming", "follow-up"] }, // Adjust this condition based on your schema
         PatientUsername: { $in: patientsUsernames }
       }, { PatientUsername: 1, Date: 1, Status: 1, _id: 0 });
 
@@ -769,7 +769,7 @@ const scheduleFollowUp = async (req, res) => {
         Time: time,
         DoctorUsername: DoctorUsername,
         PatientUsername: PatientUsername,
-        Status: "Following",
+        Status: "Follow-up",
         PaymentMethod: null,
         Price: 0,
         Name: patient.Name
@@ -805,7 +805,7 @@ const doctorPastApp = async (req, res) => {
       // Find upcoming appointments for the doctor
       const pastAppointments = await appointmentSchema.find({
         DoctorUsername: Username,
-        Status: { $in: ["Finished", "Following", "finished", "following"] }, // Adjust this condition based on your schema
+        Status: { $in: ["Finished", "Follow-up", "finished", "follow-up"] }, // Adjust this condition based on your schema
         PatientUsername: { $in: patientsUsernames }
       }, { PatientUsername: 1, Date: 1, Status: 1, _id: 0, Time: 1 });
 
@@ -1291,8 +1291,8 @@ const rescheduleAppointmentPatient = async (req, res) => {
               const selectedAppointmentDate = selectedAppointment.Date;
               const selectedAppointmentTime = selectedAppointment.Time;
 
-      // Check if the selected appointment is upcoming or following
-      if (['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
+      // Check if the selected appointment is upcoming or follow-up
+      if (['Upcoming', 'upcoming', 'Follow-up', 'follow-up'].includes(selectedAppointment.Status)) {
         if(['Upcoming', 'upcoming'].includes(selectedAppointment.Status)){
 
         const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
@@ -1349,7 +1349,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
 
 
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment});
-      } else if(['Following', 'following'].includes(selectedAppointment.Status)){
+      } else if(['Follow-up', 'follow-up'].includes(selectedAppointment.Status)){
         let newAppointment1;
         const found = false;
         for(const slot of doctorAvailableTimeSlots){
@@ -1378,7 +1378,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
         }
       } 
       } else {
-        return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for Upcoming or following appointments.' });
+        return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for upcoming or follow-up appointments.' });
       }
     } catch (error) {
       console.error(error);
@@ -1412,8 +1412,8 @@ const cancelAppointmentPatient = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
     }
 
-    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    if (!['Upcoming', 'upcoming', 'Follow-up', 'follow-up'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for upcoming or follow-up appointments.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -1492,8 +1492,8 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
     }
 
-    if (!['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for Upcoming or following appointments.' });
+    if (!['Upcoming', 'upcoming', 'Follow-up', 'follow-up'].includes(selectedAppointment.Status)) {
+      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for upcoming or follow-up appointments.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -1559,7 +1559,7 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
 
 const createDoctorAppointmentNotifications = async () => {
   try {
-    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Following","following","upcoming"] } });
+    const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Follow-up","follow-up","upcoming"] } });
     const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
     const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
 
@@ -1763,7 +1763,7 @@ const sendAppointmentDoctorCancelledNotificationEmail = async (req) => {
     const subject = 'Appointment Cancelled';
     const text = `Dear ${DoctorUsername},
 
-    We're sorry to inform you that the following appointment has been Cancelled:
+    We're sorry to inform you that the following appointment has been cancelled:
 
     - Patient: ${PatientUsername}
     - Date: ${Date}

@@ -195,7 +195,7 @@ router.post(
   requestFollowUpAppointment
 );
 router.post(
-  "/requestFollowUpForFamilyMember/:patientusername/:doctorUsername",verify ,
+  "/requestFollowUpForFamilyMember/:username/:appointmentId",verify ,
   requestFollowUpForFamilyMember
 );
 
