@@ -1,6 +1,5 @@
 import { useNavigate } from 'react-router-dom';
 
-
 function CaseTableBody({ data }) {
   let navigate = useNavigate()
   console.log("pres id", data.prescriptionID)

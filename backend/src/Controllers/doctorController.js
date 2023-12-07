@@ -1108,54 +1108,69 @@ const addPatientPrescription = async (req, res) => {
 
 // update a patient's prescription
 const updatePatientPrescription = async (req, res) => {
+  console.log('im here')
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
   if (!(req.user.Username === DoctorUsername)) {
-    res.status(403).json("You are not logged in!");
-  } else {
-    try {
-      const { updatedDescription, updatedDose } = req.body;
+    return res.status(403).json("You are not logged in!");
+  }
 
-      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
-      if (!doctor) {
-        return res.status(404).json({ error: 'Doctor not found.' });
-      }
+  try {
+    const { updatedDescription, updatedDose } = req.body;
 
-      const patient = await patientSchema.findOne({ Username: PatientUsername });
-      if (!patient) {
-        return res.status(404).json({ error: 'Patient not found.' });
-      }
+    console.log('Updating prescription:', {
+      DoctorUsername,
+      PatientUsername,
+      prescriptionId,
+      updatedDescription,
+      updatedDose,
+    });
 
-      const prescription = await Prescription.findOne({
-        _id: prescriptionId,
-        DoctorUsername: DoctorUsername,
-        PatientUsername: PatientUsername,
-      });
-
-      if (!prescription) {
-        return res.status(404).json({ error: 'Prescription not found or does not belong to the specified doctor and patient.' });
-      }
-
-      if (updatedDescription) {
-        prescription.Description = updatedDescription;
-      }
-
-      if (updatedDose) {
-        prescription.Dose = updatedDose;
-      }
-
-      const updatedPrescription = await prescription.save();
-
-      return res.status(200).json({ success: 'Prescription updated successfully.', updatedPrescription });
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Internal server error.' });
+    const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+    if (!doctor) {
+      return res.status(404).json({ error: 'Doctor not found.' });
     }
+
+    const patient = await patientSchema.findOne({ Username: PatientUsername });
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found.' });
+    }
+
+    const prescription = await Prescription.findOne({
+      _id: prescriptionId,
+      DoctorUsername: DoctorUsername,
+      PatientUsername: PatientUsername,
+      Filled: false, // Only update if the prescription is unfilled
+    });
+
+    if (!prescription) {
+      return res.status(404).json({
+        error: 'Prescription not found or does not belong to the specified doctor and patient, or it is already filled.',
+      });
+    }
+
+    if (updatedDescription) {
+      prescription.Description = updatedDescription;
+    }
+
+    if (updatedDose) {
+      prescription.Dose = updatedDose;
+    }
+
+    const updatedPrescription = await prescription.save();
+
+    return res.status(200).json({
+      success: 'Prescription updated successfully.',
+      updatedPrescription,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error.' });
   }
 };
-
 
 const pharmacyAPIUrl = 'http://localhost:8001';
 

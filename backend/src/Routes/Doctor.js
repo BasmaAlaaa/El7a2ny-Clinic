@@ -124,8 +124,8 @@ router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPat
 
 router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
 
-// update patient prescription
-router.put('/updatePatientPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
+// Update the route path to match your frontend
+router.put('/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
 
 router.post('/DeleteMedecineFromPrescription',DeleteMedecineFromPrescription);
 
