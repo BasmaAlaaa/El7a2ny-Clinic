@@ -2218,66 +2218,50 @@ const AddRefundForPatient = async (req, res) => {
 
 
 // Req 64 Requesting a follow-up for a previous app (himself)
-
 const requestFollowUpAppointment = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { username, appointmentId } = req.params;
-  if (!(req.user.Username === username)) {
-    res.status(403).json("You are not logged in!");
-  } else {
-    try {
-      const { Date, Time } = req.body;
+  try {
+    const { username, appointmentId } = req.params;
 
-      // Find the patient by username
-      const patient = await patientSchema.findOne({ Username: username });
+    const previousAppointment = await Appointment.findOne({ _id: appointmentId });
 
-      if (!patient) {
-        return res.status(404).json({ success: false, message: 'Patient not found.' });
-      }
-
-      // Find the previous appointment by ID
-      const previousAppointment = await appointmentSchema.findById(appointmentId);
-
-      if (!previousAppointment) {
-        return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
-      }
-
-      // Check if the patient is associated with the previous appointment
-      if (previousAppointment.PatientUsername !== patient.Username) {
-        return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-      }
-
-      // Check if the previous appointment is completed or following
-      if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
-        // Save the follow-up request details in the database
-        previousAppointment.FollowUpRequest = {
-          Date,
-          Time,
-          Status: 'A new follow-up is Requested'
-        };
-
-        // Update the patient's status to 'Requested' 
-        previousAppointment.Status = 'Requesting';
-
-        // Save the updated patient and appointment
-        previousAppointment.save();
-
-
-        return res.status(200).json({ success: true, message: 'A new Follow-up appointment is requested successfully.' });
-      } else {
-        return res.status(400).json({ success: false, message: 'Follow-up appointment can only be requested for completed or following appointments.' });
-      }
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+    if (!previousAppointment) {
+      return res.status(404).json({ error: 'Previous appointment not found.' });
     }
+
+    if (previousAppointment.PatientUsername !== username) {
+      return res.status(403).json({ error: 'You do not have permission to request a follow-up for this appointment.' });
+    }
+
+    const { date, time, followUpName } = req.body; 
+
+    if (!date || !time || !followUpName) {
+      return res.status(400).json({ error: 'Please provide date, time, and follow-up name.' });
+    }
+
+    const followUpAppointment = new Appointment({
+      Date: date,
+      DoctorUsername: previousAppointment.DoctorUsername,
+      PatientUsername: username,
+      Status: 'Requested',
+      Price: previousAppointment.Price,
+      Time: time,
+      Name: followUpName,
+      ForPatient: true,
+    });
+
+    await followUpAppointment.save();
+
+    return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error.' });
   }
 };
 
 // Req 64 Requesting a follow-up for a previous appointment (family member)
-
 const requestFollowUpForFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -2362,7 +2346,7 @@ const requestFollowUpForFamilyMember = async (req, res) => {
   }
 };
 
-
+// view all patient prescriptions
 const ViewAllPres = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
