@@ -855,13 +855,12 @@ const createAvailableApps = async (req, res) => {
 
 
 //Req 53: add/update dosage for each medicine added to the prescription 
-const updateDosage = async (req, res) => {
-  const { DoctorUsername, prescriptionId } = req.params;
+const updateMedicineDosage = async (req, res) => {
+  const { DoctorUsername, prescriptionId, medicineName } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  // Check if the logged-in user is the same as the DoctorUsername
   if (!(req.user.Username === DoctorUsername)) {
     return res.status(403).json("You are not authorized to perform this action!");
   }
@@ -869,31 +868,37 @@ const updateDosage = async (req, res) => {
   try {
     const { newDosage } = req.body;
 
-    // Check if the necessary parameters are provided
-    if (!DoctorUsername || !prescriptionId || newDosage === undefined || newDosage === null) {
+    if (!DoctorUsername || !prescriptionId || !medicineName || newDosage === undefined) {
       return res.status(400).json({ error: 'Required parameters are missing.' });
     }
 
-    // Find the specific prescription
     const prescription = await Prescription.findOne({
       _id: prescriptionId,
       DoctorUsername: DoctorUsername
     });
 
-    // Check if the prescription exists
     if (!prescription) {
       return res.status(404).json({ error: 'Prescription not found.' });
     }
 
+    // Find the specific medicine within the prescription
+    const medicineToUpdate = prescription.medicines.find(med => med.name === medicineName);
+
+    if (!medicineToUpdate) {
+      return res.status(404).json({ error: 'Medicine not found in the prescription.' });
+    }
+
     // Update the dosage
-    prescription.Dose = newDosage;
+    medicineToUpdate.dosage = newDosage;
+
     const updatedPrescription = await prescription.save();
 
-    return res.status(200).json({ success: 'Dosage updated successfully.', updatedPrescription });
+    return res.status(200).json({ success: 'Medicine dosage updated successfully.', updatedPrescription });
   } catch (error) {
-    return res.status(500).json({ error: `Error updating dosage: ${error.message}` });
+    return res.status(500).json({ error: `Error updating medicine dosage: ${error.message}` });
   }
 };
+
 
 //Req 59: download selected prescription (PDF) 
 const downloadPrescriptionPDF = async (req, res) => {
@@ -934,7 +939,6 @@ const downloadPrescriptionPDF = async (req, res) => {
         pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
         pdfDoc.text(`Description: ${prescription.Description}`);
         pdfDoc.text(`Date: ${prescription.Date}`);
-        pdfDoc.text(`Dose: ${prescription.Dose}`);
         pdfDoc.text('-----------------------------------------');
       });
 
@@ -1070,9 +1074,9 @@ const addPatientPrescription = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      const { description, date, appointmentID, dose } = req.body;
+      const { description, date, appointmentID } = req.body;
 
-      if (!username || !PatientUsername || !description || !date || !appointmentID || !dose) {
+      if (!username || !PatientUsername || !description || !date || !appointmentID ) {
         return res.status(400).json({ error: 'All fields must be filled.' });
       }
 
@@ -1092,8 +1096,7 @@ const addPatientPrescription = async (req, res) => {
         Description: description,
         Date: date,
         Appointment_ID: appointmentID,
-        Filled: false,
-        Dose: dose,
+        Filled: false
       });
 
       patient.PatientPrescriptions.push(prescription._id);
@@ -1884,7 +1887,7 @@ module.exports = {
   scheduleFollowUp,
   doctorPastApp,
   createAvailableApps,
-  updateDosage,
+  updateMedicineDosage,
   downloadPrescriptionPDF,
   acceptFollowUpRequest,
   rejectFollowUpRequest,
