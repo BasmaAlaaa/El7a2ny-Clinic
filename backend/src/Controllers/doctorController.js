@@ -1418,7 +1418,7 @@ const cancelAppointmentPatient = async (req, res) => {
     }
 
     if (!['Upcoming', 'upcoming', 'Follow-up', 'follow-up'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for upcoming or follow-up appointments.' });
+      return res.status(400).json({ success: false, message: 'Can only cancel upcoming or follow-up appointments.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -1457,15 +1457,15 @@ const cancelAppointmentPatient = async (req, res) => {
       matchingTimeSlot.Status = 'available';
     }
 
-    // Update existing appointment status to 'canceled'
-    selectedAppointment.Status = 'Canceled';
+    // Update existing appointment status to 'cancelled'
+    selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
     //await Promise.all([selectedAppointment.save(), doctor.save()]);
 
-    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
+    return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: 'Internal server error.' });
@@ -1543,15 +1543,15 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
       matchingTimeSlot.Status = 'available';
     }
 
-    // Update existing appointment status to 'canceled'
-    selectedAppointment.Status = 'Canceled';
+    // Update existing appointment status to 'cancelled'
+    selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
     //await Promise.all([selectedAppointment.save(), doctor.save()]);
 
-    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
+    return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: 'Internal server error.' });
@@ -1565,7 +1565,7 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
 const createDoctorAppointmentNotifications = async () => {
   try {
     const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Follow-up", "follow-up", "upcoming"] } });
-    const canceledAppointments = await Appointment.find({ Status: { $in: ["Canceled"] } });
+    const cancelledAppointments = await Appointment.find({ Status: { $in: ["Cancelled"] } });
     const rescheduledAppointments = await Appointment.find({ Status: { $in: ["Rescheduled"] } });
 
     // Handle upcoming appointments
@@ -1586,19 +1586,19 @@ const createDoctorAppointmentNotifications = async () => {
       }
     }
 
-    // Handle canceled appointments
-    for (const appointment of canceledAppointments) {
-      const existingDoctorNotificationCa = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.` });
+    // Handle cancelled appointments
+    for (const appointment of cancelledAppointments) {
+      const existingDoctorNotificationCa = await Notification.findOne({ type: "Appointment", DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been cancelled.` });
       if (!existingDoctorNotificationCa) {
         const newNotification = await Notification.create({
           type: "Appointment",
           username: `${appointment.DoctorUsername}`,
-          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been canceled.`,
+          DoctorMessage: `Appointment with patient ${appointment.PatientUsername} on ${appointment.Date} has been cancelled.`,
         });
         await newNotification.save();
-        console.log('Canceled appointment notification added');
+        console.log('Cancelled appointment notification added');
       } else {
-        console.log('Canceled appointment notification already exists');
+        console.log('Cancelled appointment notification already exists');
       }
     }
 
