@@ -108,10 +108,10 @@ router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps)
 router.post('/updateDosage/:DoctorUsername', verify, updateDosage);
 
 // Define route for accepting follow-up request
-router.post('/acceptFollowUpRequest/:DoctorUsername/:PatientUsername',verify, acceptFollowUpRequest);
 
+router.post('/acceptFollowUpRequest/:AppointmentId/:DoctorUsername',verify, acceptFollowUpRequest);
 // Define route for accepting follow-up request
-router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername',verify, rejectFollowUpRequest);
+router.post('/rejectFollowUpRequest/:AppointmentId/:DoctorUsername',verify, rejectFollowUpRequest);
 
 
 // Define a route to trigger the download

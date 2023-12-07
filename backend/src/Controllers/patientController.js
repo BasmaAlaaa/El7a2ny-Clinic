@@ -2224,9 +2224,12 @@ const requestFollowUpAppointment = async (req, res) => {
 
   try {
     const { username, appointmentId } = req.params;
+    console.log("username: ", username);
+    console.log("appointmentId: ", appointmentId);
 
     const previousAppointment = await Appointment.findOne({ _id: appointmentId });
-
+    console.log("Previous appointment", previousAppointment);
+    console.log("Previous appointment Price", previousAppointment.Price);
     if (!previousAppointment) {
       return res.status(404).json({ error: 'Previous appointment not found.' });
     }
@@ -2261,23 +2264,27 @@ const requestFollowUpAppointment = async (req, res) => {
   }
 };
 
+
+
 // Req 64 Requesting a follow-up for a previous appointment (family member)
 const requestFollowUpForFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { patientusername, doctorUsername } = req.params;
+  console.log("patientusername: ", patientusername);
+  console.log("doctorUsername: ", doctorUsername);
 
-
-  if (!(req.user.Username === username)) {
+  if (!(req.user.Username === patientusername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
       const { familyMemberName, Date, Time } = req.body;
-
+      console.log("familyMemberName: ", familyMemberName);
+      console.log("Date: ", Date);
+      console.log("Time: ", Time);
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username: patientusername });
-
       if (!patient) {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
@@ -2286,10 +2293,10 @@ const requestFollowUpForFamilyMember = async (req, res) => {
       if (patient.FamilyMembers.length === 0) {
         return res.status(403).json({ success: false, message: 'Patient has no family members.' });
       }
-
       // Check if the specified family member exists for the patient
-      const familyMember = patient.FamilyMembers.find(member => member.Name === familyMemberName);
-
+      //const familyMember = patient.FamilyMembers.find(member => member.Name === familyMemberName);
+      const familyMember = patient.FamilyMembers.find(member => member === familyMemberName);
+      console.log("familyMember IS: ", familyMember);
       if (!familyMember) {
         return res.status(404).json({ success: false, message: 'Family member not found for the patient.' });
       }
@@ -2299,31 +2306,28 @@ const requestFollowUpForFamilyMember = async (req, res) => {
         DoctorUsername: doctorUsername,
         PatientUsername: patient.Username,
       });
-
+      console.log("previousAppointment: ", previousAppointment);
       if (!previousAppointment) {
         return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
       }
-
       // Check if the patient or family member is associated with the previous appointment
       if (
         previousAppointment.PatientUsername !== patient.Username &&
         previousAppointment.PatientUsername !== familyMember.Name
       ) {
-        return res
-          .status(403)
-          .json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
+        return res.status(403).json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
       }
-
       // Check if the previous appointment is completed or following
       if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
         // Save the follow-up request details in the database
+        console.log("Fam MEM: ", familyMember.Name);
         previousAppointment.FollowUpRequest = {
           Date,
           Time,
           Status: 'Requested',
           RequestingFamilyMember: familyMember.Name,
         };
-
+        console.log("3 weselna")
         // Update the appointment's status to 'Requested'
         previousAppointment.Status = 'Requesting';
 
@@ -2345,6 +2349,8 @@ const requestFollowUpForFamilyMember = async (req, res) => {
     }
   }
 };
+
+
 
 // view all patient prescriptions
 const ViewAllPres = async (req, res) => {

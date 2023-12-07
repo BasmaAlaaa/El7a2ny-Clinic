@@ -950,37 +950,34 @@ const downloadPrescriptionPDF = async (req, res) => {
 };
 
 // Req 65 Accept a follow-up request
-
 const acceptFollowUpRequest = async (req, res) => {
-  const { DoctorUsername, PatientUsername } = req.params;
-
+  const { AppointmentId, DoctorUsername } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+    console.error('Invalid ObjectId format for AppointmentId');
+    return;
+  }
+  console.log('DoctorUsername:', DoctorUsername);
+  console.log('AppointmentId:', AppointmentId);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      // Find the doctor by username
-      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
-
-      if (!doctor) {
-        return res.status(404).json({ success: false, message: 'Doctor not found.' });
-      }
-
-      // Find the appointment by patient username
-      const appointment = await appointmentSchema.findOne({ PatientUsername: PatientUsername });
+       // Find the appointment by patient username
+       const appointment = await appointmentSchema.findById( AppointmentId );
 
       if (!appointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
-
+      console.log(appointment.Status);
       // Check if the appointment is in the 'Requesting' status
-      if (appointment.Status === 'Requesting' || appointment.Status === 'requesting') {
+      if (appointment.Status === 'Requesting' || appointment.Status === 'requesting'|| appointment.Status === 'Following' || appointment.Status === 'following' || appointment.Status === 'Requested' || appointment.Status === 'requested') {
+        console.log(appointment.Status);
         // Update the appointment status to 'Upcoming' or any appropriate status
         appointment.Status = 'Upcoming'; // You can set it to 'Upcoming' or any other status as needed
         // Save the updated appointment
         await appointment.save();
-
         return res.status(200).json({ success: true, message: 'Follow-up appointment request accepted successfully.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the requesting status.' });
@@ -996,36 +993,34 @@ const acceptFollowUpRequest = async (req, res) => {
 // Req 65 reject a follow-up request
 
 const rejectFollowUpRequest = async (req, res) => {
-  const { DoctorUsername, PatientUsername } = req.params;
-
+  const { AppointmentId, DoctorUsername } = req.params;
+  if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
+    console.error('Invalid ObjectId format for AppointmentId');
+    return;
+  }
+  console.log('DoctorUsername:', DoctorUsername);
+  console.log('AppointmentId:', AppointmentId);
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      // Find the doctor by username
-      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
-
-      if (!doctor) {
-        return res.status(404).json({ success: false, message: 'Doctor not found.' });
-      }
-
-      // Find the appointment by patient username
-      const appointment = await appointmentSchema.findOne({ PatientUsername: PatientUsername });
+       // Find the appointment by patient username
+       const appointment = await appointmentSchema.findById( AppointmentId );
 
       if (!appointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
-
+      console.log(appointment.Status);
       // Check if the appointment is in the 'Requesting' status
-      if (appointment.Status === 'Requesting' || appointment.Status === 'requesting') {
-        // Update the appointment status to 'Canceled' or any appropriate status
-        appointment.Status = 'Canceled'; // You can set it to 'Canceled' or any other status as needed
+      if (appointment.Status === 'Requesting' || appointment.Status === 'requesting'|| appointment.Status === 'Following' || appointment.Status === 'following' || appointment.Status === 'Requested' || appointment.Status === 'requested') {
+        console.log(appointment.Status);
+        // Update the appointment status to 'Upcoming' or any appropriate status
+        appointment.Status = 'Cancelled'; // You can set it to 'Upcoming' or any other status as needed
         // Save the updated appointment
         await appointment.save();
-
-        return res.status(200).json({ success: true, message: 'Follow-up appointment request rejected successfully.' });
+        return res.status(200).json({ success: true, message: 'Follow-up appointment request cancelled successfully.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the requesting status.' });
       }
@@ -1060,8 +1055,8 @@ const ViewAllPres = async (req, res) => {
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
-  const { username } = req.params; // doctor username
-  const { PatientUsername } = req.params;
+  const { username,PatientUsername } = req.params; // doctor username
+  console.log(req.user.Username)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
@@ -1809,7 +1804,7 @@ const sendAppointmentDoctorNotificationEmail = async (req) => {
       return;
     }
 
-    const { PatientUsername, DoctorUsername, Date, RescheduleReason } = appointment;
+    const { PatientUsername, DoctorUsername, Date} = appointment;
     const Doctor = require('../Models/Doctor'); // Adjust the model path accordingly
     const doctor = await Doctor.findOne({ Username: DoctorUsername });
 
