@@ -44,6 +44,7 @@ import HealthPackagesListFam from './components/HealthPackagesListFam';
 import HealthPackageInfoFam from './pages/healthPackageInfoFam';
 import RescheduleAppointment from './pages/rescheduleAppointment';
 import NotificationsPatient from './pages/notificationsPatient';
+import UpdatePackage from './pages/updatePackage';
 
 
 function App() {
@@ -68,6 +69,7 @@ function App() {
           <Route exact path="/doctorView/:username" element={<DoctorView />} />
           <Route path="/doctor/:username/contract" element={<ContractView />} />
           <Route exact path="/managePackages/:username" element={<ManagePackages />} />
+          <Route exact path="/updatePackage/:username" element={<UpdatePackage />} />
           <Route exact path="/removeUser/:username" element={<RemoveUser />} />
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
           <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />

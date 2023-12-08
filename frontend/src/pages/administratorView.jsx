@@ -70,31 +70,6 @@ let navigate = useNavigate()
   return (
     <div>
         <NavBarAdministrator username={username}/>
-        <div>
-            <MainBtn
-              txt="Add Administrator"
-              style="green-btn"
-              action={() => navigate(`/addAdministrator/${username}`)}
-              key="navBtn"
-            />
-          </div>
-          <div>
-            <MainBtn
-              txt="Manage Health Packages"
-              style="green-btn"
-              action={() => navigate(`/managePackages/${username}`)}
-              key="navBtn"
-            />
-          </div>
-          <div>
-            <MainBtn
-              txt="Remove User"
-              style="green-btn"
-              action={() => navigate(`/removeUser/${username}`)}
-              key="navBtn"
-            />
-            
-          </div>
 
     <div className="d-flex justify-content-between flex-row">
       <p className="text-capitalize fs-4 w-25">Doctors Requests</p>

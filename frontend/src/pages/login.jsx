@@ -64,16 +64,6 @@ function Login() {
             type='password'
             onChange={(e) => setPassword(e.target.value)}
           />
-      
-
-        {/* {type == 'register' && (
-          <p className="text-center mt-3 small-txt">
-            By Creating an account you agree to our
-            <a className="green-txt"> Terms of use </a>
-            and
-            <a className="green-txt"> Privacy Policy</a>
-          </p>
-        )} */}
 
           <div className="mt-3">
             <MainBtn
@@ -85,15 +75,6 @@ function Login() {
           </div>
 
         <p className="text-center mt-3 small-txt">
-          {/* {type == 'register' ? (
-            <>
-              Have an account?
-              <Link to="/" className="green-txt">
-                {' '}
-                Login
-              </Link>
-            </>
-          ) : type == 'login' ? ( */}
             <>
               Forgot Password?
               <Link to="/forgotpassword" className="green-txt">
@@ -101,9 +82,6 @@ function Login() {
                 Reset Password
               </Link>
             </>
-          {/* ) : (
-            ''
-          )} */}
         </p>
       </div>
     </form>
