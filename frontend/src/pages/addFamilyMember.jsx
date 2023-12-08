@@ -26,7 +26,7 @@ function AddFamilyMember() {
   //     action: handleSubmit(),
   //   },
   // ];
-
+  const navigate = useNavigate();
   const {username} = useParams()
 
   const [name, setName] = useState('');
@@ -62,12 +62,11 @@ function AddFamilyMember() {
   return (
     <div>
       <NavBarPatient username={username}/>
-      <div  style={{ display: 'flex', flexDirection: 'row', marginRight: '10px', marginLeft: '10px', width: '1400px' }}>
+
     <form
-        style={{ width: '50%' }}
         className="d-flex justify-content-center"
       >
-        <div className="form-width">
+        <div style={{ width: '30%' }} className="form-width">
           <p className="text-capitalize fs-4">Add Family Member</p>
 
           <Input
@@ -116,11 +115,9 @@ function AddFamilyMember() {
         </div>
       </form>
       <form
-      style={{ width: '50%' }}
         className="d-flex justify-content-center"
-        
       >
-        <div className="form-width">
+        <div style={{ width: '30%' }} className="form-width">
           <p className="text-capitalize fs-4">Link Patient as Family Member</p>
 
           <Input
@@ -149,7 +146,6 @@ function AddFamilyMember() {
         </div>
       </form>
       </div>
-    </div>
   );
 }
 export default AddFamilyMember;
