@@ -45,6 +45,7 @@ import HealthPackageInfoFam from './pages/healthPackageInfoFam';
 import RescheduleAppointment from './pages/rescheduleAppointment';
 import NotificationsPatient from './pages/notificationsPatient';
 import UpdatePackage from './pages/updatePackage';
+import ManageProfile from './pages/manageProfile';
 
 
 function App() {
@@ -92,6 +93,8 @@ function App() {
           <Route exact path="/payAppointmentFamily/:usernamePatient/:id/:usernameDoctor" element={<PayAppointmentFamily />} />
           <Route exact path="/rescheduleAppointment/:usernamePatient/:usernameDoctor/:appID" element={<RescheduleAppointment />} />
           <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
+          <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
+
 
 
 
