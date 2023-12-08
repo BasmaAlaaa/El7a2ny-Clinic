@@ -13,29 +13,13 @@ function PayAppointment(){
     const [cardCVV, setCardCVV] = useState('');
     const [typePay, setTypePay] = useState('');
     
-    const sendNotificationDoctor = () =>{
-      axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorNotificationEmail/${usernameDoctor}/${id}`, "", {
-       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-     })
-      .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error sending doctor notification'))
-     }
-      const sendNotification = () =>{
-        const response = axios.post(`http://localhost:4000/Patient/sendAppointmentNotificationEmail/${usernamePatient}/${id}`, "", {
-         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-       })
-        .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
-       }
-      const createNotification = () =>{
-     const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    })
-     .then(res =>sendNotification).catch(err => alert('error creating notification'))
-    }
+
     //useEffect(() => {
         // const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`)
         // .then(res =>console.log(res)).catch(err => console.log(err))
         //   }, [])
-        const handleBook = () =>{
+        const handleBook = (e) =>{
+          e.preventDefault();
             const data = {paymentMethod:typePay}
             if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
               alert('Missing fields')
@@ -44,16 +28,19 @@ function PayAppointment(){
          axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`, data, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-         .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
-         createNotification();
+         .then(res =>{
+          alert('Appointment Booked');
+          navigate(`/appointmentsList/${usernamePatient}`);
+        }).catch(err => alert('error booking appointment'))
       }
         }
 
     return (
         <div>
         <NavBarPatient username={usernamePatient}/>
-        <div>
-        <h4>Choose Payment Method</h4>
+
+
+        {/* <h4>Choose Payment Method</h4>
         <div>
             <input
             type='radio' name='payment' checked={typePay==='wallet'} value={'wallet'} onChange={(e) => {setTypePay(e.target.value)}}/>
@@ -67,7 +54,7 @@ function PayAppointment(){
         </div>
         
         {typePay==='card' &&
-        <div>
+        <div style={{width:'30%'}}>
         <Input
             title='Card Number'
             placeholder='Enter card number'
@@ -94,7 +81,7 @@ function PayAppointment(){
             </div>
 }       
         
-        <div>
+        <div style={{width:'30%'}}>
           {(typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
             <MainBtn
               txt="Book appointment"
@@ -111,8 +98,73 @@ function PayAppointment(){
               key="navBtn"
             />
           } */}
-          </div>
+
+          <form
+      //style={{ width: '100%' }}
+      className="d-flex justify-content-center "
+    >
+      <div style={{ width: '40%' }} className="form-width">
+          <div className="mt-3">
+
+<div>
+        <h4>Choose Payment Method</h4>
+        <div>
+            <input
+            type='radio' name='payment' checked={typePay==='wallet'} value={'wallet'} onChange={(e) => {setTypePay(e.target.value)}}/>
+            Pay with wallet
         </div>
+        <div>
+            <input
+            type='radio' name='payment' checked={typePay==='card'} value={'card'} onChange={(e) => {setTypePay(e.target.value)}}/>
+            Pay by card
+        </div>
+
+        </div>
+
+        {typePay==='card' &&
+        <div>
+        <Input
+            title='Card Number'
+            placeholder='Enter card number'
+            type='text'
+            required={true}
+
+           onChange={(e) => setCardNumber(e.target.value)}
+          />
+          <Input
+            title='Expiry Date'
+            type='date'
+            required={true}
+
+           onChange={(e) => setCardDate(e.target.value)}
+          />
+          <Input
+            title='CVV'
+            placeholder='Enter CVV'
+            type='text'
+            required={true}
+           onChange={(e) => setCardCVV(e.target.value)}
+          />
+
+            </div>
+}
+
+        </div>
+        {(typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
+<div>
+        <h3>Book Appointment</h3>
+        <MainBtn
+              txt='Book'
+              style='green-btn'
+             action={handleBook}
+              
+            />
+</div>
+}
+      </div>
+    </form>
+
+      </div>
     )
 }
 export default PayAppointment;

@@ -14,40 +14,13 @@ function PayAppointmentFamily(){
     const [typePay, setTypePay] = useState('');
     const [nationalID, setNationalID] = useState('');
 
-    const sendNotificationDoctor = () =>{
-      axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorNotificationEmail/${usernameDoctor}/${id}`, "", {
-       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-     })
-      .then(res =>navigate(`/appointmentsList/${usernamePatient}`)).catch(err => alert('error sending doctor notification'))
-     }
-      const sendNotification = () =>{
-        const response = axios.post(`http://localhost:4000/Patient/sendAppointmentNotificationEmail/${usernamePatient}/${id}`, "", {
-         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-       })
-        .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
-       }
-      const createNotification = () =>{
-     const response = axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${usernamePatient}`, "", {
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    })
-     .then(res =>sendNotification).catch(err => alert('error creating notification'))
-    }
-
-    const handleAdd = (e) => {
-        if(cardCVV && cardDate && cardNumber){
-        alert('Card added successfully')
-        }
-        else{
-          alert('Missing fields')
-        }
-        e.preventDefault();
-      }
 
     //useEffect(() => {
         // const response = axios.post(`http://localhost:4000/Patient/selectAppointment/${usernamePatient}/${id}/${usernameDoctor}`)
         // .then(res =>console.log(res)).catch(err => console.log(err))
         //   }, [])
-        const handleBook = () =>{
+        const handleBook = (e) =>{
+          e.preventDefault();
             const data = {paymentMethod:typePay, familyId: nationalID}
             if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
               alert('Missing fields')
@@ -56,16 +29,27 @@ function PayAppointmentFamily(){
          const response = axios.post(`http://localhost:4000/Patient/selectAppointmentDateTimeFamMem/${usernamePatient}/${id}/${usernameDoctor}`, data,  {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-         .then(res =>alert('Appointment Booked')).catch(err => alert('error booking appointment'))
-         createNotification();
+         .then(res =>{
+          alert('Appointment Booked');
+          navigate(`appointmentsList/${usernamePatient}`);
+         }
+          ).catch(err => alert('error booking appointment'))
         }
       }
 
     return (
         <div>
         <NavBarPatient username={usernamePatient}/>
-        <div>
-        <h4>Enter Family Member National ID</h4>
+
+        <form
+      //style={{ width: '100%' }}
+      className="d-flex justify-content-center "
+    >
+      <div style={{ width: '40%' }} className="form-width">
+          <div className="mt-3">
+
+<div>
+<h4>Enter Family Member National ID</h4>
         <div>
         <Input
             title='National ID'
@@ -75,7 +59,7 @@ function PayAppointmentFamily(){
 
            onChange={(e) => setNationalID(e.target.value)}
           />
-        </div>   
+        </div>
         <h4>Choose Payment Method</h4>
         <div>
             <input
@@ -87,8 +71,9 @@ function PayAppointmentFamily(){
             type='radio' name='payment' checked={typePay==='card'} value={'card'} onChange={(e) => {setTypePay(e.target.value)}}/>
             Pay by card
         </div>
+
         </div>
-        
+
         {typePay==='card' &&
         <div>
         <Input
@@ -115,26 +100,22 @@ function PayAppointmentFamily(){
           />
 
             </div>
-}       
-        
-        <div>
-          {(typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
-            <MainBtn
-              txt="Book appointment"
-              style="green-btn"
-              action={handleBook}
-              key="navBtn"
+}
+
+        </div>
+        {(typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
+<div>
+        <h3>Book Appointment</h3>
+        <MainBtn
+              txt='Book'
+              style='green-btn'
+             action={handleBook}
+              
             />
-          }
-          {/* {result.Status === 'Subscribed' &&
-             <MainBtn
-              txt="Cancel Subscription"
-              style="white-btn"
-              action={handleCancel}
-              key="navBtn"
-            />
-          } */}
-          </div>
+</div>
+}
+      </div>
+    </form>
         </div>
     )
 }
