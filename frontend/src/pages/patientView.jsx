@@ -26,19 +26,7 @@ function PatientView() {
   return (
     <div>
       <NavBarPatient username={username} />
-      <div>
-        <MainBtn
-          txt="Add Medical History Document"
-          style="green-btn"
-          action={() => navigate(`/addMedicalHistoryDocument/${username}`)}
-          key="navBtn"
-        />
-      </div>
       <DoctorsList />
-      <h1>Health Records</h1>
-      <TableHealthRecords tHead={tHead} data={healthRecord} />
-
-
 
     </div>
   );

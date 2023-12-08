@@ -7,7 +7,7 @@ function CaseTableBody({ data }) {
 
   const updateLink = data.Filled === 'false' ? (
     <span
-      style={{ color: 'blue', cursor: 'pointer', textDecoration: 'underline' }}
+      style={{ color: 'blue', cursor: 'pointer' }}
       onClick={() =>
         navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)
       }

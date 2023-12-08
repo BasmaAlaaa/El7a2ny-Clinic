@@ -19,7 +19,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/patientInfo/${username}/${data.Username}`)}
           >
             View
@@ -30,7 +30,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/addPrescription/${username}/${PatientUsername}`)}
           >
             Add Prescription
@@ -41,7 +41,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/presDoctorsList/${DoctorUsername}/${PatientUsername}`)}
           >
             View Prescriptions

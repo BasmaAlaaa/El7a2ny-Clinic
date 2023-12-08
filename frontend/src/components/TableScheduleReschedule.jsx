@@ -6,29 +6,10 @@ function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
   console.log('app id', appID);
   console.log('time slot', data._id);
 
-  const sendNotificationDoctor = () =>{
-    axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorRescheduleNotificationEmail/${doctorUsername}/${appID}`, "", {
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-    .then(res =>navigate(`/appointmentsList/${data.PatientUsername}`)).catch(err => alert('error sending doctor notification'))
-   }
-  const sendNotification = () =>{
-    axios.post(`http://localhost:4000/Patient/sendAppointmentPatientRescheduleNotificationEmail/${patientUsername}/${appID}`, "", {
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-    .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
-   }
-  const createNotification = () =>{
-   axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${patientUsername}`, "", {
-  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-})
- .then(res =>sendNotification).catch(err => alert('error creating notification'))
-}
 const rescheduleAppointment = () =>{
   axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
   ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
   .then(res =>alert('appointment rescheduled')).catch(err => alert('error rescheduling appointment'));
-  createNotification();
 }
 
   return (
@@ -41,7 +22,7 @@ const rescheduleAppointment = () =>{
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={()=>rescheduleAppointment}
       >
         Book

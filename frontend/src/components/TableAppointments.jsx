@@ -6,31 +6,12 @@ import { useState } from 'react';
 
 function CaseTableBody({ data }) {
   let navigate = useNavigate();
-  
-  const sendNotificationDoctor = () =>{
-    axios.post(`http://localhost:4000/Doctor/sendAppointmentDoctorCancelledNotificationEmail/${data.DoctorUsername}/${data._id}`, "", {
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-    .then(res =>navigate(`/appointmentsList/${data.PatientUsername}`)).catch(err => alert('error sending doctor notification'))
-   }
-  const sendNotification = () =>{
-    axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-    .then(res =>sendNotificationDoctor).catch(err => alert('error sending notification'))
-   }
-  const createNotification = () =>{
-   axios.post(`http://localhost:4000/Patient/createAppointmentNotifications/${data.PatientUsername}`, "", {
-  headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-})
- .then(res =>sendNotification).catch(err => alert('error creating notification'))
-}
+
 const cancelAppointment = () =>{
    axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
   .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
-  createNotification();
  }
 
 
@@ -46,7 +27,7 @@ const cancelAppointment = () =>{
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
       >
         Reschedule
@@ -57,7 +38,7 @@ const cancelAppointment = () =>{
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={()=>cancelAppointment}
       >
         Cancel
