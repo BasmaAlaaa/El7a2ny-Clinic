@@ -2246,7 +2246,7 @@ const requestFollowUpAppointment = async (req, res) => {
       DoctorUsername: previousAppointment.DoctorUsername,
       PatientUsername: username,
       Status: 'Requested',
-      Price: previousAppointment.Price,
+      Price: 0,
       Time: time,
       Name: followUpName,
       ForPatient: true,
@@ -2417,7 +2417,7 @@ const requestFollowUpForFamilyMember = async (req, res) => {
       DoctorUsername: previousAppointment.DoctorUsername,
       PatientUsername: familyMember.PatientUsername || username,
       Status: 'Requested',
-      Price: previousAppointment.Price,
+      Price: 0,
       Time: time,
       Name: followUpName,
       ForPatient: false,  // This appointment is for a family member
