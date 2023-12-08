@@ -17,7 +17,7 @@ function PrescriptionInfo() {
       .then(res => setResult(res.data)).catch(err => console.log(err))
   }, [])
 
-
+console.log('el result aho', result)
   //   result.map((e) => {
   //     console.log(e)
   //   })
@@ -29,7 +29,7 @@ function PrescriptionInfo() {
       <ul>
         <h3>Patient Name: {result.PatientName}</h3>
         <h3>Doctor Name: {result.DoctorName}</h3>
-        <h3>Prescription Date: {result.Date}</h3>
+        <h3>Prescription Date: {result.Date && result.Date.substring(0,10)}</h3>
         <h3>Description: {result.Description}</h3>
         <h3>Status: {result.Filled == true ? "Filled" : "Unfilled"}</h3>
 
