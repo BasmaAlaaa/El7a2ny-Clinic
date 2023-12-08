@@ -109,7 +109,7 @@ function NavBarPatient(props) {
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={() => navigate(`/changePassword/${props.username}`)}
+        onClick={() => navigate(`/changePassword/${props.username}/${"patient"}`)}
       >
         Change Password
       </button>

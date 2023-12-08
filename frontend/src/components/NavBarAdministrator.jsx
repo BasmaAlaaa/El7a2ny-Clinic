@@ -50,7 +50,7 @@ function NavBarAdministrator() {
           <MainBtn
               txt="Change Password"
               style="green-btn"
-              action={() => navigate(`/changePassword/${username}`)}
+              action={() => navigate(`/changePassword/${username}/${"admin"}`)}
               key="navBtn"
             />
             </div>

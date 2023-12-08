@@ -5,6 +5,9 @@ import NavBar from '../components/NavBar.jsx';
 import axios from 'axios';
 import { useParams } from 'react-router';
 import { useNavigate } from 'react-router-dom';
+import NavBarPatient from '../components/NavBarPatient.jsx';
+import NavBarDoctor from '../components/NavBarDoctor.jsx';
+import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 
 
 
@@ -12,7 +15,7 @@ function ChangePassword() {
   const [oldPassword, setOldPassword] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const { username } = useParams();
+  const { username, type } = useParams();
   const navigate = useNavigate();
   console.log(username)
 
@@ -50,8 +53,10 @@ function ChangePassword() {
   }
   return (
     <div>
-      <NavBar />
-      {/* <Form title="change password" inputArr={inputArr} btnArr={btnArr} /> */}
+      {type==='patient' &&       <NavBarPatient username={username}/>}
+      {type==='doctor' &&       <NavBarDoctor username={username}/>}
+      {type==='admin' &&       <NavBarAdministrator username={username}/>}    
+
       <form
         className="d-flex justify-content-center"
       >
