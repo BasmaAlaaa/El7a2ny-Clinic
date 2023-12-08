@@ -67,7 +67,7 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='appointments' onChange={onFilterValueChanged}>
+        <select className="input-group-text bg-white border-end-0 search" name='appointments' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
         <option value='upcoming'>Upcoming</option>
         <option value='completed'>Completed</option>

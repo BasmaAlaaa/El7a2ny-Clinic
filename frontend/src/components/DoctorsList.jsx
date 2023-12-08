@@ -80,7 +80,7 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='time' onChange={(e) => setSearchTime(e.target.value)}>
+        <select className="input-group-text bg-white border-end-0 search" name='time' onChange={(e) => setSearchTime(e.target.value)}>
         <option value='12'>12 p.m.</option>
         <option value='1'>1 p.m.</option>
         <option value='2'>2 p.m.</option>
@@ -93,7 +93,7 @@ let navigate = useNavigate()
         <option value='9'>9 p.m.</option>
         <option value='10'>10 p.m.</option>
         </select>
-        <select name='speciality' onChange={onFilterValueChanged}>
+        <select className="input-group-text bg-white border-end-0 search" name='speciality' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
         <option value='dermatology'>Dermatology</option>
         <option value='dentistry'>Dentistry</option>
