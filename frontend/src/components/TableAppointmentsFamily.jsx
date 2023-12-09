@@ -15,6 +15,14 @@ const cancelAppointment = () =>{
   .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
  }
 
+ function goOrnoGo (){
+  if(data.Status === 'completed'){
+    navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+  
+  else{
+   alert('You can only  request a followUp for completed appointments')
+  }}
+
   return (
     <>
       
@@ -50,7 +58,8 @@ const cancelAppointment = () =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+      //  onClick={()=>navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+      onClick={goOrnoGo}
       >
         Follow Up
       </button>
