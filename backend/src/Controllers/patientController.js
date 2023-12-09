@@ -2104,19 +2104,19 @@ const downloadPrescriptionPDF = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
-  const { patientUsername, doctorUsername } = req.params;
+  const { patientUsername, prescriptionID } = req.params;
   if (!(req.user.Username === patientUsername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      if (!doctorUsername) {
-        return res.status(400).json({ error: 'doctorUsername is a required parameter.' });
-      }
+     if(!mongoose.Types.ObjectId.isValid(prescriptionID)){
+        return res.status(404).json({ error: 'Invalid prescription ID.' });
+      };
 
-      const prescriptions = await Prescription.find({ DoctorUsername: doctorUsername });
+      const prescriptions = await Prescription.findById({ _id: prescriptionID });
 
       if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+        return res.status(404).json({ error: 'No prescriptions found with this Id.' });
       }
 
       // Ensure the directory exists
@@ -2127,6 +2127,7 @@ const downloadPrescriptionPDF = async (req, res) => {
 
       // Resolve the full file path
       const filePath = path.resolve(directoryPath, 'prescription.pdf');
+//    const filePath = path.resolve(directoryPath, `${prescriptionId}.pdf`);
 
       const pdfDoc = new PDFDocument();
       pdfDoc.pipe(fs.createWriteStream(filePath));

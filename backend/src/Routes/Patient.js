@@ -184,7 +184,7 @@ router.post(
 // router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 // Define a route to trigger the download
-router.get("/downloadPrescriptionPDF/:patientUsername/:doctorUsername", verify, downloadPrescriptionPDF);
+router.get("/downloadPrescriptionPDF/:patientUsername/:prescriptionID", verify, downloadPrescriptionPDF);
 
 router.post(
   "/AddRefundForPatient/:username/:appointmentId",verify, 
