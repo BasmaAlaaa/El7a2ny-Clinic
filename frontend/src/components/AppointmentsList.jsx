@@ -9,6 +9,7 @@ import NavBar from './NavBar.jsx';
 import TableAppointments from './TableAppointments.jsx';
 import NavBarPatient from './NavBarPatient.jsx';
 import TableAppointmentsFamily from './TableAppointmentsFamily.jsx';
+import FollowUpButton from './FollowUp.jsx'; // Import the new Follow Up button component
 
 
 function AppointmentsList() {
@@ -42,8 +43,8 @@ const onFilterValueChanged=(event)=>{
 }
 console.log("filter",filterText)
 let navigate = useNavigate()
-
-  let tHead = ['Date', 'Doctor Username', 'Patient Username', 'Patient Name', 'Status', 'Reschedule', 'Cancel'];
+/////
+  let tHead = ['Date', 'Doctor Username', 'Patient Username', 'Patient Name', 'Status', 'Reschedule', 'Cancel', 'Follow Up'];
 
   return (
     <div>

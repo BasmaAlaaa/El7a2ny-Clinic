@@ -2237,6 +2237,9 @@ const requestFollowUpAppointment = async (req, res) => {
     if (previousAppointment.PatientUsername !== username) {
       return res.status(403).json({ error: 'You do not have permission to request a follow-up for this appointment.' });
     }
+    if(previousAppointment.Status !== "Completed" ){
+      return res.status(403).json({ error: 'You can only request a follow-up for completed appointments.' });
+    }
 
     const { date, time, followUpName } = req.body; 
 
