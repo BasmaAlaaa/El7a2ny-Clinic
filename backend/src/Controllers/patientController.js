@@ -2113,10 +2113,10 @@ const downloadPrescriptionPDF = async (req, res) => {
         return res.status(404).json({ error: 'Invalid prescription ID.' });
       };
 
-      const prescriptions = await Prescription.findById({ _id: prescriptionID });
+      const prescription = await Prescription.findById({ _id: prescriptionID });
 
-      if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).json({ error: 'No prescriptions found with this Id.' });
+      if (!prescription || prescription.length === 0) {
+        return res.status(404).json({ error: 'No prescription found with this Id.' });
       }
 
       // Ensure the directory exists
@@ -2133,15 +2133,17 @@ const downloadPrescriptionPDF = async (req, res) => {
       pdfDoc.pipe(fs.createWriteStream(filePath));
 
       // Customize the content of the PDF based on your prescription data
-      prescriptions.forEach((prescription) => {
+    
         pdfDoc.text(`Prescription ID: ${prescription._id}`);
         pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
         pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
         pdfDoc.text(`Description: ${prescription.Description}`);
         pdfDoc.text(`Date: ${prescription.Date}`);
         pdfDoc.text(`Dose: ${prescription.Dose}`);
+        pdfDoc.text(`Medicine: ${prescription.Medicine}`);
+
         pdfDoc.text('-----------------------------------------');
-      });
+      
 
       pdfDoc.end();
 
