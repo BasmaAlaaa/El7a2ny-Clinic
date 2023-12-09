@@ -16,7 +16,7 @@ const cancelAppointment = () =>{
  }
 
  function goOrnoGo (){
-  if(data.Status === 'completed'){
+  if(data.Status === 'completed' || data.Status === 'Completed'){
     navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
   
   else{

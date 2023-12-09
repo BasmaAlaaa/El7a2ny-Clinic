@@ -14,7 +14,7 @@ const cancelAppointment = () =>{
   .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
  }
  function goOrnoGo (){
-  if(data.Status === 'completed'){
+  if(data.Status === 'completed' || data.Status === 'Completed'){
     navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
   
   else{
