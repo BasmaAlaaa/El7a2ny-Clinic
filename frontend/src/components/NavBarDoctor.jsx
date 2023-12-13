@@ -72,6 +72,15 @@ function NavBarDoctor(props) {
     <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/prescriptionsListDoctor/${props.username}`)}
+      >
+        Prescriptions
+      </button>
+      </div>
+
+    <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={() => navigate(`/doctor/${props.username}/contract`)}
       >
         Contract

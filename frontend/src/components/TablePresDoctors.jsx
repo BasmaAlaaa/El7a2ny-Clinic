@@ -12,7 +12,7 @@ function CaseTableBody({ data }) {
     .then(res =>alert('Prescription downloaded')).catch(err => alert('error downloading prescription'));
   }
 
-  const updateLink = data.Filled ? (
+  const updateLink = !data.Filled ? (
     // <span
     //   style={{ color: 'blue', cursor: 'pointer' }}
     //   onClick={() =>
@@ -27,7 +27,7 @@ function CaseTableBody({ data }) {
             className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
            onClick={()=>navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)}
           >
-            Update
+            View
           </button>
           </div>
           </td>

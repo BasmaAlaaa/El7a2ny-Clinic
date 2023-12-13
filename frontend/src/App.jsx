@@ -47,6 +47,7 @@ import NotificationsPatient from './pages/notificationsPatient';
 import UpdatePackage from './pages/updatePackage';
 import ManageProfile from './pages/manageProfile';
 import RequestFollowUp from './pages/requestFollowUp';
+import PrescriptionsListDoctor from './components/PrescriptionsListDoctor';
 
 
 function App() {
@@ -84,6 +85,7 @@ function App() {
           <Route exact path="/appointmentsList/:username" element={<AppointmentsList />} />
           <Route exact path="/appointmentsListDoctor/:username" element={<AppointmentsListDoctor />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
+          <Route exact path="/prescriptionsListDoctor/:username" element={<PrescriptionsListDoctor />} />
           <Route exact path="/presDoctorsList/:DoctorUsername/:PatientUsername" element={<PresDoctorsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
           <Route exact path="/healthPackagesList/:username" element={<HealthPackagesList />} />

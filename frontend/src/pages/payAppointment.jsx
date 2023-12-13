@@ -99,7 +99,7 @@ function PayAppointment(){
             />
           } */}
 
-          <form
+<form
       //style={{ width: '100%' }}
       className="d-flex justify-content-center "
     >
@@ -162,7 +162,7 @@ function PayAppointment(){
 </div>
 }
       </div>
-    </form>
+</form>
 
       </div>
     )

@@ -1,15 +1,24 @@
 import MainBtn from '../components/Button.jsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NavBarDoctor from '../components/NavBarDoctor.jsx';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
+import TableCart from '../components/TableCart.jsx';
 
 function UpdatePrescription() {
     const { DoctorUsername, PatientUsername, prescriptionId } = useParams();
     const [updatedDescription, setUpdatedDescription] = useState("");
     const [updatedDose, setUpdatedDose] = useState(0);
+    const [result, setResult] = useState('');
     const navigate = useNavigate();
 
+    useEffect(() => {
+        const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${prescriptionId}`, {
+          headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+        })
+          .then(res => setResult(res.data)).catch(err => console.log(err))
+      }, [])
+      console.log("el pres" , result)
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -43,7 +52,13 @@ function UpdatePrescription() {
 
     return (
         <div>
-            <NavBarDoctor />
+            <NavBarDoctor username={DoctorUsername}/>
+            <h1>Prescription Info</h1>
+      <ul>
+        <h3>Patient Name:</h3>
+        <h3>Description:</h3>
+      </ul>
+            {/* <TableCart /> */}
             <form className="d-flex justify-content-center">
                 <div className="form-width">
                     <p className="text-capitalize fs-4 mb-3">Update Prescription</p>
@@ -58,7 +73,7 @@ function UpdatePrescription() {
                         />
                     </div>
 
-                    <div className="mb-3">
+                    {/* <div className="mb-3">
                         <label className="form-label">Updated Dose</label>
                         <input
                             className="form-control"
@@ -68,8 +83,7 @@ function UpdatePrescription() {
                             value={updatedDose}
                             onChange={(e) => setUpdatedDose(e.target.value)}
                         />
-                    </div>
-
+                    </div> */}
                     <div className="mt-3">
                         <MainBtn
                             txt='Save'
