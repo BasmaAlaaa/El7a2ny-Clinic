@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useState } from 'react';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data, type }) {
   let navigate = useNavigate();
 
 const cancelAppointment = () =>{
@@ -51,8 +51,9 @@ const cancelAppointment = () =>{
         Cancel
       </button>
       </div>
-
       </td>
+{type=="patient" &&
+
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
@@ -64,7 +65,7 @@ const cancelAppointment = () =>{
       </button>
       </div>
       </td>
-
+}
     </>
   );
 }
@@ -82,7 +83,7 @@ const cancelAppointment = () =>{
 //   );
 // }
 
-function TableAppointments({ tHead, data, searchText, searchDate, filterText }) {
+function TableAppointments({ tHead, data, searchText, searchDate, filterText, type }) {
   console.log('haayaa', data)
 
   return (
@@ -107,7 +108,7 @@ function TableAppointments({ tHead, data, searchText, searchDate, filterText }) 
           })
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} type={type}/>
             </tr>
           ))}
         </tbody>

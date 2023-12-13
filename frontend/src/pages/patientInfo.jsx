@@ -26,16 +26,17 @@ function PatientInfo(){
       const response = axios.post(`http://localhost:4000/Doctor/addHealthRecord/${usernameDoctor}/${usernamePatient}`, data, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
-      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+      .then(res =>alert("Health records added")).catch(err => alert(err))
     }
 
-    const handleSubmit1 = () => {
+    const handleSubmit1 = (e) => {
+      e.preventDefault();
       const data = {date:date, time:time}
       console.log(data)
       const response = axios.post(`http://localhost:4000/Doctor/scheduleFollowUp/${usernameDoctor}/${usernamePatient}`, data, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
-      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+      .then(res =>alert("follow-up scheduled")).catch(err => alert(err))
     }
 
     useEffect(() => {
