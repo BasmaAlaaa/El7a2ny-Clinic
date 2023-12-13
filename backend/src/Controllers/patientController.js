@@ -1732,7 +1732,8 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
 
           slot.Status = "booked";
           doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
-            doctor.save();
+          doctor.PatientsUsernames.push(patientUsername);
+          doctor.save();
         }
         else {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
@@ -1838,6 +1839,8 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
 
           slot.Status = "booked";
           doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
+          doctor.PatientsUsernames.push(patientUsername);
+
             doctor.save();
         }
         else {
