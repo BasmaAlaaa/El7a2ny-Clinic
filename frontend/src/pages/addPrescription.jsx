@@ -7,6 +7,9 @@ import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 import { useEffect, useState } from 'react';
 import axios from 'axios'
 import NavBarPatient from '../components/NavBarPatient.jsx';
+import Input from '../components/Input.jsx';
+import MainBtn from '../components/Button.jsx';
+import NavBarDoctor from '../components/NavBarDoctor.jsx';
 // import Patient from '../../../backend/src/Models/Patient.js';
 
 function AddPrescription() {
@@ -67,12 +70,52 @@ function AddPrescription() {
 
     return (
         <div>
-            <NavBarPatient username={username} />
+            <NavBarDoctor username={username} />
             {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
+            {/* <form
+        className="d-flex justify-content-center"
+        onSubmit={handleSubmit}
+      >
+        <div className="form-width">
+          <p className="text-capitalize fs-4">Add Prescription</p>
+          <Input
+            title='Description'
+            required={true}
+            placeholder='Enter Description'
+            type='text'
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <Input
+            title='email'
+            required={true}
+            placeholder='Enter email'
+            type='email'
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            title='password'
+            required={true}
+            placeholder='Enter password'
+            type='password'
+            onChange={(e) => setPassword(e.target.value)}
+          />
+         
+          <div className="mt-3">
+            <MainBtn
+              txt='submit'
+              type="submit"
+              style='green-btn'
+              //action={handleSubmit}
+
+            />
+          </div>
+
+        </div>
+      </form> */}
+
             <form onSubmit={handleSubmit}>
                 <h2>Add Prescription</h2>
                 <h3><input required placeholder='Description' type='text' onChange={(e) => setDescription(e.target.value)} /></h3>
-                <h3><input required placeholder='Dose' type='number' onChange={(e) => setDose(e.target.value)} /></h3>
                 <h3><input required placeholder='Date' type='date' onChange={(e) => setDate(e.target.value)} /></h3>
 
                 {/* Dropdown list of appointments */}

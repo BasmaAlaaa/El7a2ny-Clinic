@@ -30,7 +30,7 @@ function PresDoctorsList() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Patient Username', 'Prescription Date', 'Description', 'Status', 'Update'];
+  let tHead = ['Patient Username', 'Prescription Date', 'Description', 'Status', 'Update', 'Download'];
 
   return (
     <div>

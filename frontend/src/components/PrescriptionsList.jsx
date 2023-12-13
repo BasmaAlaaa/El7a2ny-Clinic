@@ -33,7 +33,7 @@ function PrescriptionsList() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Doctor Username', 'Prescription Date', 'Description', 'Status', 'View'];
+  let tHead = ['Doctor Username', 'Prescription Date', 'Description', 'Status', 'View', 'Download'];
 
   return (
     <div>
@@ -72,7 +72,7 @@ function PrescriptionsList() {
           </select>
         </div>
       </div>
-      <TablePrescriptions tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} />
+      <TablePrescriptions tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
     </div>
   );
 }

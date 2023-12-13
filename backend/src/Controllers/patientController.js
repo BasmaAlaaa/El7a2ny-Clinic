@@ -811,7 +811,8 @@ const viewMyPres = async (req, res) => {
         Description: prescription.Description,
         Date: prescription.Date,
         Filled: prescription.Filled,
-        AppointmentID: prescription.Appointment_ID
+        AppointmentID: prescription.Appointment_ID,
+        Medicines: prescription.medicines
       }
 
       res.status(200).send(result);
@@ -2140,7 +2141,7 @@ const downloadPrescriptionPDF = async (req, res) => {
         pdfDoc.text(`Description: ${prescription.Description}`);
         pdfDoc.text(`Date: ${prescription.Date}`);
         pdfDoc.text(`Dose: ${prescription.Dose}`);
-        pdfDoc.text(`Medicine: ${prescription.Medicine}`);
+        pdfDoc.text(`Medicines: ${prescription.medicines}`);
 
         pdfDoc.text('-----------------------------------------');
       
