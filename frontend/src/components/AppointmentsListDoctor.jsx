@@ -35,7 +35,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel'];
+  let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel', 'Follow-up'];
 
   return (
     <div>
@@ -65,7 +65,7 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText} type="doctor"/>
+      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText}/>
     </div>
   );
 }

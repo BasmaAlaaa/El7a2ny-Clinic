@@ -65,17 +65,13 @@ function PatientsList() {
               onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
-          {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
-          <img src={filter} className="me-2" alt="filter" />
-          Filter
-        </button> */}
-          {/* <select className="input-group-text bg-white border-end-0 search" name="upcomingAppointments" onChange={onFilterValueChanged}>
+          <select className="input-group-text bg-white border-end-0 search" name="upcomingAppointments" onChange={onFilterValueChanged}>
             <option value="all">All</option>
             <option value="upcoming">Upcoming</option>
             <option value="finished">Finished</option>
             <option value="running">Running</option>
             <option value="following">Following</option>
-          </select> */}
+          </select>
         </div>
       </div>
       <TablePatients

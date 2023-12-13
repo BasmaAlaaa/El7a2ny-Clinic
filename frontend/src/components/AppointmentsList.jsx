@@ -77,7 +77,7 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText} type="patient"/>
+      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText}/>
       <h3>Family Members Appointments</h3>
       <TableAppointmentsFamily tHead={tHead} data={resultFamily} searchDate={searchDate} filterText={filterText}/>
 

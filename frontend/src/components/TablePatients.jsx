@@ -6,7 +6,6 @@ function CaseTableBody({ data, username }) {
   console.log("username doctor:", username)
   const PatientUsername = `${data.Username}`;
   const DoctorUsername = `${username}`;
-  console.log("app status", data.Appointment_Status)
 
   return (
     <>
@@ -68,10 +67,10 @@ function TablePatients({ tHead, data, searchText, filterText, username }) {
         </thead>
         <tbody>
           {data
-            // .filter((e) => {
-            //   return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all' ?
-            //     e : e.Appointment_Status.toLowerCase() === filterText.toLowerCase()
-            // })
+            .filter((e) => {
+              return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all' ?
+                e : e.Appointment_Status.toLowerCase() === filterText.toLowerCase()
+            })
             .filter((e) => {
               return searchText.toLowerCase() === '' ?
                 e : e.Name.toLowerCase().includes(searchText.toLowerCase())
