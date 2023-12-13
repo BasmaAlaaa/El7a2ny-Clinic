@@ -4,17 +4,18 @@ const validator = require('validator');
 const Doctor = require('./Doctor.js');
 const Patient = require('./Patient.js');
 const Appointment = require('./Appointment.js');
+const Medicine = require('./Medicine.js');
 
-const medicineSchema = new Schema({
-    name: {
-        type: String,
-        required: true
-    },
-    dosage: {
-        type: String,
-        required: true
-    }
-});
+// const medicineSchema = new Schema({
+//     name: {
+//         type: String,
+//         required: true
+//     },
+//     dosage: {
+//         type: String,
+//         required: true
+//     }
+// });
 
 const prescriptionSchema = new Schema({
 
@@ -45,7 +46,17 @@ const prescriptionSchema = new Schema({
         default: false
         //required: true,
     },
-    medicines: [medicineSchema]
+    Medicines: [{
+        Name: {
+            type: String,
+            required: true,
+        },
+        dosage: {
+            type: Number,
+            required: true,
+        },
+    }],
+
 
 }, { timestamps: true });
 
@@ -70,7 +81,7 @@ prescriptionSchema.statics.register = async function (
         !PatientUsername ||
         !Date ||
         !Description || !medicines
-        ) {
+    ) {
         throw Error('All fields must be filled.');
     }
 
@@ -83,7 +94,7 @@ prescriptionSchema.statics.register = async function (
         Appointment_ID,
         Filled,
         medicines
-        
+
     });
 
     return prescription;

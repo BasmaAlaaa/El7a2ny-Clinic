@@ -1,8 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import Form from '../components/Form.jsx';
-import { useDispatch } from 'react-redux';
-import { loggedIn } from '../features/login.js';
-import Validation from '../validate/validate';
 import Input from '../components/Input.jsx';
 import MainBtn from '../components/Button.jsx';
 import { Link } from 'react-router-dom';
@@ -11,10 +7,7 @@ import axios from "axios";
 
 
 function Login() {
-  let { errors, handleSubmit, register } = Validation('login')
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState(""); 
   
@@ -45,7 +38,6 @@ function Login() {
 
   return (
     <div>
-      {/* <Form title="login" inputArr={inputArr} type="login" btnArr={btnArr} /> */}
       <form
       className="d-flex justify-content-center"
     >
@@ -90,4 +82,3 @@ function Login() {
   );
 }
 export default Login;
-

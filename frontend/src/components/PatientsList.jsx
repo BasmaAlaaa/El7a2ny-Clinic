@@ -1,35 +1,30 @@
-import Search from "./Search.jsx";
-import Table from "./TableRequests.jsx";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import search from "../assets/images/svg/search.svg";
-import filter from "../assets/images/svg/filter.svg";
-import NavBar from "./NavBar.jsx";
 import TablePatients from "./TablePatients.jsx";
 import NavBarDoctor from "./NavBarDoctor.jsx";
-import { set } from "react-hook-form";
 
 function PatientsList() {
   const [searchText, setSearchText] = useState("");
   const [filterText, setFilterText] = useState("");
   const [result, setResult] = useState([]);
   const { username } = useParams();
-  const [isLoading, setIsLoading] = useState(true); // New state for loading
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    setIsLoading(true); // When the request starts, set isLoading to true
+    setIsLoading(true);
     const response = axios
       .get(`http://localhost:4000/Doctor/MyPatients/${username}`, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
       })
       .then((res) => {
         setResult(res.data);
-        setIsLoading(false); // Stop loading after data is received
+        setIsLoading(false);
       })
       .catch((err) => {
         console.log(err);
-        setIsLoading(false); // Stop loading if there's an error
+        setIsLoading(false);
       });
   }, [username]);
   console.log(result);
@@ -41,7 +36,6 @@ function PatientsList() {
     setFilterText(event.target.value);
   };
   console.log(filterText);
-  let navigate = useNavigate();
 
   let tHead = [
     "Name",
@@ -52,12 +46,11 @@ function PatientsList() {
     "View Prescriptions",
   ];
   if (isLoading) {
-    return <div>Loading...</div>; // Or any other loading indicator like a spinner
+    return <div>Loading...</div>;
   }
   return (
     <div>
       <NavBarDoctor username={username} />
-      {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
         <p className="text-capitalize fs-4 w-25">Patients</p>
         <div className="d-flex flex-row w-75 justify-content-end">
@@ -72,10 +65,6 @@ function PatientsList() {
               onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
-          {/* <button className="filter-btn ms-2 d-flex flex-row align-items-center">
-          <img src={filter} className="me-2" alt="filter" />
-          Filter
-        </button> */}
           <select className="input-group-text bg-white border-end-0 search" name="upcomingAppointments" onChange={onFilterValueChanged}>
             <option value="all">All</option>
             <option value="upcoming">Upcoming</option>
