@@ -9,6 +9,7 @@ import NavBar from './NavBar.jsx';
 import TableAppointments from './TableAppointments.jsx';
 import NavBarPatient from './NavBarPatient.jsx';
 import TableAppointmentsFamily from './TableAppointmentsFamily.jsx';
+import FollowUpButton from './FollowUp.jsx'; // Import the new Follow Up button component
 
 
 function AppointmentsList() {
@@ -42,8 +43,8 @@ const onFilterValueChanged=(event)=>{
 }
 console.log("filter",filterText)
 let navigate = useNavigate()
-
-  let tHead = ['Date', 'Doctor Username', 'Patient Username', 'Patient Name', 'Status', 'Reschedule', 'Cancel'];
+/////
+  let tHead = ['Date', 'Doctor Username', 'Patient Username', 'Patient Name', 'Status', 'Reschedule', 'Cancel', 'Follow Up'];
 
   return (
     <div>
@@ -67,7 +68,7 @@ let navigate = useNavigate()
           <img src={filter} className="me-2" alt="filter" />
           Filter
         </button> */}
-        <select name='appointments' onChange={onFilterValueChanged}>
+        <select className="input-group-text bg-white border-end-0 search" name='appointments' onChange={onFilterValueChanged}>
         <option value='all'>All</option>
         <option value='upcoming'>Upcoming</option>
         <option value='completed'>Completed</option>
@@ -76,7 +77,7 @@ let navigate = useNavigate()
         </select>
       </div>
     </div>
-      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText}/>
+      <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText} type="patient"/>
       <h3>Family Members Appointments</h3>
       <TableAppointmentsFamily tHead={tHead} data={resultFamily} searchDate={searchDate} filterText={filterText}/>
 

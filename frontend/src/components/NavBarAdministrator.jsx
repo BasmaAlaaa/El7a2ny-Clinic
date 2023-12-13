@@ -7,17 +7,16 @@ import { showUserDrop } from '../features/userDropDown.js';
 import DropDown from './Dropdown.jsx';
 import axios from 'axios';
 
-function NavBarAdministrator() {
+function NavBarAdministrator(props) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const {username} = useParams();
   const login = useSelector((state) => state.login.loggedIn);
   
   const handleLogout = async (event) => {
     event.preventDefault(); 
     try {
       console.log(sessionStorage.getItem("token"));
-    const response = await axios.post(`http://localhost:4000/logout/${username}`,"",{
+    const response = await axios.post(`http://localhost:4000/logout/${props.username}`,"",{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     });
     sessionStorage.removeItem('token');
@@ -37,31 +36,55 @@ function NavBarAdministrator() {
             <img src='https://i.pinimg.com/originals/57/1a/e3/571ae39ce1b3360b0cf852322b413bdb.jpg' alt="Pharmacy" width={40} height={40} />
           </a>
         </div>
-        
-          <div>
-          <MainBtn
-              txt="Home"
-              style="green-btn"
-              action={() => navigate(`/administratorView/${username}`)}
-              key="navBtn"
-            />
-            </div>
-            <div>
-          <MainBtn
-              txt="Change Password"
-              style="green-btn"
-              action={() => navigate(`/changePassword/${username}`)}
-              key="navBtn"
-            />
-            </div>
-            <div>
-            <MainBtn
-              txt="Logout"
-              style="green-btn"
-               action={handleLogout}
-              key="navBtn"
-            />
-          </div>
+
+        <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/administratorView/${props.username}`)}
+      >
+        Home
+      </button>
+      </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/managePackages/${props.username}`)}
+      >
+        Health Packages
+      </button>
+      </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/removeUser/${props.username}`)}
+      >
+        Remove User
+      </button>
+      </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/addAdministrator/${props.username}`)}
+      >
+        Add Administrator
+      </button>
+      </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/changePassword/${props.username}/${"admin"}`)}
+      >
+        Change Password
+      </button>
+      </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`red-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
+      </div>
 
       </div>
     </nav>

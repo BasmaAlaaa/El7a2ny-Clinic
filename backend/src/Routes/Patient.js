@@ -59,7 +59,9 @@ const {
   displayNotifications,
   allFamilyMemberAppointments,
   sendAppointmentPatientRescheduleNotificationEmail,
-  sendAppointmentPatientCancelledNotificationEmail
+  sendAppointmentPatientCancelledNotificationEmail,
+  updatePrescriptionPaymentMethod,
+  sendAppointmentNotificationEmail
 } = require("../Controllers/patientController");
 
 const router = express.Router();
@@ -182,7 +184,7 @@ router.post(
 // router.post('/selectAppointmentDateTimeFamMem/:Username', selectAppointmentDateTimeFamMem);
 
 // Define a route to trigger the download
-router.get("/downloadPrescriptionPDF/:patientUsername/:doctorUsername", verify, downloadPrescriptionPDF);
+router.get("/downloadPrescriptionPDF/:patientUsername/:prescriptionID", verify, downloadPrescriptionPDF);
 
 router.post(
   "/AddRefundForPatient/:username/:appointmentId",verify, 
@@ -193,7 +195,7 @@ router.post(
   requestFollowUpAppointment
 );
 router.post(
-  "/requestFollowUpForFamilyMember/:patientusername/:doctorUsername",verify ,
+  "/requestFollowUpForFamilyMember/:username/:appointmentId",verify ,
   requestFollowUpForFamilyMember
 );
 
@@ -221,6 +223,7 @@ router.get("/displayNotifications/:Username", verify, displayNotifications);
 
 router.post("/sendAppointmentPatientRescheduleNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientRescheduleNotificationEmail);
 router.post("/sendAppointmentPatientCancelledNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientCancelledNotificationEmail);
-
+router.post("/sendAppointmentNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentNotificationEmail);
+router.put('/updatePrescriptionPaymentMethod/:patientUsername', verify,updatePrescriptionPaymentMethod);
 
 module.exports = router;

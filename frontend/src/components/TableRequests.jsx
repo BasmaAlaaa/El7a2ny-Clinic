@@ -26,7 +26,7 @@ function CaseTableBody({ data ,onAcceptOrReject, username }) {
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={handleAccept}
       >
         Accept
@@ -37,7 +37,7 @@ function CaseTableBody({ data ,onAcceptOrReject, username }) {
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={handleReject}
       >
         Reject

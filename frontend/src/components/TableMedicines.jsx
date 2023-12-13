@@ -1,27 +1,41 @@
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data, username }) {
-  let navigate = useNavigate()
+function CaseTableBody({ data }) {
+  let navigate = useNavigate();
+
+  const handleAdd = async() => {
+    try{
+    const response = await axios.get(`http://localhost:4000/Doctor/AddMedicineToCart/${username}/${data.Name}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+   // .then(res =>setResult(res)).catch(err => console.log(err))
+      if (response.status === 200) {
+            alert(response.data.message);
+              console.log(response.data.message);
+          }}
+          catch(error ){
+            alert(`Failed to add medicine `);
+            console.error('Error adding medicine:', error);
+          };
+  }
 
   return (
     <>
-      
-    {data.Name && <th>{data.Name}</th>}
-    {data.Age&&<td>{data.Age}</td>}
-    {data.NationalID&&<td>{data.NationalID}</td>}
-    {data.Gender&&<td>{data.Gender}</td>}
-    {data.RelationToPatient&&<td>{data.RelationToPatient}</td>}
+    <th>{data.name}</th>
+    <td>{data.dosage}</td>
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/healthPackagesListFam/${username}/${data.NationalID}`)}
+        onClick={handleAdd}
       >
-        View
+        Add to Prescription
       </button>
       </div>
       </td>
+      
     </>
   );
 }
@@ -39,7 +53,7 @@ function CaseTableBody({ data, username }) {
 //   );
 // }
 
-function TableFamilyMembers({ tHead, data, username}) {
+function TableMedicines({ tHead, data}) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -54,7 +68,7 @@ function TableFamilyMembers({ tHead, data, username}) {
           {data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} username={username}/>
+                <CaseTableBody data={e} />
             </tr>
           ))}
         </tbody>
@@ -63,4 +77,4 @@ function TableFamilyMembers({ tHead, data, username}) {
   );
 }
 
-export default TableFamilyMembers;
+export default TableMedicines;

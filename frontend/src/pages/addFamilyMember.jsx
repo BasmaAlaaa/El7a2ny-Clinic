@@ -7,6 +7,8 @@ import NavBarAdministrator from '../components/NavBarAdministrator.jsx';
 import { useState } from 'react';
 import axios from 'axios'
 import NavBarPatient from '../components/NavBarPatient.jsx';
+import Input from '../components/Input.jsx';
+import MainBtn from '../components/Button.jsx';
 
 function AddFamilyMember() {
   // let { errors, handleSubmit, register } = Validation('username')
@@ -24,7 +26,7 @@ function AddFamilyMember() {
   //     action: handleSubmit(),
   //   },
   // ];
-
+  const navigate = useNavigate();
   const {username} = useParams()
 
   const [name, setName] = useState('');
@@ -60,26 +62,90 @@ function AddFamilyMember() {
   return (
     <div>
       <NavBarPatient username={username}/>
-      {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
-      <form onSubmit={handleSubmit}>
-        <h2>Add Family Member</h2>
-        <h3><input  required placeholder= 'enter Name' type= 'text' onChange={(e) => setName(e.target.value)} /></h3>
-        <h3><input  required placeholder= 'enter National ID' type= 'text' onChange={(e) => setNationalID(e.target.value)} /></h3>
-        <h3><input  required placeholder= 'enter Age' type= 'number' onChange={(e) => setAge(e.target.value)} /></h3>
-        <h3><input  required placeholder= 'enter Gender' type= 'text' onChange={(e) => setGender(e.target.value)} /></h3>
-        <h3><input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatient(e.target.value)} /></h3>
 
-        <h3><button type="submit">Submit</button></h3>
-    </form>
-    <form onSubmit={handleSubmitLink}>
-        <h2>Link Patient as Family Member</h2>
-        <h3><input  required placeholder= 'enter Email' type= 'email' onChange={(e) => setEmail(e.target.value)} /></h3>
-        <h3><input  required placeholder= 'enter relation to patient' type= 'text' onChange={(e) => setRelationToPatientLink(e.target.value)} /></h3>
+    <form
+        className="d-flex justify-content-center"
+      >
+        <div style={{ width: '30%' }} className="form-width">
+          <p className="text-capitalize fs-4">Add Family Member</p>
 
-        <h3><button type="submit">Submit</button></h3>
-    </form>
+          <Input
+            title='Name'
+            placeholder='enter family member name'
+            type='text'
+            required={true}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            title='National ID'
+            placeholder='enter national id'
+            type='text'
+            required={true}
+            onChange={(e) => setNationalID(e.target.value)}
+          />
+          <Input
+            title='Age'
+            placeholder='enter age'
+            type='number'
+            required={true}
+            onChange={(e) => setAge(e.target.value)}
+          />
+          <Input
+            title='Gender'
+            placeholder='enter gender'
+            type='text'
+            required={true}
+            onChange={(e) => setGender(e.target.value)}
+          />
+          <Input
+            title='Relation To Patient'
+            placeholder='enter relation to patient'
+            type='text'
+            required={true}
+            onChange={(e) => setRelationToPatient(e.target.value)}
+          />
 
-    </div>
+          <div className="mt-3">
+            <MainBtn
+              txt='save'
+              style='green-btn'
+              action={handleSubmit}
+            />
+          </div>
+        </div>
+      </form>
+      <form
+        className="d-flex justify-content-center"
+      >
+        <div style={{ width: '30%' }} className="form-width">
+          <p className="text-capitalize fs-4">Link Patient as Family Member</p>
+
+          <Input
+            title='Email'
+            placeholder='enter family member email'
+            type='email'
+            required={true}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+         <Input
+            title='Relation To Patient'
+            placeholder='enter relation to patient'
+            type='text'
+            required={true}
+            onChange={(e) => setRelationToPatientLink(e.target.value)}
+          />
+
+
+          <div className="mt-3">
+            <MainBtn
+              txt='save'
+              style='green-btn'
+              action={handleSubmitLink}
+            />
+          </div>
+        </div>
+      </form>
+      </div>
   );
 }
 export default AddFamilyMember;

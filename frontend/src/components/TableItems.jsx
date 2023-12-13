@@ -1,27 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data, username }) {
+function CaseTableBody({ data }) {
   let navigate = useNavigate()
 
   return (
     <>
+    <th>{data.name}</th>
+    <td>{data.dosage}</td>
       
-    {data.Name && <th>{data.Name}</th>}
-    {data.Age&&<td>{data.Age}</td>}
-    {data.NationalID&&<td>{data.NationalID}</td>}
-    {data.Gender&&<td>{data.Gender}</td>}
-    {data.RelationToPatient&&<td>{data.RelationToPatient}</td>}
-    <td className="py-3 text-align-center">
-      <div className="d-flex flex-row">
-      <button
-        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/healthPackagesListFam/${username}/${data.NationalID}`)}
-      >
-        View
-      </button>
-      </div>
-      </td>
+      
     </>
   );
 }
@@ -39,7 +27,7 @@ function CaseTableBody({ data, username }) {
 //   );
 // }
 
-function TableFamilyMembers({ tHead, data, username}) {
+function TableItems({ tHead, data}) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -54,7 +42,7 @@ function TableFamilyMembers({ tHead, data, username}) {
           {data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} username={username}/>
+                <CaseTableBody data={e} />
             </tr>
           ))}
         </tbody>
@@ -63,4 +51,4 @@ function TableFamilyMembers({ tHead, data, username}) {
   );
 }
 
-export default TableFamilyMembers;
+export default TableItems;

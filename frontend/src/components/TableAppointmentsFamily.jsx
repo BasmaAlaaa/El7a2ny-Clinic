@@ -8,6 +8,20 @@ function CaseTableBody({ data }) {
   let navigate = useNavigate();
   const[searchDate, setSearchDate] = useState('');
 
+const cancelAppointment = () =>{
+   axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
+   headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+ })
+  .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
+ }
+
+ function goOrnoGo (){
+  if(data.Status === 'completed' || data.Status === 'Completed'){
+    navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+  
+  else{
+   alert('You can only  request a followUp for completed appointments')
+  }}
 
   return (
     <>
@@ -21,7 +35,7 @@ function CaseTableBody({ data }) {
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
       >
         Reschedule
@@ -32,12 +46,22 @@ function CaseTableBody({ data }) {
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
-        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
-        onClick={()=>axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`
-        ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-        .then(res =>console.log(res)).catch(err => console.log(err))}
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={()=>cancelAppointment}
       >
         Cancel
+      </button>
+      </div>
+      </td>
+
+      <td className="py-3 text-align-center">
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+      //  onClick={()=>navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+      onClick={goOrnoGo}
+      >
+        Follow Up
       </button>
       </div>
       </td>

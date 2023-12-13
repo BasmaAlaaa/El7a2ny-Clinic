@@ -27,8 +27,8 @@ function HealthPackageInfo(){
 
   console.log(result)
 
-  const handleSubscribe = async () =>{
-    
+  const handleSubscribe = async (e) =>{
+    e.preventDefault();
 
   try {
 
@@ -39,6 +39,7 @@ function HealthPackageInfo(){
 
     if (response.status === 200) {
       alert(`Subscribed successfully`);
+      navigate(`/healthPackagesList/${username}`)
       console.log(response.data.message);
     } else if (response.status === 400) {
       alert(`Failed to subscribe, not enough money in the wallet`);
@@ -54,13 +55,7 @@ function HealthPackageInfo(){
   }
 
   }
-  const handleCancel = () =>{
-    const response = axios.post(`http://localhost:4000/Patient/cancelHealthCarePackageSubscription/${username}/${type}`, "", {
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    })
-  .then(res =>alert('Cancelled')).catch(err => alert(err))
-  window.location.reload(true);
-  }
+
  
 
 
@@ -82,7 +77,7 @@ return (
     <div>
         <NavBarPatient username={username}/>
         
-        <h1>Package Info</h1>
+        {/* <h1>Package Info</h1>
         <ul>
             <h3>Type: {result.Type}</h3>
             <h3>Annual Fee: {result.AnnualFee}</h3>
@@ -96,9 +91,9 @@ return (
             {result.Status === "Cancelled" &&
               <h3> Cancellation Date: {result.CancellationDate.substring(0,10)}</h3>
             }
-        </ul>
+        </ul> */}
         
-        <div>
+        {/* <div>
         <h4>Choose Payment Method</h4>
         <div>
             <input
@@ -166,7 +161,72 @@ return (
               key="navBtn"
             />
           }
-          </div>
+          </div> */}
+
+    <form
+      //style={{ width: '100%' }}
+      className="d-flex justify-content-center "
+    >
+      <div style={{ width: '40%' }} className="form-width">
+          <div className="mt-3">
+
+<div>
+        <h4>Choose Payment Method</h4>
+        <div>
+            <input
+            type='radio' name='payment' checked={typePay==='wallet'} value={'wallet'} onChange={(e) => {setTypePay(e.target.value)}}/>
+            Pay with wallet
+        </div>
+        <div>
+            <input
+            type='radio' name='payment' checked={typePay==='card'} value={'card'} onChange={(e) => {setTypePay(e.target.value)}}/>
+            Pay by card
+        </div>
+
+        </div>
+
+        {typePay==='card' &&
+        <div>
+        <Input
+            title='Card Number'
+            placeholder='Enter card number'
+            type='text'
+            required={true}
+
+           onChange={(e) => setCardNumber(e.target.value)}
+          />
+          <Input
+            title='Expiry Date'
+            type='date'
+            required={true}
+
+           onChange={(e) => setCardDate(e.target.value)}
+          />
+          <Input
+            title='CVV'
+            placeholder='Enter CVV'
+            type='text'
+            required={true}
+           onChange={(e) => setCardCVV(e.target.value)}
+          />
+
+            </div>
+}
+
+        </div>
+        {(typePay==='wallet' || (typePay==='card' && cardCVV && cardDate && cardNumber)) &&
+<div>
+        <MainBtn
+              txt='Subscribe'
+              style='green-btn'
+             action={handleSubscribe}
+              
+            />
+</div>
+}
+      </div>
+    </form>
+
         </div>
 )
 }

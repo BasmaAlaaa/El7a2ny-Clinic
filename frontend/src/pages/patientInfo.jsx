@@ -4,6 +4,7 @@ import { useParams} from 'react-router-dom';
 import axios from "axios";
 import NavBar from "../components/NavBarDoctor";
 import TableHealthRecords from "../components/TableHealthRecords";
+import NavBarDoctor from "../components/NavBarDoctor";
 
 
 function PatientInfo(){
@@ -25,16 +26,17 @@ function PatientInfo(){
       const response = axios.post(`http://localhost:4000/Doctor/addHealthRecord/${usernameDoctor}/${usernamePatient}`, data, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
-      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+      .then(res =>alert("Health records added")).catch(err => alert(err))
     }
 
-    const handleSubmit1 = () => {
+    const handleSubmit1 = (e) => {
+      e.preventDefault();
       const data = {date:date, time:time}
       console.log(data)
       const response = axios.post(`http://localhost:4000/Doctor/scheduleFollowUp/${usernameDoctor}/${usernamePatient}`, data, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
-      .then(res =>setResultAdd(res)).catch(err => console.log(err))
+      .then(res =>alert("follow-up scheduled")).catch(err => alert(err))
     }
 
     useEffect(() => {
@@ -78,13 +80,13 @@ function PatientInfo(){
 
     return (
         <div>
-        <NavBar/>
+        <NavBarDoctor username={usernameDoctor}/>
         <h1>Patient Info</h1>
         <ul>
             <h3>Name: {result.Name}</h3>
             <h3>Username: {result.Username}</h3>
             <h3>Email: {result.Email}</h3>
-            <h3>Date of Birth: {result.DateOfBirth}</h3>
+            <h3>Date of Birth: {result.DateOfBirth && result.DateOfBirth.substring(0,10)}</h3>
             <h3>Gender: {result.Gender}</h3>
             <h3>Mobile Number: {result.MobileNumber}</h3>
         </ul>

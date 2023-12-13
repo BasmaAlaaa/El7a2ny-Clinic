@@ -14,6 +14,7 @@ import DoctorInfo from './pages/doctorInfo';
 import RequestInfo from './pages/requestInfo';
 import PrescriptionInfo from './pages/prescriptionInfo';
 import AddPrescription from './pages/addPrescription';
+import UpdatePrescription from './pages/updatePrescription';
 
 import DoctorView from './pages/doctorView';
 import ManagePackages from './pages/managePackages';
@@ -42,6 +43,12 @@ import PayAppointmentFamily from './pages/payAppointmentFamily';
 import HealthPackagesListFam from './components/HealthPackagesListFam';
 import HealthPackageInfoFam from './pages/healthPackageInfoFam';
 import RescheduleAppointment from './pages/rescheduleAppointment';
+import NotificationsPatient from './pages/notificationsPatient';
+import UpdatePackage from './pages/updatePackage';
+import ManageProfile from './pages/manageProfile';
+import RequestFollowUp from './pages/requestFollowUp';
+import PrescriptionsListDoctor from './components/PrescriptionsListDoctor';
+
 
 function App() {
   return (
@@ -51,7 +58,7 @@ function App() {
         <Routes>
           <Route exact path="/login" element={<Login />} />
           <Route exact path="/forgotPassword" element={<ForgotPassword />} />
-          <Route exact path="/changePassword/:username" element={<ChangePassword />} />
+          <Route exact path="/changePassword/:username/:type" element={<ChangePassword />} />
           <Route exact path="/resetPassword" element={<ResetPassword />} />
           <Route exact path="/registerPatient" element={<RegisterPatient />} />
           <Route exact path="/registerDoctor" element={<RegisterDoctor />} />
@@ -65,18 +72,20 @@ function App() {
           <Route exact path="/doctorView/:username" element={<DoctorView />} />
           <Route path="/doctor/:username/contract" element={<ContractView />} />
           <Route exact path="/managePackages/:username" element={<ManagePackages />} />
+          <Route exact path="/updatePackage/:username" element={<UpdatePackage />} />
           <Route exact path="/removeUser/:username" element={<RemoveUser />} />
           <Route exact path="/prescriptionInfo/:id" element={<PrescriptionInfo />} />
           <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />
           <Route exact path="/viewMedicalHistoryDocuments/:username" element={<ViewMedicalHistoryDocuments />} />
           <Route exact path="/addPrescription/:username/:PatientUsername" element={<AddPrescription />} />
-
+          <Route exact path="/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId" element={<UpdatePrescription />} />
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />
           <Route exact path="/appointmentsList/:username" element={<AppointmentsList />} />
           <Route exact path="/appointmentsListDoctor/:username" element={<AppointmentsListDoctor />} />
           <Route exact path="/prescriptionsList/:username" element={<PrescriptionsList />} />
+          <Route exact path="/prescriptionsListDoctor/:username" element={<PrescriptionsListDoctor />} />
           <Route exact path="/presDoctorsList/:DoctorUsername/:PatientUsername" element={<PresDoctorsList />} />
           <Route exact path="/familyMembersList/:username" element={<FamilyMembersList />} />
           <Route exact path="/healthPackagesList/:username" element={<HealthPackagesList />} />
@@ -86,6 +95,11 @@ function App() {
           <Route exact path="/payAppointment/:usernamePatient/:id/:usernameDoctor" element={<PayAppointment />} />
           <Route exact path="/payAppointmentFamily/:usernamePatient/:id/:usernameDoctor" element={<PayAppointmentFamily />} />
           <Route exact path="/rescheduleAppointment/:usernamePatient/:usernameDoctor/:appID" element={<RescheduleAppointment />} />
+          <Route exact path="/requestFollowUp/:usernamePatient/:usernameDoctor/:appID" element={<RequestFollowUp />} />
+          <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
+          <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
+
+
 
 
 

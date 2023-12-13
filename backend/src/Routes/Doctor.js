@@ -29,7 +29,7 @@ const { registerDoctor,
     scheduleFollowUp, 
     doctorPastApp,
     createAvailableApps,
-    updateDosage,
+    updateMedicineDosage,
     downloadPrescriptionPDF ,
     acceptFollowUpRequest,
     rejectFollowUpRequest,
@@ -44,6 +44,7 @@ const { registerDoctor,
     displayDoctorNotifications,
     sendAppointmentDoctorRescheduleNotificationEmail,
     sendAppointmentDoctorCancelledNotificationEmail,
+    sendAppointmentDoctorNotificationEmail
 
 
 } = require('../Controllers/doctorController');
@@ -104,7 +105,8 @@ router.get('/doctorPastApp/:Username', verify, doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps);
 
 //Req 53: add/update dosage for each medicine added to the prescription 
-router.post('/updateDosage/:DoctorUsername', verify, updateDosage);
+//router.post('/updateDosage/:DoctorUsername/:prescriptionId', verify, updateDosage);
+router.post('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName',verify, updateMedicineDosage);
 
 // Define route for accepting follow-up request
 router.post('/acceptFollowUpRequest/:DoctorUsername/:PatientUsername',verify, acceptFollowUpRequest);
@@ -123,8 +125,8 @@ router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPat
 
 router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
 
-// update patient prescription
-router.put('/updatePatientPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
+// Update the route path to match your frontend
+router.put('/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
 
 router.post('/DeleteMedecineFromPrescription',DeleteMedecineFromPrescription);
 
@@ -138,6 +140,7 @@ router.get('/displayDoctorNotifications/:Username', verify, displayDoctorNotific
 
 router.post('/sendAppointmentDoctorRescheduleNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorRescheduleNotificationEmail);
 router.post('/sendAppointmentDoctorCancelledNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorCancelledNotificationEmail);
+router.post('/sendAppointmentDoctorNotificationEmail/:Username/:AppointmentId', verify, sendAppointmentDoctorNotificationEmail);
 
 const log =require("../Controllers/loginController")
 

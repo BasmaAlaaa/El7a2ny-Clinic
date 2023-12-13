@@ -4,10 +4,12 @@ import { useEffect, useState } from 'react';
 import search from '../assets/images/svg/search.svg';
 import TablePrescriptions from './TablePrescriptions.jsx'
 import NavBarPatient from './NavBarPatient.jsx';
+import NavBarDoctor from './NavBarDoctor.jsx';
+import TablePresDoctors from './TablePresDoctors.jsx';
 
 
 
-function PrescriptionsList() {
+function PrescriptionsListDoctor() {
   const [searchText, setSearchText] = useState('');
   const [searchDate, setSearchDate] = useState('');
   const [filterText, setFilterText] = useState('');
@@ -16,7 +18,7 @@ function PrescriptionsList() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewAllMyPres/${username}`, {
+    const response = axios.get(`http://localhost:4000/Doctor/viewAllMyPres/${username}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
 
@@ -33,11 +35,11 @@ function PrescriptionsList() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Doctor Username', 'Prescription Date', 'Description', 'Status', 'View', 'Download'];
+  let tHead = ['Patient name', 'Patient username', 'Prescription Date', 'Status', 'View', 'Download'];
 
   return (
     <div>
-      <NavBarPatient username={username} />
+      <NavBarDoctor username={username} />
       {/* <Search onChange={(e) => setSearch(e.target.value)}/> */}
       <div className="d-flex justify-content-between flex-row">
         <p className="text-capitalize fs-4 w-25">Prescriptions</p>
@@ -72,8 +74,8 @@ function PrescriptionsList() {
           </select>
         </div>
       </div>
-      <TablePrescriptions tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
+      <TablePresDoctors tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
     </div>
   );
 }
-export default PrescriptionsList;
+export default PrescriptionsListDoctor;

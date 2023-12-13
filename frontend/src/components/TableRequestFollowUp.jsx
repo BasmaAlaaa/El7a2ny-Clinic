@@ -3,14 +3,27 @@ import { useNavigate } from 'react-router-dom';
 
 function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
   let navigate = useNavigate();
-  console.log('app id', appID);
-  console.log('time slot', data._id);
+const followUp = async  () => {
+    console.log('Follow up button clicked');
+    axios.post(`http://localhost:4000/Patient/requestFollowUpAppointment/${patientUsername}/${appID}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+    .then(res => {
+      alert('Follow Up Requested');
+    })
+    .catch(err => {
+      // Check if the error response has data and a message
+      if (err.response && err.response.data && err.response.data.error) {
+        alert('Error requesting a follow up: ' + err.response.data.error);
+      } else {
+        // Fallback error message if the above data is not available
+        alert('Error requesting a follow up');
+      }
+    });
+  }
+  
 
-const rescheduleAppointment = () =>{
-  axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
-  ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-  .then(res =>alert('appointment rescheduled')).catch(err => alert('error rescheduling appointment'));
-}
+  
 
   return (
     <>
@@ -23,9 +36,9 @@ const rescheduleAppointment = () =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>rescheduleAppointment}
+        onClick={followUp}
       >
-        Book
+        Request Follow Up
       </button>
       </div>
       </td>
@@ -48,8 +61,8 @@ const rescheduleAppointment = () =>{
 //   );
 // }
 
-function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUsername }) {
-  console.log('haayaa', data)
+function TableRequestFollowUp({ tHead, data, appID, patientUsername, doctorUsername }) {
+  console.log('basbosa hena followUp', data)
 
   return (
     <div className="case-table card mt-4">
@@ -74,4 +87,4 @@ function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUs
   );
 }
 
-export default TableScheduleReschedule;
+export default TableRequestFollowUp;

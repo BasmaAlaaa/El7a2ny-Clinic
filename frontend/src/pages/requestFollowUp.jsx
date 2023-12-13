@@ -3,10 +3,10 @@ import { useParams} from 'react-router-dom';
 import axios from "axios";
 import NavBarPatient from "../components/NavBarPatient";
 import TableSchedule from "../components/TableSchedule";
-import TableScheduleReschedule from "../components/TableScheduleReschedule";
+import TableRequestFollowUp from "../components/TableRequestFollowUp";
 
 
-function RescheduleAppointment(){
+function RequestFollowUp(){
 
     const {usernamePatient, usernameDoctor, appID} = useParams();
     const[result, setResult] = useState('');
@@ -19,25 +19,16 @@ function RescheduleAppointment(){
   .then(res =>setResult(res.data)).catch(err => console.log(err))
     }, [])
 
-  console.log('aaaaaa',result)
+  console.log('alo ana basbosa ba followUp hena',result)
 
-  // const handleRemove=() => {
-  //   const response = axios.delete(`http://localhost:8000/Admin/RemovePatientOrPharmacist/${username}`)
-  // .then(res =>setResultDelete(res.data)).catch(err => console.log(err))
-  // }
-  // console.log(resultDelete)
-
-//   result.map((e) => {
-//     console.log(e)
-//   })
-let tHead = ['Date', 'Time', 'Status', 'Book'];
+let tHead = ['Date', 'Time', 'Status', 'Request Follow Up'];
 
     return (
         <div>
         <NavBarPatient username={usernamePatient}/>
         <h1>Available Appointments: </h1>
-            <TableScheduleReschedule tHead={tHead} data={result.AvailableTimeSlots} appID={appID} patientUsername={usernamePatient} doctorUsername={usernameDoctor}/>
+            <TableRequestFollowUp tHead={tHead} data={result.AvailableTimeSlots} appID={appID} patientUsername={usernamePatient} doctorUsername={usernameDoctor}/>
         </div>
     )
     }
-    export default RescheduleAppointment;
+    export default RequestFollowUp;

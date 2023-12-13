@@ -1,12 +1,7 @@
-import Search from './Search.jsx';
-import Table from './TableRequests.jsx';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import search from '../assets/images/svg/search.svg';
-import filter from '../assets/images/svg/filter.svg';
-import NavBar from './NavBar.jsx';
-import TablePrescriptions from './TablePrescriptions.jsx'
 import NavBarDoctor from './NavBarDoctor.jsx';
 import TablePresDoctors from "./TablePresDoctors";
 
@@ -35,7 +30,7 @@ function PresDoctorsList() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Patient Username', 'Prescription Date', 'Description', 'Status'];
+  let tHead = ['Patient Username', 'Prescription Date', 'Description', 'Status', 'Update', 'Download'];
 
   return (
     <div>

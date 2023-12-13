@@ -6,6 +6,7 @@ function CaseTableBody({ data, username }) {
   console.log("username doctor:", username)
   const PatientUsername = `${data.Username}`;
   const DoctorUsername = `${username}`;
+  console.log("app status", data.Appointment_Status)
 
   return (
     <>
@@ -19,7 +20,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/patientInfo/${username}/${data.Username}`)}
           >
             View
@@ -30,7 +31,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/addPrescription/${username}/${PatientUsername}`)}
           >
             Add Prescription
@@ -41,7 +42,7 @@ function CaseTableBody({ data, username }) {
       <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
           <button
-            className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
             onClick={() => navigate(`/presDoctorsList/${DoctorUsername}/${PatientUsername}`)}
           >
             View Prescriptions
@@ -67,10 +68,10 @@ function TablePatients({ tHead, data, searchText, filterText, username }) {
         </thead>
         <tbody>
           {data
-            .filter((e) => {
-              return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all' ?
-                e : e.Appointment_Status.toLowerCase() === filterText.toLowerCase()
-            })
+            // .filter((e) => {
+            //   return filterText.toLowerCase() === '' || filterText.toLowerCase() === 'all' ?
+            //     e : e.Appointment_Status.toLowerCase() === filterText.toLowerCase()
+            // })
             .filter((e) => {
               return searchText.toLowerCase() === '' ?
                 e : e.Name.toLowerCase().includes(searchText.toLowerCase())

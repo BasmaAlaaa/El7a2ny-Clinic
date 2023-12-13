@@ -47,7 +47,7 @@ let tHead = ['Date', 'Time', 'Status', 'Book', 'Book For A Family Member'];
             <h3>Name: {result.Name}</h3>
             <h3>Username: {result.Username}</h3>
             <h3>Email: {result.Email}</h3>
-            <h3>Date of Birth: {result.DateOfBirth}</h3>
+            <h3>Date of Birth: {result.DateOfBirth && result.DateOfBirth.substring(0,10)}</h3>
             <h3>Hourly Rate: {result.HourlyRate}</h3>
             <h3>Affiliation: {result.Affiliation}</h3>
             <h3>Educational Background: {result.EDB}</h3>

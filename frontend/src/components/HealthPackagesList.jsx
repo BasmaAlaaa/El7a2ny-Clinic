@@ -32,7 +32,7 @@ function HealthPackagesList(){
   //   console.log(e)
   // })
   let navigate = useNavigate()
-  let tHead = ['Type', 'Annual Fee', 'Doctor Session Discount', 'Medicine Discount', 'Family Subscription Discount', 'View'];
+  let tHead = ['Type', 'Annual Fee', 'Doctor Session Discount', 'Medicine Discount', 'Family Subscription Discount', 'Manage Subscription'];
   let tHeadSub = ['Type', 'Payment Method', 'Renewal Date', 'Subscription Start Date', 'Subscription End Date']
     return (
         <div>
