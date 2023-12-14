@@ -154,7 +154,7 @@ function RegisterDoctor() {
             title='Password'
             required={true}
             placeholder='Enter password'
-            type='text'
+            type='password'
             onChange={(e) => setPassword(e.target.value)}
           />
           <Input

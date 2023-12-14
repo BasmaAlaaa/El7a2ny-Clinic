@@ -4,36 +4,10 @@ import Validation from '../validate/validate.js';
 import NavBar from '../components/NavBar.jsx';
 import { useState } from 'react';
 import axios from 'axios';
+import MainBtn from '../components/Button.jsx';
+import Input from '../components/Input.jsx';
 
 function RegisterPatient() {
-  // let {errors,handleSubmit,register} = Validation('createAccount')
-  // const navigate = useNavigate();
-  // let c = (data) => {
-  //   console.log(data);
-  // }
-  // let inputArr = [
-  //   { title: 'username', placeholder: 'enter your username', type:'text', showErr:errors.username?.message, register: register("username")},
-  //   { title: 'name', placeholder: 'enter your name', type:'text', showErr:errors.name?.message, register: register("name") },
-  //   { title: 'email', placeholder: 'enter your email', type:'email', showErr:errors.email?.message, register: register("email")},
-  //   { title: 'password', placeholder: 'enter password',type:'password', showErr:errors.password?.message, register: register("password") },
-  //   { title: 'confirm password', placeholder: 'enter password',type:'password', showErr:errors.confirmPassword?.message, register: register("confirmPassword") },
-  //   { title: 'date of birth', placeholder: 'enter your date of birth', type:'date', showErr:errors.dateOfBirth?.message, register: register("dateOfBirth") },
-  //   { title: 'gender', placeholder: 'select your gender', type:'text', showErr:errors.gender?.message, register: register("gender") },
-  //   { title: 'mobile number', placeholder: 'enter your mobile number', type: 'tel', showErr:errors.mobileNumber?.message, register: register("mobileNumber") },
-  //   { title: 'Emergency contact full name', placeholder: 'enter your emergency contact full name', type:'text', showErr:errors.emergencyName?.message, register: register("emergencyName") },
-  //   { title: 'Emergency contact mobile number', placeholder: 'enter your emergency contact mobile number', type:'text', showErr:errors.emergencyMobile?.message, register: register("emergencyMobile") },
-  //   { title: 'Emergency contact relation to the patient', placeholder: 'enter your emergency contact relation to the patient', type:'text', showErr:errors.emergencyRelation?.message, register: register("emergencyRelation") },
-
-
-
-  // ];
-  // let btnArr = [
-  //   {
-  //     title: 'create account',
-  //     style: 'green-btn',
-  //     action: handleSubmit(c),
-  //   },
-  // ];
   const [name, setName] = useState('')
   const [nationalID, setNationalID] = useState('')
   const [username, setUsername] = useState('')
@@ -79,13 +53,7 @@ function RegisterPatient() {
   return (
     <div>
       <NavBar />
-      {/* <Form
-        title="create account"
-        inputArr={inputArr}
-        btnArr={btnArr}
-        type="register"
-      /> */}
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <h3>
           <label>Name</label>
           <input title='name' required placeholder='Name...' type='text' onChange={(e) => setName(e.target.value)} />
@@ -129,6 +97,95 @@ function RegisterPatient() {
         <h3>
           <button type="submit">Submit</button>
         </h3>
+      </form> */}
+      <form
+        className="d-flex justify-content-center"
+        onSubmit={handleSubmit}
+      >
+      <div style={{ width: '35%' }} className="form-width">
+          <p className="text-capitalize fs-4">Register As Patient</p>
+          <Input
+            title='Name'
+            required={true}
+            placeholder='Enter name'
+            type='text'
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            title='National ID'
+            required={true}
+            placeholder='Enter national id'
+            type='text'
+            onChange={(e) => setNationalID(e.target.value)}
+          />
+          <Input
+            title='Username'
+            required={true}
+            placeholder='Enter username'
+            type='text'
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            title='Email'
+            required={true}
+            placeholder='Enter email'
+            type='email'
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            title='Password'
+            required={true}
+            placeholder='Enter password'
+            type='password'
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Input
+            title='Date Of Birth'
+            required={true}
+            placeholder='Enter date'
+            type='date'
+            onChange={(e) => setDateOfBirth(e.target.value)}
+          />
+          <Input
+            title='Gender'
+            required={true}
+            placeholder='Enter gender'
+            type='text'
+            onChange={(e) => setGender(e.target.value)}
+          />
+          <Input
+            title='Mobile Number'
+            required={true}
+            placeholder='Enter mobile number'
+            type='text'
+            onChange={(e) => setMobileNumber(e.target.value)}
+          />
+          <Input
+            title='Emergency Contact Full Name'
+            required={true}
+            placeholder='Enter emergency contact full name'
+            type='text'
+            onChange={(e) => setEmergencyName(e.target.value)}
+          />
+          <Input
+            title='Emergency Contact Mobile Number'
+            required={true}
+            placeholder='Enter emergency contact mobile number'
+            type='text'
+            onChange={(e) => setEmergencyMobile(e.target.value)}
+          />
+         
+          <div className="mt-3">
+            <MainBtn
+              txt='Submit'
+              type="submit"
+              style='green-btn'
+              //action={handleSubmit}
+
+            />
+          </div>
+
+        </div>
       </form>
     </div>
   );
