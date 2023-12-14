@@ -9,7 +9,7 @@ function CaseTableBody({ data }) {
   const[searchDate, setSearchDate] = useState('');
 
 const cancelAppointment = () =>{
-   axios.post(`http://localhost:4000/Patient/sendAppointmentPatientCancelledNotificationEmail/${data.PatientUsername}/${data._id}`, "", {
+   axios.post(`http://localhost:4000/Patient/cancelAppointmentFamMem/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
   .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))

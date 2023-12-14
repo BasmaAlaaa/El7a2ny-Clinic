@@ -28,14 +28,17 @@ function RemoveUser() {
   const {username} = useParams();
 
 
-
+console.log("p u", usernamePatient)
   const handleSubmitAdmin = (e) => {
     e.preventDefault();
     const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/${username}/admin/${usernameAdmin}`,{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-.then(res =>alert("Admin removed")).catch(err => alert(err))
-window.location.reload(true);
+    .then(res =>{
+      alert("Admin Removed")
+      window.location.reload(true);
+
+    }).catch(err => alert(err))
   }
 
   const handleSubmitPatient = (e) => {
@@ -43,10 +46,15 @@ window.location.reload(true);
 
     const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/${username}/patient/${usernamePatient}`,{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    }).
-    then(res =>alert("Patient removed")).catch(err => alert(err))
-    window.location.reload(true);
+    })
+    .then(res =>{
+      alert("Patient Removed")
+      window.location.reload(true);
 
+    }).catch(err =>{   
+    console.log("dakhalt")
+    alert(err)}
+    )
   }
 
   const handleSubmitDoctor = (e) => {
@@ -54,9 +62,12 @@ window.location.reload(true);
 
     const response = axios.delete(`http://localhost:4000/Admin/deleteEntity/${username}/doctor/${usernameDoctor}`,{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    }).
-    then(res =>alert("Doctor removed")).catch(err => alert(err))
-    window.location.reload(true);
+    })
+    .then(res =>{
+      alert("Doctor Removed")
+      window.location.reload(true);
+
+    }).catch(err => alert(err))
 
   }
 

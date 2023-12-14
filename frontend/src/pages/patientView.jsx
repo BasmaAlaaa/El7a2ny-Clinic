@@ -10,18 +10,18 @@ import TableNotifications from "../components/TableNotifications";
 function PatientView() {
   const navigate = useNavigate();
   const { username } = useParams();
-  const [healthRecord, setHealthRecord] = useState([]);
+  // const [healthRecord, setHealthRecord] = useState([]);
 
 
-  let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
+  // let tHead = ['Date', 'Description', 'Diagnosis', 'Medication'];
 
-  useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewHealthRecords/${username}`,{
-      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    })
-      .then(res => setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
-  }, [])
-  console.log(healthRecord);
+  // useEffect(() => {
+  //   const response = axios.get(`http://localhost:4000/Patient/viewHealthRecords/${username}`,{
+  //     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  //   })
+  //     .then(res => setHealthRecord(res.data.healthRecords)).catch(err => console.log(err))
+  // }, [])
+  // console.log(healthRecord);
 
   return (
     <div>

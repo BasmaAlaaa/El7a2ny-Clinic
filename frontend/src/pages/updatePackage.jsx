@@ -29,8 +29,11 @@ function UpdatePackage(){
       {AnnualFee:annualFee}, {
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       })
-      .then(res =>alert("Updated!")).catch(err => alert(err))
-      window.location.reload(true);
+      .then(res =>{
+        alert("Updated")
+        window.location.reload(true);
+  
+      }).catch(err => alert(err))
 
       console.log(annualFee)
       }
@@ -39,8 +42,11 @@ function UpdatePackage(){
         {DoctorSessionDiscount:doctorSessionDiscount}, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
+        .then(res =>{
+          alert("Updated")
+          window.location.reload(true);
+    
+        }).catch(err => alert(err))
 
         }
       if(medicineDiscount){
@@ -48,8 +54,11 @@ function UpdatePackage(){
         {MedicineDiscount:medicineDiscount}, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
+        .then(res =>{
+          alert("Updated")
+          window.location.reload(true);
+    
+        }).catch(err => alert(err))
 
         }
       if(familySubscriptionDiscount){
@@ -57,8 +66,11 @@ function UpdatePackage(){
         {FamilySubscriptionDiscount:familySubscriptionDiscount}, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
+        .then(res =>{
+          alert("Updated")
+          window.location.reload(true);
+    
+        }).catch(err => alert(err))
 
         }
     }
