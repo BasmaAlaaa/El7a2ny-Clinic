@@ -4,6 +4,7 @@ import MainBtn from '../components/Button.jsx';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import axios from "axios";
+import NavBar from '../components/NavBar.jsx';
 
 
 function Login() {
@@ -38,6 +39,7 @@ function Login() {
 
   return (
     <div>
+      <NavBar />
       <form
       className="d-flex justify-content-center"
     >

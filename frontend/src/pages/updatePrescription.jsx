@@ -12,13 +12,13 @@ function UpdatePrescription() {
     const [result, setResult] = useState('');
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${prescriptionId}`, {
-          headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
-        })
-          .then(res => setResult(res.data)).catch(err => console.log(err))
-      }, [])
-      console.log("el pres" , result)
+    // useEffect(() => {
+    //     const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${prescriptionId}`, {
+    //       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+    //     })
+    //       .then(res => setResult(res.data)).catch(err => console.log(err))
+    //   }, [])
+    //   console.log("el pres" , result)
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -53,11 +53,7 @@ function UpdatePrescription() {
     return (
         <div>
             <NavBarDoctor username={DoctorUsername}/>
-            <h1>Prescription Info</h1>
-      <ul>
-        <h3>Patient Name:</h3>
-        <h3>Description:</h3>
-      </ul>
+
             {/* <TableCart /> */}
             <form className="d-flex justify-content-center">
                 <div className="form-width">

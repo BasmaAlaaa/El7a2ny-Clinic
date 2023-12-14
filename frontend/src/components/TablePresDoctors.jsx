@@ -27,7 +27,7 @@ function CaseTableBody({ data }) {
             className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
            onClick={()=>navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)}
           >
-            View
+            Update
           </button>
           </div>
           </td>

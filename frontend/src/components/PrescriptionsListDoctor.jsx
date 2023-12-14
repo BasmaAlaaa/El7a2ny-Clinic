@@ -53,7 +53,7 @@ function PrescriptionsListDoctor() {
             <input
               type="text"
               className="form-control border-start-0 search ps-0"
-              placeholder="Search by Doctor"
+              placeholder="Search by Patient"
               onChange={(e) => setSearchText(e.target.value)}
             />
             <input
