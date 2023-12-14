@@ -864,7 +864,7 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   if (!(req.user.Username === DoctorUsername)) {
-    return res.status(403).json("You are not authorized to perform this action!");
+    return res.status(403).json("You are not logged in!");
   }
 
   try {
@@ -884,7 +884,7 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
     }
 
     // Find the specific medicine within the prescription
-    const medicineToUpdate = prescription.medicines.find(med => med.name === medicineName);
+    const medicineToUpdate = prescription.Medicines.find(med => med.Name === medicineName);
 
     if (!medicineToUpdate) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
