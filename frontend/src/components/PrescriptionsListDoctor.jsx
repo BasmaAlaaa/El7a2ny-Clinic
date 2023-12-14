@@ -6,6 +6,7 @@ import TablePrescriptions from './TablePrescriptions.jsx'
 import NavBarPatient from './NavBarPatient.jsx';
 import NavBarDoctor from './NavBarDoctor.jsx';
 import TablePresDoctors from './TablePresDoctors.jsx';
+import TablePresGeneral from './TablePresGeneral.jsx';
 
 
 
@@ -74,7 +75,7 @@ function PrescriptionsListDoctor() {
           </select>
         </div>
       </div>
-      <TablePresDoctors tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
+      <TablePresGeneral tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
     </div>
   );
 }

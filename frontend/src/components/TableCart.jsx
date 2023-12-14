@@ -110,7 +110,7 @@ function CaseTableBody({ data, username }) {
             
   return (
     <>
-    <th>{data.name}</th>
+    <th>{data.Name}</th>
 
     <td>
     <div className="d-flex flex-row">
@@ -120,7 +120,7 @@ function CaseTableBody({ data, username }) {
       >
         +
       </button>
-      {newQuantity}
+      {data.dosage}
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
         onClick={handleQuantityRemove}
