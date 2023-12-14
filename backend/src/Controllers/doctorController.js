@@ -1294,9 +1294,9 @@ const addMedicineToPrescription = async (req, res) => {
 //   }
 // };
 
-const deleteMedecineFromPrescription = async (req, res) => { // fix routes
+const deleteMedecineFromPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
-  const { MedicineName } = req.body;
+  const { medicineName } = req.body;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -1316,18 +1316,18 @@ const deleteMedecineFromPrescription = async (req, res) => { // fix routes
       return res.status(404).json({ error: 'Prescription not found.' });
     }
 
-    // Find the index of the medicine in the Medicines array
-    const medicineIndex = prescription.Medicines.findIndex(medicine => medicine.medicine.name === MedicineName);
+    console.log(prescription.Medicines);
+    const medicineIndex = prescription.Medicines.findIndex(
+      (medicine) => medicine.Name === medicineName
+    );
+    console.log(medicineIndex);
 
-    // Check if the MedicineName exists in the prescription
     if (medicineIndex === -1) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
     }
 
-    // Remove the medicine at the specified index
     prescription.Medicines.splice(medicineIndex, 1);
 
-    // Save the updated prescription
     await prescription.save();
 
     res.status(200).json({ message: 'Medicine deleted from prescription successfully.' });

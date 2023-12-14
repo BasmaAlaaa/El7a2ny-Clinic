@@ -119,7 +119,7 @@ router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, r
 router.get('/downloadPrescriptionPDF/:DoctorUsername', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
-router.post('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
+router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
 
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
