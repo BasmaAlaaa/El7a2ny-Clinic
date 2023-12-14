@@ -1037,8 +1037,12 @@ const rejectFollowUpRequest = async (req, res) => {
 };
 
 // view all prescriptions of a patient
-const ViewAllPres = async (req, res) => {
+const viewAllPres = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   if (!(req.user.Username === DoctorUsername)) {
     return res.status(403).json("You are not logged in!");
   }
@@ -1060,8 +1064,12 @@ const ViewAllPres = async (req, res) => {
 };
 
 // view ALL prescriptions
-const ViewAllPresGeneral = async (req, res) => {
+const viewAllPresGeneral = async (req, res) => {
   const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   if (!(req.user.Username === DoctorUsername)) {
     return res.status(403).json("You are not logged in!");
   }
@@ -1076,6 +1084,33 @@ const ViewAllPresGeneral = async (req, res) => {
     }
 
     res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+const viewPresDetails = async (req, res) => {
+  const { DoctorUsername, prescriptionId } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
+
+  try {
+    const prescription = await Prescription.findOne({
+      _id: mongoose.Types.ObjectId(prescriptionId),
+      DoctorUsername: DoctorUsername
+    });
+
+    if (!prescription) {
+      return res.status(404).send("Prescription not found for this doctor");
+    }
+
+    res.status(200).send(prescription);
   } catch (error) {
     res.status(400).send({ error: error.message });
   }
@@ -1953,8 +1988,9 @@ module.exports = {
   acceptFollowUpRequest,
   rejectFollowUpRequest,
   addPatientPrescription,
-  ViewAllPres,
-  ViewAllPresGeneral,
+  viewAllPres,
+  viewAllPresGeneral,
+  viewPresDetails,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,
