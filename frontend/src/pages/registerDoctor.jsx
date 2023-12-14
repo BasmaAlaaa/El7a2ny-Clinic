@@ -4,33 +4,10 @@ import Validation from '../validate/validate.js';
 import NavBar from '../components/NavBar.jsx';
 import { useState } from 'react';
 import axios from 'axios';
+import Input from '../components/Input.jsx';
+import MainBtn from '../components/Button.jsx';
 
 function RegisterDoctor() {
-  // let {errors,handleSubmit,register} = Validation('createAccount')
-  // const navigate = useNavigate();
-  // let c = (data) => {
-  //   console.log(data);
-  // }
-  // let inputArr = [
-  //   { title: 'username', placeholder: 'enter your username', type:'text', showErr:errors.username?.message, register: register("username")},
-  //   { title: 'name', placeholder: 'enter your name', type:'text', showErr:errors.name?.message, register: register("name") },
-  //   { title: 'email', placeholder: 'enter your email', type:'email', showErr:errors.email?.message, register: register("email")},
-  //   { title: 'password', placeholder: 'enter password',type:'password', showErr:errors.password?.message, register: register("password") },
-  //   { title: 'confirm password', placeholder: 'enter password',type:'password', showErr:errors.confirmPassword?.message, register: register("confirmPassword") },
-  //   { title: 'date of birth', placeholder: 'enter your date of birth', type:'date', showErr:errors.dateOfBirth?.message, register: register("dateOfBirth") },
-  //   { title: 'hourly rate', placeholder: 'Enter your hourly rate', type:'text', showErr:errors.hourlyRate?.message, register: register("hourlyRate") },
-  //   { title: 'affiliation', placeholder: 'enter hospital name', type: 'text', showErr:errors.affiliation?.message, register: register("affiliation") },
-  //   { title: 'Educational background', placeholder: 'enter your educational background', type:'text', showErr:errors.educationalBackground?.message, register: register("educationalBackground") },
-
-
-  // ];
-  // let btnArr = [
-  //   {
-  //     title: 'create account',
-  //     style: 'green-btn',
-  //     action: handleSubmit(c),
-  //   },
-  // ];
   const [name, setName] = useState('')
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
@@ -79,7 +56,7 @@ function RegisterDoctor() {
             alert(`Failed to register. Status: ${response.status}`);
           }
         } catch (error) {
-          alert(`Failed to update password. Error: ${error.message}`);
+          alert(`Failed to register. Error: ${error.message}`);
           console.error('Error accepting request:', error);
         }
   }
@@ -92,7 +69,7 @@ function RegisterDoctor() {
         btnArr={btnArr}
         type="register"
       /> */}
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         <h3>
           <label>Name</label>
           <input title='name' required placeholder='enter name' type='text' onChange={(e) => setName(e.target.value)} />
@@ -145,6 +122,110 @@ function RegisterDoctor() {
         <h3>
           <button type="submit">Submit</button>
         </h3>
+      </form> */}
+      <form
+        className="d-flex justify-content-center"
+        onSubmit={handleSubmit}
+      >
+      <div style={{ width: '35%' }} className="form-width">
+          <p className="text-capitalize fs-4">Register As Doctor</p>
+          <Input
+            title='Name'
+            required={true}
+            placeholder='Enter name'
+            type='text'
+            onChange={(e) => setName(e.target.value)}
+          />
+          <Input
+            title='Username'
+            required={true}
+            placeholder='Enter username'
+            type='text'
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <Input
+            title='Email'
+            required={true}
+            placeholder='Enter email'
+            type='email'
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            title='Password'
+            required={true}
+            placeholder='Enter password'
+            type='text'
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Input
+            title='Date Of Birth'
+            required={true}
+            placeholder='Enter date'
+            type='date'
+            onChange={(e) => setDateOfBirth(e.target.value)}
+          />
+          <Input
+            title='Hourly Rate'
+            required={true}
+            placeholder='Enter hourly rate'
+            type='number'
+            onChange={(e) => setHourlyRate(e.target.value)}
+          />
+          <Input
+            title='Affiliation'
+            required={true}
+            placeholder='Enter affiliation'
+            type='text'
+            onChange={(e) => setAffiliation(e.target.value)}
+          />
+          <Input
+            title='EducationalBackgroung'
+            required={true}
+            placeholder='Enter educational background'
+            type='text'
+            onChange={(e) => setEDB(e.target.value)}
+          />
+          <Input
+            title='Speciality'
+            required={true}
+            placeholder='Enter speciality'
+            type='text'
+            onChange={(e) => setSpeciality(e.target.value)}
+          />
+          <Input
+            title='ID'
+            required={true}
+            placeholder='Enter ID'
+            type='file'
+            onChange={(e) => setIDDocument(e.target.value)}
+          />
+          <Input
+            title='Medical Degree'
+            required={true}
+            placeholder='Enter Medical degree document'
+            type='file'
+            onChange={(e) => setMedicalDegreeDocument(e.target.value)}
+          />
+          <Input
+            title='Working License'
+            required={true}
+            placeholder='Enter working license'
+            type='file'
+            onChange={(e) => setWorkingLicenseDocument(e.target.value)}
+          />
+
+         
+          <div className="mt-3">
+            <MainBtn
+              txt='Submit'
+              type="submit"
+              style='green-btn'
+              //action={handleSubmit}
+
+            />
+          </div>
+
+        </div>
       </form>
     </div>
   );
