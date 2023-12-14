@@ -18,7 +18,7 @@ function PrescriptionsListDoctor() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/viewAllMyPres/${username}`, {
+    const response = axios.get(`http://localhost:4000/Doctor/viewAllPresGeneral/${username}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
 
@@ -35,7 +35,7 @@ function PrescriptionsListDoctor() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Patient name', 'Patient username', 'Prescription Date', 'Status', 'View', 'Download'];
+  let tHead = ['Patient name', 'Patient username', 'Prescription Date', 'Status'];
 
   return (
     <div>

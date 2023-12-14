@@ -6,34 +6,6 @@ function CaseTableBody({ data }) {
   console.log("pres id", data._id);
   console.log("Data object:", data);
 
-  const downloadPrescription = () =>{
-    axios.get(`http://localhost:4000/Doctor/downloadPrescriptionPDF/${data.prescriptionID}`
-    ,{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-    .then(res =>alert('Prescription downloaded')).catch(err => alert('error downloading prescription'));
-  }
-
-  const updateLink = !data.Filled ? (
-    // <span
-    //   style={{ color: 'blue', cursor: 'pointer' }}
-    //   onClick={() =>
-    //     navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)
-    //   }
-    // >
-    //   Update
-    // </span>
-          <td className="py-3 text-align-center">
-          <div className="d-flex flex-row">
-          <button
-            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-           onClick={()=>navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)}
-          >
-            Update
-          </button>
-          </div>
-          </td>
-  ) : (
-    <span style={{ color: 'gray' }}>Update (Filled)</span>
-  );
 
   return (
     <>
@@ -42,17 +14,7 @@ function CaseTableBody({ data }) {
       {data.Description && <td>{data.Description}</td>}
       {data.Filled && <td>Filled</td>}
       {!data.Filled && <td>Unfilled</td>}
-      <td>{updateLink}</td>
-      <td className="py-3 text-align-center">
-        <div className="d-flex flex-row">
-          <button
-            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-            onClick={downloadPrescription}
-          >
-            Download
-          </button>
-        </div>
-      </td>
+
     </>
   );
 }

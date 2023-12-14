@@ -46,7 +46,7 @@ function RegisterPatient() {
           alert(`Failed to register. Status: ${response.status}`);
         }
       } catch (error) {
-        alert(`Failed to update password. Error: ${error.message}`);
+        alert(`Failed to register. Error: ${error.message}`);
         console.error('Error accepting request:', error);
       }
   }
