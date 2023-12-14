@@ -119,6 +119,7 @@ router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, r
 router.get('/downloadPrescriptionPDF/:DoctorUsername', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
+router.post('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
 
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
@@ -128,7 +129,7 @@ router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres)
 // Update the route path to match your frontend
 router.put('/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
 
-router.post('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
+
 
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentPatient);
 

@@ -1086,23 +1086,18 @@ const addPatientPrescription = async (req, res) => {
         return res.status(404).json({ error: 'Patient not found.' });
       }
 
-      console.log('im here1')
 
       // Validate that each medicine in the request is available from the pharmacy platform
       const validMedicines = await Promise.all(medicines.map(async ({ Name, dosage }) => {
         const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`);
         const medicineDetails = pharmacyResponse.data;
-        console.log('im here2')
-        console.log(pharmacyResponse);
-        console.log('----------------');
-        console.log(medicineDetails);
 
         if (!medicineDetails) {
           return null; // Medicine not found in the pharmacy platform
         }
 
         return {
-          Name: medicineDetails.Name, // Assuming medicineDetails has an _id field
+          Name: medicineDetails.Name,
           dosage: dosage,
         };
       }));
@@ -1208,41 +1203,16 @@ const updatePatientPrescription = async (req, res) => {
 
 
 // Method to add medicine to a prescription
-// const addMedicineToPrescription = async (req, res) => {
-//   const { DoctorUsername, PatientUsername, medicineName } = req.body;
-
-//   try {
-//     // Fetch the prescription from the clinic database
-//     const prescription = await Prescription.findOne({
-//       DoctorUsername: DoctorUsername,
-//       PatientUsername: PatientUsername,
-//     });
-
-//     if (!prescription) {
-//       return res.status(404).json({ error: 'Prescription not found' });
-//     }
-
-//     // Make a request to the pharmacy platform to get medicine details
-//     const pharmacyResponse = await axios.get(`${pharmacyAPIUrl}/DocotorFromTheClinic/GetMedicineByDoctor/${medicineName}`);
-
-//     // Assuming the pharmacy API responds with medicine details
-//     const medicineDetails = pharmacyResponse.data;
-
-//     // Add the medicine details to the prescription
-//     prescription.medecine.push(medicineDetails.Name);
-
-//     // Save the updated prescription
-//     await prescription.save();
-
-//     return res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-
-const addMedicineToPrescription = async (req, res) => { // fix routes
+const addMedicineToPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
+  const username = DoctorUsername;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user && req.user.Username === DoctorUsername)) {
+    return res.status(403).json({ error: 'You are not logged in as the doctor' });
+  }
 
   try {
     const prescription = await Prescription.findOne({
@@ -1255,27 +1225,24 @@ const addMedicineToPrescription = async (req, res) => { // fix routes
       return res.status(404).json({ error: 'Prescription not found' });
     }
 
-    const { medicineName, dosage } = req.body;
+    const { Name, dosage } = req.body;
 
-    // Fetch medicine details from the pharmacy platform
-    const pharmacyResponse = await axios.get(`${pharmacyAPIUrl}/DoctorFromTheClinic/GetMedicineByDoctor/${DoctorUsername}/${medicineName}`);
+    const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     const medicineDetails = pharmacyResponse.data;
 
-    if (!medicineDetails) {
-      return res.status(404).json({ error: 'Medicine was not found in the pharmacy platform.' });
+    if (!medicineDetails || !medicineDetails.Name) {
+      return res.status(404).json({ error: 'The requested medicine does not exist in the pharmacy platform' });
     }
 
-    // Manually provide the dosage
     prescription.Medicines.push({
-      medicine: {
-        _id: medicineDetails._id,
-        name: medicineDetails.name,
-        // Include other relevant fields from medicineDetails if needed
-      },
+      Name: medicineDetails.Name,
       dosage: dosage,
     });
 
-    // Save the updated prescription
     await prescription.save();
 
     return res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
@@ -1333,6 +1300,10 @@ const deleteMedecineFromPrescription = async (req, res) => { // fix routes
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
 
   try {
     const prescription = await Prescription.findOne({
