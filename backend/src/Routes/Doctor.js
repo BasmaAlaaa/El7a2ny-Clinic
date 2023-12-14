@@ -119,7 +119,7 @@ router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, r
 
 
 // Define a route to trigger the download
-router.get('/downloadPrescriptionPDF/:DoctorUsername', verify, downloadPrescriptionPDF);
+router.get('/downloadPrescriptionPDF/:DoctorUsername/:prescriptionID', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
 router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);

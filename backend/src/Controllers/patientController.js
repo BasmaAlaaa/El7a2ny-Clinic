@@ -7,12 +7,11 @@ const FamilyMember = require('../Models/FamilyMember.js');
 const appointmentSchema = require('../Models/Appointment.js');
 const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
+const Prescription = require('../Models/Prescription.js');
 const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
-
-const Prescription = require('../Models/Prescription.js');
 
 require("dotenv").config();
 
@@ -2113,9 +2112,9 @@ const downloadPrescriptionPDF = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-     if(!mongoose.Types.ObjectId.isValid(prescriptionID)){
+      if (!mongoose.Types.ObjectId.isValid(prescriptionID)) {
         return res.status(404).json({ error: 'Invalid prescription ID.' });
-      };
+      }
 
       const prescription = await Prescription.findById({ _id: prescriptionID });
 
@@ -2131,35 +2130,37 @@ const downloadPrescriptionPDF = async (req, res) => {
 
       // Resolve the full file path
       const filePath = path.resolve(directoryPath, 'prescription.pdf');
-//    const filePath = path.resolve(directoryPath, `${prescriptionId}.pdf`);
 
       const pdfDoc = new PDFDocument();
-      pdfDoc.pipe(fs.createWriteStream(filePath));
+      const writeStream = fs.createWriteStream(filePath);
+      pdfDoc.pipe(writeStream);
 
       // Customize the content of the PDF based on your prescription data
-    
-        pdfDoc.text(`Prescription ID: ${prescription._id}`);
-        pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
-        pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
-        pdfDoc.text(`Description: ${prescription.Description}`);
-        pdfDoc.text(`Date: ${prescription.Date}`);
-        pdfDoc.text(`Dose: ${prescription.Dose}`);
-        pdfDoc.text(`Medicines: ${prescription.medicines}`);
+      pdfDoc.text(`Prescription ID: ${prescription._id}`);
+      pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+      pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+      pdfDoc.text(`Description: ${prescription.Description}`);
+      pdfDoc.text(`Date: ${prescription.Date}`);
+      pdfDoc.text(`Filled: ${prescription.Filled}`);
+      pdfDoc.text(`Medicines: ${prescription.Medicines}`);
 
-        pdfDoc.text('-----------------------------------------');
-      
+      pdfDoc.text('-----------------------------------------');
 
       pdfDoc.end();
 
-      // Download the PDF
-      res.download(filePath, 'prescription.pdf', (err) => {
-        if (err) {
-          return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
-        }
+      // Listen for the 'finish' event to ensure the file is fully written
+      writeStream.on('finish', () => {
+        // Download the PDF
+        res.download(filePath, 'prescription.pdf', (err) => {
+          if (err) {
+            return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
+          }
 
-        // Clean up the temporary PDF file after download
-        fs.unlinkSync(filePath);
+          // Clean up the temporary PDF file after download
+          fs.unlinkSync(filePath);
+        });
       });
+
     } catch (error) {
       return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
     }
@@ -2167,8 +2168,6 @@ const downloadPrescriptionPDF = async (req, res) => {
 };
 
 // Req 66 
-
-
 const AddRefundForPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);

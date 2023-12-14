@@ -904,22 +904,22 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
 
 //Req 59: download selected prescription (PDF) 
 const downloadPrescriptionPDF = async (req, res) => {
-  const { DoctorUsername } = req.params;
-
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { DoctorUsername, prescriptionID } = req.params;
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      if (!DoctorUsername) {
-        return res.status(400).json({ error: 'DoctorUsername is a required parameter.' });
+      if (!mongoose.Types.ObjectId.isValid(prescriptionID)) {
+        return res.status(404).json({ error: 'Invalid prescription ID.' });
       }
 
-      const prescriptions = await Prescription.find({ DoctorUsername: DoctorUsername });
+      const prescription = await Prescription.findById({ _id: prescriptionID });
 
-      if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+      if (!prescription || prescription.length === 0) {
+        return res.status(404).json({ error: 'No prescription found with this Id.' });
       }
 
       // Ensure the directory exists
@@ -932,34 +932,41 @@ const downloadPrescriptionPDF = async (req, res) => {
       const filePath = path.resolve(directoryPath, 'prescription.pdf');
 
       const pdfDoc = new PDFDocument();
-      pdfDoc.pipe(fs.createWriteStream(filePath));
+      const writeStream = fs.createWriteStream(filePath);
+      pdfDoc.pipe(writeStream);
 
       // Customize the content of the PDF based on your prescription data
-      prescriptions.forEach((prescription) => {
-        pdfDoc.text(`Prescription ID: ${prescription._id}`);
-        pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
-        pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
-        pdfDoc.text(`Description: ${prescription.Description}`);
-        pdfDoc.text(`Date: ${prescription.Date}`);
-        pdfDoc.text('-----------------------------------------');
-      });
+      pdfDoc.text(`Prescription ID: ${prescription._id}`);
+      pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+      pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+      pdfDoc.text(`Description: ${prescription.Description}`);
+      pdfDoc.text(`Date: ${prescription.Date}`);
+      pdfDoc.text(`Filled: ${prescription.Filled}`);
+      pdfDoc.text(`Medicines: ${prescription.Medicines}`);
+
+      pdfDoc.text('-----------------------------------------');
 
       pdfDoc.end();
 
-      // Download the PDF
-      res.download(filePath, 'prescription.pdf', (err) => {
-        if (err) {
-          return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
-        }
+      // Listen for the 'finish' event to ensure the file is fully written
+      writeStream.on('finish', () => {
+        // Download the PDF
+        res.download(filePath, 'prescription.pdf', (err) => {
+          if (err) {
+            return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
+          }
 
-        // Clean up the temporary PDF file after download
-        fs.unlinkSync(filePath);
+          // Clean up the temporary PDF file after download
+          fs.unlinkSync(filePath);
+        });
       });
+
     } catch (error) {
       return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
     }
   }
 };
+
 
 // Req 65 Accept a follow-up request
 
@@ -1129,11 +1136,11 @@ const getAllMedicinesFromPharmacy = async (req, res) => {
     try {
       const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetAllMedicines/${DoctorUsername}`);
       const pharmacyMedicines = pharmacyResponse.data;
-  
+
       if (!pharmacyMedicines || pharmacyMedicines.length === 0) {
         return res.status(404).json({ error: 'No medicines found in the pharmacy!' });
       }
-  
+
       res.status(200).json(pharmacyMedicines);
     } catch (error) {
       console.error(error);
