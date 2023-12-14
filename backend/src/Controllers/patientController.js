@@ -2527,10 +2527,6 @@ const rescheduleAppointment = async (req, res) => {
         return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
       }
 
-      if (!(['Upcoming', 'upcoming', 'Following', 'following'].includes(selectedAppointment.Status))) {
-        return res.status(403).json({ success: false, message: 'You can not reschedule any appointment other than upcoming or following appointments'});
-      }
-
       const doctorUsername = selectedAppointment.DoctorUsername;
       const doctor = await doctorSchema.findOne({ Username: doctorUsername });
 
@@ -2550,7 +2546,8 @@ const rescheduleAppointment = async (req, res) => {
 
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
-        await doctor.save();
+      } else {
+        return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
       }
 
       let slot;

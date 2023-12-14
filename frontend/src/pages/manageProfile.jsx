@@ -35,7 +35,7 @@ const handleAddAppointment = (e) => {
     const response = axios.post(`http://localhost:4000/Doctor/addAvailableTimeSlots/${username}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-    .then(res =>alert('time slot added')).catch(err => alert('error'))
+    .then(res =>alert('added')).catch(err => alert('error'))
   }
       // if (response.status === 200) {
       //       alert(response.data.message);
@@ -46,14 +46,13 @@ const handleAddAppointment = (e) => {
       //       console.error('Error:', error);
       //     };
          // window.location.reload(true); 
-//window.location.reload(true)
+window.location.reload(true)
 }
 
 
     
   const updateEmail=(e) => {
     e.preventDefault();
-    if(email){
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByEmail/${username}`, {Email:email},
     {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
@@ -67,10 +66,9 @@ const handleAddAppointment = (e) => {
       alert('Failed to update email.');
     });
     console.log(result)
-  }}
+  }
   const updateHourlyRate=(e) => {
     e.preventDefault();
-    if(hourlyrate){
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByHourlyRate/${username}`, {HourlyRate:hourlyrate},{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
@@ -83,10 +81,9 @@ const handleAddAppointment = (e) => {
       alert('Failed to update hourly rate.');
     });
       console.log(result)
-  }}
+  }
   const updateAffiliation=(e) => {
     e.preventDefault();
-    if(affiliation){
     const response = axios.put(`http://localhost:4000/Doctor/updateDoctorByAffiliation/${username}`, {Affiliation:affiliation},{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
@@ -98,7 +95,7 @@ const handleAddAppointment = (e) => {
       console.log(err);
       alert('Failed to update affiliation.');
     });  console.log(result)
-  }}
+  }
 
  
     return (

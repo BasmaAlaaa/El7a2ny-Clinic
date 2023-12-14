@@ -89,8 +89,7 @@ const sendOTP = async ({ body }, res) => {
 
 // Async function to update the user's password in MongoDB
 const updatePassword = async ({ body }, res) => {
-  //res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+
   const { Email, otp, newPassword } = body;
   try {
 
@@ -128,8 +127,7 @@ const updatePassword = async ({ body }, res) => {
 };
 
 const changePassword = async (req, res) => {
-  //res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+
   const { username } = req.params;
   const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
