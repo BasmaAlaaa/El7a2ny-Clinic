@@ -1036,7 +1036,7 @@ const rejectFollowUpRequest = async (req, res) => {
   }
 };
 
-
+// view all prescriptions of a patient
 const ViewAllPres = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
   if (!(req.user.Username === DoctorUsername)) {
@@ -1051,6 +1051,28 @@ const ViewAllPres = async (req, res) => {
 
     if (!prescriptions || prescriptions.length === 0) {
       return res.status(404).send("No prescriptions found for this patient");
+    }
+
+    res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+// view ALL prescriptions
+const ViewAllPresGeneral = async (req, res) => {
+  const { DoctorUsername } = req.params;
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
+
+  try {
+    const prescriptions = await Prescription.find({
+      DoctorUsername: DoctorUsername,
+    });
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).send("No prescriptions found for this doctor");
     }
 
     res.status(200).send(prescriptions);
@@ -1932,6 +1954,7 @@ module.exports = {
   rejectFollowUpRequest,
   addPatientPrescription,
   ViewAllPres,
+  ViewAllPresGeneral,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,

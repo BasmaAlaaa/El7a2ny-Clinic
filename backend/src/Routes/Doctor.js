@@ -35,6 +35,7 @@ const { registerDoctor,
   rejectFollowUpRequest,
   addPatientPrescription,
   ViewAllPres,
+  ViewAllPresGeneral,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,
@@ -125,6 +126,7 @@ router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
 
 router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
+router.get('/viewAllPresGeneral/:DoctorUsername', verify, ViewAllPresGeneral);
 
 // Update the route path to match your frontend
 router.put('/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
