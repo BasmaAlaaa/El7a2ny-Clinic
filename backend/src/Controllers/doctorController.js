@@ -1116,6 +1116,31 @@ const viewPresDetails = async (req, res) => {
   }
 };
 
+// view meds @ pharacy
+const getAllMedicinesFromPharmacy = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { DoctorUsername } = req.params;
+
+  if (!(req.user.Username === DoctorUsername)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+    try {
+      const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetAllMedicines/${DoctorUsername}`);
+      const pharmacyMedicines = pharmacyResponse.data;
+  
+      if (!pharmacyMedicines || pharmacyMedicines.length === 0) {
+        return res.status(404).json({ error: 'No medicines found in the pharmacy!' });
+      }
+  
+      res.status(200).json(pharmacyMedicines);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error while fetching medicines from the pharmacy.' });
+    }
+  }
+};
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
@@ -1991,6 +2016,7 @@ module.exports = {
   viewAllPres,
   viewAllPresGeneral,
   viewPresDetails,
+  getAllMedicinesFromPharmacy,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,
