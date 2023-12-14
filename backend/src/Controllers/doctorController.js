@@ -1252,48 +1252,7 @@ const addMedicineToPrescription = async (req, res) => {
   }
 };
 
-
-
-// const DeleteMedecineFromPrescription = async (req, res) => {
-//   const { DoctorUsername, PatientUsername, MedicineName } = req.body;
-
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   try {
-//     const prescription = await Prescription.findOne({
-//       DoctorUsername,
-//       PatientUsername,
-//     });
-
-//     if (!prescription) {
-//       return res.status(404).json({ error: 'Prescription not found.' });
-//     }
-
-//     // const medicineIndex2 = prescription.medecine.findOneAndUpdate(
-
-//     // )
-
-//     // Find the index of the medicine in the medecine array
-//     const medicineIndex = prescription.medecine.findIndex(medicine => medicine === MedicineName);
-
-//     // Check if the medicineName exists in the prescription
-//     if (medicineIndex === -1) {
-//       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
-//     }
-
-//     // Remove the medicine at the specified index
-//     prescription.medecine.splice(medicineIndex, 1);
-
-//     // Save the updated prescription
-//     await prescription.save();
-
-//     res.status(200).json({ message: 'Medicine deleted from prescription successfully.' });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
+// delete medicine from prescription
 const deleteMedecineFromPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
   const { medicineName } = req.body;
