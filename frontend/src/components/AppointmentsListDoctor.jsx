@@ -8,12 +8,14 @@ import filter from '../assets/images/svg/filter.svg';
 import NavBar from './NavBar.jsx';
 import TableAppointments from './TableAppointments.jsx';
 import NavBarDoctor from './NavBarDoctor.jsx';
+import TableAppointmentsRequests from './TableAppointmentsRequests.jsx';
 
 
 function AppointmentsListDoctor() {
   const[searchText, setSearchText] = useState('');
   const[filterText, setFilterText] = useState('');
   const[result, setResult] = useState([]);
+  const[resultReq, setResultReq] = useState([]);
   const {username} = useParams();
   const[searchDate, setSearchDate] = useState('');
 
@@ -24,7 +26,15 @@ const response = axios.get(`http://localhost:4000/Doctor/allAppointmentsDoc/${us
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
-console.log('hayouya', result)
+  useEffect(() => {
+    const response = axios.get(`http://localhost:4000/Doctor/viewRequestedAppointments/${username}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    })
+    .then(res =>setResultReq(res.data)).catch(err => console.log(err))
+      }, [])
+console.log('apps', result);
+console.log('appsReqs', resultReq);
+
 // result.map((e) => {
 //   console.log(e)
 // })
@@ -36,6 +46,8 @@ console.log(filterText)
 let navigate = useNavigate()
 
   let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel'];
+  let tHeadReq = ['Date','Patient Username','Name', 'Accept', 'Reject'];
+
 
   return (
     <div>
@@ -66,6 +78,8 @@ let navigate = useNavigate()
       </div>
     </div>
       <TableAppointments tHead={tHead} data={result} searchDate={searchDate} filterText={filterText} type='doctor'/>
+      <p className="text-capitalize fs-4 w-25">Appointments Requests</p>
+      <TableAppointmentsRequests tHead={tHeadReq} data={resultReq}/>
     </div>
   );
 }
