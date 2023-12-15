@@ -3,110 +3,68 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data, username }) {
+function CaseTableBody({ data, DoctorUsername, PatientUsername, prescriptionId }) {
   let navigate = useNavigate();
   const [newQuantity, setNewQuantity] = useState(data.quantity);
   const [maxQuantity, setMaxQuantity] = useState(0);
+  const [dose, setDose] = useState(0);
 
-  useEffect(() => {
-    axios.get(`http://localhost:8000/Patient/getMedicineByName/${data.medicine}/${username}`,{
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-   .then(res =>setMaxQuantity(res.data.Quantity)).catch(err => console.log(err))
- }, []);
-
- console.log('maxx', maxQuantity);
-  const handleRemove = async() => {
+  const handleRemove = async(e) => {
+    e.preventDefault();
+    const postData = {medicineName: data.Name}
     try{
-    const response = await axios.delete(`http://localhost:8000/Patient/removeItemFromCart/${username}/${data.medicine}`, {
+    const response = await axios.delete(`http://localhost:4000/Doctor/deleteMedecineFromPrescription/${DoctorUsername}/${PatientUsername}/${prescriptionId}/${data.Name}` , {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
    // .then(res =>setResult(res)).catch(err => console.log(err))
       if (response.status === 200) {
             alert(response.data.message);
               console.log(response.data.message);
+              window.location.reload(true);
           }}
           catch(error ){
             alert(`Failed to remove item `);
             console.error('Error removing item:', error);
           };
-          window.location.reload(true);        
       }
-      // useEffect(() => {
-      //    axios.put(`http://localhost:8000/Patient/updateQuantity/${username}/${data.medicine}/${newQuantity}`,"",{
-      //     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      //   })
-      //   .then(res =>console.log(res)).catch(err => console.log(err))
-
-      // }, [newQuantity]);
-
-      // const handleQuantityAdd = async() => {
-      //   try{
-      //     //const newQuantity = data.quantity+1;
-      //     setNewQuantity(data.quantity+1);
-      //   const response = await axios.put(`http://localhost:8000/Patient/updateQuantity/${username}/${data.medicine}/${newQuantity}`,"",{
-      //     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      //   })
-      //  // .then(res =>setResult(res)).catch(err => console.log(err))
-      //     if (response.status === 200) {
-      //           //alert(response.data.message);
-      //             console.log(response.data.message);
-      //         }}
-      //         catch(error ){
-      //           alert(`Failed to add item `);
-      //           console.error('Error removing item:', error);
-      //         };
-      //         //window.location.reload(true);        
-      //     }
-      //     const handleQuantityRemove = async() => {
-      //       if(data.quantity>1){
-      //         setNewQuantity(data.quantity-1);
-      //       try{
-      //       const response = await axios.put(`http://localhost:8000/Patient/updateQuantity/${username}/${data.medicine}/${newQuantity}`, "", {
-      //         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      //       }) 
-      //       if (response.status === 200) {
-      //         //alert(response.data.message);
-      //           console.log(response.data.message);
-      //       }}
-      //       catch(error ){
-      //         alert(`Failed to remove item `);
-      //         console.error('Error removing item:', error);
-      //       };
-      //       //window.location.reload(true);    
-      //     }
-      //     else{
-      //       try{
-      //         const response = await axios.delete(`http://localhost:8000/Patient/removeItemFromCart/${username}/${data.medicine}`, {
-      //           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      //         })
-      //         if (response.status === 200) {
-      //           alert(response.data.message);
-      //             console.log(response.data.message);
-      //         }}
-      //         catch(error ){
-      //           alert(`Failed to remove item `);
-      //           console.error('Error removing item:', error);
-      //         };
-      //         window.location.reload(true);
-      //     }           
-      //         }
-      const handleQuantityRemove =() => {
-        if(newQuantity>1){
-        setNewQuantity(newQuantity-1) ;
-        axios.put(`http://localhost:8000/Patient/updateQuantity/${username}/${data.medicine}/${newQuantity}`,"",{
+      const handleQuantityAdd = async(e) => {
+        e.preventDefault();
+        const postData = {newDosage: data.dosage+1}
+        try{
+        const response = await axios.put(`http://localhost:4000/Doctor/updateMedicineDosage/${DoctorUsername}/${prescriptionId}/${data.Name}`,postData , {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-        .then(res =>setNewQuantity(newQuantity-1)).catch(err => console.log(err))
-      }
-    }
-      const handleQuantityAdd =() => {
-        axios.put(`http://localhost:8000/Patient/updateQuantity/${username}/${data.medicine}/${newQuantity}`,"",{
-          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-        })
-        .then(res =>setNewQuantity(newQuantity+1)).catch(err => console.log(err))
-        
-      }
+       // .then(res =>setResult(res)).catch(err => console.log(err))
+          if (response.status === 200) {
+                alert("Updated");
+                  console.log(response.data.message);
+                  window.location.reload(true);
+              }}
+              catch(error ){
+                alert(`Failed to update dosage`);
+                console.error('Error removing item:', error);
+              };
+          }
+          const handleQuantityRemove = async(e) => {
+            e.preventDefault();
+            const postData = {newDosage: data.dosage-1}
+            try{
+            const response = await axios.put(`http://localhost:4000/Doctor/updateMedicineDosage/${DoctorUsername}/${prescriptionId}/${data.Name}`,postData , {
+              headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+            })
+           // .then(res =>setResult(res)).catch(err => console.log(err))
+              if (response.status === 200) {
+                    alert("Updated");
+                      console.log(response.data.message);
+                      window.location.reload(true);
+                  }}
+                  catch(error ){
+                    alert(`Failed to update dosage `);
+                    console.error('Error removing item:', error);
+                  };
+              }
+
+      
             
   return (
     <>
@@ -160,7 +118,7 @@ function CaseTableBody({ data, username }) {
 //   );
 // }
 
-function TableCart({ tHead, data, username }) {
+function TableCart({ tHead, data, DoctorUsername, PatientUsername, prescriptionId  }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -175,7 +133,7 @@ function TableCart({ tHead, data, username }) {
           {data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} username={username}/>
+                <CaseTableBody data={e} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>
             </tr>
           ))}
         </tbody>

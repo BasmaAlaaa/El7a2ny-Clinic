@@ -9,12 +9,27 @@ function CaseTableBody({ data, type }) {
 
 const cancelAppointment = (e) =>{
   e.preventDefault();
-  console.log("ana f cancel")
+  console.log("ana f cancel");
+  if(type==='patient'){
    axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
   .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
+}else{
+  if(data.ForPatient){
+  axios.post(`http://localhost:4000/Doctor/cancelAppointmentPatient/${data.DoctorUsername}/${data._id}`, "", {
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
+   .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
+}
+else{
+  axios.post(`http://localhost:4000/Doctor/cancelAppointmentPatientFamMem/${data.DoctorUsername}/${data._id}`, "", {
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
+   .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
+}
  }
+}
  function goOrnoGo (){
   if(data.Status === 'completed' || data.Status === 'Completed'){
     navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
@@ -37,7 +52,7 @@ const cancelAppointment = (e) =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}/${type}`)}
       >
         Reschedule
       </button>

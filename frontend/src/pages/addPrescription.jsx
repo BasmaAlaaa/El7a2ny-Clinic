@@ -10,44 +10,35 @@ import NavBarPatient from '../components/NavBarPatient.jsx';
 import Input from '../components/Input.jsx';
 import MainBtn from '../components/Button.jsx';
 import NavBarDoctor from '../components/NavBarDoctor.jsx';
+import TableMedicines from '../components/TableMedicines.jsx';
 // import Patient from '../../../backend/src/Models/Patient.js';
+
 
 function AddPrescription() {
 
-    const { username } = useParams();
-    const { PatientUsername } = useParams();
+    const { username, PatientUsername } = useParams();
     const [description, setDescription] = useState('');
     const [date, setDate] = useState('');
-    const [appointmentID, setAppointmentID] = useState('');
     const [dose, setDose] = useState(0);
-    const [appointments, setAppointments] = useState([]);
+    const [medicines, setMedicines] = useState([]);
+    let tHead = ['Medicine Name'];
 
     const navigate = useNavigate();
 
     console.log(username);
     console.log(PatientUsername);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(
-                    `http://localhost:4000/Doctor/docFilterAppsByStatus/${username}/Upcoming`,
-                    {
-                        headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
-                    }
-                );
-                setAppointments(response.data.filteredAppointments);
-            } catch (error) {
-                console.error('Error fetching appointments:', error);
-            }
-        };
+    // useEffect(() => {
+    //     const response = axios.get(`http://localhost:4000/Doctor/getAllMedicinesFromPharmacy/${username}`, {
+    //       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+    //     })
+    //     .then(res =>setData(res)).catch(err => console.log(err))
+    //       }, [])
 
-        fetchData();
-    }, [username]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const data = { description, date, dose, appointmentID };
+        const data = { description};
         console.log(data);
     
         try {
@@ -71,6 +62,7 @@ function AddPrescription() {
     return (
         <div>
             <NavBarDoctor username={username} />
+
             {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
             {/* <form
         className="d-flex justify-content-center"
@@ -119,7 +111,7 @@ function AddPrescription() {
                 <h3><input required placeholder='Date' type='date' onChange={(e) => setDate(e.target.value)} /></h3>
 
                 {/* Dropdown list of appointments */}
-                <h3>
+                {/* <h3>
                     <select value={appointmentID} onChange={(e) => setAppointmentID(e.target.value)}>
                         <option value="">Select an appointment</option>
                         {appointments.map((appointment) => (
@@ -128,7 +120,7 @@ function AddPrescription() {
                             </option>
                         ))}
                     </select>
-                </h3>
+                </h3> */}
 
                 <h3><button type="submit">Submit</button></h3>
             </form>

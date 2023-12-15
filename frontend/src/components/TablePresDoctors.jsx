@@ -24,7 +24,7 @@ function CaseTableBody({ data }) {
           <div className="d-flex flex-row">
           <button
             className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-           onClick={()=>navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`)}
+           onClick={()=>navigate(`/updatePrescription/${data.DoctorUsername}/${data.PatientUsername}/${data._id}/${'update'}`)}
           >
             Update
           </button>

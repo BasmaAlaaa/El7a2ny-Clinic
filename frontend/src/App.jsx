@@ -79,7 +79,7 @@ function App() {
           <Route exact path="/addMedicalHistoryDocument/:username" element={<AddMedicalHistoryDocument />} />
           <Route exact path="/viewMedicalHistoryDocuments/:username" element={<ViewMedicalHistoryDocuments />} />
           <Route exact path="/addPrescription/:username/:PatientUsername" element={<AddPrescription />} />
-          <Route exact path="/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId" element={<UpdatePrescription />} />
+          <Route exact path="/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId/:type" element={<UpdatePrescription />} />
 
           <Route exact path="/doctorsList" element={<DoctorsList />} />
           <Route exact path="/patientsList/:username" element={<PatientsList />} />
