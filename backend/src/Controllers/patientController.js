@@ -786,48 +786,6 @@ const filterMyPresBasedOnDoctor = async (req, res) => {
   }
 };
 
-const viewMyPres = async (req, res) => {
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  const { id } = req.params;
-
-  const prescription = await prescriptionSchema.findById(id);
-
-  if (!prescription) {
-    return res.status(404).send({ error: 'Prescription not found' });
-  }
-
-  if (!(req.user.Username === prescription.PatientUsername)) {
-    res.status(403).json("You are not logged in!");
-  } else {
-    try {
-
-      const patient = await patientSchema.findOne({ Username: prescription.PatientUsername });
-
-      const doctor = await doctorSchema.findOne({ Username: prescription.DoctorUsername });
-
-      const appointment = await Appointment.findOne({ _id: prescription.Appointment_ID });
-
-      const result = {
-        PatientName: patient.Name,
-        PatientUsername: patient.Username,
-        DoctorName: doctor.Name,
-        Description: prescription.Description,
-        Date: prescription.Date,
-        Filled: prescription.Filled,
-        AppointmentID: prescription.Appointment_ID,
-        Medicines: prescription.medicines
-      }
-
-      res.status(200).send(result);
-    } catch (error) {
-      res.status(400).send({ error: error.message });
-    }
-  }
-};
-
 //Req 20: choose payment method of appointment
 const choosePaymentMethodForApp = async (req, res) => {
 
@@ -3741,7 +3699,6 @@ module.exports = {
   viewDoctorsWithSessionPrices,
   viewDoctorInfo,
   addPresToPatient,
-  viewMyPres,
   viewAllMyPres,
   filterMyPresBasedOnDate,
   filterMyPresBasedOnDoctor,
