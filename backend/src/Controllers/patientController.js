@@ -615,7 +615,7 @@ const addPresToPatient = async (req, res) => {
 
 
 
-// Req 54: app.get('/viewMyPres/:Username')
+// Req 54
 const viewAllMyPres = async (req, res) => {
   const { username } = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -633,22 +633,25 @@ const viewAllMyPres = async (req, res) => {
       const allPrescriptions = patient.PatientPrescriptions;
 
       if (allPrescriptions.length === 0) {
-        return res.status(404).send('No prescriptions found for this patient');
+        return res.status(404).send('No prescriptions found for this patient.');
       }
 
       const prescriptions = await prescriptionSchema.find({ _id: { $in: allPrescriptions } });
 
       if (prescriptions.length === 0) {
-        return res.status(404).send('No prescriptions found for this patient2');
+        return res.status(404).send('No prescriptions found for this patient.');
       }
 
       const result = prescriptions.map(prescription => ({
         prescriptionID: prescription._id,
-        Appointment_ID: prescription.Appointment_ID,
-        Date: prescription.Date,
         DoctorUsername: prescription.DoctorUsername,
+        PatientUsername: prescription.PatientUsername,
         Description: prescription.Description,
-        Filled: prescription.Filled
+        Date: prescription.Date,
+        Filled: prescription.Filled,
+        Medicines: prescription.Medicines,
+        TotalAmount: prescription.TotalAmount,
+        prescriptionPaymentMethod: prescription.prescriptionPaymentMethod
       }));
 
       res.status(200).send(result);
