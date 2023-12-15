@@ -19,7 +19,7 @@ function AppointmentsListDoctor() {
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Doctor/allAppointments/${username}`, {
+const response = axios.get(`http://localhost:4000/Doctor/allAppointmentsDoc/${username}`, {
   headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
@@ -35,7 +35,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel', 'Follow-up'];
+  let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel'];
 
   return (
     <div>

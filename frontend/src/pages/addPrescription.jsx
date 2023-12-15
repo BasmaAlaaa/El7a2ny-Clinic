@@ -51,7 +51,7 @@ function AddPrescription() {
             );
     
             alert('Prescription added successfully.');
-            navigate(`/patientsList/${username}`);
+            navigate(`/updatePrescription/${username}/${PatientUsername}`);
             console.log(response.data);
         } catch (error) {
             console.error('Error adding prescription:', error.response?.data || error.message);

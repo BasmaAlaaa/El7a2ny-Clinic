@@ -41,15 +41,15 @@ function UpdatePrescription() {
         e.preventDefault();
 
         try {
-            const data = {};
+            const data = {updatedDescription: updatedDescription};
 
-            if (updatedDescription !== "" && updatedDescription.trim() !== "") {
-                data.updatedDescription = updatedDescription;
-            }
+            // if (updatedDescription !== "" && updatedDescription.trim() !== "") {
+            //     data.updatedDescription = updatedDescription;
+            // }
 
-            if (updatedDose !== 0) {
-                data.updatedDose = updatedDose;
-            }
+            // if (updatedDose !== 0) {
+            //     data.updatedDose = updatedDose;
+            // }
 
             const response = await axios.put(`http://localhost:4000/Doctor/updatePrescription/${DoctorUsername}/${PatientUsername}/${prescriptionId}`, data, {
                 headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },

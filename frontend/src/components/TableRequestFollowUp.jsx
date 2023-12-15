@@ -17,6 +17,7 @@ const followUp = async  (e) => {
       // Check if the error response has data and a message
       if (err.response && err.response.data && err.response.data.error) {
         alert('Error requesting a follow up: ' + err.response.data.error);
+        console.log(err);
       } else {
         // Fallback error message if the above data is not available
         alert('Error requesting a follow up');
