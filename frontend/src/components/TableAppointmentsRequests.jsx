@@ -9,14 +9,15 @@ function CaseTableBody({ data}) {
 
 const handleAccept = (e) =>{
   e.preventDefault();
-   axios.post(`http://localhost:4000/Doctor/acceptFollowUpRequest/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`, "", {
+   axios.post(`http://localhost:4000/Doctor/acceptFollowUpRequest/${data.DoctorUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
   .then(res =>{alert('Appointment Accepted');window.location.reload(true)}).catch(err => {console.log(err); alert('error accepting appointment')})
 }
 const handleReject = (e) =>{
     e.preventDefault();
-     axios.post(`http://localhost:4000/Doctor/rejectFollowUpRequest/${data.DoctorUsername}/${data.PatientUsername}/${data._id}`, "", {
+    console.log("ana f reject", data._id);
+     axios.post(`http://localhost:4000/Doctor/rejectFollowUpRequest/${data.DoctorUsername}/${data.PatientUsername}`, "", {
      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
    })
     .then(res =>{alert('Appointment Rejected');window.location.reload(true)}).catch(err => {console.log(err); alert('error rejecting appointment')})

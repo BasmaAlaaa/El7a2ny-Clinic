@@ -45,8 +45,8 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Date', 'Doctor Username','Patient Username','Name', 'Status', 'Reschedule', 'Cancel'];
-  let tHeadReq = ['Date','Patient Username','Name', 'Accept', 'Reject'];
+  let tHead = ['Date', 'Doctor Username','Patient Username','Patient Name', 'Status', 'Reschedule', 'Cancel'];
+  let tHeadReq = ['Date','Patient Username','Patient Name', 'Accept', 'Reject'];
 
 
   return (
