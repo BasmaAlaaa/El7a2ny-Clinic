@@ -66,8 +66,7 @@ function AddPrescription() {
     const data = { description: description };
     const response = axios.post(`http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
-    })
-      .then(res => { setPrescriptionId(res.data.prescription._id); console.log(res); alert('Prescription Added successfully'); }).catch(err => alert(err))
+    }).then(res => { setPrescriptionId(res.data.prescription._id); console.log(res); alert('Prescription Added successfully'); }).catch(err => alert(err))
   }
 
   return (
