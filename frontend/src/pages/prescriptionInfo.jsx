@@ -4,6 +4,8 @@ import axios from "axios";
 import NavBarPatient from "../components/NavBarPatient";
 import MainBtn from "../components/Button";
 import Input from "../components/Input";
+import TableMedicines from "../components/TableMedicines";
+import TableItems from "../components/TableItems";
 
 
 function PrescriptionInfo() {
@@ -23,13 +25,15 @@ function PrescriptionInfo() {
   }, [])
 
   const handlePay = (e) =>{
+    console.log('patient username', result.PatientUsername);
+    console.log('id', id);
     e.preventDefault();
       const data = {paymentMethod:typePay}
       if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
         alert('Missing fields')
       }
       else{
-   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${result.PatientUsername}/${id}`, data, {
+   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${result.PatientUsername}`, data, {
     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
   })
    .then(res =>{
@@ -57,7 +61,8 @@ console.log('el result aho', result)
         <h3>Description: {result.Description}</h3>
         <h3>Status: {result.Filled == true ? "Filled" : "Unfilled"}</h3>
       </ul>
-      {/* <TableItems /> */}
+      <h2>Prescription Medicines</h2>
+           {result.Medicines && <TableItems tHead={tHead} data={result.Medicines}/>}
       <form
       //style={{ width: '100%' }}
       className="d-flex justify-content-center "
