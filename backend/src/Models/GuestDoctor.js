@@ -37,10 +37,10 @@ const guestDoctorSchema = new Schema(
       type: String,
       required: true,
     },
-    Speciality:{
+    Speciality: {
       type: String,
       required: true,
-      enum:["dermatology","dentistry","psychiatry","neurology","orthopedics"]
+      enum: ["dermatology", "Dermatology", "dentistry", "Dentistry", "psychiatry", "Psychiatry", "neurology", "Neurology", "orthopedics", "Orthopedics"]
     },
     IsApproved: {
       type: Boolean,

@@ -1,7 +1,5 @@
-const guestDoctorModel = require('../Models/GuestDoctor.js');
-const { default: mongoose } = require('mongoose');
+const GuestDoctor = require('../Models/GuestDoctor.js');
 const { isEmailUnique, isUsernameUnique, validatePassword } = require('../utils.js');
-const upload = require('../Routes/multer-config');
 
 // Task 3 : register Doctor
 const registerGuestDoctor = async (req, res) => {
@@ -49,7 +47,7 @@ const registerGuestDoctor = async (req, res) => {
             return res.status(400).json('All fields must be filled.');
         }
         
-        const guestDoctor = new guestDoctorModel({
+        const guestDoctor = new GuestDoctor({
             Username,
             Name,
             Email,

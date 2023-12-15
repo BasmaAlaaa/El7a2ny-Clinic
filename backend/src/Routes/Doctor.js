@@ -7,8 +7,7 @@ const upload = require('../Routes/multer-config');
 
 
 
-const { registerDoctor,
-  viewInfoAndRecords,
+const { viewInfoAndRecords,
   MyPatients,
   PatientByName,
   PatientsUpcoming,
@@ -57,11 +56,6 @@ const { verify } = require('../Controllers/loginController');
 
 
 // register route
-router.post('/Register', upload.fields([
-  { name: 'IDDocument', maxCount: 1 },
-  { name: 'MedicalDegreeDocument', maxCount: 1 },
-  { name: 'WorkingLicenseDocument', maxCount: 1 },
-]), registerDoctor);
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 router.put('/updateDoctorByAffiliation/:Username', verify, updateDoctorByAffiliation);

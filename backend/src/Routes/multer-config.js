@@ -5,7 +5,7 @@ const path = require('path');
 
 const storage = multer.memoryStorage();
 
-const allowedFileTypes = ['pdf', 'jpeg', 'jpg', 'png'];
+const allowedFileTypes = ['pdf', 'jpeg', 'jpg', 'png', 'PDF', 'JPEG', 'JPG', 'PNG', 'Pdf', 'Jpeg', 'Jpg', 'Png'];
 
 const fileFilter = (req, file, cb) => {
     const extname = path.extname(file.originalname).toLowerCase();
