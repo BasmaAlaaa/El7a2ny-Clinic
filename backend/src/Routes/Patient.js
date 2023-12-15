@@ -13,7 +13,6 @@ const {
   findDocBySpecality,
   findDocByAvailability,
   addPresToPatient,
-  viewMyPres,
   filterMyPresBasedOnDate,
   filterMyPresBasedOnDoctor,
   filterMyPresBasedOnFilled,
@@ -85,7 +84,6 @@ router.get("/searchDocBySpec/:Username/:Speciality", verify, searchDocBySpec);
 
 router.post("/addPresToPatient/:Username/:id", verify, addPresToPatient);
 
-router.get("/viewMyPres/:id", verify, viewMyPres);
 
 router.get("/filterMyPresBasedOnDate/:Username/:Date", verify, filterMyPresBasedOnDate);
 router.get("/filterMyPresBasedOnDoctor/:Username/:DoctorUsername", verify, filterMyPresBasedOnDoctor);
