@@ -108,8 +108,6 @@ const registerPatient = async (req, res) => {
   }
 };
 
-
-
 // Req 18: app.post('/addFamMember/:Username')
 const addFamMember = async (req, res) => {
 
