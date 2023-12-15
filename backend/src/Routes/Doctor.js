@@ -119,7 +119,7 @@ router.get('/viewRequestedAppointments/:DoctorUsername', verify, viewRequestedAp
 router.get('/downloadPrescriptionPDF/:DoctorUsername/:prescriptionID', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
-router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
+router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId/:medicineName', verify, deleteMedecineFromPrescription);
 
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);

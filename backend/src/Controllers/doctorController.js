@@ -1295,9 +1295,8 @@ const addMedicineToPrescription = async (req, res) => {
 
 // delete medicine from prescription
 const deleteMedecineFromPrescription = async (req, res) => {
-  const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
-  const { medicineName } = req.body;
-
+  const { DoctorUsername, PatientUsername, prescriptionId, medicineName } = req.params;
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
