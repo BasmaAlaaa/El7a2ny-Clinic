@@ -269,6 +269,7 @@ const MyPatients = async (req, res) => {
 
       const appointments = await appointmentSchema.find({ PatientUsername: { $in: patientsUsernames } });
 
+      
       const result = [];
       for (const patient of patients) {
         for (const app of appointments) {
@@ -1697,7 +1698,7 @@ const removeDoctorAppointmentNotifications = async () => {
 
 const displayDoctorNotifications = async (req, res) => {
   try {
-    await createDoctorAppointmentNotifications(req);
+    //await createDoctorAppointmentNotifications(req);
     const { Username } = req.params;
     console.log(Username);
     const notifications = await Notification.find({ username: Username });
