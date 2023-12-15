@@ -918,7 +918,7 @@ const downloadPrescriptionPDF = async (req, res) => {
 // Req 65 Accept a follow-up request
 
 const acceptFollowUpRequest = async (req, res) => {
-  const { DoctorUsername, AppointmentId, timeSlot } = req.params;
+  const { DoctorUsername, AppointmentId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
     console.error('Invalid ObjectId format for AppointmentId');
     return;
@@ -945,12 +945,17 @@ const acceptFollowUpRequest = async (req, res) => {
 
       const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
 
-      const slot = doctorAvailableTimeSlots.find(s => s._id.toString() === timeSlot);
-  
+      const date = appointment.Date;
+      const time = appointment.Time;
+      
+      const slot = doctorAvailableTimeSlots.find(s => s.Date.getTime() === date.getTime() && s.Time === time);
+      
+      console.log(slot);
+      
       if (!slot) {
         return res.status(400).json({ success: false, message: 'Selected time slot is not available.' });
-      }  
-
+      }
+      
       const validStatusValues = ['Requested', 'requested'];
       if (validStatusValues.includes(appointment.Status)) {
         console.log(appointment.Status);
