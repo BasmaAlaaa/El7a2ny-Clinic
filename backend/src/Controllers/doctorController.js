@@ -447,7 +447,7 @@ const PatientsUpcoming = async (req, res) => {
       res.send(upcomingAppointments);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(err.message);
     }
   }
 }
@@ -480,7 +480,7 @@ const selectPatientWithHisName = async (req, res) => {
       res.send(patient);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(err.message);
     }
   }
 }
@@ -822,7 +822,7 @@ const doctorPastApp = async (req, res) => {
       res.send(pastAppointments);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(err.message);
     }
   }
 };
@@ -1005,7 +1005,7 @@ const acceptFollowUpRequest = async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
@@ -1042,7 +1042,7 @@ const rejectFollowUpRequest = async (req, res) => {
       }
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
@@ -1176,7 +1176,7 @@ const getAllMedicinesFromPharmacy = async (req, res) => {
       res.status(200).json(pharmacyMedicines);
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: 'Internal server error while fetching medicines from the pharmacy.' });
+      res.status(500).json({ error: error.message });
     }
   }
 };
@@ -1244,7 +1244,7 @@ const addPatientPrescription = async (req, res) => {
       return res.status(200).json({ success: 'Prescription added successfully.', prescription });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ error: 'Internal server error.' });
+      return res.status(500).json({ error: error.message });
     }
   }
 }
@@ -1318,7 +1318,7 @@ const updatePatientPrescription = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal server error.' });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -1369,7 +1369,7 @@ const addMedicineToPrescription = async (req, res) => {
     return res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -1591,14 +1591,14 @@ const cancelAppointmentPatient = async (req, res) => {
     return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 
 
 const cancelAppointmentPatientFamMem = async (req, res) => {
   try {
-    const { username, appointmentId, familyId } = req.params;
+    const { username, appointmentId } = req.params;
 
     if (req.user.Username !== username) {
       return res.status(403).json({ success: false, message: 'You are not logged in!' });
@@ -1653,8 +1653,6 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
     await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
     await doctorSchema.updateOne({ Username: doctor.Username }, { $inc: { WalletAmount: -refundAmount } });
 
-
-
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
       slot.Date.getTime() === selectedAppointment.Date.getTime() &&
       slot.Time === selectedAppointment.Time &&
@@ -1671,13 +1669,13 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
-    //await Promise.all([selectedAppointment.save(), doctor.save()]);
+
     await SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "yes");
 
     return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: 'Internal server error.' });
+    return res.status(500).json({ success: false, message: error.message});
   }
 };
 

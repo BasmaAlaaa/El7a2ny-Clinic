@@ -1426,7 +1426,7 @@ const addMedicalHistoryDocument = async (req, res) => {
       return res.status(200).json({ message: 'Document uploaded successfully', document: newDocument });
     } catch (error) {
       console.error('Error in addMedicalHistoryDocument:', error);
-      res.status(500).json({ message: 'Internal Server Error' });
+      res.status(500).json({ message: error.message });
     }
   }
 };
@@ -1569,7 +1569,7 @@ const patientPastApp = async (req, res) => {
       res.send(pastAppointments);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(error.message);
     }
   }
 }
@@ -1606,7 +1606,7 @@ const patientUpcoming = async (req, res) => {
       res.send(upcomingAppointments);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(error.message);
     }
   }
 }
@@ -1645,7 +1645,7 @@ const availableDoctorApps = async (req, res) => {
       res.send(result);
     } catch (err) {
       console.error(err);
-      res.status(500).send('Internal Server Error');
+      res.status(500).send(error.message);
     }
   }
 }
@@ -2386,7 +2386,7 @@ const AddRefundForPatient = async (req, res) => {
       });
     } catch (error) {
       console.error(error);
-      return res.status(500).json({ success: false, message: 'Internal server error.' });
+      return res.status(500).json({ success: false, message: error.message });
     }
   }
 };
@@ -2435,7 +2435,7 @@ const requestFollowUpAppointment = async (req, res) => {
     return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal server error.' });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -2606,7 +2606,7 @@ const requestFollowUpForFamilyMember = async (req, res) => {
     return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Internal server error.' });
+    return res.status(500).json({ error: error.message });
   }
 };
 
@@ -3757,7 +3757,7 @@ const updatePrescriptionPaymentMethod = async (req, res) => {
 
     res.status(200).send('Prescription payment method updated successfully');
   } catch (error) {
-    res.status(500).send('Internal Server Error');
+    res.status(500).send(error.message);
   }
 };
 
