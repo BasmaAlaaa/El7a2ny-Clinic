@@ -134,12 +134,6 @@ const patientSchema = new Schema({
   MedicalHistoryDocuments: [
     medicalHistoryDocument
   ],
-  prescriptionPaymentMethod: {
-    type: String,
-    enum: ['wallet', 'creditCard'],
-    default: 'wallet'
-  },
-
 }, { timestamps: true });
 
 const Patient = mongoose.model('Patient', patientSchema);

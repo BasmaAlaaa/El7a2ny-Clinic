@@ -5,6 +5,7 @@ const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
 const Prescription = require('../Models/Prescription.js');
 const Appointment = require("../Models/Appointment.js");
+const Medicine = require("../Models/Medicine.js");
 const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
@@ -1275,11 +1276,16 @@ const addMedicineToPrescription = async (req, res) => {
         'Content-Type': 'application/json',
       },
     });
+
+    console.log('Pharmacy Response Data:', pharmacyResponse.data);
+
     const medicineDetails = pharmacyResponse.data;
 
-    if (!medicineDetails || !medicineDetails.Name) {
-      return res.status(404).json({ error: 'The requested medicine does not exist in the pharmacy platform' });
+    if (!medicineDetails || !medicineDetails.Name || isNaN(medicineDetails.Price) || isNaN(dosage)) {
+      return res.status(404).json({ error: 'Invalid medicine details or dosage' });
     }
+
+    prescription.TotalAmount += medicineDetails.Price * dosage;
 
     prescription.Medicines.push({
       Name: medicineDetails.Name,
@@ -1295,10 +1301,11 @@ const addMedicineToPrescription = async (req, res) => {
   }
 };
 
+
 // delete medicine from prescription
 const deleteMedecineFromPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId, medicineName } = req.params;
-  
+
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -1317,15 +1324,20 @@ const deleteMedecineFromPrescription = async (req, res) => {
       return res.status(404).json({ error: 'Prescription not found.' });
     }
 
-    console.log(prescription.Medicines);
     const medicineIndex = prescription.Medicines.findIndex(
       (medicine) => medicine.Name === medicineName
     );
-    console.log(medicineIndex);
 
     if (medicineIndex === -1) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
     }
+    
+    // Assuming you have a field named 'Price' in your Medicine schema
+    const medicineDetails = await Medicine.findOne({ Name: medicineName });
+    const removedMedicinePrice = medicineDetails ? medicineDetails.Price : 0;
+    const removedMedicineDosage = prescription.Medicines[medicineIndex].dosage;
+
+    prescription.TotalAmount -= removedMedicinePrice * removedMedicineDosage;
 
     prescription.Medicines.splice(medicineIndex, 1);
 
@@ -1336,6 +1348,7 @@ const deleteMedecineFromPrescription = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 const rescheduleAppointmentPatient = async (req, res) => {
