@@ -111,7 +111,7 @@ router.put('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName'
 router.post('/acceptFollowUpRequest/:DoctorUsername/:AppointmentId', verify, acceptFollowUpRequest);
 
 // Define route for accepting follow-up request
-router.post('/rejectFollowUpRequest/:DoctorUsername/:AppointmentId', verify, rejectFollowUpRequest);
+router.delete('/rejectFollowUpRequest/:DoctorUsername/:AppointmentId', verify, rejectFollowUpRequest);
 
 router.get('/viewRequestedAppointments/:DoctorUsername', verify, viewRequestedAppointments);
 

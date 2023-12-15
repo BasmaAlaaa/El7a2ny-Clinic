@@ -998,9 +998,10 @@ const rejectFollowUpRequest = async (req, res) => {
 
       const validStatusValues = ['Follow-up', 'follow-up', 'Requested', 'requested'];
       if (validStatusValues.includes(appointment.Status)) {
-        appointment.Status = 'Cancelled';
-        await appointment.save();
-        return res.status(200).json({ success: true, message: 'Follow-up appointment request has been rejected.' });
+        // Delete the appointment from the database
+        await appointmentSchema.deleteOne({ _id: AppointmentId });
+        
+        return res.status(200).json({ success: true, message: 'Follow-up appointment request has been rejected and deleted.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in an appropriate status.' });
       }
