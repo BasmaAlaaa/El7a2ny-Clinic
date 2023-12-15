@@ -6,7 +6,7 @@ function CaseTableBody({ data }) {
 
   return (
     <>
-    <th>{data.name}</th>
+    <th>{data.Name}</th>
     <td>{data.dosage}</td>
       
       

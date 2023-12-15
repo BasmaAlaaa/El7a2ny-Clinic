@@ -9,7 +9,7 @@ import TableItems from "../components/TableItems";
 
 
 function PrescriptionInfo() {
-  const { id } = useParams();
+  const {username, id } = useParams();
   const [result, setResult] = useState([]);
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
@@ -18,7 +18,7 @@ function PrescriptionInfo() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${id}`, {
+    const response = axios.get(`http://localhost:4000/Patient/ViewPresDetails/${username}/${id}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
       .then(res => setResult(res.data)).catch(err => console.log(err))
@@ -33,7 +33,7 @@ function PrescriptionInfo() {
         alert('Missing fields')
       }
       else{
-   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${result.PatientUsername}`, data, {
+   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${username}`, data, {
     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
   })
    .then(res =>{
@@ -52,13 +52,14 @@ console.log('el result aho', result)
 
   return (
     <div>
-      <NavBarPatient username={result.PatientUsername} />
+      <NavBarPatient username={username} />
       <h1>Prescription Info</h1>
       <ul>
         <h3>Patient Name: {result.PatientName}</h3>
         <h3>Doctor Name: {result.DoctorName}</h3>
         <h3>Prescription Date: {result.Date && result.Date.substring(0,10)}</h3>
         <h3>Description: {result.Description}</h3>
+        <h3>Total Amount: {result.TotalAmount}</h3>
         <h3>Status: {result.Filled == true ? "Filled" : "Unfilled"}</h3>
       </ul>
       <h2>Prescription Medicines</h2>
