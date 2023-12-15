@@ -95,8 +95,8 @@ function App() {
           <Route exact path="/healthPackageInfoFam/:username/:type/:id" element={<HealthPackageInfoFam />} />
           <Route exact path="/payAppointment/:usernamePatient/:id/:usernameDoctor" element={<PayAppointment />} />
           <Route exact path="/payAppointmentFamily/:usernamePatient/:id/:usernameDoctor" element={<PayAppointmentFamily />} />
-          <Route exact path="/rescheduleAppointment/:usernamePatient/:usernameDoctor/:appID" element={<RescheduleAppointment />} />
-          <Route exact path="/requestFollowUp/:usernamePatient/:usernameDoctor/:appID" element={<RequestFollowUp />} />
+          <Route exact path="/rescheduleAppointment/:usernamePatient/:usernameDoctor/:appID/:type" element={<RescheduleAppointment />} />
+          <Route exact path="/requestFollowUp/:usernamePatient/:usernameDoctor/:appID/:type" element={<RequestFollowUp />} />
           <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
           <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
           <Route exact path="/healthRecordsInfo/:usernameDoctor/:usernamePatient" element={<HealthRecordsInfo />} />

@@ -14,7 +14,6 @@ const { verify } = require('../Controllers/loginController');
 
 router.post("/createAdmin/:username", verify, adminController.createAdmin);
 router.delete("/deleteEntity/:username/:entityType/:Username", verify, adminController.deleteEntity);
-router.delete("/deleteEntity2/:username/:Username", verify, adminController.deleteEntity2);
 router.get("/viewUnapprovedDoctors/:username", verify, adminController.viewUnapprovedDoctors);
 router.get("/viewDoctorInfo/:username/:Username", verify, adminController.viewDoctorInfo);
 router.post('/acceptOrRejectDoctorRequest/:username/:Username', verify, adminController.acceptOrRejectDoctorRequest);

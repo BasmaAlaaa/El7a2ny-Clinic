@@ -12,12 +12,12 @@ const cancelAppointment = () =>{
    axios.post(`http://localhost:4000/Patient/cancelAppointmentFamMem/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
-  .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
+  .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
  }
 
  function goOrnoGo (){
   if(data.Status === 'completed' || data.Status === 'Completed'){
-    navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
   
   else{
    alert('You can only  request a followUp for completed appointments')

@@ -1,19 +1,14 @@
-const { StatusFile } = require('git');
 const { default: mongoose } = require("mongoose");
 const appointmentSchema = require('../Models/Appointment.js');
 const doctorSchema = require('../Models/Doctor.js');
 const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
 const Prescription = require('../Models/Prescription.js');
-const FamilyMember = require('../Models/FamilyMember.js');
 const Appointment = require("../Models/Appointment.js");
 const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
-const Medicine = require('../Models/Medicine.js');
-const pharmacyAPIUrl = 'http://localhost:8000'; // was 8001 for some reason
-
 const axios = require('axios'); // for making HTTP requests
 
 const {SendEmailNotificationCancel,
@@ -21,82 +16,6 @@ const {SendEmailNotificationCancel,
   SendEmailNotificationReschedule,
   SendEmailNotificationRescheduleFam} = require('../Controllers/patientController.js');
 
-const { isEmailUnique, isUsernameUnique } = require('../utils.js');
-//const Appointment = require ('../Models/Appointment.js');
-//const Doctor = require('../Models/Doctor'); 
-
-// register Doctor
-const registerDoctor = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-
-  const {
-    Username,
-    Name,
-    Email,
-    Password,
-    DateOfBirth,
-    HourlyRate,
-    Affiliation,
-    EDB,
-    Speciality
-  } = req.body;
-
-  try {
-    if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
-      return res.status(400).json('Missing file(s)');
-    }
-
-    if (!(await isUsernameUnique(Username))) {
-      return res.status(400).json('Username is already taken.');
-    }
-
-    if (!(await isEmailUnique(Email))) {
-      return res.status(400).json('Email is already in use.');
-    }
-
-    if (!Username ||
-      !Name ||
-      !Email ||
-      !Password ||
-      !DateOfBirth ||
-      !HourlyRate ||
-      !Affiliation ||
-      !EDB ||
-      !Speciality) {
-      return res.status(400).json('All fields must be filled.');
-    }
-
-    const guestDoctor = new doctorSchema({
-      Username,
-      Name,
-      Email,
-      Password,
-      DateOfBirth,
-      HourlyRate,
-      Affiliation,
-      EDB,
-      Speciality,
-      IDDocument: {
-        data: Buffer.from(req.files['IDDocument'][0].buffer),
-        contentType: req.files['IDDocument'][0].mimetype,
-      },
-      MedicalDegreeDocument: {
-        data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
-        contentType: req.files['MedicalDegreeDocument'][0].mimetype,
-      },
-      WorkingLicenseDocument: {
-        data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
-        contentType: req.files['WorkingLicenseDocument'][0].mimetype,
-      },
-    });
-
-    await guestDoctor.save();
-    res.status(200).json({ guestDoctor });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
 
 //Req 14(edit/ update my email, hourly rate or affiliation (hospital))
 const updateDoctorByEmail = async (req, res) => {
@@ -1473,7 +1392,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }      
 
-      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
@@ -1486,17 +1405,6 @@ const rescheduleAppointmentPatient = async (req, res) => {
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
-
-      // let slot;
-      // let found = false;
-      // for (const s of doctorAvailableTimeSlots) {
-      //   if (!found) {
-      //     if (s._id.equals(timeSlot)) {
-      //       found = true;
-      //       slot = s;
-      //     }
-      //   }
-      // }
 
       const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
 
@@ -2008,7 +1916,6 @@ module.exports = {
   MyPatients,
   PatientByName,
   PatientsUpcoming,
-  registerDoctor,
   updateDoctorByAffiliation,
   updateDoctorByEmail,
   updateDoctorByHourlyRate,

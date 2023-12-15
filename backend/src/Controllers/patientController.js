@@ -2409,14 +2409,29 @@ const requestFollowUpAppointment = async (req, res) => {
     if (previousAppointment.PatientUsername !== username) {
       return res.status(403).json({ error: 'You do not have permission to request a follow-up for this appointment.' });
     }
-    if(previousAppointment.Status !== "Completed" ){
+
+    if (previousAppointment.Status !== "Completed") {
       return res.status(403).json({ error: 'You can only request a follow-up for completed appointments.' });
     }
 
-    const { date, time, followUpName } = req.body; 
+    const { date, time, followUpName } = req.body;
 
     if (!date || !time || !followUpName) {
       return res.status(400).json({ error: 'Please provide date, time, and follow-up name.' });
+    }
+
+    const doctor = await doctorSchema.findOne({ Username: previousAppointment.DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+    const slot = doctorAvailableTimeSlots.find(s => s.Date.getTime() === new Date(date).getTime() && s.Time === time && s.Status === 'available');
+
+    if (!slot) {
+      return res.status(400).json({ success: false, message: 'Selected time slot is not available.' });
     }
 
     const followUpAppointment = new Appointment({
@@ -2430,135 +2445,22 @@ const requestFollowUpAppointment = async (req, res) => {
       ForPatient: true,
     });
 
+    // Update the time slot status to 'booked'
+    slot.Status = 'booked';
+    await doctor.save();
+
+    // Save the follow-up appointment
     await followUpAppointment.save();
 
-    return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
+    return res.status(200).json({ message: 'Follow-up appointment requested successfully.', followUpAppointment });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
   }
 };
 
+
 // Req 64 Requesting a follow-up for a previous appointment (family member)
-// const requestFollowUpForFamilyMember = async (req, res) => {
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   const { patientusername, doctorUsername } = req.params;
-
-
-//   if (!(req.user.Username === username)) {
-//     res.status(403).json("You are not logged in!");
-//   } else {
-//     try {
-//       const { familyMemberName, Date, Time } = req.body;
-
-//       // Find the patient by username
-//       const patient = await patientSchema.findOne({ Username: patientusername });
-
-//       if (!patient) {
-//         return res.status(404).json({ success: false, message: 'Patient not found.' });
-//       }
-
-//       // Check if the patient has family members
-//       if (patient.FamilyMembers.length === 0) {
-//         return res.status(403).json({ success: false, message: 'Patient has no family members.' });
-//       }
-
-//       // Check if the specified family member exists for the patient
-//       const familyMember = patient.FamilyMembers.find(member => member.Name === familyMemberName);
-
-//       if (!familyMember) {
-//         return res.status(404).json({ success: false, message: 'Family member not found for the patient.' });
-//       }
-
-//       // Find the previous appointment by doctor's username and patient's username
-//       const previousAppointment = await appointmentSchema.findOne({
-//         DoctorUsername: doctorUsername,
-//         PatientUsername: patient.Username,
-//       });
-
-//       if (!previousAppointment) {
-//         return res.status(404).json({ success: false, message: 'Previous appointment not found.' });
-//       }
-
-//       // Check if the patient or family member is associated with the previous appointment
-//       if (
-//         previousAppointment.PatientUsername !== patient.Username &&
-//         previousAppointment.PatientUsername !== familyMember.Name
-//       ) {
-//         return res
-//           .status(403)
-//           .json({ success: false, message: 'Patient or family member is not associated with this appointment.' });
-//       }
-
-//       // Check if the previous appointment is completed or following
-//       if (['Completed', 'completed', 'Following', 'following'].includes(previousAppointment.Status)) {
-//         // Save the follow-up request details in the database
-//         previousAppointment.FollowUpRequest = {
-//           Date,
-//           Time,
-//           Status: 'Requested',
-//           RequestingFamilyMember: familyMember.Name,
-//         };
-
-//         // Update the appointment's status to 'Requested'
-//         previousAppointment.Status = 'Requesting';
-
-//         // Save the updated appointment
-//         await previousAppointment.save();
-
-//         return res.status(200).json({ success: true, message: 'Follow-up appointment requested successfully.' });
-//       } else {
-//         return res
-//           .status(400)
-//           .json({
-//             success: false,
-//             message: 'Follow-up appointment can only be requested for completed or following appointments.',
-//           });
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       return res.status(500).json({ success: false, message: 'Internal server error.' });
-//     }
-//   }
-//   //   const { date, time, followUpName, familyMemberId } = req.body;
-
-//   //   if (!date || !time || !followUpName || !familyMemberId) {
-//   //     return res.status(400).json({ error: 'Please provide date, time, follow-up name, and family member national ID.' });
-//   //   }
-
-//   //   const patient = await patientSchema.findOne({ Username: username });
-
-//   //   if (!patient || !patient.FamilyMembers || patient.FamilyMembers.length === 0) {
-//   //     return res.status(403).json({ error: 'You do not have registered family members in the system.' });
-//   //   }
-
-//   //   const familyMember = await FamilyMember.findOne({ NationalID: familyMemberId });
-
-//   //   if (!familyMember || !patient.FamilyMembers.includes(familyMember.NationalID)) {
-//   //     return res.status(403).json({ error: 'You do not have permission to request a follow-up for this family member.' });
-//   //   }
-
-//   //   const followUpAppointment = new Appointment({
-//   //     Date: date,
-//   //     DoctorUsername: previousAppointment.DoctorUsername,
-//   //     PatientUsername: familyMember.PatientUsername || username,
-//   //     Status: 'Requested',
-//   //     Price: previousAppointment.Price,
-//   //     Time: time,
-//   //     Name: followUpName,
-//   //     ForPatient: false,  // This appointment is for a family member
-//   //   });
-
-//   //   await followUpAppointment.save();
-
-//   //   return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
-//   // } catch (error) {
-//   //   console.error(error);
-//   //   return res.status(500).json({ error: 'Internal server error.' });
-//   // }
-// };
 const requestFollowUpForFamilyMember = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -2590,6 +2492,20 @@ const requestFollowUpForFamilyMember = async (req, res) => {
       return res.status(403).json({ error: 'You do not have permission to request a follow-up for this family member.' });
     }
 
+    const doctor = await doctorSchema.findOne({ Username: previousAppointment.DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+    const slot = doctorAvailableTimeSlots.find(s => s.Date.getTime() === new Date(date).getTime() && s.Time === time && s.Status === 'available');
+
+    if (!slot) {
+      return res.status(400).json({ success: false, message: 'Selected time slot is not available.' });
+    }
+
     const followUpAppointment = new Appointment({
       Date: date,
       DoctorUsername: previousAppointment.DoctorUsername,
@@ -2601,22 +2517,19 @@ const requestFollowUpForFamilyMember = async (req, res) => {
       ForPatient: false,  // This appointment is for a family member
     });
 
+    // Update the time slot status to 'booked'
+    slot.Status = 'booked';
+    await doctor.save();
+
+    // Save the follow-up appointment
     await followUpAppointment.save();
 
-    return res.status(200).json({ message: 'Follow-up appointment requested successfully.' });
+    return res.status(200).json({ message: 'Follow-up appointment requested successfully.', followUpAppointment });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: error.message });
   }
 };
-
-// <<<<<<< HEAD
-// <<<<<<< HEAD
-
-// =======
-// >>>>>>> parent of de2f6a4 (Prescription (View+add) Request followup (myself) Followup (Accept/Reject))
-// =======
-// >>>>>>> 5ae8c1d86bb2c53ec2f6fe694a2efd69209b6ab9
 
 // view all patient prescriptions
 const ViewAllPres = async (req, res) => {

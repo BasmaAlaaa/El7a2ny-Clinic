@@ -4,18 +4,20 @@ import axios from 'axios';
 import { useState } from 'react';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data, type }) {
   let navigate = useNavigate();
 
-const cancelAppointment = () =>{
+const cancelAppointment = (e) =>{
+  e.preventDefault();
+  console.log("ana f cancel")
    axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
-  .then(res =>alert('Appointment Canceled')).catch(err => alert('error booking appointment'))
+  .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
  }
  function goOrnoGo (){
   if(data.Status === 'completed' || data.Status === 'Completed'){
-    navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
   
   else{
    alert('You can only  request a followUp for completed appointments')
@@ -46,7 +48,7 @@ const cancelAppointment = () =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>cancelAppointment}
+        onClick={cancelAppointment}
       >
         Cancel
       </button>
@@ -82,7 +84,7 @@ const cancelAppointment = () =>{
 //   );
 // }
 
-function TableAppointments({ tHead, data, searchText, searchDate, filterText }) {
+function TableAppointments({ tHead, data, searchText, searchDate, filterText, type }) {
   console.log('haayaa', data)
 
   return (
@@ -107,7 +109,7 @@ function TableAppointments({ tHead, data, searchText, searchDate, filterText }) 
           })
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} type={type}/>
             </tr>
           ))}
         </tbody>
