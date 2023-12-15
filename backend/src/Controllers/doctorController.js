@@ -1181,15 +1181,7 @@ const updatePatientPrescription = async (req, res) => {
   }
 
   try {
-    const { updatedDescription, updatedMedicine } = req.body;
-
-    console.log('Updating prescription:', {
-      DoctorUsername,
-      PatientUsername,
-      prescriptionId,
-      updatedDescription,
-      updatedMedicine,
-    });
+    const { updatedDescription } = req.body;
 
     const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
     if (!doctor) {
@@ -1216,18 +1208,6 @@ const updatePatientPrescription = async (req, res) => {
 
     if (updatedDescription) {
       prescription.Description = updatedDescription;
-    }
-
-    if (updatedMedicine) {
-      const { medicineName, newDosage } = updatedMedicine;
-      const medicineIndex = prescription.Medicines.findIndex(med => med.Name === medicineName);
-
-      if (medicineIndex !== -1) {
-        // Update the dosage of the medicine
-        prescription.Medicines[medicineIndex].dosage = newDosage;
-      } else {
-        return res.status(404).json({ error: 'Medicine not found in the prescription.' });
-      }
     }
 
     const updatedPrescription = await prescription.save();
