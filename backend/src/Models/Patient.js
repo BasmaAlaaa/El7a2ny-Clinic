@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const validator = require('validator');
-const Appointment = require('./Appointment');
 
 const medicalHistoryDocument = new Schema({
   document: Buffer,
@@ -53,6 +51,10 @@ const patientSchema = new Schema({
     type: String,
     required: true
   },
+  EmergencyContactRelation: {
+    type: String,
+    required: true
+  },
   FamilyMembers: [{
     type: String,
     ref: 'FamilyMember', // This should match the model name you defined for FamilyMember
@@ -61,6 +63,15 @@ const patientSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Prescription', // This should match the model name you defined for Prescription
   }],
+  addresses:
+    [{
+      type: String,
+      required: false,
+    }],
+  cart: {
+    type: Schema.Types.ObjectId,
+    ref: 'Cart',
+  },
   StripeCustomerId: {
     type: String,
     required: false
@@ -123,70 +134,7 @@ const patientSchema = new Schema({
   MedicalHistoryDocuments: [
     medicalHistoryDocument
   ],
-  prescriptionPaymentMethod: {
-    type: String,
-    enum: ['wallet', 'creditCard'],
-    default: 'wallet'
-  },
-
 }, { timestamps: true });
 
-
-
-// static register method
-patientSchema.statics.register = async function (
-  Username,
-  Name,
-  NationalID,
-  Email,
-  Password,
-  DateOfBirth,
-  Gender,
-  MobileNumber,
-  EmergencyContactName,
-  EmergencyContactMobile,
-  FamilyMembers,
-  PatientPrescriptions,
-  SubscribedHP,
-  StripeCustomerId
-) {
-  // validation
-  if (!Username ||
-    !Name ||
-    !Email ||
-    !Password ||
-    !DateOfBirth ||
-    !Gender ||
-    !MobileNumber ||
-    !EmergencyContactName ||
-    !EmergencyContactMobile ||
-    !NationalID) {
-    throw Error('All fields must be filled.');
-  }
-
-  if (!validator.isEmail(Email)) {
-    throw Error('Email must be in the form of johndoe@example.com');
-  }
-
-  const patient = await this.create({
-    Username,
-    Name,
-    NationalID,
-    Email,
-    Password,
-    DateOfBirth,
-    Gender,
-    MobileNumber,
-    EmergencyContactName,
-    EmergencyContactMobile,
-    FamilyMembers,
-    PatientPrescriptions,
-    SubscribedHP,
-    StripeCustomerId
-  });
-
-  return patient;
-
-};
 const Patient = mongoose.model('Patient', patientSchema);
 module.exports = Patient;

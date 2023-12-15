@@ -32,6 +32,15 @@ const prescriptionSchema = new Schema({
             required: true,
         },
     }],
+    TotalAmount: {
+        type: Number,
+        default: 0
+    },
+    prescriptionPaymentMethod: {
+        type: String,
+        enum: ['wallet', 'creditCard'],
+        default: 'wallet'
+    },
 }, { timestamps: true });
 
 

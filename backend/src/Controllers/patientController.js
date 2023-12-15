@@ -10,6 +10,7 @@ const HealthPackage = require("../Models/HealthPackage.js");
 const Appointment = require("../Models/Appointment.js");
 const Prescription = require('../Models/Prescription.js');
 const Notification = require("../Models/notifications.js");
+const Cart = require('../Models/Cart.js');
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
@@ -38,7 +39,6 @@ async function createStripeCustomer({ Email, Name, Phone }) {
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
-
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -53,9 +53,8 @@ const registerPatient = async (req, res) => {
     MobileNumber,
     EmergencyContactName,
     EmergencyContactMobile,
-    FamilyMembers,
-    PatientPrescriptions,
-    SubscribedHP
+    EmergencyContactRelation,
+    address,
   } = req.body;
 
   try {
@@ -77,9 +76,14 @@ const registerPatient = async (req, res) => {
       return res.status(404).send("You already registered.");
     }
 
+    const newCart = await Cart.create({
+      items: [],
+      totalAmount: 0,
+    });
+
     const customer = await createStripeCustomer({ Email, Name, MobileNumber });
 
-    const patient = await patientSchema.register(
+    const patient = new patientSchema({
       Username,
       Name,
       NationalID,
@@ -90,11 +94,11 @@ const registerPatient = async (req, res) => {
       MobileNumber,
       EmergencyContactName,
       EmergencyContactMobile,
-      FamilyMembers,
-      PatientPrescriptions,
-      SubscribedHP,
-      customer.id
-    );
+      EmergencyContactRelation,
+      addresses: [address],  // Add the address to the addresses array
+      StripeCustomerId: customer.id,
+      cart: newCart
+    });
 
     await patient.save();
 
@@ -103,7 +107,6 @@ const registerPatient = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 // Req 18: app.post('/addFamMember/:Username')
 const addFamMember = async (req, res) => {
