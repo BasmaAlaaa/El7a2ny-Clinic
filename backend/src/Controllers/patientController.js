@@ -289,6 +289,7 @@ const allAppointments = async (req, res) => {
   const {Username} = req.params;
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
   if (!(req.user.Username === Username)) {
     res.status(403).json("You are not logged in!");
   }else{
@@ -299,9 +300,8 @@ const allAppointments = async (req, res) => {
         return res.status(404).send('No patient found');
       }
       
-      const familyMembers = await FamilyMember.find({PatientUsername: Username});
       // Use the filter object to query the appointment collection
-      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username });
+      const filteredAppointments = await appointmentSchema.find({ PatientUsername: Username, ForPatient: true});
 
       if (filteredAppointments.length === 0) {
         return res.status(404).send('No matching appointments found');
