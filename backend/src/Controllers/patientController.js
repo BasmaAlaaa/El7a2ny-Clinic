@@ -3610,7 +3610,6 @@ const displayNotifications = async (req, res) => {
   }
 };
 
-const nodemailer = require('nodemailer');
 const sendAppointmentPatientRescheduleNotificationEmail = async (req) => {
   try {
     const { AppointmentId } = req.params;
