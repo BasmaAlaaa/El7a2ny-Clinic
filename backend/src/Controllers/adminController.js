@@ -168,53 +168,6 @@ const createAdmin = async (req, res) => {
   }
 };
 
-// Task 8 : remove a patient, doctor, admin
-const deleteEntity2 = async (req, res) => {
-  const { username } = req.params;
-
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  if (!(req.user.Username === username)) {
-      res.status(403).json("You are not logged in!");
-  }else{
-    try {
-      // Destructure 'username' from request parameters.
-      const { Username } = req.params;
-
-      // Define an array of models to search through.
-      const models = [Doctor, Patient, Admin];
-
-      // Initialize a variable to store the deleted entity and the model name.
-      let deletedEntity;
-      let modelUsed;
-
-      // Loop through each model and try to find and delete the entity.
-      for (const Model of models) {
-        deletedEntity = await Model.findOneAndDelete({ Username: Username });
-        // If an entity is found and deleted, exit the loop.
-        if (deletedEntity) {
-          modelUsed = Model.modelName; // Assuming the model name is available on the Model object.
-          break;
-        }
-      }
-
-      // Check if an entity was actually deleted; if not, respond with a 404 status code and an error message.
-      if (!deletedEntity) {
-        return res.status(404).json({ error: "Entity not found" });
-      }
-
-      // If an entity was found and deleted, respond with a 200 status code and a success message.
-      res.status(200).json({
-        message: `${modelUsed} deleted successfully`,
-        data: deletedEntity,
-      });
-    } catch (error) {
-      // If an error occurs (e.g., a problem with the database), respond with a 500 status code and an error message.
-      res.status(500).json({ error: "Server error" });
-    }
-  }
-};
-
 // Task 9 : view all information of doctors who wants to join platform
 const viewUnapprovedDoctors = async (req, res) => {
   const { username } = req.params;
@@ -393,7 +346,6 @@ const logout = async (req, res) => {
 }
 module.exports = {
   viewUnapprovedDoctors,
-  deleteEntity2,
   createAdmin,
   deleteEntity,
   viewDoctorInfo,
