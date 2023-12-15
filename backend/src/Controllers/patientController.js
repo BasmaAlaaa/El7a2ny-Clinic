@@ -3510,9 +3510,10 @@ const removeAppointmentNotifications = async () => {
     console.error(error);
   };
 }
+
 const displayNotifications = async (req, res) => {
   try {
-    await createAppointmentNotifications(req);
+    //await createAppointmentNotifications(req);
     const { Username } = req.params;
     console.log(Username);
     const notifications = await Notification.find({ username: Username });

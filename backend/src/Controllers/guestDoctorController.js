@@ -15,11 +15,19 @@ const registerGuestDoctor = async (req, res) => {
         HourlyRate,
         Affiliation,
         EDB,
-        Speciality
+        Speciality,
+        IDDocument,
+        MedicalDegreeDocument,
+        WorkingLicenseDocument
     } = req.body;
 
     try {
-        if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
+        console.log(req);
+        // if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
+        //     return res.status(400).json('Missing file(s)');
+        // }
+
+        if (!WorkingLicenseDocument || !MedicalDegreeDocument || !IDDocument) {
             return res.status(400).json('Missing file(s)');
         }
 
@@ -57,18 +65,21 @@ const registerGuestDoctor = async (req, res) => {
             Affiliation,
             EDB,
             Speciality,
-            IDDocument: {
-                data: Buffer.from(req.files['IDDocument'][0].buffer),
-                contentType: req.files['IDDocument'][0].mimetype,
-            },
-            MedicalDegreeDocument: {
-                data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
-                contentType: req.files['MedicalDegreeDocument'][0].mimetype,
-            },
-            WorkingLicenseDocument: {
-                data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
-                contentType: req.files['WorkingLicenseDocument'][0].mimetype,
-            },
+            IDDocument,
+            MedicalDegreeDocument,
+            WorkingLicenseDocument
+            // IDDocument: {
+            //     data: Buffer.from(req.files['IDDocument'][0].buffer),
+            //     contentType: req.files['IDDocument'][0].mimetype,
+            // },
+            // MedicalDegreeDocument: {
+            //     data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
+            //     contentType: req.files['MedicalDegreeDocument'][0].mimetype,
+            // },
+            // WorkingLicenseDocument: {
+            //     data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
+            //     contentType: req.files['WorkingLicenseDocument'][0].mimetype,
+            // },
         });
 
         await guestDoctor.save();

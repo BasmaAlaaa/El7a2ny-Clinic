@@ -97,7 +97,7 @@ router.post('/addHealthRecord/:DoctorUsername/:PatientUsername', verify, addHeal
 
 // Route to view and add available time slots 
 router.post('/addAvailableTimeSlots/:DoctorUsername', verify, addAvailableTimeSlots);
-router.post('/allAvailableTimeSlots/:DoctorUsername', verify, allAvailableTimeSlots);
+router.get('/allAvailableTimeSlots/:DoctorUsername', verify, allAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
 router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername', verify, scheduleFollowUp);
