@@ -16,8 +16,9 @@ const handleAccept = (e) =>{
 }
 const handleReject = (e) =>{
     e.preventDefault();
+    console.log("ana f reject", data.DoctorUsername);
     console.log("ana f reject", data._id);
-     axios.post(`http://localhost:4000/Doctor/rejectFollowUpRequest/${data.DoctorUsername}/${data.PatientUsername}`, "", {
+     axios.post(`http://localhost:4000/Doctor/rejectFollowUpRequest/${data.DoctorUsername}/${data._id}`, "", {
      headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
    })
     .then(res =>{alert('Appointment Rejected');window.location.reload(true)}).catch(err => {console.log(err); alert('error rejecting appointment')})
