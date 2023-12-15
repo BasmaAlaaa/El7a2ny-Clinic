@@ -18,16 +18,18 @@ function AppointmentsListDoctor() {
   const[resultReq, setResultReq] = useState([]);
   const {username} = useParams();
   const[searchDate, setSearchDate] = useState('');
+  const DoctorUsername = username;
+  const Username = username;
 
 
   useEffect(() => {
-const response = axios.get(`http://localhost:4000/Doctor/allAppointmentsDoc/${username}`, {
+const response = axios.get(`http://localhost:4000/Doctor/allAppointmentsDoc/${Username}`, {
   headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/viewRequestedAppointments/${username}`, {
+    const response = axios.get(`http://localhost:4000/Doctor/viewRequestedAppointments/${DoctorUsername}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
     .then(res =>setResultReq(res.data)).catch(err => console.log(err))

@@ -4,54 +4,63 @@ import axios from 'axios';
 import { useState } from 'react';
 
 
-function CaseTableBody({ data}) {
+function CaseTableBody({ data }) {
   let navigate = useNavigate();
+  const DoctorUsername = data.DoctorUsername;
+  const AppointmentId = data._id;
 
-const handleAccept = (e) =>{
-  e.preventDefault();
-   axios.post(`http://localhost:4000/Doctor/acceptFollowUpRequest/${data.DoctorUsername}/${data._id}`, "", {
-   headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
- })
-  .then(res =>{alert('Appointment Accepted');window.location.reload(true)}).catch(err => {console.log(err); alert('error accepting appointment')})
-}
-const handleReject = (e) =>{
+  const handleAccept = (e) => {
     e.preventDefault();
-    console.log("ana f reject", data.DoctorUsername);
-    console.log("ana f reject", data._id);
-     axios.post(`http://localhost:4000/Doctor/rejectFollowUpRequest/${data.DoctorUsername}/${data._id}`, "", {
-     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-   })
-    .then(res =>{alert('Appointment Rejected');window.location.reload(true)}).catch(err => {console.log(err); alert('error rejecting appointment')})
+    axios.post(`http://localhost:4000/Doctor/acceptFollowUpRequest/${DoctorUsername}/${AppointmentId}`, "", {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+    })
+      .then(res => { alert('Appointment Accepted'); window.location.reload(true) }).catch(err => { console.log(err); alert('error accepting appointment') })
   }
-
+  
+  const handleReject = (e) => {
+    e.preventDefault();
+    const { DoctorUsername, _id } = data;
+  
+    axios.delete(`http://localhost:4000/Doctor/rejectFollowUpRequest/${DoctorUsername}/${_id}`, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token") }
+    })
+      .then(res => {
+        alert('Appointment Rejected');
+        window.location.reload(true);
+      })
+      .catch(err => {
+        console.log(err);
+        alert('Error rejecting appointment');
+      });
+  };
 
   return (
     <>
-      
-    {data.Date && <th>{data.Date.substring(0,10)}</th>}
-    {data.PatientUsername && <td>{data.PatientUsername}</td>}
-    {data.Name && <td>{data.Name}</td>}
 
-    <td className="py-3 text-align-center">
-      <div className="d-flex flex-row">
-      <button
-        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={handleAccept}
-      >
-        Accept
-      </button>
-      </div>
+      {data.Date && <th>{data.Date.substring(0, 10)}</th>}
+      {data.PatientUsername && <td>{data.PatientUsername}</td>}
+      {data.Name && <td>{data.Name}</td>}
+
+      <td className="py-3 text-align-center">
+        <div className="d-flex flex-row">
+          <button
+            className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+            onClick={handleAccept}
+          >
+            Accept
+          </button>
+        </div>
       </td>
 
       <td className="py-3 text-align-center">
-      <div className="d-flex flex-row">
-      <button
-        className={`red-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={handleReject}
-      >
-        Reject
-      </button>
-      </div>
+        <div className="d-flex flex-row">
+          <button
+            className={`red-txt mx-2 text-capitalize border-0 bg-transparent`}
+            onClick={handleReject}
+          >
+            Reject
+          </button>
+        </div>
       </td>
 
     </>
@@ -86,11 +95,11 @@ function TableAppointmentsRequests({ tHead, data }) {
         </thead>
         <tbody>
           {data
-          .map((e) => (
-            <tr className="text-capitalize">
-                <CaseTableBody data={e}/>
-            </tr>
-          ))}
+            .map((e) => (
+              <tr className="text-capitalize">
+                <CaseTableBody data={e} />
+              </tr>
+            ))}
         </tbody>
       </table>
     </div>
