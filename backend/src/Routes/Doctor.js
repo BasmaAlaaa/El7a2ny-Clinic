@@ -108,7 +108,7 @@ router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps)
 router.put('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName', verify, updateMedicineDosage);
 
 // Define route for accepting follow-up request
-router.post('/acceptFollowUpRequest/:DoctorUsername/:AppointmentId/:timeSlot', verify, acceptFollowUpRequest);
+router.post('/acceptFollowUpRequest/:DoctorUsername/:AppointmentId/', verify, acceptFollowUpRequest);
 
 // Define route for accepting follow-up request
 router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, rejectFollowUpRequest);
