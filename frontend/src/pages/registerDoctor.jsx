@@ -23,42 +23,46 @@ function RegisterDoctor() {
   let navigate = useNavigate();
 
 
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-    const data = new FormData();
+    try {
+      const data = new FormData();
 
-    // Append other form fields
-    data.append('Name', name);
-    data.append('Username', username);
-    data.append('Email', email);
-    data.append('Password', password);
-    data.append('DateOfBirth', dateOfBirth);
-    data.append('HourlyRate', hourlyRate);
-    data.append('Affiliation', affiliation);
-    data.append('EDB', EDB);
-    data.append('Speciality', speciality);
+      // Append other form fields
+      data.append('Name', name);
+      data.append('Username', username);
+      data.append('Email', email);
+      data.append('Password', password);
+      data.append('DateOfBirth', dateOfBirth);
+      data.append('HourlyRate', hourlyRate);
+      data.append('Affiliation', affiliation);
+      data.append('EDB', EDB);
+      data.append('Speciality', speciality);
 
-    // Append file uploads
-    data.append('IDDocument', IDDocument);
-    data.append('MedicalDegreeDocument', MedicalDegreeDocument);
-    data.append('WorkingLicenseDocument', WorkingLicenseDocument);
+      // Append file uploads
+      data.append('IDDocument', IDDocument);
+      data.append('MedicalDegreeDocument', MedicalDegreeDocument);
+      data.append('WorkingLicenseDocument', WorkingLicenseDocument);
 
-    console.log(data)
+      console.log(data)
 
-    const response = await axios.post('http://localhost:4000/GuestDoctor/Register', data)
-    
-          if (response.status === 200) {
-            alert(`Registered successfully`);
-            console.log(response.data.message);
-            navigate(`/login`);
-          } else {
-            alert(`Failed to register. Status: ${response.status}`);
-          }
-        } catch (error) {
-          alert(`Failed to register. Error: ${error.message}`);
-          console.error('Error accepting request:', error);
-        }
+      const response = await axios.post('http://localhost:4000/GuestDoctor/Register', data, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      if (response.status === 200) {
+        alert(`Registered successfully`);
+        console.log(response.data.message);
+        navigate(`/login`);
+      } else {
+        alert(`Failed to register. Status: ${response.status}`);
+      }
+    } catch (error) {
+      alert(`Failed to register. Error: ${error.message}`);
+      console.error('Error accepting request:', error);
+    }
   }
   return (
     <div>
@@ -127,7 +131,7 @@ function RegisterDoctor() {
         className="d-flex justify-content-center"
         onSubmit={handleSubmit}
       >
-      <div style={{ width: '35%' }} className="form-width">
+        <div style={{ width: '35%' }} className="form-width">
           <p className="text-capitalize fs-4">Register As Doctor</p>
           <Input
             title='Name'
@@ -179,7 +183,7 @@ function RegisterDoctor() {
             onChange={(e) => setAffiliation(e.target.value)}
           />
           <Input
-            title='EducationalBackgroung'
+            title='Educational Background'
             required={true}
             placeholder='Enter educational background'
             type='text'
@@ -197,30 +201,30 @@ function RegisterDoctor() {
             required={true}
             placeholder='Enter ID'
             type='file'
-            onChange={(e) => setIDDocument(e.target.value)}
+            onChange={(e) => setIDDocument(e.target.files[0])}
           />
           <Input
             title='Medical Degree'
             required={true}
             placeholder='Enter Medical degree document'
             type='file'
-            onChange={(e) => setMedicalDegreeDocument(e.target.value)}
+            onChange={(e) => setMedicalDegreeDocument(e.target.files[0])}
           />
           <Input
             title='Working License'
             required={true}
             placeholder='Enter working license'
             type='file'
-            onChange={(e) => setWorkingLicenseDocument(e.target.value)}
+            onChange={(e) => setWorkingLicenseDocument(e.target.files[0])}
           />
 
-         
+
           <div className="mt-3">
             <MainBtn
               txt='Submit'
               type="submit"
               style='green-btn'
-              //action={handleSubmit}
+            //action={handleSubmit}
 
             />
           </div>
