@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const { isEmailUnique, isUsernameUnique, validatePassword } = require("../utils.js")
+const nodemailer = require('nodemailer');
 const patientSchema = require('../Models/Patient.js');
 const doctorSchema = require('../Models/Doctor.js');
 const prescriptionSchema = require('../Models/Prescription.js');
@@ -1712,7 +1713,7 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
         let newAppointment;
 
         if(paymentMethod === "card" || (paymentMethod === "wallet" && patient.WalletAmount >= sessionPrice)){
-        newAppointment = await appointmentSchema.create({
+          newAppointment = await appointmentSchema.create({
           Date: slot.Date,
           Time: slot.Time,
           DoctorUsername: doctorUsername,
@@ -1722,7 +1723,7 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
           Price: sessionPrice,
           Name: patient.Name,
           ForPatient: true
-        });
+          });
 
           if (paymentMethod === "wallet") {
             patient.WalletAmount = (patient.WalletAmount - sessionPrice),
@@ -1733,11 +1734,14 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
           doctor.WalletAmount = (doctor.WalletAmount + sessionPrice),
           doctor.PatientsUsernames.push(patientUsername);
           doctor.save();
+
+          
         }
         else {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
         res.status(200).send(newAppointment);
+        SendEmailNotificationBook(newAppointment, doctor, patient);
       }
       else {
         return res.status(400).send("This slot is already booked");
@@ -1749,6 +1753,170 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
   }
 };
 
+async function SendEmailNotificationBook(newAppointment, doctor, patient){
+  
+  try {
+        const newNotificationForPatient = await Notification.create({
+          type: "Booked Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `Your appoitment has been booked successfully with doctor ${doctor.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForPatient.save();
+
+        const newNotificationForDoctor = await Notification.create({
+          type: "Booked Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          PatientMessage: `You have a new appoitment with patient ${patient.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Booked',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that the following appointment has been booked:
+
+            - Doctor: ${doctor.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Booked',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that the following appointment has been booked:
+
+            - Patient: ${patient.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+async function SendEmailNotificationBookFam (newAppointment, doctor, patient){
+  
+  try {
+        const newNotificationForPatient = await Notification.create({
+          type: "Booked Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `Your appoitment for a family member has been booked successfully with doctor ${doctor.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForPatient.save();
+
+        const newNotificationForDoctor = await Notification.create({
+          type: "Booked Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          DoctorMessage: `You have a new appointment with patient ${newAppointment.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Booked',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that the following appointment has been booked for a family member:
+
+            - Doctor: ${doctor.Name}
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+            - Payment Method: ${newAppointment.PaymentMethod}
+            - Price: ${newAppointment.Price}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Booked',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that the following appointment has been booked:
+
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const selectAppointmentDateTimeAndPayFam = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -1846,6 +2014,7 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
         res.status(200).send(newAppointment);
+        SendEmailNotificationBookFam(newAppointment, doctor, patient);
       }
       else {
         return res.status(400).send("This slot is already booked");
@@ -2499,7 +2668,168 @@ const ViewPresDetails = async (req, res) => {
   }
 };
 
+async function SendEmailNotificationReschedule(newAppointment, doctor, patient){
+  
+  try {
+        const newNotificationForPatient = await Notification.create({
+          type: "Rescheduled Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `Your appoitment has been rescheduled successfully with doctor ${doctor.Name}, to be on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForPatient.save();
 
+        const newNotificationForDoctor = await Notification.create({
+          type: "Rescheduled Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          PatientMessage: `Your appoitment has been rescheduled successfully with patient ${patient.Name}, to be on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Rescheduled ',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that your appointment has been rescheduled, here you can find your new appointment:
+
+            - Doctor: ${doctor.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Rescheduled',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that an appointment has been rescheduled, here you can find its details:
+
+            - Patient: ${patient.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+async function SendEmailNotificationRescheduleFam (newAppointment, doctor, patient){
+  
+  try {
+        const newNotificationForPatient = await Notification.create({
+          type: "Rescheduled Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `Your appoitment has been rescheduled successfully with doctor ${doctor.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForPatient.save();
+
+        const newNotificationForDoctor = await Notification.create({
+          type: "Rescheduled Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          DoctorMessage: `Your appoitment has been rescheduled successfully with Patient ${newAppointment.Name} on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Rescheduled',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that your appointment has been rescheduled for a family member, here ou can find its details:
+
+            - Doctor: ${doctor.Name}
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Rescheduled',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that an appointment has been rescheduled, here you can find its details:
+
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+  } catch (error) {
+    console.error(error);
+  }
+};
 const rescheduleAppointment = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -2516,7 +2846,7 @@ const rescheduleAppointment = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const selectedAppointment = await appointmentSchema.findById(appointmentId);
+      const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up"]}});
 
       if (!selectedAppointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
@@ -2531,7 +2861,7 @@ const rescheduleAppointment = async (req, res) => {
 
       if (!doctor) {
         return res.status(404).json({ success: false, message: 'Doctor not found.' });
-      }
+      } 
 
       const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
       const selectedAppointmentDate = selectedAppointment.Date;
@@ -2545,20 +2875,20 @@ const rescheduleAppointment = async (req, res) => {
 
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
-      } else {
-        return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
       }
 
-      let slot;
-      let found = false;
-      for (const s of doctorAvailableTimeSlots) {
-        if (!found) {
-          if (s._id.equals(timeSlot)) {
-            found = true;
-            slot = s;
-          }
-        }
-      }
+      // let slot;
+      // let found = false;
+      // for (const s of doctorAvailableTimeSlots) {
+      //   if (!found) {
+      //     if (s._id.equals(timeSlot)) {
+      //       found = true;
+      //       slot = s;
+      //     }
+      //   }
+      // }
+
+      const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
 
       let newAppointment;
 
@@ -2583,6 +2913,7 @@ const rescheduleAppointment = async (req, res) => {
 
       selectedAppointment.Status = 'Rescheduled';
       await selectedAppointment.save();
+      SendEmailNotificationReschedule(newAppointment, doctor, patient);
 
       return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
     } catch (error) {
@@ -2597,13 +2928,11 @@ const rescheduleAppointmentFamMem = async (req, res) => {
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   const { username, appointmentId , timeSlot} = req.params;
-  //const { familyId } = req.body;
 
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      //const { newDate, newTime } = req.body;
 
       // Find the patient by username
       const patient = await patientSchema.findOne({ Username: username });
@@ -2612,17 +2941,11 @@ const rescheduleAppointmentFamMem = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: username });
-
-      if (!familyMem) {
-        return res.status(404).send({ error: 'Family member not found' });
-      }
-
       // Find the selected appointment by ID
-      const selectedAppointment = await appointmentSchema.findById(appointmentId);
+      const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up"]}});
 
       if (!selectedAppointment) {
-        return res.status(404).json({ success: false, message: ' appointment not found.' });
+        return res.status(404).json({ success: false, message: ' Appointment not found.' });
       }
 
       // Check if the patient is associated with the selected appointment
@@ -2644,32 +2967,30 @@ const rescheduleAppointmentFamMem = async (req, res) => {
       // Match the appointment date and time with the doctor's available time slots
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
-      // Check if the selected appointment is upcoming or follow-up
-      if (['Upcoming', 'upcoming', 'Follow-up', 'follow-up'].includes(selectedAppointment.Status)) {
-        if(['Upcoming', 'upcoming'].includes(selectedAppointment.Status)){
 
-        const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-          slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-          slot.Time === selectedAppointmentTime &&
-          slot.Status === 'booked'
-        );
+      const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+        slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+        slot.Time === selectedAppointmentTime &&
+        slot.Status === 'booked'
+      );
 
         if (matchingTimeSlot) {
           matchingTimeSlot.Status = 'available';
-        } else {
-          return res.status(403).json({ success: false, message: 'Cannot reschedule this appointment' });
         }
 
-        let slot;
-        var found = false;
-        for (const s of doctorAvailableTimeSlots) {
-          if (!found) {
-            if (s._id.equals(timeSlot)) {
-              found = true;
-              slot = s;
-            }
-          }
-        }
+        // let slot;
+        // var found = false;
+        // for (const s of doctorAvailableTimeSlots) {
+        //   if (!found) {
+        //     if (s._id.equals(timeSlot)) {
+        //       found = true;
+        //       slot = s;
+        //     }
+        //   }
+        // }
+
+        const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
+
         let newAppointment;
 
         if(slot.Status === "available"){          
@@ -2681,10 +3002,9 @@ const rescheduleAppointmentFamMem = async (req, res) => {
             Status: selectedAppointment.Status,
             PaymentMethod: selectedAppointment.PaymentMethod,
             Price: selectedAppointment.Price,
-            Name: familyMem.Name,
+            Name: selectedAppointment.Name,
             ForPatient: false
           });
-
 
           slot.Status = "booked";
           await doctor.save();
@@ -2698,38 +3018,9 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
         // Save the updated patient and appointment
         await selectedAppointment.save();
+        SendEmailNotificationRescheduleFam(newAppointment, doctor, patient);
 
-      
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled' , newAppointment});
-      } else if(['Follow-up', 'follow-up'].includes(selectedAppointment.Status)){
-        let newAppointment1;
-        const found = false;
-        for(const slot of doctorAvailableTimeSlots){
-          if(slot._id.equals(timeSlot) && slot.Status === "available" && !found){
-            newAppointment1 = await appointmentSchema.create({
-              Date: slot.Date,
-              Time: slot.Time,
-              DoctorUsername: selectedAppointment.DoctorUsername,
-              PatientUsername: selectedAppointment.PatientUsername,
-              Status: selectedAppointment.Status,
-              PaymentMethod: selectedAppointment.PaymentMethod,
-              Price: selectedAppointment.Price,
-              Name: selectedAppointment.Name,
-              ForPatient: true
-            });
-            selectedAppointment.Status = 'Rescheduled';
-            found = true;
-            await selectedAppointment.save();
-            return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment1 });
-          }
-        }
-        if(!found){
-          return res.status(400).json({ success: false, message: 'No available time slots for the doctor' });
-        }
-      } 
-      } else {
-        return res.status(400).json({ success: false, message: 'Reschedule appointment can only be requested for upcoming or follow-up appointments.' });
-      }
     } catch (error) {
       console.error(error);
       return res.status(500).json({ success: false, message: error.message });
@@ -2741,7 +3032,87 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 const cancelAppointment = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+  const { username, appointmentId } = req.params;
 
+    if (req.user.Username !== username) {
+      return res.status(403).json({ success: false, message: 'You are not logged in!' });
+    }
+
+  try {  
+
+    const patient = await patientSchema.findOne({ Username: username });
+
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Patient not found.' });
+    }
+
+
+    const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up","Rescheduled", "rescheduled"]}});
+
+    if (!selectedAppointment) {
+      return res.status(404).json({ success: false, message: 'Appointment not found.' });
+    }
+
+    if (selectedAppointment.PatientUsername !== patient.Username) {
+      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    }
+
+    const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
+
+    const appointmentDateTime = new Date(selectedAppointment.Date);
+    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
+
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds between the current time and appointment time
+    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to hours
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    if (hoursDifference >= 24) {
+      // Calculate the refund amount based on your business logic
+      const refundAmount = selectedAppointment.Price;
+
+      // Update the WalletAmount directly in the database using $inc
+      await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+      await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
+      SendEmailNotificationCancel(selectedAppointment,doctor,patient,"yes");
+    }
+    else{
+      SendEmailNotificationCancel(selectedAppointment,doctor,patient,"no");
+    }
+
+    const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
+      slot.Date.getTime() === selectedAppointment.Date.getTime() &&
+      slot.Time === selectedAppointment.Time &&
+      slot.Status === 'booked'
+    );
+
+    if (matchingTimeSlot) {
+      matchingTimeSlot.Status = 'available';
+    } 
+
+    // Update existing appointment status to 'canceled'
+    selectedAppointment.Status = 'Cancelled';
+
+    // Save changes to appointment and doctor
+    await selectedAppointment.save();
+    await doctor.save();
+
+    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ success: false, message: error.message});
+  }
+};
+
+
+const cancelAppointmentFamMem = async (req, res) => {
   try {
     const { username, appointmentId } = req.params;
 
@@ -2755,7 +3126,7 @@ const cancelAppointment = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Patient not found.' });
     }
 
-    const selectedAppointment = await appointmentSchema.findById(appointmentId);
+    const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up","Rescheduled", "rescheduled"]}});
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
@@ -2765,8 +3136,10 @@ const cancelAppointment = async (req, res) => {
       return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
     }
 
-    if (!['Upcoming', 'upcoming', 'Follow-up', 'follow-up', 'Rescheduled', 'rescheduled'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for upcoming or follow-up or rescheduled appointments.' });
+    const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
+
+    if (!doctor) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
     }
 
     const appointmentDateTime = new Date(selectedAppointment.Date);
@@ -2786,97 +3159,11 @@ const cancelAppointment = async (req, res) => {
 
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+      await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
+      SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"yes");
     }
-
-    const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
-
-    if (!doctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found.' });
-    }
-
-    const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
-      slot.Date.getTime() === selectedAppointment.Date.getTime() &&
-      slot.Time === selectedAppointment.Time &&
-      slot.Status === 'booked'
-    );
-
-    if (matchingTimeSlot) {
-      matchingTimeSlot.Status = 'available';
-    }
-
-    // Update existing appointment status to 'canceled'
-    selectedAppointment.Status = 'Cancelled';
-
-    // Save changes to appointment and doctor
-    await selectedAppointment.save();
-    await doctor.save();
-    //await Promise.all([selectedAppointment.save(), doctor.save()]);
-
-    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ success: false, message: error.message});
-  }
-};
-
-
-const cancelAppointmentFamMem = async (req, res) => {
-  try {
-    const { username, appointmentId, familyId } = req.params;
-
-    if (req.user.Username !== username) {
-      return res.status(403).json({ success: false, message: 'You are not logged in!' });
-    }
-
-    const patient = await patientSchema.findOne({ Username: username });
-
-    if (!patient) {
-      return res.status(404).json({ success: false, message: 'Patient not found.' });
-    }
-
-    const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: username });
-
-    if (!familyMem) {
-      return res.status(404).send({ error: 'Family member not found' });
-    }
-
-    const selectedAppointment = await appointmentSchema.findById(appointmentId);
-
-    if (!selectedAppointment) {
-      return res.status(404).json({ success: false, message: 'Appointment not found.' });
-    }
-
-    if (selectedAppointment.PatientUsername !== patient.Username) {
-      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-    }
-
-    if (!['Upcoming', 'upcoming', 'Follow-up', 'follow-up', 'Rescheduled', 'rescheduled'].includes(selectedAppointment.Status)) {
-      return res.status(400).json({ success: false, message: 'Cancel appointment can only be requested for upcoming or follow-up or rescheduled appointments.' });
-    }
-
-    const appointmentDateTime = new Date(selectedAppointment.Date);
-    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
-
-    const currentTime = new Date();
-
-    // Calculate the time difference in milliseconds between the current time and appointment time
-    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
-
-    // Convert milliseconds to hours
-    const hoursDifference = timeDifference / (1000 * 60 * 60);
-
-    if (hoursDifference >= 24) {
-      // Calculate the refund amount based on your business logic
-      const refundAmount = selectedAppointment.Price;
-
-      // Update the WalletAmount directly in the database using $inc
-      await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
-    }
-
-    const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
-
-    if (!doctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    else{
+      SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"no");
     }
 
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
@@ -2895,14 +3182,336 @@ const cancelAppointmentFamMem = async (req, res) => {
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
-    //await Promise.all([selectedAppointment.save(), doctor.save()]);
-
     return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: error.message });
   }
 };
+
+
+async function SendEmailNotificationCancel(newAppointment, doctor, patient, refund){
+  
+  try {
+    if(refund === "yes"){
+        const newNotificationForPatient = await Notification.create({
+          type: "Cancelled Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `Your appoitment has been cancelled successfully with doctor ${doctor.Name},than was on ${newAppointment.Date} at ${newAppointment.Time} with a 100% refund`,
+        });
+        await newNotificationForPatient.save();
+
+        const newNotificationForDoctor = await Notification.create({
+          type: "Cancelled Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          PatientMessage: `Your appoitment has been cancelled successfully with patient ${patient.Name},that was on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Cancelled ',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that the following appointment has been cancelled:
+
+            - Doctor: ${doctor.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+            - The refund amount ${newAppointment.Price} has been added to your wallet.
+
+            Please make a note of this cancellation. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Rescheduled',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that the following appointment has been cancelled:
+
+            - Patient: ${patient.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+            - The refund amount sent to the patient from your wallet is ${newAppointment.Price}
+
+            Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+    }
+    else if(refund === "no"){
+      const newNotificationForPatient = await Notification.create({
+        type: "Cancelled Appointment",
+        username: `${newAppointment.PatientUsername}`,
+        PatientMessage: `Your appoitment has been cancelled successfully with doctor ${doctor.Name},than was on ${newAppointment.Date} at ${newAppointment.Time} without a refund`,
+      });
+      await newNotificationForPatient.save();
+
+      const newNotificationForDoctor = await Notification.create({
+        type: "Cancelled Appointment ",
+        username: `${newAppointment.DoctorUsername}`,
+        PatientMessage: `Your appoitment has been cancelled successfully with patient ${patient.Name},that was on ${newAppointment.Date} at ${newAppointment.Time} without a refund`,
+      });
+      await newNotificationForDoctor.save();
+
+      // Send email notification to the Patient
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'SuicideSquadGUC@gmail.com',
+          pass: 'wryq ofjx rybi hpom'
+        }
+      });
+
+        const mailOptions = {
+          from: 'SuicideSquadGUC@gmail.com',
+          to: patient.Email,
+          subject: 'Appointment Cancelled ',
+          text: `Dear ${patient.Name},
+
+          We would like to inform you that the following appointment has been cancelled without a refund:
+
+          - Doctor: ${doctor.Name}
+          - Date: ${newAppointment.Date}
+          - Time: ${newAppointment.Time}
+
+          Please make a note of this cancellation. If you have any questions, feel free to contact us.
+
+          Best regards,
+          Your Clinic`
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("email sent to the patient");
+
+        // Send email notification to the doctor
+      const transporter1 = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'SuicideSquadGUC@gmail.com',
+          pass: 'wryq ofjx rybi hpom'
+        }
+      });
+
+        const mailOptions1 = {
+          from: 'SuicideSquadGUC@gmail.com',
+          to: doctor.Email,
+          subject: 'Appointment Cancelled',
+          text: `Dear ${doctor.Name},
+
+          We would like to inform you that the following appointment has been cancelled without a refund:
+
+          - Patient: ${patient.Name}
+          - Date: ${newAppointment.Date}
+          - Time: ${newAppointment.Time}
+
+          Please make a note of the new appointment details. If you have any questions, feel free to contact us.
+
+          Best regards,
+          Your Clinic`
+        };
+
+        await transporter1.sendMail(mailOptions1);
+        console.log("email sent to the doctor");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+async function SendEmailNotificationCancelFam(newAppointment, doctor, patient, refund){
+  
+  try {
+    if(refund === "yes"){
+        const newNotificationForPatient = await Notification.create({
+          type: "Cancelled Appointment",
+          username: `${newAppointment.PatientUsername}`,
+          PatientMessage: `The appoitment for a family member has been cancelled successfully with doctor ${doctor.Name},than was on ${newAppointment.Date} at ${newAppointment.Time} with a 100% refund`,
+        });
+        await newNotificationForPatient.save();
+
+        const newNotificationForDoctor = await Notification.create({
+          type: "Cancelled Appointment ",
+          username: `${newAppointment.DoctorUsername}`,
+          PatientMessage: `Your appoitment has been cancelled successfully with patient ${newAppointment.Name},that was on ${newAppointment.Date} at ${newAppointment.Time}`,
+        });
+        await newNotificationForDoctor.save();
+
+        // Send email notification to the Patient
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: patient.Email,
+            subject: 'Appointment Cancelled ',
+            text: `Dear ${patient.Name},
+
+            We would like to inform you that the following appointment has been cancelled for a family member:
+
+            - Doctor: ${doctor.Name}
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+            - The refund amount ${newAppointment.Price} has been added to your wallet.
+
+            Please make a note of this cancellation. If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter.sendMail(mailOptions);
+          console.log("email sent to the patient");
+
+          // Send email notification to the doctor
+        const transporter1 = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'SuicideSquadGUC@gmail.com',
+            pass: 'wryq ofjx rybi hpom'
+          }
+        });
+
+          const mailOptions1 = {
+            from: 'SuicideSquadGUC@gmail.com',
+            to: doctor.Email,
+            subject: 'Appointment Cancelled',
+            text: `Dear ${doctor.Name},
+
+            We would like to inform you that the following appointment has been cancelled:
+
+            - Patient: ${newAppointment.Name}
+            - Date: ${newAppointment.Date}
+            - Time: ${newAppointment.Time}
+            - The refund amount sent to the patient from your wallet is ${newAppointment.Price}
+
+            Please make a note of this cancellation . If you have any questions, feel free to contact us.
+
+            Best regards,
+            Your Clinic`
+          };
+
+          await transporter1.sendMail(mailOptions1);
+          console.log("email sent to the doctor");
+    }
+    else if(refund === "no"){
+      const newNotificationForPatient = await Notification.create({
+        type: "Cancelled Appointment",
+        username: `${newAppointment.PatientUsername}`,
+        PatientMessage: `Your appoitment for a family member has been cancelled successfully with doctor ${doctor.Name},than was on ${newAppointment.Date} at ${newAppointment.Time} without a refund`,
+      });
+      await newNotificationForPatient.save();
+
+      const newNotificationForDoctor = await Notification.create({
+        type: "Cancelled Appointment ",
+        username: `${newAppointment.DoctorUsername}`,
+        PatientMessage: `Your appoitment has been cancelled successfully with patient ${newAppointment.Name},that was on ${newAppointment.Date} at ${newAppointment.Time} without a refund`,
+      });
+      await newNotificationForDoctor.save();
+
+      // Send email notification to the Patient
+      const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'SuicideSquadGUC@gmail.com',
+          pass: 'wryq ofjx rybi hpom'
+        }
+      });
+
+        const mailOptions = {
+          from: 'SuicideSquadGUC@gmail.com',
+          to: patient.Email,
+          subject: 'Appointment Cancelled ',
+          text: `Dear ${patient.Name},
+
+          We would like to inform you that the following appointment for a family member has been cancelled without a refund:
+
+          - Doctor: ${doctor.Name}
+          - Date: ${newAppointment.Date}
+          - Time: ${newAppointment.Time}
+
+          Please make a note of this cancellation. If you have any questions, feel free to contact us.
+
+          Best regards,
+          Your Clinic`
+        };
+
+        await transporter.sendMail(mailOptions);
+        console.log("email sent to the patient");
+
+        // Send email notification to the doctor
+      const transporter1 = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+          user: 'SuicideSquadGUC@gmail.com',
+          pass: 'wryq ofjx rybi hpom'
+        }
+      });
+
+        const mailOptions1 = {
+          from: 'SuicideSquadGUC@gmail.com',
+          to: doctor.Email,
+          subject: 'Appointment Cancelled',
+          text: `Dear ${doctor.Name},
+
+          We would like to inform you that the following appointment has been cancelled without a refund:
+
+          - Patient: ${newAppointment.Name}
+          - Date: ${newAppointment.Date}
+          - Time: ${newAppointment.Time}
+
+          Please make a note of this cancellation. If you have any questions, feel free to contact us.
+
+          Best regards,
+          Your Clinic`
+        };
+
+        await transporter1.sendMail(mailOptions1);
+        console.log("email sent to the doctor");
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
 const createAppointmentNotifications = async () => {
   try {
     const upcomingAppointments = await Appointment.find({ Status: { $in: ["Upcoming", "Follow-up"] } });
@@ -3000,6 +3609,7 @@ const displayNotifications = async (req, res) => {
     res.status(500).json({ success: false, message: 'Failed to fetch notifications' });
   }
 };
+
 const nodemailer = require('nodemailer');
 const sendAppointmentPatientRescheduleNotificationEmail = async (req) => {
   try {
@@ -3278,5 +3888,9 @@ module.exports = {
   sendAppointmentPatientRescheduleNotificationEmail,
   sendAppointmentPatientCancelledNotificationEmail,
   updatePrescriptionPaymentMethod,
-  sendAppointmentNotificationEmail
+  sendAppointmentNotificationEmail,
+  SendEmailNotificationCancel,
+  SendEmailNotificationCancelFam,
+  SendEmailNotificationReschedule,
+  SendEmailNotificationRescheduleFam
 }
