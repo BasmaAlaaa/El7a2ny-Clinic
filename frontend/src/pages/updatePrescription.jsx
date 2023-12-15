@@ -11,14 +11,17 @@ function UpdatePrescription() {
     const [updatedDose, setUpdatedDose] = useState(0);
     const [result, setResult] = useState('');
     const navigate = useNavigate();
+    let tHead = ['Medicine', 'Dosage', 'Remove'];
 
     useEffect(() => {
-        const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${prescriptionId}`, {
+        const response = axios.get(`http://localhost:4000/Doctor/viewPresDetails/${DoctorUsername}/${prescriptionId}`, {
           headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
         })
           .then(res => setResult(res.data)).catch(err => console.log(err))
       }, [])
-      console.log("el pres" , result)
+      console.log("el pres" , result);
+      console.log("el meds", result.Medicines);
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -53,15 +56,10 @@ function UpdatePrescription() {
     return (
         <div>
             <NavBarDoctor username={DoctorUsername}/>
-            <h1>Prescription Info</h1>
-      <ul>
-        <h3>Patient Name:</h3>
-        <h3>Description:</h3>
-      </ul>
-            {/* <TableCart /> */}
+            <h1>Update Prescription</h1>
             <form className="d-flex justify-content-center">
-                <div className="form-width">
-                    <p className="text-capitalize fs-4 mb-3">Update Prescription</p>
+                <div style={{width: "30%"}} className="form-width">
+                    <p className="text-capitalize fs-4 mb-3"></p>
                     <div className="mb-3">
                         <label className="form-label">Updated Description</label>
                         <textarea
@@ -93,6 +91,9 @@ function UpdatePrescription() {
                     </div>
                 </div>
             </form>
+            <h2>Prescription Medicines</h2>
+            <TableCart tHead={tHead} data={result.Medicines} username={DoctorUsername}/>
+
         </div>
     );
 }

@@ -27,8 +27,11 @@ function ManagePackages(){
         const response = axios.post(`http://localhost:4000/HealthPackage/create/${username}`, data,{
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-    .then(res =>alert("Package added successfully")).catch(err => alert(err))
-    window.location.reload(true);
+    .then(res =>{
+      alert("Package added successfully")
+      window.location.reload(true);
+
+      }).catch(err => alert(err))
       }
 
       const handleDelete = (e) => {
@@ -37,8 +40,11 @@ function ManagePackages(){
         const response = axios.delete(`http://localhost:4000/HealthPackage/delete/${username}/${typeDelete}`,{
           headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
         })
-    .then(res =>alert("Package Deleted")).catch(err => alert(err))
-    window.location.reload(true);
+    .then(res =>{
+      alert("Package Deleted")
+      window.location.reload(true);
+
+    }).catch(err => alert(err))
 
       }
     //   const handleUpdate = (e) => {
@@ -48,47 +54,6 @@ function ManagePackages(){
     //     const response = axios.put(`http://localhost:4000//HealthPackage/update/${typeUpdate}`, data)
     // .then(res =>console.log(res.data)).catch(err => console.log(err))
     //   }
-    const handleUpdate = (e) => {
-      e.preventDefault();
-
-      if(annualFee){
-      const response = axios.put(`http://localhost:4000/HealthPackage/updateAnnualFee/${username}/${typeUpdate}`,
-      {AnnualFee:annualFee}, {
-        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      })
-      .then(res =>alert("Updated!")).catch(err => alert(err))
-      window.location.reload(true);
-
-      console.log(annualFee)
-      }
-      if(doctorSessionDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateDoctorSessionDiscount/${username}/${typeUpdate}`, 
-        {DoctorSessionDiscount:doctorSessionDiscount}, {
-          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-        })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
-
-        }
-      if(medicineDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateMedicineDiscount/${username}/${typeUpdate}`,
-        {MedicineDiscount:medicineDiscount}, {
-          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-        })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
-
-        }
-      if(familySubscriptionDiscount){
-        const response = axios.put(`http://localhost:4000/HealthPackage/updateFamilySubscriptionDiscount/${username}/${typeUpdate}`, 
-        {FamilySubscriptionDiscount:familySubscriptionDiscount}, {
-          headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-        })
-        .then(res =>alert("Updated!")).catch(err => alert(err))
-        window.location.reload(true);
-
-        }
-    }
     
     
 return(

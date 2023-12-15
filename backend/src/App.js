@@ -37,25 +37,25 @@ app.use(bodyParser.json());
 const port = process.env.PORT || "4000";
 /////////////////////////////////////////////////////////
 //A method to create an admin at the begginning of the server "3shan mainf3shanesh n-create admin "
-const createInitialAdmin = async () => {
-  try {
-    const adminExists = await Admin.findOne({ Username: "admin" });
+// const createInitialAdmin = async () => {
+//   try {
+//     const adminExists = await Admin.findOne({ Username: "admin" });
 
-    if (!adminExists) {
-      // Createnew admin
-      const initialAdmin = new Admin({
-        Username: "admin",
-        Password: "basma"
-      });
-      await initialAdmin.save();
-      console.log("Admin initialized with username: admin and password: basma");
-    } else {
-      console.log("Admin already exists");
-    }
-  } catch (error) {
-    console.error("Error initializing admin:", error);
-  }
-};
+//     if (!adminExists) {
+//       // Createnew admin
+//       const initialAdmin = new Admin({
+//         Username: "admin",
+//         Password: "basma"
+//       });
+//       await initialAdmin.save();
+//       console.log("Admin initialized with username: admin and password: basma");
+//     } else {
+//       console.log("Admin already exists");
+//     }
+//   } catch (error) {
+//     console.error("Error initializing admin:", error);
+//   }
+// };
 ////////////////////////////////////////////////////////
 
 // configurations
@@ -63,7 +63,7 @@ const createInitialAdmin = async () => {
 mongoose.connect(MongoURI)
   .then(() => {
     console.log("MongoDB is now connected!")
-    createInitialAdmin();
+   // createInitialAdmin();
     // Starting server
     app.listen(port, () => {
       console.log(`Listening to requests on http://localhost:${port}`);

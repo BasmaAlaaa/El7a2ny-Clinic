@@ -868,7 +868,7 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
   res.setHeader('Access-Control-Allow-Credentials', true);
 
   if (!(req.user.Username === DoctorUsername)) {
-    return res.status(403).json("You are not authorized to perform this action!");
+    return res.status(403).json("You are not logged in!");
   }
 
   try {
@@ -888,7 +888,7 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
     }
 
     // Find the specific medicine within the prescription
-    const medicineToUpdate = prescription.medicines.find(med => med.name === medicineName);
+    const medicineToUpdate = prescription.Medicines.find(med => med.Name === medicineName);
 
     if (!medicineToUpdate) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
@@ -908,22 +908,22 @@ const updateMedicineDosage = async (req, res) => { // NEED TO RECHECK
 
 //Req 59: download selected prescription (PDF) 
 const downloadPrescriptionPDF = async (req, res) => {
-  const { DoctorUsername } = req.params;
-
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { DoctorUsername, prescriptionID } = req.params;
   if (!(req.user.Username === DoctorUsername)) {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      if (!DoctorUsername) {
-        return res.status(400).json({ error: 'DoctorUsername is a required parameter.' });
+      if (!mongoose.Types.ObjectId.isValid(prescriptionID)) {
+        return res.status(404).json({ error: 'Invalid prescription ID.' });
       }
 
-      const prescriptions = await Prescription.find({ DoctorUsername: DoctorUsername });
+      const prescription = await Prescription.findById({ _id: prescriptionID });
 
-      if (!prescriptions || prescriptions.length === 0) {
-        return res.status(404).json({ error: 'No prescriptions found for the specified doctor.' });
+      if (!prescription || prescription.length === 0) {
+        return res.status(404).json({ error: 'No prescription found with this Id.' });
       }
 
       // Ensure the directory exists
@@ -936,34 +936,41 @@ const downloadPrescriptionPDF = async (req, res) => {
       const filePath = path.resolve(directoryPath, 'prescription.pdf');
 
       const pdfDoc = new PDFDocument();
-      pdfDoc.pipe(fs.createWriteStream(filePath));
+      const writeStream = fs.createWriteStream(filePath);
+      pdfDoc.pipe(writeStream);
 
       // Customize the content of the PDF based on your prescription data
-      prescriptions.forEach((prescription) => {
-        pdfDoc.text(`Prescription ID: ${prescription._id}`);
-        pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
-        pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
-        pdfDoc.text(`Description: ${prescription.Description}`);
-        pdfDoc.text(`Date: ${prescription.Date}`);
-        pdfDoc.text('-----------------------------------------');
-      });
+      pdfDoc.text(`Prescription ID: ${prescription._id}`);
+      pdfDoc.text(`Doctor: ${prescription.DoctorUsername}`);
+      pdfDoc.text(`Patient: ${prescription.PatientUsername}`);
+      pdfDoc.text(`Description: ${prescription.Description}`);
+      pdfDoc.text(`Date: ${prescription.Date}`);
+      pdfDoc.text(`Filled: ${prescription.Filled}`);
+      pdfDoc.text(`Medicines: ${prescription.Medicines}`);
+
+      pdfDoc.text('-----------------------------------------');
 
       pdfDoc.end();
 
-      // Download the PDF
-      res.download(filePath, 'prescription.pdf', (err) => {
-        if (err) {
-          return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
-        }
+      // Listen for the 'finish' event to ensure the file is fully written
+      writeStream.on('finish', () => {
+        // Download the PDF
+        res.download(filePath, 'prescription.pdf', (err) => {
+          if (err) {
+            return res.status(500).json({ error: `Error downloading PDF: ${err.message}` });
+          }
 
-        // Clean up the temporary PDF file after download
-        fs.unlinkSync(filePath);
+          // Clean up the temporary PDF file after download
+          fs.unlinkSync(filePath);
+        });
       });
+
     } catch (error) {
       return res.status(500).json({ error: `Error generating PDF: ${error.message}` });
     }
   }
 };
+
 
 // Req 65 Accept a follow-up request
 
@@ -1040,9 +1047,13 @@ const rejectFollowUpRequest = async (req, res) => {
   }
 };
 
-
-const ViewAllPres = async (req, res) => {
+// view all prescriptions of a patient
+const viewAllPres = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   if (!(req.user.Username === DoctorUsername)) {
     return res.status(403).json("You are not logged in!");
   }
@@ -1063,6 +1074,84 @@ const ViewAllPres = async (req, res) => {
   }
 };
 
+// view ALL prescriptions
+const viewAllPresGeneral = async (req, res) => {
+  const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
+
+  try {
+    const prescriptions = await Prescription.find({
+      DoctorUsername: DoctorUsername,
+    });
+
+    if (!prescriptions || prescriptions.length === 0) {
+      return res.status(404).send("No prescriptions found for this doctor");
+    }
+
+    res.status(200).send(prescriptions);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+
+const viewPresDetails = async (req, res) => {
+  const { DoctorUsername, prescriptionId } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
+
+  try {
+    const prescription = await Prescription.findOne({
+      _id: mongoose.Types.ObjectId(prescriptionId),
+      DoctorUsername: DoctorUsername
+    });
+
+    if (!prescription) {
+      return res.status(404).send("Prescription not found for this doctor");
+    }
+
+    res.status(200).send(prescription);
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+};
+
+// view meds @ pharacy
+const getAllMedicinesFromPharmacy = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { DoctorUsername } = req.params;
+
+  if (!(req.user.Username === DoctorUsername)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+    try {
+      const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetAllMedicines/${DoctorUsername}`);
+      const pharmacyMedicines = pharmacyResponse.data;
+
+      if (!pharmacyMedicines || pharmacyMedicines.length === 0) {
+        return res.status(404).json({ error: 'No medicines found in the pharmacy!' });
+      }
+
+      res.status(200).json(pharmacyMedicines);
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Internal server error while fetching medicines from the pharmacy.' });
+    }
+  }
+};
 
 // add a patient's prescription 
 const addPatientPrescription = async (req, res) => {
@@ -1090,23 +1179,18 @@ const addPatientPrescription = async (req, res) => {
         return res.status(404).json({ error: 'Patient not found.' });
       }
 
-      console.log('im here1')
 
       // Validate that each medicine in the request is available from the pharmacy platform
       const validMedicines = await Promise.all(medicines.map(async ({ Name, dosage }) => {
         const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`);
         const medicineDetails = pharmacyResponse.data;
-        console.log('im here2')
-        console.log(pharmacyResponse);
-        console.log('----------------');
-        console.log(medicineDetails);
 
         if (!medicineDetails) {
           return null; // Medicine not found in the pharmacy platform
         }
 
         return {
-          Name: medicineDetails.Name, // Assuming medicineDetails has an _id field
+          Name: medicineDetails.Name,
           dosage: dosage,
         };
       }));
@@ -1212,41 +1296,16 @@ const updatePatientPrescription = async (req, res) => {
 
 
 // Method to add medicine to a prescription
-// const addMedicineToPrescription = async (req, res) => {
-//   const { DoctorUsername, PatientUsername, medicineName } = req.body;
-
-//   try {
-//     // Fetch the prescription from the clinic database
-//     const prescription = await Prescription.findOne({
-//       DoctorUsername: DoctorUsername,
-//       PatientUsername: PatientUsername,
-//     });
-
-//     if (!prescription) {
-//       return res.status(404).json({ error: 'Prescription not found' });
-//     }
-
-//     // Make a request to the pharmacy platform to get medicine details
-//     const pharmacyResponse = await axios.get(`${pharmacyAPIUrl}/DocotorFromTheClinic/GetMedicineByDoctor/${medicineName}`);
-
-//     // Assuming the pharmacy API responds with medicine details
-//     const medicineDetails = pharmacyResponse.data;
-
-//     // Add the medicine details to the prescription
-//     prescription.medecine.push(medicineDetails.Name);
-
-//     // Save the updated prescription
-//     await prescription.save();
-
-//     return res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// };
-
-const addMedicineToPrescription = async (req, res) => { // fix routes
+const addMedicineToPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
+  const username = DoctorUsername;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user && req.user.Username === DoctorUsername)) {
+    return res.status(403).json({ error: 'You are not logged in as the doctor' });
+  }
 
   try {
     const prescription = await Prescription.findOne({
@@ -1259,27 +1318,24 @@ const addMedicineToPrescription = async (req, res) => { // fix routes
       return res.status(404).json({ error: 'Prescription not found' });
     }
 
-    const { medicineName, dosage } = req.body;
+    const { Name, dosage } = req.body;
 
-    // Fetch medicine details from the pharmacy platform
-    const pharmacyResponse = await axios.get(`${pharmacyAPIUrl}/DoctorFromTheClinic/GetMedicineByDoctor/${DoctorUsername}/${medicineName}`);
+    const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
     const medicineDetails = pharmacyResponse.data;
 
-    if (!medicineDetails) {
-      return res.status(404).json({ error: 'Medicine was not found in the pharmacy platform.' });
+    if (!medicineDetails || !medicineDetails.Name) {
+      return res.status(404).json({ error: 'The requested medicine does not exist in the pharmacy platform' });
     }
 
-    // Manually provide the dosage
     prescription.Medicines.push({
-      medicine: {
-        _id: medicineDetails._id,
-        name: medicineDetails.name,
-        // Include other relevant fields from medicineDetails if needed
-      },
+      Name: medicineDetails.Name,
       dosage: dosage,
     });
 
-    // Save the updated prescription
     await prescription.save();
 
     return res.status(200).json({ message: 'Medicine added to prescription successfully', prescription });
@@ -1289,54 +1345,17 @@ const addMedicineToPrescription = async (req, res) => { // fix routes
   }
 };
 
-
-
-// const DeleteMedecineFromPrescription = async (req, res) => {
-//   const { DoctorUsername, PatientUsername, MedicineName } = req.body;
-
-//   res.setHeader('Access-Control-Allow-Origin', '*');
-//   res.setHeader('Access-Control-Allow-Credentials', true);
-
-//   try {
-//     const prescription = await Prescription.findOne({
-//       DoctorUsername,
-//       PatientUsername,
-//     });
-
-//     if (!prescription) {
-//       return res.status(404).json({ error: 'Prescription not found.' });
-//     }
-
-//     // const medicineIndex2 = prescription.medecine.findOneAndUpdate(
-
-//     // )
-
-//     // Find the index of the medicine in the medecine array
-//     const medicineIndex = prescription.medecine.findIndex(medicine => medicine === MedicineName);
-
-//     // Check if the medicineName exists in the prescription
-//     if (medicineIndex === -1) {
-//       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
-//     }
-
-//     // Remove the medicine at the specified index
-//     prescription.medecine.splice(medicineIndex, 1);
-
-//     // Save the updated prescription
-//     await prescription.save();
-
-//     res.status(200).json({ message: 'Medicine deleted from prescription successfully.' });
-//   } catch (error) {
-//     res.status(400).json({ error: error.message });
-//   }
-// };
-
-const deleteMedecineFromPrescription = async (req, res) => { // fix routes
+// delete medicine from prescription
+const deleteMedecineFromPrescription = async (req, res) => {
   const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
-  const { MedicineName } = req.body;
+  const { medicineName } = req.body;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
 
   try {
     const prescription = await Prescription.findOne({
@@ -1349,18 +1368,18 @@ const deleteMedecineFromPrescription = async (req, res) => { // fix routes
       return res.status(404).json({ error: 'Prescription not found.' });
     }
 
-    // Find the index of the medicine in the Medicines array
-    const medicineIndex = prescription.Medicines.findIndex(medicine => medicine.medicine.name === MedicineName);
+    console.log(prescription.Medicines);
+    const medicineIndex = prescription.Medicines.findIndex(
+      (medicine) => medicine.Name === medicineName
+    );
+    console.log(medicineIndex);
 
-    // Check if the MedicineName exists in the prescription
     if (medicineIndex === -1) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
     }
 
-    // Remove the medicine at the specified index
     prescription.Medicines.splice(medicineIndex, 1);
 
-    // Save the updated prescription
     await prescription.save();
 
     res.status(200).json({ message: 'Medicine deleted from prescription successfully.' });
@@ -1956,7 +1975,10 @@ module.exports = {
   acceptFollowUpRequest,
   rejectFollowUpRequest,
   addPatientPrescription,
-  ViewAllPres,
+  viewAllPres,
+  viewAllPresGeneral,
+  viewPresDetails,
+  getAllMedicinesFromPharmacy,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,

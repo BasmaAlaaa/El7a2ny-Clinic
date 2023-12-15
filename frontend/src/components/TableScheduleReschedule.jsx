@@ -6,10 +6,11 @@ function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
   console.log('app id', appID);
   console.log('time slot', data._id);
 
-const rescheduleAppointment = () =>{
+const rescheduleAppointment = (e) =>{
+  e.preventDefault();
   axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
   ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-  .then(res =>alert('appointment rescheduled')).catch(err => alert('error rescheduling appointment'));
+  .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)}).catch(err => alert('error rescheduling appointment'));
 }
 
   return (

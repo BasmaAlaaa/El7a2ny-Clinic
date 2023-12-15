@@ -39,8 +39,10 @@ function AddAdministrator() {
     console.log(data)
     const response = axios.post(`http://localhost:4000/Admin/createAdmin/${username}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    }).then(res => alert("Administrator added successfully")).catch(err => alert("Failed to add administrator"));
+    }).then(res =>{
+    alert("Administrator added successfully")
     window.location.reload(true);
+     }).catch(err => alert("Failed to add administrator"));
   }
 
   return (

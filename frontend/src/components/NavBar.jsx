@@ -16,14 +16,40 @@ function NavBar() {
           </a>
         </div>
 
-        <div>
+        {/* <div>
             <MainBtn
-              txt="login"
+              txt="register as patient"
               style="green-btn"
-              action={() => navigate('/login')}
+              action={() => navigate('/registerPatient')}
               key="navBtn"
             />
-          </div>
+          </div> */}
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate('/registerPatient')}
+      >
+        Register as Patient
+      </button>
+      </div>
+
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate('/registerDoctor')}
+      >
+        Register as Doctor
+      </button>
+      </div>
+
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={()=>navigate('/login')}
+      >
+        Login
+      </button>
+      </div>
         
       </div>
     </nav>

@@ -57,15 +57,6 @@ console.log(filterText)
 let navigate = useNavigate()
 
   let tHeadRequests = ['Name', 'Username', 'Email', 'Affiliation', 'Hourly Rate', 'EducationalBackground', 'Accept', 'Reject'];
-  let dataRequests = [{
-    name: 'Ahmed',
-    affiliation: 'Y Hospital',
-    hourlyRate: 1000,
-    educationalBackground: 'pharmacy',
-    username: 'ahmed123'
-
-  }
-];
 
   return (
     <div>

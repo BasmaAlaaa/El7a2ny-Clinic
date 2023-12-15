@@ -48,6 +48,7 @@ import UpdatePackage from './pages/updatePackage';
 import ManageProfile from './pages/manageProfile';
 import RequestFollowUp from './pages/requestFollowUp';
 import PrescriptionsListDoctor from './components/PrescriptionsListDoctor';
+import HealthRecordsInfo from './pages/healthRecordsInfo';
 
 
 function App() {
@@ -98,6 +99,8 @@ function App() {
           <Route exact path="/requestFollowUp/:usernamePatient/:usernameDoctor/:appID" element={<RequestFollowUp />} />
           <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
           <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
+          <Route exact path="/healthRecordsInfo/:usernameDoctor/:usernamePatient" element={<HealthRecordsInfo />} />
+
 
 
 

@@ -34,7 +34,10 @@ const { registerDoctor,
   acceptFollowUpRequest,
   rejectFollowUpRequest,
   addPatientPrescription,
-  ViewAllPres,
+  viewAllPres,
+  viewAllPresGeneral,
+  viewPresDetails,
+  getAllMedicinesFromPharmacy,
   updatePatientPrescription,
   addMedicineToPrescription,
   deleteMedecineFromPrescription,
@@ -105,8 +108,7 @@ router.get('/doctorPastApp/:Username', verify, doctorPastApp);
 router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps);
 
 //Req 53: add/update dosage for each medicine added to the prescription 
-//router.post('/updateDosage/:DoctorUsername/:prescriptionId', verify, updateDosage);
-router.post('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName', verify, updateMedicineDosage);
+router.put('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName', verify, updateMedicineDosage);
 
 // Define route for accepting follow-up request
 router.post('/acceptFollowUpRequest/:DoctorUsername/:PatientUsername', verify, acceptFollowUpRequest);
@@ -116,19 +118,23 @@ router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, r
 
 
 // Define a route to trigger the download
-router.get('/downloadPrescriptionPDF/:DoctorUsername', verify, downloadPrescriptionPDF);
+router.get('/downloadPrescriptionPDF/:DoctorUsername/:prescriptionID', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
+router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
 
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);
 
-router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, ViewAllPres);
+router.get('/viewAllPres/:DoctorUsername/:PatientUsername', verify, viewAllPres);
+router.get('/viewAllPresGeneral/:DoctorUsername', verify, viewAllPresGeneral);
+router.get('/viewPresDetails/:DoctorUsername/:prescriptionId', verify, viewPresDetails);
+router.get('/getAllMedicinesFromPharmacy/:DoctorUsername', verify, getAllMedicinesFromPharmacy)
 
 // Update the route path to match your frontend
 router.put('/updatePrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, updatePatientPrescription);
 
-router.post('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
+
 
 router.post('/rescheduleAppointment/:username/:appointmentId/:timeSlot', verify, rescheduleAppointmentPatient);
 

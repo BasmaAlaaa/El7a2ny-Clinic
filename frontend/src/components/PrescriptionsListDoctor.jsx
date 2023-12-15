@@ -6,6 +6,7 @@ import TablePrescriptions from './TablePrescriptions.jsx'
 import NavBarPatient from './NavBarPatient.jsx';
 import NavBarDoctor from './NavBarDoctor.jsx';
 import TablePresDoctors from './TablePresDoctors.jsx';
+import TablePresGeneral from './TablePresGeneral.jsx';
 
 
 
@@ -18,7 +19,7 @@ function PrescriptionsListDoctor() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Doctor/viewAllMyPres/${username}`, {
+    const response = axios.get(`http://localhost:4000/Doctor/viewAllPresGeneral/${username}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
 
@@ -35,7 +36,7 @@ function PrescriptionsListDoctor() {
   console.log(filterText)
   let navigate = useNavigate()
 
-  let tHead = ['Patient name', 'Patient username', 'Prescription Date', 'Status', 'View', 'Download'];
+  let tHead = ['Patient name', 'Patient username', 'Prescription Date', 'Status'];
 
   return (
     <div>
@@ -53,7 +54,7 @@ function PrescriptionsListDoctor() {
             <input
               type="text"
               className="form-control border-start-0 search ps-0"
-              placeholder="Search by Doctor"
+              placeholder="Search by Patient"
               onChange={(e) => setSearchText(e.target.value)}
             />
             <input
@@ -74,7 +75,7 @@ function PrescriptionsListDoctor() {
           </select>
         </div>
       </div>
-      <TablePresDoctors tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
+      <TablePresGeneral tHead={tHead} data={result} searchText={searchText} searchDate={searchDate} filterText={filterText} username={username}/>
     </div>
   );
 }
