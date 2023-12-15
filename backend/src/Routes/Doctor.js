@@ -19,7 +19,7 @@ const { registerDoctor,
   updateDoctorByEmail,
   docFilterAppsByDate,
   docFilterAppsByStatus,
-  allAppointments,
+  allAppointmentsDoc,
   viewContract,
   acceptContract,
   viewWalletAmountByDoc,
@@ -48,7 +48,8 @@ const { registerDoctor,
   displayDoctorNotifications,
   sendAppointmentDoctorRescheduleNotificationEmail,
   sendAppointmentDoctorCancelledNotificationEmail,
-  sendAppointmentDoctorNotificationEmail
+  sendAppointmentDoctorNotificationEmail,
+  allAvailableTimeSlots
 
 
 } = require('../Controllers/doctorController');
@@ -71,7 +72,7 @@ router.put('/updateDoctorByHourlyRate/:Username', verify, updateDoctorByHourlyRa
 //Req 23 (filter appointments by date/status)
 router.get('/docFilterAppsByDate/:Username/:Date', verify, docFilterAppsByDate)
 router.get('/docFilterAppsByStatus/:Username/:Status', verify, docFilterAppsByStatus)
-router.get('/allAppointments/:Username', verify, allAppointments);
+router.get('/allAppointmentsDoc/:Username', verify, allAppointmentsDoc);
 
 //Req 25 (view information and health records of patient registered with me)
 router.get('/viewInfoAndRecords/:DoctorUsername/:PatientUsername', verify, viewInfoAndRecords)
@@ -100,8 +101,9 @@ router.get('/viewHealthRecords/:DoctorUsername/:PatientUsername', verify, viewHe
 // Define the route for adding a health record for a patient
 router.post('/addHealthRecord/:DoctorUsername/:PatientUsername', verify, addHealthRecordForPatient);
 
-// Route to add available time slots 
+// Route to view and add available time slots 
 router.post('/addAvailableTimeSlots/:DoctorUsername', verify, addAvailableTimeSlots);
+router.post('/allAvailableTimeSlots/:DoctorUsername', verify, allAvailableTimeSlots);
 
 // Define a route for scheduling a follow-up appointment
 router.post('/scheduleFollowUp/:DoctorUsername/:PatientUsername', verify, scheduleFollowUp);
