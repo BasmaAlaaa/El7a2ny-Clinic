@@ -1369,7 +1369,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }      
 
-      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
@@ -1382,17 +1382,6 @@ const rescheduleAppointmentPatient = async (req, res) => {
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
-
-      // let slot;
-      // let found = false;
-      // for (const s of doctorAvailableTimeSlots) {
-      //   if (!found) {
-      //     if (s._id.equals(timeSlot)) {
-      //       found = true;
-      //       slot = s;
-      //     }
-      //   }
-      // }
 
       const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
 
