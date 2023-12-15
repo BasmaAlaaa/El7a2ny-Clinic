@@ -1,29 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const validator = require('validator');
-const Doctor = require('./Doctor.js');
-const Patient = require('./Patient.js');
-const Appointment = require('./Appointment.js');
-const Medicine = require('./Medicine.js');
-
-// const medicineSchema = new Schema({
-//     name: {
-//         type: String,
-//         required: true
-//     },
-//     dosage: {
-//         type: String,
-//         required: true
-//     }
-// });
 
 const prescriptionSchema = new Schema({
-
     DoctorUsername: {
         type: String,
         required: true,
     },
-
     PatientUsername: {
         type: String,
         required: true,
@@ -34,17 +16,11 @@ const prescriptionSchema = new Schema({
     },
     Date: {
         type: Date,
-        required: true,
-    },
-    Appointment_ID: {
-        type: Schema.Types.ObjectId,
-        //required: true,
-        ref: 'Appointment'
+        default: Date.now,
     },
     Filled: {
         type: Boolean,
-        default: false
-        //required: true,
+        default: false,
     },
     Medicines: [{
         Name: {
@@ -56,49 +32,7 @@ const prescriptionSchema = new Schema({
             required: true,
         },
     }],
-
-
 }, { timestamps: true });
-
-
-
-
-
-
-
-prescriptionSchema.statics.register = async function (
-    DoctorUsername,
-    PatientUsername,
-    Description,
-    Date,
-    Appointment_ID,
-    Filled,
-    medicines
-) {
-
-    // validation 
-    if (!DoctorUsername ||
-        !PatientUsername ||
-        !Date ||
-        !Description || !medicines
-    ) {
-        throw Error('All fields must be filled.');
-    }
-
-
-    const prescription = await this.create({
-        DoctorUsername,
-        PatientUsername,
-        Description,
-        Date,
-        Appointment_ID,
-        Filled,
-        medicines
-
-    });
-
-    return prescription;
-};
 
 
 function generateRandom4DigitNumber() {
@@ -106,8 +40,6 @@ function generateRandom4DigitNumber() {
     const max = 9999; // Maximum 4-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-
-
 
 const Prescription = mongoose.model('Prescription', prescriptionSchema);
 module.exports = Prescription;

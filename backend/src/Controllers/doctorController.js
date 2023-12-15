@@ -1133,9 +1133,9 @@ const addPatientPrescription = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      const { description, date, appointmentID, medicines } = req.body;
+      const { description } = req.body;
 
-      if (!username || !PatientUsername || !description || !date || !appointmentID || !medicines) {
+      if (!username || !PatientUsername || !description) {
         return res.status(400).json({ error: 'All fields must be filled.' });
       }
 
@@ -1149,35 +1149,12 @@ const addPatientPrescription = async (req, res) => {
         return res.status(404).json({ error: 'Patient not found.' });
       }
 
-
-      // Validate that each medicine in the request is available from the pharmacy platform
-      const validMedicines = await Promise.all(medicines.map(async ({ Name, dosage }) => {
-        const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`);
-        const medicineDetails = pharmacyResponse.data;
-
-        if (!medicineDetails) {
-          return null; // Medicine not found in the pharmacy platform
-        }
-
-        return {
-          Name: medicineDetails.Name,
-          dosage: dosage,
-        };
-      }));
-
-      // Check if any medicine was not found in the pharmacy
-      if (validMedicines.some(med => med === null)) {
-        return res.status(404).json({ error: 'One or more medicines not found in the pharmacy platform' });
-      }
-
       const prescription = await Prescription.create({
         DoctorUsername: username,
         PatientUsername: PatientUsername,
         Description: description,
-        Date: date,
-        Appointment_ID: appointmentID,
+        Date: Date.now(),
         Filled: false,
-        Medicines: validMedicines,
       });
 
       patient.PatientPrescriptions.push(prescription._id);
