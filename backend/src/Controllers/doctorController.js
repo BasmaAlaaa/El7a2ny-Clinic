@@ -172,7 +172,7 @@ const docFilterAppsByStatus = async (req, res) => {
   }
 }
 
-const allAppointments = async (req, res) => {
+const allAppointmentsDoc = async (req, res) => {
   const { Username } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -269,6 +269,7 @@ const MyPatients = async (req, res) => {
 
       const appointments = await appointmentSchema.find({ PatientUsername: { $in: patientsUsernames } });
 
+      
       const result = [];
       for (const patient of patients) {
         for (const app of appointments) {
@@ -640,6 +641,29 @@ const addAvailableTimeSlots = async (req, res) => {
         doctor.AvailableTimeSlots.push({ Date: date, Time: time, Status: "available" });
       }
       await doctor.save();
+
+      res.status(200).json(doctor.AvailableTimeSlots);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+const allAvailableTimeSlots = async (req, res) => {
+  const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (!(req.user.Username === DoctorUsername)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+
+    try {
+      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+
+      if (!doctor) {
+        return res.status(404).json({ error: 'Doctor not found.' });
+      }
 
       res.status(200).json(doctor.AvailableTimeSlots);
     } catch (error) {
@@ -1110,9 +1134,9 @@ const addPatientPrescription = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      const { description, date, appointmentID, medicines } = req.body;
+      const { description } = req.body;
 
-      if (!username || !PatientUsername || !description || !date || !appointmentID || !medicines) {
+      if (!username || !PatientUsername || !description) {
         return res.status(400).json({ error: 'All fields must be filled.' });
       }
 
@@ -1126,35 +1150,12 @@ const addPatientPrescription = async (req, res) => {
         return res.status(404).json({ error: 'Patient not found.' });
       }
 
-
-      // Validate that each medicine in the request is available from the pharmacy platform
-      const validMedicines = await Promise.all(medicines.map(async ({ Name, dosage }) => {
-        const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`);
-        const medicineDetails = pharmacyResponse.data;
-
-        if (!medicineDetails) {
-          return null; // Medicine not found in the pharmacy platform
-        }
-
-        return {
-          Name: medicineDetails.Name,
-          dosage: dosage,
-        };
-      }));
-
-      // Check if any medicine was not found in the pharmacy
-      if (validMedicines.some(med => med === null)) {
-        return res.status(404).json({ error: 'One or more medicines not found in the pharmacy platform' });
-      }
-
       const prescription = await Prescription.create({
         DoctorUsername: username,
         PatientUsername: PatientUsername,
         Description: description,
-        Date: date,
-        Appointment_ID: appointmentID,
+        Date: Date.now(),
         Filled: false,
-        Medicines: validMedicines,
       });
 
       patient.PatientPrescriptions.push(prescription._id);
@@ -1294,9 +1295,8 @@ const addMedicineToPrescription = async (req, res) => {
 
 // delete medicine from prescription
 const deleteMedecineFromPrescription = async (req, res) => {
-  const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
-  const { medicineName } = req.body;
-
+  const { DoctorUsername, PatientUsername, prescriptionId, medicineName } = req.params;
+  
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -1369,7 +1369,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }      
 
-      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
@@ -1382,17 +1382,6 @@ const rescheduleAppointmentPatient = async (req, res) => {
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
-
-      // let slot;
-      // let found = false;
-      // for (const s of doctorAvailableTimeSlots) {
-      //   if (!found) {
-      //     if (s._id.equals(timeSlot)) {
-      //       found = true;
-      //       slot = s;
-      //     }
-      //   }
-      // }
 
       const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
 
@@ -1685,7 +1674,7 @@ const removeDoctorAppointmentNotifications = async () => {
 
 const displayDoctorNotifications = async (req, res) => {
   try {
-    await createDoctorAppointmentNotifications(req);
+    //await createDoctorAppointmentNotifications(req);
     const { Username } = req.params;
     console.log(Username);
     const notifications = await Notification.find({ username: Username });
@@ -1910,12 +1899,13 @@ module.exports = {
   selectPatientWithHisName,
   addDoctor,
   viewContract,
-  allAppointments,
+  allAppointmentsDoc,
   acceptContract,
   viewWalletAmountByDoc,
   viewHealthRecords,
   addHealthRecordForPatient,
   addAvailableTimeSlots,
+  allAvailableTimeSlots,
   scheduleFollowUp,
   doctorPastApp,
   createAvailableApps,
