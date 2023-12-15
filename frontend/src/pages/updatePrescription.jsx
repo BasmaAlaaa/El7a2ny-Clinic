@@ -39,18 +39,12 @@ function UpdatePrescription() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (updatedDescription === "") {
+            navigate(`/presDoctorsList/${DoctorUsername}/${PatientUsername}`);
 
+        }else{
         try {
             const data = {updatedDescription: updatedDescription};
-
-            // if (updatedDescription !== "" && updatedDescription.trim() !== "") {
-            //     data.updatedDescription = updatedDescription;
-            // }
-
-            // if (updatedDose !== 0) {
-            //     data.updatedDose = updatedDose;
-            // }
-
             const response = await axios.put(`http://localhost:4000/Doctor/updatePrescription/${DoctorUsername}/${PatientUsername}/${prescriptionId}`, data, {
                 headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
             });
@@ -59,6 +53,7 @@ function UpdatePrescription() {
                 alert(`Prescription updated successfully.`);
                 navigate(`/presDoctorsList/${DoctorUsername}/${PatientUsername}`);
                 console.log(response.data.message);
+                //window.location.reload(true);
             } else {
                 alert(`Failed to update prescription. Status: ${response.status}`);
             }
@@ -66,13 +61,17 @@ function UpdatePrescription() {
             alert(`Failed to update prescription. Error: ${error.message}`);
             console.error('Error accepting request:', error.response);
         }
+    }
     };
 
     return (
         <div>
             <NavBarDoctor username={DoctorUsername}/>
-            {/* {type==='update' && {
-                <div> */}
+            <h1>Add Medicine to Prescription</h1>    
+            <TableMedicines tHead={tHeadMeds} data={resultMeds} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>
+            <h2>Prescription Medicines</h2>
+           {result.Medicines && <TableCart tHead={tHead} data={result.Medicines} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>}
+
             <div>
             {type==='update' &&<h1>Update Prescription</h1>}
             {type==='update' &&<form className="d-flex justify-content-center">
@@ -98,12 +97,6 @@ function UpdatePrescription() {
                 </div>
             </form>}
             </div>
-            
-            {/* </div>
-            }} */}
-            <TableMedicines tHead={tHeadMeds} data={resultMeds} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>
-            <h2>Prescription Medicines</h2>
-           {result.Medicines && <TableCart tHead={tHead} data={result.Medicines} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>}
 
         </div>
     );
