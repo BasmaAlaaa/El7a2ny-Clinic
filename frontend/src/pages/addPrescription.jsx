@@ -18,6 +18,8 @@ function AddPrescription() {
 
     const { username, PatientUsername } = useParams();
     const [description, setDescription] = useState('');
+    const [prescriptionId, setPrescriptionId] = useState('');
+
     const [date, setDate] = useState('');
     const [dose, setDose] = useState(0);
     const [medicines, setMedicines] = useState([]);
@@ -36,28 +38,37 @@ function AddPrescription() {
     //       }, [])
 
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const data = { description};
-        console.log(data);
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault();
+    //     const data = { description};
+    //     console.log(data);
     
-        try {
-            const response = await axios.post(
-                `http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`,
-                data,
-                {
-                    headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
-                }
-            );
+    //     try {
+    //         const response = await axios.post(
+    //             `http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`,
+    //             data,
+    //             {
+    //                 headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
+    //             }
+    //         );
     
-            alert('Prescription added successfully.');
-            navigate(`/updatePrescription/${username}/${PatientUsername}`);
-            console.log(response.data);
-        } catch (error) {
-            console.error('Error adding prescription:', error.response?.data || error.message);
-            alert('Error adding prescription. Please check console for details.');
-        }
-    };
+    //         alert('Prescription added successfully.');
+    //         navigate(`/updatePrescription/${username}/${PatientUsername}`);
+    //         console.log(response.data);
+    //     } catch (error) {
+    //         console.error('Error adding prescription:', error.response?.data || error.message);
+    //         alert('Error adding prescription. Please check console for details.');
+    //     }
+    // };
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      console.log('desc', description)
+      const data = {description: description};
+      const response = axios.post(`http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`, data, {
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      })
+  .then(res =>{setPrescriptionId(res.data.prescription._id);console.log(res);alert('Prescription Added successfully');}).catch(err => alert(err))
+    }
 
     return (
         <div>
@@ -77,20 +88,6 @@ function AddPrescription() {
             type='text'
             onChange={(e) => setDescription(e.target.value)}
           />
-          <Input
-            title='email'
-            required={true}
-            placeholder='Enter email'
-            type='email'
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <Input
-            title='password'
-            required={true}
-            placeholder='Enter password'
-            type='password'
-            onChange={(e) => setPassword(e.target.value)}
-          />
          
           <div className="mt-3">
             <MainBtn
@@ -104,11 +101,34 @@ function AddPrescription() {
 
         </div>
       </form> */}
+      <h1>Add Prescription</h1>
+<form className="d-flex justify-content-center">
+                <div style={{width: "30%"}} className="form-width">
+                    <p className="text-capitalize fs-4 mb-3"></p>
+                    <div className="mb-3">
+                        <label className="form-label">Description</label>
+                        <textarea
+                            rows={3}
+                            className="form-control"
+                            placeholder='Description'
+                            //value={updatedDescription}
+                            onChange={(e) => setDescription(e.target.value)}
+                        />
+                    </div>
+                    <div className="mt-3">
+                        <MainBtn
+                            txt='Save'
+                            style='green-btn'
+                            action={handleSubmit}
+                        />
+                    </div>
+                </div>
+            </form>
 
-            <form onSubmit={handleSubmit}>
+            {/* <form onSubmit={handleSubmit}>
                 <h2>Add Prescription</h2>
                 <h3><input required placeholder='Description' type='text' onChange={(e) => setDescription(e.target.value)} /></h3>
-                <h3><input required placeholder='Date' type='date' onChange={(e) => setDate(e.target.value)} /></h3>
+                <h3><input required placeholder='Date' type='date' onChange={(e) => setDate(e.target.value)} /></h3> */}
 
                 {/* Dropdown list of appointments */}
                 {/* <h3>
@@ -122,8 +142,8 @@ function AddPrescription() {
                     </select>
                 </h3> */}
 
-                <h3><button type="submit">Submit</button></h3>
-            </form>
+                {/* <h3><button type="submit">Submit</button></h3>
+            </form> */}
 
         </div>
     );
