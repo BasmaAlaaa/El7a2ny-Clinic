@@ -172,7 +172,7 @@ const docFilterAppsByStatus = async (req, res) => {
   }
 }
 
-const allAppointments = async (req, res) => {
+const allAppointmentsDoc = async (req, res) => {
   const { Username } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -640,6 +640,29 @@ const addAvailableTimeSlots = async (req, res) => {
         doctor.AvailableTimeSlots.push({ Date: date, Time: time, Status: "available" });
       }
       await doctor.save();
+
+      res.status(200).json(doctor.AvailableTimeSlots);
+    } catch (error) {
+      res.status(500).json({ error: error.message });
+    }
+  }
+};
+
+const allAvailableTimeSlots = async (req, res) => {
+  const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (!(req.user.Username === DoctorUsername)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+
+    try {
+      const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
+
+      if (!doctor) {
+        return res.status(404).json({ error: 'Doctor not found.' });
+      }
 
       res.status(200).json(doctor.AvailableTimeSlots);
     } catch (error) {
@@ -1899,12 +1922,13 @@ module.exports = {
   selectPatientWithHisName,
   addDoctor,
   viewContract,
-  allAppointments,
+  allAppointmentsDoc,
   acceptContract,
   viewWalletAmountByDoc,
   viewHealthRecords,
   addHealthRecordForPatient,
   addAvailableTimeSlots,
+  allAvailableTimeSlots,
   scheduleFollowUp,
   doctorPastApp,
   createAvailableApps,
