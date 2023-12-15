@@ -16,66 +16,66 @@ import TableMedicines from '../components/TableMedicines.jsx';
 
 function AddPrescription() {
 
-    const { username, PatientUsername } = useParams();
-    const [description, setDescription] = useState('');
-    const [prescriptionId, setPrescriptionId] = useState('');
+  const { username, PatientUsername } = useParams();
+  const [description, setDescription] = useState('');
+  const [prescriptionId, setPrescriptionId] = useState('');
 
-    const [date, setDate] = useState('');
-    const [dose, setDose] = useState(0);
-    const [medicines, setMedicines] = useState([]);
-    let tHead = ['Medicine Name'];
+  const [date, setDate] = useState('');
+  const [dose, setDose] = useState(0);
+  const [medicines, setMedicines] = useState([]);
+  let tHead = ['Medicine Name'];
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
 
-    console.log(username);
-    console.log(PatientUsername);
+  console.log(username);
+  console.log(PatientUsername);
 
-    // useEffect(() => {
-    //     const response = axios.get(`http://localhost:4000/Doctor/getAllMedicinesFromPharmacy/${username}`, {
-    //       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-    //     })
-    //     .then(res =>setData(res)).catch(err => console.log(err))
-    //       }, [])
+  // useEffect(() => {
+  //     const response = axios.get(`http://localhost:4000/Doctor/getAllMedicinesFromPharmacy/${username}`, {
+  //       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  //     })
+  //     .then(res =>setData(res)).catch(err => console.log(err))
+  //       }, [])
 
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     const data = { description};
-    //     console.log(data);
-    
-    //     try {
-    //         const response = await axios.post(
-    //             `http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`,
-    //             data,
-    //             {
-    //                 headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
-    //             }
-    //         );
-    
-    //         alert('Prescription added successfully.');
-    //         navigate(`/updatePrescription/${username}/${PatientUsername}`);
-    //         console.log(response.data);
-    //     } catch (error) {
-    //         console.error('Error adding prescription:', error.response?.data || error.message);
-    //         alert('Error adding prescription. Please check console for details.');
-    //     }
-    // };
-    const handleSubmit = (e) => {
-      e.preventDefault();
-      console.log('desc', description)
-      const data = {description: description};
-      const response = axios.post(`http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`, data, {
-        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
-      })
-  .then(res =>{setPrescriptionId(res.data.prescription._id);console.log(res);alert('Prescription Added successfully');}).catch(err => alert(err))
-    }
+  // const handleSubmit = async (e) => {
+  //     e.preventDefault();
+  //     const data = { description};
+  //     console.log(data);
 
-    return (
-        <div>
-            <NavBarDoctor username={username} />
+  //     try {
+  //         const response = await axios.post(
+  //             `http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`,
+  //             data,
+  //             {
+  //                 headers: { authorization: 'Bearer ' + sessionStorage.getItem('token') },
+  //             }
+  //         );
 
-            {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
-            {/* <form
+  //         alert('Prescription added successfully.');
+  //         navigate(`/updatePrescription/${username}/${PatientUsername}`);
+  //         console.log(response.data);
+  //     } catch (error) {
+  //         console.error('Error adding prescription:', error.response?.data || error.message);
+  //         alert('Error adding prescription. Please check console for details.');
+  //     }
+  // };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('desc', description)
+    const data = { description: description };
+    const response = axios.post(`http://localhost:4000/Doctor/addPatientPrescription/${username}/${PatientUsername}`, data, {
+      headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
+    })
+      .then(res => { setPrescriptionId(res.data.prescription._id); console.log(res); alert('Prescription Added successfully'); }).catch(err => alert(err))
+  }
+
+  return (
+    <div>
+      <NavBarDoctor username={username} />
+
+      {/* <Form title="Add Administrator" inputArr={inputArr} type="addAdministrator" btnArr={btnArr} /> */}
+      {/* <form
         className="d-flex justify-content-center"
         onSubmit={handleSubmit}
       >
@@ -102,36 +102,36 @@ function AddPrescription() {
         </div>
       </form> */}
       <h1>Add Prescription</h1>
-<form className="d-flex justify-content-center">
-                <div style={{width: "30%"}} className="form-width">
-                    <p className="text-capitalize fs-4 mb-3"></p>
-                    <div className="mb-3">
-                        <label className="form-label">Description</label>
-                        <textarea
-                            rows={3}
-                            className="form-control"
-                            placeholder='Description'
-                            //value={updatedDescription}
-                            onChange={(e) => setDescription(e.target.value)}
-                        />
-                    </div>
-                    <div className="mt-3">
-                        <MainBtn
-                            txt='Save'
-                            style='green-btn'
-                            action={handleSubmit}
-                        />
-                    </div>
-                </div>
-            </form>
+      <form className="d-flex justify-content-center">
+        <div style={{ width: "30%" }} className="form-width">
+          <p className="text-capitalize fs-4 mb-3"></p>
+          <div className="mb-3">
+            <label className="form-label">Description</label>
+            <textarea
+              rows={3}
+              className="form-control"
+              placeholder='Description'
+              //value={updatedDescription}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+          </div>
+          <div className="mt-3">
+            <MainBtn
+              txt='Save'
+              style='green-btn'
+              action={handleSubmit}
+            />
+          </div>
+        </div>
+      </form>
 
-            {/* <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
                 <h2>Add Prescription</h2>
                 <h3><input required placeholder='Description' type='text' onChange={(e) => setDescription(e.target.value)} /></h3>
                 <h3><input required placeholder='Date' type='date' onChange={(e) => setDate(e.target.value)} /></h3> */}
 
-                {/* Dropdown list of appointments */}
-                {/* <h3>
+      {/* Dropdown list of appointments */}
+      {/* <h3>
                     <select value={appointmentID} onChange={(e) => setAppointmentID(e.target.value)}>
                         <option value="">Select an appointment</option>
                         {appointments.map((appointment) => (
@@ -142,10 +142,10 @@ function AddPrescription() {
                     </select>
                 </h3> */}
 
-                {/* <h3><button type="submit">Submit</button></h3>
+      {/* <h3><button type="submit">Submit</button></h3>
             </form> */}
 
-        </div>
-    );
+    </div>
+  );
 }
 export default AddPrescription;
