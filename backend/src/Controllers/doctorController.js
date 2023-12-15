@@ -1043,6 +1043,34 @@ const rejectFollowUpRequest = async (req, res) => {
   }
 };
 
+const viewRequestedAppointments = async (req, res) => {
+  const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  if (!(req.user.Username === DoctorUsername)) {
+    return res.status(403).json("You are not logged in!");
+  }
+
+  try {
+    const appointments = await Appointment.find({
+      DoctorUsername: DoctorUsername,
+      Status: 'Requested'
+    }).lean(); // Use the lean() method here
+
+    if (!appointments || appointments.length === 0) {
+      return res.status(404).send('No follow-up appointments requested for this doctor');
+    }
+
+    res.status(200).send(appointments);
+
+  } catch (error) {
+    res.status(400).send({ error: error.message });
+  }
+}
+
+
 // view all prescriptions of a patient
 const viewAllPres = async (req, res) => {
   const { DoctorUsername, PatientUsername } = req.params;
@@ -2019,6 +2047,7 @@ module.exports = {
   downloadPrescriptionPDF,
   acceptFollowUpRequest,
   rejectFollowUpRequest,
+  viewRequestedAppointments,
   addPatientPrescription,
   viewAllPres,
   viewAllPresGeneral,

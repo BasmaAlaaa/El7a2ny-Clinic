@@ -33,6 +33,7 @@ const { registerDoctor,
   downloadPrescriptionPDF,
   acceptFollowUpRequest,
   rejectFollowUpRequest,
+  viewRequestedAppointments,
   addPatientPrescription,
   viewAllPres,
   viewAllPresGeneral,
@@ -116,6 +117,7 @@ router.post('/acceptFollowUpRequest/:DoctorUsername/:PatientUsername', verify, a
 // Define route for accepting follow-up request
 router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, rejectFollowUpRequest);
 
+router.get('/viewRequestedAppointments/:DoctorUsername', verify, viewRequestedAppointments);
 
 // Define a route to trigger the download
 router.get('/downloadPrescriptionPDF/:DoctorUsername/:prescriptionID', verify, downloadPrescriptionPDF);

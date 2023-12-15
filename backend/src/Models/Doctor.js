@@ -7,11 +7,11 @@ const doctorSchema = new Schema({
     type: String,
     required: true,
     unique: true
-  },  
+  },
   Name: {
-      type: String,
-      required: true
-    },
+    type: String,
+    required: true
+  },
   Email: {
     type: String,
     required: true,
@@ -25,29 +25,29 @@ const doctorSchema = new Schema({
     type: Date,
     required: true
   },
-  HourlyRate:{
-      type: Number,
-      required: true,
+  HourlyRate: {
+    type: Number,
+    required: true,
   },
-  Affiliation:{
-      type:String,
-      required: true
+  Affiliation: {
+    type: String,
+    required: true
   },
-  EDB:{
-    type:String,
+  EDB: {
+    type: String,
     required: true
   },
   PatientsUsernames: [{
     type: String,
     ref: 'Patient', // This should match the model name you defined for Patient
   }],
-  Speciality:{
+  Speciality: {
     type: String,
     required: true,
-    enum:["dermatology","dentistry","psychiatry","neurology","orthopedics","Dermatology","Dentistry","Psychiatry","Neurology","Orthopedics"]
+    enum: ["dermatology", "dentistry", "psychiatry", "neurology", "orthopedics", "Dermatology", "Dentistry", "Psychiatry", "Neurology", "Orthopedics"]
 
   },
-  WalletAmount:{
+  WalletAmount: {
     type: Number,
     default: 0
   },
@@ -91,12 +91,12 @@ const doctorSchema = new Schema({
       },
     },
   ],
- 
 
 
 
-  
-},{ timestamps: true });
 
-  const Doctor = mongoose.model('Doctor', doctorSchema);
-  module.exports = Doctor;
+
+}, { timestamps: true });
+
+const Doctor = mongoose.model('Doctor', doctorSchema);
+module.exports = Doctor;
