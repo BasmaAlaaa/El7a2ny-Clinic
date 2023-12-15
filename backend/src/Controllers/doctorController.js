@@ -1489,7 +1489,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
           PaymentMethod: selectedAppointment.PaymentMethod,
           Price: selectedAppointment.Price,
           Name: selectedAppointment.Name,
-          ForPatient: true
+          ForPatient: selectedAppointment.ForPatient
         });
 
         slot.Status = "booked";
@@ -1500,7 +1500,11 @@ const rescheduleAppointmentPatient = async (req, res) => {
 
       selectedAppointment.Status = 'Rescheduled';
       await selectedAppointment.save();
-      await SendEmailNotificationReschedule(selectedAppointment, doctor, patient);
+      if(selectedAppointment.ForPatient === true){
+        await SendEmailNotificationReschedule(selectedAppointment, doctor, patient);
+      }else{
+        await SendEmailNotificationRescheduleFam(selectedAppointment, doctor, patient);
+      }
 
       return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
     } catch (error) {
@@ -1582,7 +1586,7 @@ const cancelAppointmentPatient = async (req, res) => {
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
-    SendEmailNotificationCancel(selectedAppointment, doctor, patient, "yes");
+    await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "yes");
 
     return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
@@ -1668,7 +1672,8 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
     await selectedAppointment.save();
     await doctor.save();
     //await Promise.all([selectedAppointment.save(), doctor.save()]);
-    SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "yes");
+    await SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "yes");
+
     return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
   } catch (error) {
     console.error(error);

@@ -1741,7 +1741,7 @@ const selectAppointmentDateTimeAndPay = async (req, res) => {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
         res.status(200).send(newAppointment);
-        SendEmailNotificationBook(newAppointment, doctor, patient);
+        await SendEmailNotificationBook(newAppointment, doctor, patient);
       }
       else {
         return res.status(400).send("This slot is already booked");
@@ -2014,7 +2014,7 @@ const selectAppointmentDateTimeAndPayFam = async (req, res) => {
           return res.status(400).send("Your wallet amount won't cover the whole appointment price!");
         }
         res.status(200).send(newAppointment);
-        SendEmailNotificationBookFam(newAppointment, doctor, patient);
+        await SendEmailNotificationBookFam(newAppointment, doctor, patient);
       }
       else {
         return res.status(400).send("This slot is already booked");
@@ -2913,7 +2913,7 @@ const rescheduleAppointment = async (req, res) => {
 
       selectedAppointment.Status = 'Rescheduled';
       await selectedAppointment.save();
-      SendEmailNotificationReschedule(newAppointment, doctor, patient);
+      await SendEmailNotificationReschedule(newAppointment, doctor, patient);
 
       return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
     } catch (error) {
@@ -3018,7 +3018,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
         // Save the updated patient and appointment
         await selectedAppointment.save();
-        SendEmailNotificationRescheduleFam(newAppointment, doctor, patient);
+        await SendEmailNotificationRescheduleFam(newAppointment, doctor, patient);
 
         return res.status(200).json({ success: true, message: 'Appointment is rescheduled' , newAppointment});
     } catch (error) {
@@ -3081,10 +3081,10 @@ const cancelAppointment = async (req, res) => {
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
       await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
-      SendEmailNotificationCancel(selectedAppointment,doctor,patient,"yes");
+      await SendEmailNotificationCancel(selectedAppointment,doctor,patient,"yes");
     }
     else{
-      SendEmailNotificationCancel(selectedAppointment,doctor,patient,"no");
+      await SendEmailNotificationCancel(selectedAppointment,doctor,patient,"no");
     }
 
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
@@ -3160,10 +3160,10 @@ const cancelAppointmentFamMem = async (req, res) => {
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
       await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
-      SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"yes");
+      await SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"yes");
     }
     else{
-      SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"no");
+      await SendEmailNotificationCancelFam(selectedAppointment,doctor,patient,"no");
     }
 
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
