@@ -918,7 +918,7 @@ const downloadPrescriptionPDF = async (req, res) => {
 // Req 65 Accept a follow-up request
 
 const acceptFollowUpRequest = async (req, res) => {
-  const { AppointmentId, DoctorUsername } = req.params;
+  const { DoctorUsername, AppointmentId, timeSlot } = req.params;
   if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
     console.error('Invalid ObjectId format for AppointmentId');
     return;
@@ -937,11 +937,27 @@ const acceptFollowUpRequest = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
+      const doctor = await doctorSchema.findOne({ Username: appointment.DoctorUsername });
+
+      if (!doctor) {
+        return res.status(404).json({ success: false, message: 'Doctor not found.' });
+      }
+
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+      const slot = doctorAvailableTimeSlots.find(s => s._id.toString() === timeSlot);
+  
+      if (!slot) {
+        return res.status(400).json({ success: false, message: 'Selected time slot is not available.' });
+      }  
+
       const validStatusValues = ['Requested', 'requested'];
       if (validStatusValues.includes(appointment.Status)) {
         console.log(appointment.Status);
         appointment.Status = 'Follow-up';
+        slot.Status = 'booked';
         await appointment.save();
+        await doctor.save();
         return res.status(200).json({ success: true, message: 'Follow-up appointment request has been accepted.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the appropriate status.' });
