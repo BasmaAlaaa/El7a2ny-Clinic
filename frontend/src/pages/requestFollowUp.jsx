@@ -8,7 +8,7 @@ import TableRequestFollowUp from "../components/TableRequestFollowUp";
 
 function RequestFollowUp(){
 
-    const {usernamePatient, usernameDoctor, appID} = useParams();
+    const {usernamePatient, usernameDoctor, appID, type} = useParams();
     const[result, setResult] = useState('');
 
 

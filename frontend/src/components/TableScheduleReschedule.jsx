@@ -8,6 +8,7 @@ function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
 
 const rescheduleAppointment = (e) =>{
   e.preventDefault();
+  console.log("ana f reschedule");
   axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
   ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
   .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)}).catch(err => alert('error rescheduling appointment'));
@@ -24,7 +25,7 @@ const rescheduleAppointment = (e) =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>rescheduleAppointment}
+        onClick={rescheduleAppointment}
       >
         Book
       </button>

@@ -8,7 +8,7 @@ import TableScheduleReschedule from "../components/TableScheduleReschedule";
 
 function RescheduleAppointment(){
 
-    const {usernamePatient, usernameDoctor, appID} = useParams();
+    const {usernamePatient, usernameDoctor, appID, type} = useParams();
     const[result, setResult] = useState('');
 
 

@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 
 function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
   let navigate = useNavigate();
-const followUp = async  () => {
+const followUp = async  (e) => {
+  e.preventDefault();
     console.log('Follow up button clicked');
     axios.post(`http://localhost:4000/Patient/requestFollowUpAppointment/${patientUsername}/${appID}`, "", {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
     .then(res => {
       alert('Follow Up Requested');
+      navigate(`/appointmentsList/${patientUsername}`);
     })
     .catch(err => {
       // Check if the error response has data and a message
