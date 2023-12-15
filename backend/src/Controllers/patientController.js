@@ -39,7 +39,6 @@ async function createStripeCustomer({ Email, Name, Phone }) {
 
 // Task 1 : register patient
 const registerPatient = async (req, res) => {
-
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
 
@@ -96,7 +95,7 @@ const registerPatient = async (req, res) => {
       EmergencyContactName,
       EmergencyContactMobile,
       EmergencyContactRelation,
-      address,
+      addresses: [address],  // Add the address to the addresses array
       StripeCustomerId: customer.id,
       cart: newCart
     });
@@ -108,6 +107,7 @@ const registerPatient = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 // Req 18: app.post('/addFamMember/:Username')
