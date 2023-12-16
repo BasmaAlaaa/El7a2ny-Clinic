@@ -57,8 +57,7 @@ function CaseTableBody({ data, username }) {
         Chat
       </button>
     </div> 
-      </td>
-
+    </td>
     </>
   );
 }
