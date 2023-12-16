@@ -31,7 +31,7 @@ function ContractView () {
       const response = await axios.post(`http://localhost:4000/Doctor/acceptContract/${username}`, "",{
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       });
-      alert(response.data.message)
+    //  alert(response.data.message)
       console.log('Contract accepted', response.data);
       setContractInfo(prevContract => ({
         ...prevContract,
@@ -49,7 +49,7 @@ function ContractView () {
       const response = await axios.post(`http://localhost:4000/Doctor/rejectContract/${username}`, "",{
         headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
       });
-      alert(response.data.message)
+    //  alert(response.data.message)
       console.log('Contract rejected', response.data);
       setContractInfo(prevContract => ({
         ...prevContract,
