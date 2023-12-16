@@ -22,7 +22,6 @@ function RegisterDoctor() {
   const [WorkingLicenseDocument, setWorkingLicenseDocument] = useState('');
   let navigate = useNavigate();
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -44,13 +43,17 @@ function RegisterDoctor() {
       data.append('MedicalDegreeDocument', MedicalDegreeDocument);
       data.append('WorkingLicenseDocument', WorkingLicenseDocument);
 
-      console.log(data)
+      console.log(data);
 
-      const response = await axios.post('http://localhost:4000/GuestDoctor/Register', data, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      const response = await axios.post(
+        'http://localhost:4000/GuestDoctor/Register',
+        data,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       if (response.status === 200) {
         alert(`Registered successfully`);
@@ -63,7 +66,8 @@ function RegisterDoctor() {
       alert(`Failed to register. Error: ${error.message}`);
       console.error('Error accepting request:', error);
     }
-  }
+  };
+
   return (
     <div>
       <NavBar />
@@ -201,6 +205,7 @@ function RegisterDoctor() {
             required={true}
             placeholder='Enter ID'
             type='file'
+            name='IDDocument' // Add this line
             onChange={(e) => setIDDocument(e.target.files[0])}
           />
           <Input
@@ -208,6 +213,7 @@ function RegisterDoctor() {
             required={true}
             placeholder='Enter Medical degree document'
             type='file'
+            name='MedicalDegreeDocument' // Add this line
             onChange={(e) => setMedicalDegreeDocument(e.target.files[0])}
           />
           <Input
@@ -215,6 +221,7 @@ function RegisterDoctor() {
             required={true}
             placeholder='Enter working license'
             type='file'
+            name='WorkingLicenseDocument' // Add this line
             onChange={(e) => setWorkingLicenseDocument(e.target.files[0])}
           />
 
