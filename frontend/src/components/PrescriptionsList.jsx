@@ -22,7 +22,7 @@ function PrescriptionsList() {
 
       .then(res => setResult(res.data)).catch(err => console.log(err.request))
   }, [])
-  console.log(result)
+  console.log("presss", result);
   result.map((e) => {
     console.log(e)
   })

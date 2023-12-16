@@ -69,36 +69,7 @@ function CaseTableBody({ data, DoctorUsername, PatientUsername, prescriptionId }
   return (
     <>
     <th>{data.Name}</th>
-
-    <td>
-    <div className="d-flex flex-row">
-      <button
-        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={handleQuantityAdd}
-      >
-        +
-      </button>
-      {data.dosage}
-      <button
-        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={handleQuantityRemove}
-      >
-        -
-      </button>
-      </div>
-      
-    </td>
-
-      <td className="py-3 text-align-center">
-      <div className="d-flex flex-row">
-      <button
-        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={handleRemove}
-      >
-        Remove
-      </button>
-      </div>
-      </td>
+    <td>{data.dosage}</td>
       
       
     </>
@@ -118,7 +89,7 @@ function CaseTableBody({ data, DoctorUsername, PatientUsername, prescriptionId }
 //   );
 // }
 
-function TableCart({ tHead, data, DoctorUsername, PatientUsername, prescriptionId  }) {
+function TableCartPatient({ tHead, data  }) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -133,7 +104,7 @@ function TableCart({ tHead, data, DoctorUsername, PatientUsername, prescriptionI
           {data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>
+                <CaseTableBody data={e} />
             </tr>
           ))}
         </tbody>
@@ -142,4 +113,4 @@ function TableCart({ tHead, data, DoctorUsername, PatientUsername, prescriptionI
   );
 }
 
-export default TableCart;
+export default TableCartPatient;

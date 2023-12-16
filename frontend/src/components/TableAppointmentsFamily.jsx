@@ -12,12 +12,12 @@ const cancelAppointment = () =>{
    axios.post(`http://localhost:4000/Patient/cancelAppointmentFamMem/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
-  .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
+  .then(res =>alert('Appointment Canceled')).catch(err =>{console.log(err); alert('error cancelling appointment')})
  }
 
  function goOrnoGo (){
   if(data.Status === 'completed' || data.Status === 'Completed'){
-    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}/'patient`)}
   
   else{
    alert('You can only  request a followUp for completed appointments')
@@ -36,7 +36,7 @@ const cancelAppointment = () =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}/'patient'`)}
       >
         Reschedule
       </button>
@@ -47,7 +47,7 @@ const cancelAppointment = () =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>cancelAppointment}
+        onClick={cancelAppointment}
       >
         Cancel
       </button>

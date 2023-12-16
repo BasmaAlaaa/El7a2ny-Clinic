@@ -5,6 +5,7 @@ const patientSchema = require('../Models/Patient.js');
 const contractSchema = require('../Models/Contract.js');
 const Prescription = require('../Models/Prescription.js');
 const Appointment = require("../Models/Appointment.js");
+const Medicine = require("../Models/Medicine.js");
 const Notification = require("../Models/notifications.js");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
@@ -918,7 +919,7 @@ const downloadPrescriptionPDF = async (req, res) => {
 // Req 65 Accept a follow-up request
 
 const acceptFollowUpRequest = async (req, res) => {
-  const { AppointmentId, DoctorUsername } = req.params;
+  const { DoctorUsername, AppointmentId } = req.params;
   if (!mongoose.Types.ObjectId.isValid(AppointmentId)) {
     console.error('Invalid ObjectId format for AppointmentId');
     return;
@@ -937,11 +938,32 @@ const acceptFollowUpRequest = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
+      const doctor = await doctorSchema.findOne({ Username: appointment.DoctorUsername });
+
+      if (!doctor) {
+        return res.status(404).json({ success: false, message: 'Doctor not found.' });
+      }
+
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+
+      const date = appointment.Date;
+      const time = appointment.Time;
+      
+      const slot = doctorAvailableTimeSlots.find(s => s.Date.getTime() === date.getTime() && s.Time === time);
+      
+      console.log(slot);
+      
+      if (!slot) {
+        return res.status(400).json({ success: false, message: 'Selected time slot is not available.' });
+      }
+      
       const validStatusValues = ['Requested', 'requested'];
       if (validStatusValues.includes(appointment.Status)) {
         console.log(appointment.Status);
         appointment.Status = 'Follow-up';
+        slot.Status = 'booked';
         await appointment.save();
+        await doctor.save();
         return res.status(200).json({ success: true, message: 'Follow-up appointment request has been accepted.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in the appropriate status.' });
@@ -977,9 +999,10 @@ const rejectFollowUpRequest = async (req, res) => {
 
       const validStatusValues = ['Follow-up', 'follow-up', 'Requested', 'requested'];
       if (validStatusValues.includes(appointment.Status)) {
-        appointment.Status = 'Cancelled';
-        await appointment.save();
-        return res.status(200).json({ success: true, message: 'Follow-up appointment request has been rejected.' });
+        // Delete the appointment from the database
+        await appointmentSchema.deleteOne({ _id: AppointmentId });
+        
+        return res.status(200).json({ success: true, message: 'Follow-up appointment request has been rejected and deleted.' });
       } else {
         return res.status(400).json({ success: false, message: 'Invalid request. The appointment is not in an appropriate status.' });
       }
@@ -1134,9 +1157,9 @@ const addPatientPrescription = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-      const { description, date, appointmentID, medicines } = req.body;
+      const { description } = req.body;
 
-      if (!username || !PatientUsername || !description || !date || !appointmentID || !medicines) {
+      if (!username || !PatientUsername || !description) {
         return res.status(400).json({ error: 'All fields must be filled.' });
       }
 
@@ -1150,35 +1173,12 @@ const addPatientPrescription = async (req, res) => {
         return res.status(404).json({ error: 'Patient not found.' });
       }
 
-
-      // Validate that each medicine in the request is available from the pharmacy platform
-      const validMedicines = await Promise.all(medicines.map(async ({ Name, dosage }) => {
-        const pharmacyResponse = await axios.get(`http://localhost:8000/DoctorFromTheClinic/GetMedicineByDoctor/${username}/${Name}`);
-        const medicineDetails = pharmacyResponse.data;
-
-        if (!medicineDetails) {
-          return null; // Medicine not found in the pharmacy platform
-        }
-
-        return {
-          Name: medicineDetails.Name,
-          dosage: dosage,
-        };
-      }));
-
-      // Check if any medicine was not found in the pharmacy
-      if (validMedicines.some(med => med === null)) {
-        return res.status(404).json({ error: 'One or more medicines not found in the pharmacy platform' });
-      }
-
       const prescription = await Prescription.create({
         DoctorUsername: username,
         PatientUsername: PatientUsername,
         Description: description,
-        Date: date,
-        Appointment_ID: appointmentID,
+        Date: Date.now(),
         Filled: false,
-        Medicines: validMedicines,
       });
 
       patient.PatientPrescriptions.push(prescription._id);
@@ -1204,15 +1204,7 @@ const updatePatientPrescription = async (req, res) => {
   }
 
   try {
-    const { updatedDescription, updatedMedicine } = req.body;
-
-    console.log('Updating prescription:', {
-      DoctorUsername,
-      PatientUsername,
-      prescriptionId,
-      updatedDescription,
-      updatedMedicine,
-    });
+    const { updatedDescription } = req.body;
 
     const doctor = await doctorSchema.findOne({ Username: DoctorUsername });
     if (!doctor) {
@@ -1239,18 +1231,6 @@ const updatePatientPrescription = async (req, res) => {
 
     if (updatedDescription) {
       prescription.Description = updatedDescription;
-    }
-
-    if (updatedMedicine) {
-      const { medicineName, newDosage } = updatedMedicine;
-      const medicineIndex = prescription.Medicines.findIndex(med => med.Name === medicineName);
-
-      if (medicineIndex !== -1) {
-        // Update the dosage of the medicine
-        prescription.Medicines[medicineIndex].dosage = newDosage;
-      } else {
-        return res.status(404).json({ error: 'Medicine not found in the prescription.' });
-      }
     }
 
     const updatedPrescription = await prescription.save();
@@ -1296,11 +1276,16 @@ const addMedicineToPrescription = async (req, res) => {
         'Content-Type': 'application/json',
       },
     });
+
+    console.log('Pharmacy Response Data:', pharmacyResponse.data);
+
     const medicineDetails = pharmacyResponse.data;
 
-    if (!medicineDetails || !medicineDetails.Name) {
-      return res.status(404).json({ error: 'The requested medicine does not exist in the pharmacy platform' });
+    if (!medicineDetails || !medicineDetails.Name || isNaN(medicineDetails.Price) || isNaN(dosage)) {
+      return res.status(404).json({ error: 'Invalid medicine details or dosage' });
     }
+
+    prescription.TotalAmount += medicineDetails.Price * dosage;
 
     prescription.Medicines.push({
       Name: medicineDetails.Name,
@@ -1316,10 +1301,10 @@ const addMedicineToPrescription = async (req, res) => {
   }
 };
 
+
 // delete medicine from prescription
 const deleteMedecineFromPrescription = async (req, res) => {
-  const { DoctorUsername, PatientUsername, prescriptionId } = req.params;
-  const { medicineName } = req.body;
+  const { DoctorUsername, PatientUsername, prescriptionId, medicineName } = req.params;
 
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
@@ -1339,15 +1324,20 @@ const deleteMedecineFromPrescription = async (req, res) => {
       return res.status(404).json({ error: 'Prescription not found.' });
     }
 
-    console.log(prescription.Medicines);
     const medicineIndex = prescription.Medicines.findIndex(
       (medicine) => medicine.Name === medicineName
     );
-    console.log(medicineIndex);
 
     if (medicineIndex === -1) {
       return res.status(404).json({ error: 'Medicine not found in the prescription.' });
     }
+    
+    // Assuming you have a field named 'Price' in your Medicine schema
+    const medicineDetails = await Medicine.findOne({ Name: medicineName });
+    const removedMedicinePrice = medicineDetails ? medicineDetails.Price : 0;
+    const removedMedicineDosage = prescription.Medicines[medicineIndex].dosage;
+
+    prescription.TotalAmount -= removedMedicinePrice * removedMedicineDosage;
 
     prescription.Medicines.splice(medicineIndex, 1);
 
@@ -1358,6 +1348,7 @@ const deleteMedecineFromPrescription = async (req, res) => {
     res.status(400).json({ error: error.message });
   }
 };
+
 
 
 const rescheduleAppointmentPatient = async (req, res) => {

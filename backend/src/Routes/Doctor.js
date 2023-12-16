@@ -108,10 +108,10 @@ router.post('/createAvailableApps/:DoctorUsername', verify, createAvailableApps)
 router.put('/updateMedicineDosage/:DoctorUsername/:prescriptionId/:medicineName', verify, updateMedicineDosage);
 
 // Define route for accepting follow-up request
-router.post('/acceptFollowUpRequest/:DoctorUsername/:PatientUsername', verify, acceptFollowUpRequest);
+router.post('/acceptFollowUpRequest/:DoctorUsername/:AppointmentId', verify, acceptFollowUpRequest);
 
 // Define route for accepting follow-up request
-router.post('/rejectFollowUpRequest/:DoctorUsername/:PatientUsername', verify, rejectFollowUpRequest);
+router.delete('/rejectFollowUpRequest/:DoctorUsername/:AppointmentId', verify, rejectFollowUpRequest);
 
 router.get('/viewRequestedAppointments/:DoctorUsername', verify, viewRequestedAppointments);
 
@@ -119,7 +119,7 @@ router.get('/viewRequestedAppointments/:DoctorUsername', verify, viewRequestedAp
 router.get('/downloadPrescriptionPDF/:DoctorUsername/:prescriptionID', verify, downloadPrescriptionPDF);
 
 router.post('/addMedicineToPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, addMedicineToPrescription)
-router.delete('/deleteMedecineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId', verify, deleteMedecineFromPrescription);
+router.delete('/deleteMedicineFromPrescription/:DoctorUsername/:PatientUsername/:prescriptionId/:medicineName', verify, deleteMedecineFromPrescription);
 
 // add patient prescription
 router.post('/addPatientPrescription/:username/:PatientUsername', verify, addPatientPrescription);

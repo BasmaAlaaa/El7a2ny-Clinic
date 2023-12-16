@@ -13,7 +13,6 @@ const {
   findDocBySpecality,
   findDocByAvailability,
   addPresToPatient,
-  viewMyPres,
   filterMyPresBasedOnDate,
   filterMyPresBasedOnDoctor,
   filterMyPresBasedOnFilled,
@@ -85,7 +84,6 @@ router.get("/searchDocBySpec/:Username/:Speciality", verify, searchDocBySpec);
 
 router.post("/addPresToPatient/:Username/:id", verify, addPresToPatient);
 
-router.get("/viewMyPres/:id", verify, viewMyPres);
 
 router.get("/filterMyPresBasedOnDate/:Username/:Date", verify, filterMyPresBasedOnDate);
 router.get("/filterMyPresBasedOnDoctor/:Username/:DoctorUsername", verify, filterMyPresBasedOnDoctor);
@@ -104,78 +102,78 @@ router.get("/patientFilterAppsByStatus/:Username/:Status", verify, patientFilter
 router.get("/allAppointments/:Username", verify, allAppointments);
 router.get("/allFamilyMemberAppointments/:Username", verify, allFamilyMemberAppointments);
 
-router.put("/choosePaymentMethodForHP/:type/:PatientUsername", verify, 
+router.put("/choosePaymentMethodForHP/:type/:PatientUsername", verify,
   choosePaymentMethodForHP
 );
 
 router.get(
-  "/viewWalletAmountByPatient/:PatientUsername",verify, 
+  "/viewWalletAmountByPatient/:PatientUsername", verify,
   viewWalletAmountByPatient
 );
 router.get("/health-packages/:Username", verify, viewHealthPackages);
 router.get(
-  "/viewSubscribedHealthPackages/:Username",verify, 
+  "/viewSubscribedHealthPackages/:Username", verify,
   viewSubscribedHealthPackages
 );
 router.get(
-    "/viewSubscribedHealthPackagesOfFamilyMember/:Username/:NationalID",verify, 
-    viewSubscribedHealthPackagesOfFamilyMember
-  );
+  "/viewSubscribedHealthPackagesOfFamilyMember/:Username/:NationalID", verify,
+  viewSubscribedHealthPackagesOfFamilyMember
+);
 router.post(
-    "/cancelHealthCarePackageSubscriptionOfFamMember/:Username/:Type/:NationalID",verify, 
-    cancelHealthCarePackageSubscriptionOfFamMember
-  );
+  "/cancelHealthCarePackageSubscriptionOfFamMember/:Username/:Type/:NationalID", verify,
+  cancelHealthCarePackageSubscriptionOfFamMember
+);
 
 router.post(
-  "/cancelHealthCarePackageSubscription/:Username/:Type",verify, 
+  "/cancelHealthCarePackageSubscription/:Username/:Type", verify,
   cancelHealthCarePackageSubscription
 );
 router.get("/viewHealthPackages/:Username", verify, viewSubscribedHealthPackages);
 router.post(
-  "/subscribeToAHealthPackage/:patientUsername/:healthPackageType",verify, 
+  "/subscribeToAHealthPackage/:patientUsername/:healthPackageType", verify,
   subscribeToAHealthPackage
 );
 router.post(
-    "/subscribeToAHealthPackageForFamilyMember/:patientUsername/:healthPackageType/:NationalID",verify, 
-    subscribeToAHealthPackageForFamilyMember
-  );
+  "/subscribeToAHealthPackageForFamilyMember/:patientUsername/:healthPackageType/:NationalID", verify,
+  subscribeToAHealthPackageForFamilyMember
+);
 router.get(
-  "/viewHealthCarePackageStatus/:Username/:healthPackageType",verify, 
+  "/viewHealthCarePackageStatus/:Username/:healthPackageType", verify,
   viewHealthCarePackageStatus
 );
 router.get(
-    "/viewHealthPackageStatusOfFamilyMember/:Username/:healthPackageType/:NationalID",verify, 
-    viewHealthPackageStatusOfFamilyMember
-  );
+  "/viewHealthPackageStatusOfFamilyMember/:Username/:healthPackageType/:NationalID", verify,
+  viewHealthPackageStatusOfFamilyMember
+);
 /*router.get(
   "/viewHealthPackageStatus/:Username/:healthPackageType",verify, 
   viewHealthPackageStatus
 );*/
 
 router.post(
-  "/addMedicalHistoryDocument/:username",verify, 
+  "/addMedicalHistoryDocument/:username", verify,
   upload.single("MedicalHistoryDocuments"),
   addMedicalHistoryDocument
 );
 router.delete(
-  "/deleteMedicalHistoryDocument/:Username/:filePathToRemove",verify, 
+  "/deleteMedicalHistoryDocument/:Username/:filePathToRemove", verify,
   deleteMedicalHistoryDocument
 );
 router.get(
-  "/viewMedicalHistoryDocuments/:Username",verify, 
+  "/viewMedicalHistoryDocuments/:Username", verify,
   viewMedicalHistoryDocuments
 );
 router.get("/viewHealthRecords/:Username", verify, viewHealthRecords);
 
 router.get("/patientPastApp/:Username", verify, patientPastApp);
 router.get("/patientUpcoming/:Username", verify, patientUpcoming);
-router.get("/availableDoctorApps/:Username", verify,availableDoctorApps);
+router.get("/availableDoctorApps/:Username", verify, availableDoctorApps);
 router.post(
-  "/selectAppointment/:patientUsername/:timeSlot/:doctorUsername",verify, 
+  "/selectAppointment/:patientUsername/:timeSlot/:doctorUsername", verify,
   selectAppointmentDateTimeAndPay
 );
 router.post(
-  "/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctorUsername",verify, 
+  "/selectAppointmentDateTimeFamMem/:patientUsername/:timeSlot/:doctorUsername", verify,
   selectAppointmentDateTimeAndPayFam
 );
 // router.get('/patientPastApp/:Username', patientPastApp);
@@ -187,20 +185,20 @@ router.post(
 router.get("/downloadPrescriptionPDF/:patientUsername/:prescriptionID", verify, downloadPrescriptionPDF);
 
 router.post(
-  "/AddRefundForPatient/:username/:appointmentId",verify, 
+  "/AddRefundForPatient/:username/:appointmentId", verify,
   AddRefundForPatient
 );
 router.post(
-  "/requestFollowUpAppointment/:username/:appointmentId",verify, 
+  "/requestFollowUpAppointment/:username/:appointmentId/:timeSlot", verify,
   requestFollowUpAppointment
 );
 router.post(
-  "/requestFollowUpForFamilyMember/:username/:appointmentId",verify ,
+  "/requestFollowUpForFamilyMember/:username/:appointmentId/:timeSlot/:familyMemberId", verify,
   requestFollowUpForFamilyMember
 );
 
 router.post(
-  "/linkPatientAccountAsFam/:PatientUsername",verify, 
+  "/linkPatientAccountAsFam/:PatientUsername", verify,
   linkPatientAccountAsFam
 );
 router.get("/ViewAllPres/:PatientUsername", verify, ViewAllPres);
@@ -224,6 +222,6 @@ router.get("/displayNotifications/:Username", verify, displayNotifications);
 router.post("/sendAppointmentPatientRescheduleNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientRescheduleNotificationEmail);
 router.post("/sendAppointmentPatientCancelledNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientCancelledNotificationEmail);
 router.post("/sendAppointmentNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentNotificationEmail);
-router.put('/updatePrescriptionPaymentMethod/:patientUsername', verify,updatePrescriptionPaymentMethod);
+router.put('/updatePrescriptionPaymentMethod/:patientUsername', verify, updatePrescriptionPaymentMethod);
 
 module.exports = router;

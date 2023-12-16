@@ -2,18 +2,20 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-function CaseTableBody({ data }) {
+function CaseTableBody({ data , DoctorUsername, PatientUsername, prescriptionId}) {
   let navigate = useNavigate();
 
   const handleAdd = async() => {
+    const postData = {Name:data.Name, dosage:1};
     try{
-    const response = await axios.get(`http://localhost:4000/Doctor/AddMedicineToCart/${username}/${data.Name}`, "", {
+    const response = await axios.post(`http://localhost:4000/Doctor/AddMedicineToPrescription/${DoctorUsername}/${PatientUsername}/${prescriptionId}`, postData, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
    // .then(res =>setResult(res)).catch(err => console.log(err))
       if (response.status === 200) {
             alert(response.data.message);
               console.log(response.data.message);
+              window.location.reload(true);
           }}
           catch(error ){
             alert(`Failed to add medicine `);
@@ -23,8 +25,7 @@ function CaseTableBody({ data }) {
 
   return (
     <>
-    <th>{data.name}</th>
-    <td>{data.dosage}</td>
+    <th>{data.Name}</th>
     <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
@@ -53,7 +54,7 @@ function CaseTableBody({ data }) {
 //   );
 // }
 
-function TableMedicines({ tHead, data}) {
+function TableMedicines({ tHead, data, DoctorUsername, PatientUsername, prescriptionId}) {
   return (
     <div className="case-table card mt-4">
       <table className="table table-striped m-0">
@@ -68,7 +69,7 @@ function TableMedicines({ tHead, data}) {
           {data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} />
+                <CaseTableBody data={e} DoctorUsername={DoctorUsername} PatientUsername={PatientUsername} prescriptionId={prescriptionId}/>
             </tr>
           ))}
         </tbody>

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
-function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
+function CaseTableBody({ data, appID, patientUsername, doctorUsername , type}) {
   let navigate = useNavigate();
   console.log('app id', appID);
   console.log('time slot', data._id);
@@ -9,9 +9,17 @@ function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
 const rescheduleAppointment = (e) =>{
   e.preventDefault();
   console.log("ana f reschedule");
+  if(type==='patient'){
   axios.post(`http://localhost:4000/Patient/rescheduleAppointment/${patientUsername}/${appID}/${data._id}`
   ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-  .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)}).catch(err => alert('error rescheduling appointment'));
+  .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)})
+  .catch(err => {console.log(err); alert('error rescheduling appointment')});
+  }else{
+    axios.post(`http://localhost:4000/Doctor/rescheduleAppointment/${doctorUsername}/${appID}/${data._id}`
+    ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
+    .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)})
+    .catch(err => {console.log(err); alert('error rescheduling appointment')});
+  }
 }
 
   return (
@@ -31,7 +39,8 @@ const rescheduleAppointment = (e) =>{
       </button>
       </div>
       </td>
-}    
+}
+{data.Status!=='available' && <td>Booked</td>}    
 
     </>
   );
@@ -50,7 +59,7 @@ const rescheduleAppointment = (e) =>{
 //   );
 // }
 
-function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUsername }) {
+function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUsername, type }) {
   console.log('haayaa', data)
 
   return (
@@ -67,7 +76,7 @@ function TableScheduleReschedule({ tHead, data, appID, patientUsername, doctorUs
           {data && data
           .map((e) => (
             <tr className="text-capitalize">
-                <CaseTableBody data={e} appID={appID} patientUsername={patientUsername} doctorUsername={doctorUsername}/>
+                <CaseTableBody data={e} appID={appID} patientUsername={patientUsername} doctorUsername={doctorUsername} type={type}/>
             </tr>
           ))}
         </tbody>

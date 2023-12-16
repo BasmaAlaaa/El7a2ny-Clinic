@@ -6,18 +6,25 @@ import { useState } from 'react';
 
 function CaseTableBody({ data, type }) {
   let navigate = useNavigate();
-
+  console.log('type:', type);
 const cancelAppointment = (e) =>{
   e.preventDefault();
-  console.log("ana f cancel")
+  console.log("ana f cancel");
+  if(type==='patient'){
    axios.post(`http://localhost:4000/Patient/cancelAppointment/${data.PatientUsername}/${data._id}`, "", {
    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
  })
-  .then(res =>alert('Appointment Canceled')).catch(err => alert('error cancelling appointment'))
+  .then(res =>alert('Appointment Canceled')).catch(err => {console.log(err); alert('error cancelling appointment')})
+}else{
+  axios.post(`http://localhost:4000/Doctor/cancelAppointmentPatient/${data.DoctorUsername}/${data._id}`, "", {
+    headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+  })
+   .then(res =>alert('Appointment Canceled')).catch(err => {console.log(err); alert('error cancelling appointment')})
  }
+}
  function goOrnoGo (){
   if(data.Status === 'completed' || data.Status === 'Completed'){
-    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+    navigate(`/requestFollowUp/${data.PatientUsername}/${data.DoctorUsername}/${data._id}/${type}`)}
   
   else{
    alert('You can only  request a followUp for completed appointments')
@@ -37,7 +44,7 @@ const cancelAppointment = (e) =>{
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}`)}
+        onClick={()=>navigate(`/rescheduleAppointment/${data.PatientUsername}/${data.DoctorUsername}/${data._id}/${type}`)}
       >
         Reschedule
       </button>
@@ -53,8 +60,9 @@ const cancelAppointment = (e) =>{
         Cancel
       </button>
       </div>
-
       </td>
+      {type==='patient' &&
+
       <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
@@ -66,7 +74,7 @@ const cancelAppointment = (e) =>{
       </button>
       </div>
       </td>
-
+}
     </>
   );
 }

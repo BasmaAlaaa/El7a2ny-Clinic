@@ -4,10 +4,12 @@ import axios from "axios";
 import NavBarPatient from "../components/NavBarPatient";
 import MainBtn from "../components/Button";
 import Input from "../components/Input";
+import TableMedicines from "../components/TableMedicines";
+import TableItems from "../components/TableItems";
 
 
 function PrescriptionInfo() {
-  const { id } = useParams();
+  const {username, id } = useParams();
   const [result, setResult] = useState([]);
   const [cardNumber, setCardNumber] = useState('');
   const [cardDate, setCardDate] = useState('');
@@ -16,20 +18,22 @@ function PrescriptionInfo() {
 
 
   useEffect(() => {
-    const response = axios.get(`http://localhost:4000/Patient/viewMyPres/${id}`, {
+    const response = axios.get(`http://localhost:4000/Patient/ViewPresDetails/${username}/${id}`, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token") },
     })
       .then(res => setResult(res.data)).catch(err => console.log(err))
   }, [])
 
   const handlePay = (e) =>{
+    console.log('patient username', result.PatientUsername);
+    console.log('id', id);
     e.preventDefault();
       const data = {paymentMethod:typePay}
       if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
         alert('Missing fields')
       }
       else{
-   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${result.PatientUsername}/${id}`, data, {
+   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${username}`, data, {
     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
   })
    .then(res =>{
@@ -48,16 +52,18 @@ console.log('el result aho', result)
 
   return (
     <div>
-      <NavBarPatient username={result.PatientUsername} />
+      <NavBarPatient username={username} />
       <h1>Prescription Info</h1>
       <ul>
         <h3>Patient Name: {result.PatientName}</h3>
         <h3>Doctor Name: {result.DoctorName}</h3>
         <h3>Prescription Date: {result.Date && result.Date.substring(0,10)}</h3>
         <h3>Description: {result.Description}</h3>
+        <h3>Total Amount: {result.TotalAmount}</h3>
         <h3>Status: {result.Filled == true ? "Filled" : "Unfilled"}</h3>
       </ul>
-      {/* <TableItems /> */}
+      <h2>Prescription Medicines</h2>
+           {result.Medicines && <TableItems tHead={tHead} data={result.Medicines}/>}
       <form
       //style={{ width: '100%' }}
       className="d-flex justify-content-center "
