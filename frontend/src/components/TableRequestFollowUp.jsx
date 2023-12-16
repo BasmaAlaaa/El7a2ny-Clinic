@@ -6,7 +6,7 @@ function CaseTableBody({ data, appID, patientUsername, doctorUsername }) {
 const followUp = async  (e) => {
   e.preventDefault();
     console.log('Follow up button clicked');
-    axios.post(`http://localhost:4000/Patient/requestFollowUpAppointment/${patientUsername}/${appID}`, "", {
+    axios.post(`http://localhost:4000/Patient/requestFollowUpAppointment/${patientUsername}/${appID}/${data._id}`, "", {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
     .then(res => {

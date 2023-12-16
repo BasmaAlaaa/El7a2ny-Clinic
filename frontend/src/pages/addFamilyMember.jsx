@@ -47,7 +47,7 @@ function AddFamilyMember() {
     const response = axios.post(`http://localhost:4000/Patient/addFamMember/${username}`, data,{
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-.then(res =>console.log(res.data)).catch(err => console.log(err))
+.then(res =>{alert("Family Member added successfully"); navigate(`familyMembersList/${username}`)}).catch(err => console.log(err))
   }
   const handleSubmitLink = (e) => {
     e.preventDefault();
@@ -56,7 +56,7 @@ function AddFamilyMember() {
     const response = axios.post(`http://localhost:4000/Patient/linkPatientAccountAsFam/${username}`, data, {
       headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
     })
-.then(res =>alert('Added successfully')).catch(err => alert(err))
+.then(res =>{alert('Added successfully'); navigate(`familyMembersList/${username}`)}).catch(err => alert(err))
   }
 
   return (
