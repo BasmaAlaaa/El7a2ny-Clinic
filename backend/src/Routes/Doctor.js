@@ -48,7 +48,7 @@ const { viewInfoAndRecords,
   sendAppointmentDoctorRescheduleNotificationEmail,
   sendAppointmentDoctorCancelledNotificationEmail,
   sendAppointmentDoctorNotificationEmail,
-  allAvailableTimeSlots
+  allAvailableTimeSlots,rejectContract
 
 
 } = require('../Controllers/doctorController');
@@ -86,6 +86,7 @@ router.get('/selectPatientWithHisName/:DoctorId/:Username', verify, selectPatien
 router.post('/addDoc', verify, addDoctor);
 router.get('/viewContract/:DoctorUsername', verify, viewContract);
 router.post('/acceptContract/:DoctorUsername', verify, acceptContract);
+router.post('/rejectContract/:DoctorUsername', verify, rejectContract)
 
 router.get('/viewWalletAmountByDoc/:DoctorUsername', verify, viewWalletAmountByDoc);
 

@@ -37,9 +37,34 @@ function ContractView () {
         ...prevContract,
         Status: 'accepted'
       }));
-   //   alert('Contract accepted');
+      alert('Contract accepted');
     } catch (error) {
       console.error('Error accepting contract', error.response.data);
+      alert(error.response.data.error);
+    }
+  };
+  const handleRejectContract = async () => {
+    console.log("Reject contract button clicked");
+    try {
+      const response = await axios.post(`http://localhost:4000/Doctor/rejectContract/${username}`, "",{
+        headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
+      });
+      alert(response.data.message)
+      console.log('Contract rejected', response.data);
+      setContractInfo(prevContract => ({
+        ...prevContract,
+        Status: 'rejected'
+      }));
+      alert('Contract rejected');
+      // Clear the session storage (or however you handle logging out)
+    sessionStorage.clear();
+
+    // Redirect to login page or home page
+    window.location.href = '/login'; // Replace '/login' with the path to your login page
+
+
+    } catch (error) {
+      console.error('Error rejecting contract', error.response.data);
       alert(error.response.data.error);
     }
   };
@@ -48,7 +73,7 @@ function ContractView () {
    <div>
     <NavBarDoctor username={username}/>
       {contractInfo ? (
-        <Contract contract={contractInfo} onAccept={handleAcceptContract}/>
+        <Contract contract={contractInfo} onAccept={handleAcceptContract} onReject={handleRejectContract}/>
       ) : (
         <p>Loading contract information...</p>
       )}

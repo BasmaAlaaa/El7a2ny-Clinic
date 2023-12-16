@@ -34,7 +34,7 @@
 // export default Contract;
 import React from 'react';
 
-const Contract = ({ contract, onAccept }) => {
+const Contract = ({ contract, onAccept ,onReject }) => {
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString();
   };
@@ -42,6 +42,10 @@ const Contract = ({ contract, onAccept }) => {
   const handleAccept = () => {
     onAccept();
   };
+  const handleReject = () => {
+    onReject();
+  };
+
 
   // Inline styles to mimic the contract image styling
   const contractStyle = {
@@ -80,6 +84,12 @@ const Contract = ({ contract, onAccept }) => {
     textTransform: 'uppercase',
     fontWeight: 'bold',
     cursor: 'pointer',
+    marginTop: '20px'
+  };
+  const buttonGroupStyle = {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '10px', // This sets the space between the buttons
     marginTop: '20px'
   };
 
@@ -126,7 +136,11 @@ const Contract = ({ contract, onAccept }) => {
         {contract.Status && <div>Current Status: {contract.Status}</div>}
        
       </p>
-      {contract.Status!=="accepted" && <button style={buttonStyle} onClick={handleAccept}>Accept Contract</button>}
+      {contract.Status !== "accepted" && (
+        <div style={buttonGroupStyle}>
+          <button style={buttonStyle} onClick={handleAccept}>Accept Contract</button>
+          <button style={{ ...buttonStyle, backgroundColor: '#f44336' }} onClick={handleReject}>Reject Contract</button>   
+        </div>)}
     </div>
   );
 };

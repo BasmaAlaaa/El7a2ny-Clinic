@@ -51,7 +51,7 @@ const ContractSchema = new Schema(
     Status:{
         type: String,
        // required: true,
-        enum: ['Approved', 'Rejected', 'Pending'],
+        enum: ['Approved', 'Rejected', 'Pending' , 'accepted'],
         default: 'Pending'
     },}
 , { timestamps: true});
