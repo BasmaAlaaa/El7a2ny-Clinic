@@ -44,6 +44,7 @@ function PatientsList() {
     "View",
     "Add Prescription",
     "View Prescriptions",
+    "Chat"
   ];
   if (isLoading) {
     return <div>Loading...</div>;

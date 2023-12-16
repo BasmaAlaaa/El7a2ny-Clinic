@@ -23,6 +23,15 @@ function CaseTableBody({ data , user}) {
         View
       </button>
       </div>
+      <div className="d-flex flex-row">
+      <button
+        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
+        onClick={() => navigate(`/chatWithDoctor/${props.username}`)}
+      >
+        Chat
+      </button>
+
+    </div> 
       </td>
       
   

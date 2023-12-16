@@ -50,7 +50,8 @@ import RequestFollowUp from './pages/requestFollowUp';
 import PrescriptionsListDoctor from './components/PrescriptionsListDoctor';
 import HealthRecordsInfo from './pages/healthRecordsInfo';
 
-
+import ChatWithDoctor from './pages/chatWithDoctor';
+import ChatWithPatient from './pages/chatWithPatient';
 function App() {
   return (
     <div className='main'>
@@ -100,6 +101,8 @@ function App() {
           <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
           <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
           <Route exact path="/healthRecordsInfo/:usernameDoctor/:usernamePatient" element={<HealthRecordsInfo />} />
+          <Route exact path="/chatWithPatient/:username" element={<ChatWithPatient/>} />
+          <Route exact path="/chatWithDoctor/:username" element={<ChatWithDoctor />} />
 
 
 

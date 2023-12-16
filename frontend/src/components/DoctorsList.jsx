@@ -38,6 +38,7 @@ const response = axios.get(`http://localhost:4000/Patient/viewAllDoctors/${usern
 })
 .then(res =>setResult(res.data)).catch(err => console.log(err))
   }, [])
+  
 console.log("all doctors", result)
 result.map((e) => {
   console.log(e)
@@ -49,7 +50,7 @@ const onFilterValueChanged=(event)=>{
 console.log(filterText)
 let navigate = useNavigate()
 
-  let tHead = ['Name', 'Email', 'Speciality', 'Session Price', 'View'];
+  let tHead = ['Name', 'Email', 'Speciality', 'Session Price', 'View', 'Chat'];
 
   return (
     <div>

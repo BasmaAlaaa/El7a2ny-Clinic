@@ -22,11 +22,41 @@ const MongoURI = process.env.MONGO_URI;
 
 //App variables
 const app = express();
+
+const http = require("http");
+
+const server = http.createServer(app);
+
+const {Server} = require("socket.io");
+
+const io = new Server(server, {
+  cors:{
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "DELETE", "PUT"],
+  }
+})
+
 app.use(cors({
   origin: "*",
   credentials: true,
 }));
 
+io.on("connection", (socket) => {
+  console.log(`User Connected: ${socket.id}`);
+
+  socket.on("join_room", (data) => {
+    socket.join(data);
+    console.log(`User with ID: ${socket.id} joined room: ${data}`);
+  });
+
+  socket.on("send_message", (data) => {
+    socket.to(data.room).emit("receive_message", data);
+  });
+  
+  socket.on("disconnect", () => {
+  console.log("User Disconnected", socket.id);
+  });
+});
 
 app.use(express.json());
 app.use(bodyParser.json());
@@ -65,7 +95,7 @@ mongoose.connect(MongoURI)
     console.log("MongoDB is now connected!")
    // createInitialAdmin();
     // Starting server
-    app.listen(port, () => {
+    server.listen(port, () => {
       console.log(`Listening to requests on http://localhost:${port}`);
     })
   })
