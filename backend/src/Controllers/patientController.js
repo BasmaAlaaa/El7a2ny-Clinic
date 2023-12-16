@@ -2716,15 +2716,15 @@ const rescheduleAppointment = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
+      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
       if (!selectedAppointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
-      if (selectedAppointment.PatientUsername !== patient.Username) {
-        return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-      }
+      // if (selectedAppointment.PatientUsername !== patient.Username) {
+      //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+      // }
 
       const doctorUsername = selectedAppointment.DoctorUsername;
       const doctor = await doctorSchema.findOne({ Username: doctorUsername });
@@ -2801,16 +2801,16 @@ const rescheduleAppointmentFamMem = async (req, res) => {
       }
 
       // Find the selected appointment by ID
-      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
+      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
       if (!selectedAppointment) {
         return res.status(404).json({ success: false, message: ' Appointment not found.' });
       }
 
-      // Check if the patient is associated with the selected appointment
-      if (selectedAppointment.PatientUsername !== patient.Username) {
-        return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-      }
+      // // Check if the patient is associated with the selected appointment
+      // if (selectedAppointment.PatientUsername !== patient.Username) {
+      //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+      // }
 
       // Fetch the doctor's details using DoctorUsername
       const doctorUsername = selectedAppointment.DoctorUsername;
@@ -2906,15 +2906,15 @@ const cancelAppointment = async (req, res) => {
     }
 
 
-    const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"] } });
+    const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"] } });
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
     }
 
-    if (selectedAppointment.PatientUsername !== patient.Username) {
-      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-    }
+    // if (selectedAppointment.PatientUsername !== patient.Username) {
+    //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    // }
 
     const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
 
@@ -2985,15 +2985,15 @@ const cancelAppointmentFamMem = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Patient not found.' });
     }
 
-    const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"] } });
+    const selectedAppointment = await appointmentSchema.find({ _id: appointmentId,PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"] } });
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
     }
 
-    if (selectedAppointment.PatientUsername !== patient.Username) {
-      return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
-    }
+    // if (selectedAppointment.PatientUsername !== patient.Username) {
+    //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    // }
 
     const doctor = await doctorSchema.findOne({ Username: selectedAppointment.DoctorUsername });
 
@@ -3053,7 +3053,7 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
 
   try {
     if (refund === "yes") {
-      const newNotificationForPatient = await Notification.create({
+      const newNotificationForPatient = await Notification.create({ 
         type: "Cancelled Appointment",
         username: `${newAppointment.PatientUsername}`,
         PatientMessage: `Your appoitment has been cancelled successfully with doctor ${doctor.Name},than was on ${newAppointment.Date} at ${newAppointment.Time} with a 100% refund`,

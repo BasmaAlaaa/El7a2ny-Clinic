@@ -23,6 +23,8 @@ function CaseTableBody({ data , user}) {
         View
       </button>
       </div>
+      </td>
+      <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
@@ -33,7 +35,6 @@ function CaseTableBody({ data , user}) {
 
     </div> 
       </td>
-      
   
     </>
   );
