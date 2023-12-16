@@ -126,7 +126,7 @@ const Contract = ({ contract, onAccept }) => {
         {contract.Status && <div>Current Status: {contract.Status}</div>}
        
       </p>
-      <button style={buttonStyle} onClick={handleAccept}>Accept Contract</button>
+      {contract.Status!=="accepted" && <button style={buttonStyle} onClick={handleAccept}>Accept Contract</button>}
     </div>
   );
 };
