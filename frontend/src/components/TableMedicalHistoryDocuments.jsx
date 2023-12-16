@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 function CaseTableBody({ data, username }) {
     let navigate = useNavigate();
-    const handleDelete = async () => {
+    const handleDelete = async (e) => {
+        e.preventDefault();
         try {
             const response = await axios.delete(`http://localhost:4000/Patient/deleteMedicalHistoryDocument/${username}/${data._id}`,{
                 headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
@@ -19,7 +20,6 @@ function CaseTableBody({ data, username }) {
             alert(`Failed to delete document `);
             console.error('Error deleting document:', error);
         };
-        window.location.reload(true);
     };
 
     return (
@@ -32,16 +32,16 @@ function CaseTableBody({ data, username }) {
                         style={{ maxWidth: '100px', maxHeight: '100px' }}
                     />
                 ) : (
-                    <p>{/* Display a link or appropriate component for non-image documents */}</p>
+                    <p>{data.contentType}</p>
                 )}
             </td>
             <td className="py-3 text-align-center">
                 <div className="d-flex flex-row">
                     <button
-                        className={`green-txt mx-2 text-decoration-underline text-capitalize border-0 bg-transparent`}
+                        className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
                         onClick={handleDelete}
                     >
-                        Delete Document
+                        Delete
                     </button>
                 </div>
             </td>

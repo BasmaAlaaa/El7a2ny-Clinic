@@ -23,16 +23,17 @@ function CaseTableBody({ data , user}) {
         View
       </button>
       </div>
+      </td>
+      <td className="py-3 text-align-center">
       <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={() => navigate(`/chatWithDoctor/${user}`)}
+        onClick={() => navigate(`/chatWithDoctor/${user}/${data.Username}`)}
       >
         Chat
       </button>
-
     </div> 
-      </td>
+    </td>
       
   
     </>

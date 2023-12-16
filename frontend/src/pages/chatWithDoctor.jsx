@@ -13,7 +13,7 @@ import NavBarPatient from "../components/NavBarPatient";
 const socket = io.connect("http://localhost:4000");
 
 function ChatWithDoctor() {
-  const {username} = useParams();
+  const {usernamePatient, usernameDoctor} = useParams();
   const [showChat, setShowChat] = useState(false);
 
 //   //const [room, setRoom] = useState('');
@@ -40,7 +40,8 @@ const joinRoom = () => {
 
   return (
     <div>
-    <h1>Chat With doctor with username: {username}</h1>
+      <NavBarPatient username={usernamePatient}/>
+    <h1>Chat With a doctor</h1>
     
     <div className="d-flex flex-row justify-content-center">
     {!showChat ? (
@@ -51,7 +52,7 @@ const joinRoom = () => {
         Start Chat
       </button>
       ) : (
-        <Chat socket={socket} username={username} room={3} />
+        <Chat socket={socket} username={usernamePatient} room={3} />
       )}
     </div> 
     </div>

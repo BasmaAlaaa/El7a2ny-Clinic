@@ -47,15 +47,15 @@ function CaseTableBody({ data, username }) {
             View Prescriptions
           </button>
         </div>
-
+      </td>
+      <td className="py-3 text-align-center">
         <div className="d-flex flex-row">
       <button
         className={`green-txt mx-2 text-capitalize border-0 bg-transparent`}
-        onClick={() => navigate(`/chatWithPatient/${PatientUsername}`)}
+        onClick={() => navigate(`/chatWithPatient/${PatientUsername}/${DoctorUsername}`)}
       >
         Chat
       </button>
-
     </div> 
       </td>
 
