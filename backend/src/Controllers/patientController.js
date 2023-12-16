@@ -3611,11 +3611,10 @@ const updatePrescriptionPaymentMethod = async (req, res) => {
     if (!patient) {
       return res.status(404).send('Patient not found');
     }
-
-    patient.prescriptionPaymentMethod = paymentMethod;
+    //patient.prescriptionPaymentMethod = paymentMethod;
     await patient.save();
 
-    res.status(200).send('Prescription payment method updated successfully');
+    res.status(200).send('Prescription payed successfully');
   } catch (error) {
     res.status(500).send(error.message);
   }
