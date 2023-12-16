@@ -105,12 +105,6 @@ function App() {
           <Route exact path="/chatWithDoctor/:username" element={<ChatWithDoctor />} />
 
 
-
-
-
-
-
-
         </Routes>
       </main>
     </div>
