@@ -222,6 +222,6 @@ router.get("/displayNotifications/:Username", verify, displayNotifications);
 router.post("/sendAppointmentPatientRescheduleNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientRescheduleNotificationEmail);
 router.post("/sendAppointmentPatientCancelledNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentPatientCancelledNotificationEmail);
 router.post("/sendAppointmentNotificationEmail/:Username/:AppointmentId", verify, sendAppointmentNotificationEmail);
-router.put('/updatePrescriptionPaymentMethod/:patientUsername', verify, updatePrescriptionPaymentMethod);
+router.put("/updatePrescriptionPaymentMethod/:username/:id", verify, updatePrescriptionPaymentMethod);
 
 module.exports = router;

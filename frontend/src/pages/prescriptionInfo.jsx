@@ -23,27 +23,33 @@ function PrescriptionInfo() {
     })
       .then(res => setResult(res.data)).catch(err => console.log(err))
   }, [])
+  //console.log('result', result);
+
 
   const handlePay = (e) =>{
     console.log('patient username', result.PatientUsername);
     console.log('id', id);
     e.preventDefault();
       const data = {paymentMethod:typePay}
+      console.log('data', data);
       if(typePay==='card' && !(cardCVV && cardDate && cardNumber)){
         alert('Missing fields')
       }
       else{
-   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${username}`, data, {
+   axios.put(`http://localhost:4000/Patient/updatePrescriptionPaymentMethod/${username}/${id}`, data, {
     headers: { authorization: "Bearer " + sessionStorage.getItem("token")},
   })
    .then(res =>{
-    alert('Prescription payed');
+    alert('Prescription payed successfully by`'+typePay+'`');
     window.location.reload(true);
-  }).catch(err => alert('error paying prescription'))
+  }).catch(err => {
+    const errorMessage = err.response?.data?.error || 'Error paying prescription';
+    alert(errorMessage);
+});
 }
   }
 
-console.log('el result aho', result)
+//console.log('el result aho', result)
   //   result.map((e) => {
   //     console.log(e)
   //   })

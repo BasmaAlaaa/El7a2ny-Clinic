@@ -3603,21 +3603,63 @@ const sendAppointmentPatientCancelledNotificationEmail = async (req) => {
 };
 
 const updatePrescriptionPaymentMethod = async (req, res) => {
-  const { patientUsername } = req.params;
+  console.log('basbosa hena');
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
+  const { username , id } = req.params;
   const { paymentMethod } = req.body;
+  console.log('Received payment method:', paymentMethod);
+
+  if (!(req.user.Username === username)) {
+    res.status(403).json("You are not logged in!");
+  }else{
 
   try {
-    const patient = await patientSchema.findOne({ username: patientUsername });
+    const patient = await patientSchema.findOne({ Username: username });
+   // console.log('basbosaa'+patient);
+    const prescription = await Prescription.findById(id);
+   // console.log('basbosa'+prescription);
     if (!patient) {
       return res.status(404).send('Patient not found');
-    }
-    //patient.prescriptionPaymentMethod = paymentMethod;
-    await patient.save();
 
-    res.status(200).send('Prescription payed successfully');
+    }
+    if (!prescription) {
+      return res.status(404).send('Prescription not found');
+    }
+    if(prescription.Filled === false){
+      console.log('basbosa'+prescription.Filled);
+    if (paymentMethod === "wallet" || paymentMethod === 'wallet') {
+      console.log('basbosa'+paymentMethod);
+      const prescriptionCost = prescription.TotalAmount;
+      console.log('basbosa'+prescriptionCost);
+      if (patient.WalletAmount < prescriptionCost) {
+        console.log('Insufficient wallet balance');
+        return res.status(400).json({ error: 'Insufficient wallet balance' });
+      }
+
+      patient.WalletAmount -= prescriptionCost; 
+      console.log('basbosaa'+patient.WalletAmount);
+
+      prescription.prescriptionPaymentMethod = 'wallet';
+      console.log('basbosa'+prescription.prescriptionPaymentMethod);
+     prescription.Filled = true;
+    }
+    else if (paymentMethod === 'creditCard') {
+      prescription.prescriptionPaymentMethod = 'creditCard';
+      prescription.Filled = true;
+    }
+
+   // await patient.save();
+    await prescription.save();
+
+    res.status(200).send('Prescription payed successfully');}
+    else{
+      res.status(400).send('Prescription has already been payed for');
+    }
   } catch (error) {
     res.status(500).send(error.message);
-  }
+  }}
 };
 
 const sendAppointmentNotificationEmail = async (req) => {
