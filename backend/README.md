@@ -15,6 +15,15 @@ Our motivation to develop El7a2ny is rooted in a shared commitment to elevate an
 
 **Catalyzing Seamless Communication:** In our vision, communication isn't just a transaction; it's the heartbeat of healthcare. We're building a platform that facilitates transparent and instantaneous communication between patients and healthcare providers, fostering a sense of connection that goes beyond traditional medical interactions.
 ## Build Status
+Some pages in the website face a longer time loading than others , which can be confusing sometimes for no data , but we tried fixing it by adding a "Loading" statements all over the website so the user does not get confused that the page stopped loading , also The "change password" has to work on 
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+})); (something specific) but we can’t do that as sometimes we run the frontend on a different port so we need to use
+app.use(cors({
+  origin: ‘*’,
+  credentials: true,
+}));
 
 ## Code Style
 ### **Project Hierarchy**
