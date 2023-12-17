@@ -115,6 +115,10 @@ function NavBarPatient(props) {
       </button>
       </div>
 
+      <div>
+          <h5>Wallet: {wallet} EGP</h5>
+          </div>
+
       <div className="d-flex flex-row">
       <button
         className={`red-txt mx-2 text-capitalize border-0 bg-transparent`}
