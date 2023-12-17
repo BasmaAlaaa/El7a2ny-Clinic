@@ -3,7 +3,7 @@ const HealthPackage = require("../Models/HealthPackage");
 
 const getAllPackages = async (req, res) => {
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -20,7 +20,7 @@ const getAllPackages = async (req, res) => {
 const subscribeToPackage = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -38,7 +38,7 @@ const subscribeToPackage = async (req, res) => {
 //Task 11 : Add health package
 const createPackage = async (req, res) => {
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -94,7 +94,7 @@ const createPackage = async (req, res) => {
 const updatePackageByAnnualFee = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -134,7 +134,7 @@ const updatePackageByAnnualFee = async (req, res) => {
 const updatePackageByDoctorSessionDiscount = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -175,7 +175,7 @@ const updatePackageByDoctorSessionDiscount = async (req, res) => {
 const updatePackageByMedicineDiscount = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -216,7 +216,7 @@ const updatePackageByMedicineDiscount = async (req, res) => {
 const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -259,7 +259,7 @@ const updatePackageByFamilySubscriptionDiscount = async (req, res) => {
 const deletePackage = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -284,7 +284,7 @@ const deletePackage = async (req, res) => {
 const viewHealthPackageInfo = async (req, res) => {
 
   const {username} = req.params;
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");

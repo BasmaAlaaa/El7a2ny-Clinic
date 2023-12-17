@@ -28,7 +28,7 @@ async function isEmailUnique(email) {
 
 // Task 8 : remove a patient, doctor, admin
 const deleteEntity = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Credentials", true);
 
   const { username } = req.params;
@@ -125,7 +125,7 @@ const deleteEntity = async (req, res) => {
 
 // Task 7 : add admin to DB
 const createAdmin = async (req, res) => {
-  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader("Access-Control-Allow-Credentials", true);
 
   const { username } = req.params;
@@ -172,7 +172,7 @@ const createAdmin = async (req, res) => {
 const viewUnapprovedDoctors = async (req, res) => {
   const { username } = req.params;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -198,7 +198,7 @@ const viewUnapprovedDoctors = async (req, res) => {
 const viewDoctorInfo = async (req, res) => {
   const { username } = req.params;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -230,7 +230,7 @@ const oneYearLater = new Date(currentDate.setFullYear(currentDate.getFullYear() 
 const acceptOrRejectDoctorRequest = async (req, res) => {
   const { username } = req.params;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");
@@ -289,7 +289,7 @@ const acceptOrRejectDoctorRequest = async (req, res) => {
 const createContract = async (req, res) => {
   const { username } = req.params;
 
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
   res.setHeader('Access-Control-Allow-Credentials', true);
   if (!(req.user.Username === username)) {
     res.status(403).json("You are not logged in!");

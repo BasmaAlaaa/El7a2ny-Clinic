@@ -16,10 +16,17 @@ const transporter = nodemailer.createTransport({
   auth: {
     user: 'SuicideSquadGUC@gmail.com',
     pass: 'wryq ofjx rybi hpom'
-  }
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
 });
 
 const sendOTP = async ({ body }, res) => {
+
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   console.log('im here');
   const { Email } = body;
 
@@ -90,6 +97,9 @@ const sendOTP = async ({ body }, res) => {
 // Async function to update the user's password in MongoDB
 const updatePassword = async ({ body }, res) => {
 
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   const { Email, otp, newPassword } = body;
   try {
 
@@ -128,6 +138,9 @@ const updatePassword = async ({ body }, res) => {
 
 const changePassword = async (req, res) => {
 
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   const { username } = req.params;
   const { oldPassword, newPassword, confirmPassword } = req.body;
   try {
@@ -160,10 +173,6 @@ const changePassword = async (req, res) => {
     res.status(500).json({ error: 'Failed to change password' });
   }
 };
-
-
-
-
 
 module.exports = {
   sendOTP,
