@@ -1740,7 +1740,10 @@ async function SendEmailNotificationBook(newAppointment, doctor, patient) {
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions = {
@@ -1770,7 +1773,10 @@ async function SendEmailNotificationBook(newAppointment, doctor, patient) {
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions1 = {
@@ -1821,7 +1827,10 @@ async function SendEmailNotificationBookFam(newAppointment, doctor, patient) {
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions = {
@@ -1845,6 +1854,8 @@ async function SendEmailNotificationBookFam(newAppointment, doctor, patient) {
             Your Clinic`
     };
 
+    console.log(patient.Email);
+
     await transporter.sendMail(mailOptions);
     console.log("email sent to the patient");
 
@@ -1854,7 +1865,10 @@ async function SendEmailNotificationBookFam(newAppointment, doctor, patient) {
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions1 = {
@@ -2560,7 +2574,10 @@ async function SendEmailNotificationReschedule(newAppointment, doctor, patient) 
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions = {
@@ -2581,6 +2598,8 @@ async function SendEmailNotificationReschedule(newAppointment, doctor, patient) 
             Your Clinic`
     };
 
+    console.log(mailOptions);
+
     await transporter.sendMail(mailOptions);
     console.log("email sent to the patient");
 
@@ -2590,7 +2609,10 @@ async function SendEmailNotificationReschedule(newAppointment, doctor, patient) 
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions1 = {
@@ -2610,6 +2632,8 @@ async function SendEmailNotificationReschedule(newAppointment, doctor, patient) 
             Best regards,
             Your Clinic`
     };
+
+    console.log(mailOptions1);
 
     await transporter1.sendMail(mailOptions1);
     console.log("email sent to the doctor");
@@ -2641,7 +2665,10 @@ async function SendEmailNotificationRescheduleFam(newAppointment, doctor, patien
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions = {
@@ -2672,7 +2699,10 @@ async function SendEmailNotificationRescheduleFam(newAppointment, doctor, patien
       auth: {
         user: 'SuicideSquadGUC@gmail.com',
         pass: 'wryq ofjx rybi hpom'
-      }
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
 
     const mailOptions1 = {
@@ -2716,7 +2746,7 @@ const rescheduleAppointment = async (req, res) => {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
+      const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
       if (!selectedAppointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
@@ -2726,29 +2756,54 @@ const rescheduleAppointment = async (req, res) => {
       //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
       // }
 
+      //console.log(selectedAppointment);
       const doctorUsername = selectedAppointment.DoctorUsername;
+      //console.log(doctorUsername);      
       const doctor = await doctorSchema.findOne({ Username: doctorUsername });
-
+      //console.log(doctor)
       if (!doctor) {
         return res.status(404).json({ success: false, message: 'Doctor not found.' });
       }
 
       const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      //console.log(doctor.AvailableTimeSlots);
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
-      const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-        slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-        slot.Time === selectedAppointmentTime &&
-        slot.Status === 'booked'
-      );
+      // const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+      //   slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+      //   slot.Time === selectedAppointmentTime &&
+      //   slot.Status === 'booked'
+      // );
+
+      let matchingTimeSlot;
+
+      for(const s of doctorAvailableTimeSlots){
+        if(s.Date.getTime() === selectedAppointmentDate.getTime() && s.Time === selectedAppointmentTime && s.Status === 'booked'){
+            matchingTimeSlot = s;
+            break;
+        }
+      }
 
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
 
-      const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
+      let slot;
+      //const timeSlot1 = new ObjectId(timeSlot);
 
+      for(const s of doctorAvailableTimeSlots){
+        //console.log(s._id);
+        //console.log(timeSlot);
+
+        if(s._id.equals(timeSlot)){
+          slot = s;
+          break;
+        }
+      }
+
+      //const slot = doctorAvailableTimeSlots.findOne(s => s._id === timeSlot);
+      //console.log(slot)
       let newAppointment;
 
       if (slot.Status === "available") {
@@ -2793,18 +2848,16 @@ const rescheduleAppointmentFamMem = async (req, res) => {
   } else {
     try {
 
-      // Find the patient by username
       const patient = await patientSchema.findOne({ Username: username });
 
       if (!patient) {
         return res.status(404).json({ success: false, message: 'Patient not found.' });
       }
 
-      // Find the selected appointment by ID
-      const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
+      const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
       if (!selectedAppointment) {
-        return res.status(404).json({ success: false, message: ' Appointment not found.' });
+        return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
       // // Check if the patient is associated with the selected appointment
@@ -2814,41 +2867,49 @@ const rescheduleAppointmentFamMem = async (req, res) => {
 
       // Fetch the doctor's details using DoctorUsername
       const doctorUsername = selectedAppointment.DoctorUsername;
+      //console.log(doctorUsername);      
       const doctor = await doctorSchema.findOne({ Username: doctorUsername });
-
+      //console.log(doctor)
       if (!doctor) {
         return res.status(404).json({ success: false, message: 'Doctor not found.' });
       }
 
-      // Access doctor's available time slots
       const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
-
-      // Match the appointment date and time with the doctor's available time slots
+      //console.log(doctor.AvailableTimeSlots);
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
-      const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-        slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-        slot.Time === selectedAppointmentTime &&
-        slot.Status === 'booked'
-      );
+      // const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+      //   slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+      //   slot.Time === selectedAppointmentTime &&
+      //   slot.Status === 'booked'
+      // );
+
+      let matchingTimeSlot;
+
+      for(const s of doctorAvailableTimeSlots){
+        if(s.Date.getTime() === selectedAppointmentDate.getTime() && s.Time === selectedAppointmentTime && s.Status === 'booked'){
+            matchingTimeSlot = s;
+            break;
+        }
+      }
 
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
 
-      // let slot;
-      // var found = false;
-      // for (const s of doctorAvailableTimeSlots) {
-      //   if (!found) {
-      //     if (s._id.equals(timeSlot)) {
-      //       found = true;
-      //       slot = s;
-      //     }
-      //   }
-      // }
+      let slot;
+      //const timeSlot1 = new ObjectId(timeSlot);
 
-      const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
+      for(const s of doctorAvailableTimeSlots){
+        //console.log(s._id);
+        //console.log(timeSlot);
+
+        if(s._id.equals(timeSlot)){
+          slot = s;
+          break;
+        }
+      }
 
       let newAppointment;
 
@@ -2862,7 +2923,7 @@ const rescheduleAppointmentFamMem = async (req, res) => {
           PaymentMethod: selectedAppointment.PaymentMethod,
           Price: selectedAppointment.Price,
           Name: selectedAppointment.Name,
-          ForPatient: false
+          ForPatient: selectedAppointment.ForPatient
         });
 
         slot.Status = "booked";
@@ -2906,7 +2967,7 @@ const cancelAppointment = async (req, res) => {
     }
 
 
-    const selectedAppointment = await appointmentSchema.find({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"] } });
+    const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, PatientUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
@@ -3073,7 +3134,10 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions = {
@@ -3095,6 +3159,8 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
             Your Clinic`
       };
 
+      console.log(mailOptions);
+
       await transporter.sendMail(mailOptions);
       console.log("email sent to the patient");
 
@@ -3104,7 +3170,10 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions1 = {
@@ -3150,7 +3219,10 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions = {
@@ -3180,7 +3252,10 @@ async function SendEmailNotificationCancel(newAppointment, doctor, patient, refu
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions1 = {
@@ -3233,7 +3308,10 @@ async function SendEmailNotificationCancelFam(newAppointment, doctor, patient, r
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions = {
@@ -3265,7 +3343,10 @@ async function SendEmailNotificationCancelFam(newAppointment, doctor, patient, r
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions1 = {
@@ -3311,7 +3392,10 @@ async function SendEmailNotificationCancelFam(newAppointment, doctor, patient, r
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions = {
@@ -3341,7 +3425,10 @@ async function SendEmailNotificationCancelFam(newAppointment, doctor, patient, r
         auth: {
           user: 'SuicideSquadGUC@gmail.com',
           pass: 'wryq ofjx rybi hpom'
-        }
+        },
+        tls: {
+          rejectUnauthorized: false,
+        },
       });
 
       const mailOptions1 = {
