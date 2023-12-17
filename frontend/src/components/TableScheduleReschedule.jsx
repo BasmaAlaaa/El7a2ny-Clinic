@@ -17,7 +17,7 @@ const rescheduleAppointment = (e) =>{
   }else{
     axios.post(`http://localhost:4000/Doctor/rescheduleAppointment/${doctorUsername}/${appID}/${data._id}`
     ,"",{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-    .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${patientUsername}`)})
+    .then(res =>{alert('appointment rescheduled'); navigate(`/appointmentsList/${doctorUsername}`)})
     .catch(err => {console.log(err); alert('error rescheduling appointment')});
   }
 }

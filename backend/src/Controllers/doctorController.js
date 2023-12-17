@@ -282,6 +282,7 @@ const MyPatients = async (req, res) => {
               DateOfBirth: patient.DateOfBirth,
               Appointment_Status: app.Status
             });
+            break;
           }
         }
       }
@@ -1391,45 +1392,70 @@ const rescheduleAppointmentPatient = async (req, res) => {
     res.status(403).json("You are not logged in!");
   } else {
     try {
-
       const doctor = await doctorSchema.findOne({ Username: username });
 
       if (!doctor) {
-        return res.status(404).json({ success: false, message: 'Doctor not found.' });
-      } 
+        return res.status(404).json({ success: false, message: 'doctor not found.' });
+      }
 
-      const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up"]}});
+      const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, DoctorUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
       if (!selectedAppointment) {
         return res.status(404).json({ success: false, message: 'Appointment not found.' });
       }
 
-      if (selectedAppointment.DoctorUsername !== doctor.Username) {
-        return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
+      // if (selectedAppointment.PatientUsername !== patient.Username) {
+      //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+      // }
+
+      //console.log(selectedAppointment);
+      //const doctorUsername = selectedAppointment.DoctorUsername;
+      //console.log(doctorUsername);      
+      const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
+      //console.log(doctor)
+      if (!patient) {
+        return res.status(404).json({ success: false, message: 'patient not found.' });
       }
 
-      const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
-
-      if (!patient) {
-        return res.status(404).json({ success: false, message: 'Patient not found.' });
-      }      
-
-      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots
+      const doctorAvailableTimeSlots = doctor.AvailableTimeSlots;
+      //console.log(doctor.AvailableTimeSlots);
       const selectedAppointmentDate = selectedAppointment.Date;
       const selectedAppointmentTime = selectedAppointment.Time;
 
-      const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
-        slot.Date.getTime() === selectedAppointmentDate.getTime() &&
-        slot.Time === selectedAppointmentTime &&
-        slot.Status === 'booked'
-      );
+      // const matchingTimeSlot = doctorAvailableTimeSlots.find(slot =>
+      //   slot.Date.getTime() === selectedAppointmentDate.getTime() &&
+      //   slot.Time === selectedAppointmentTime &&
+      //   slot.Status === 'booked'
+      // );
+
+      let matchingTimeSlot;
+
+      for(const s of doctorAvailableTimeSlots){
+        if(s.Date.getTime() === selectedAppointmentDate.getTime() && s.Time === selectedAppointmentTime && s.Status === 'booked'){
+            matchingTimeSlot = s;
+            break;
+        }
+      }
 
       if (matchingTimeSlot) {
         matchingTimeSlot.Status = 'available';
       }
 
-      const slot = doctorAvailableTimeSlots.find(s => s._id === timeSlot);
+      let slot;
+      //const timeSlot1 = new ObjectId(timeSlot);
 
+      for(const s of doctorAvailableTimeSlots){
+        //console.log(s._id);
+        //console.log(timeSlot);
+
+        if(s._id.equals(timeSlot)){
+          slot = s;
+          break;
+        }
+      }
+
+      //const slot = doctorAvailableTimeSlots.findOne(s => s._id === timeSlot);
+      //console.log(slot)
       let newAppointment;
 
       if (slot.Status === "available") {
@@ -1453,11 +1479,7 @@ const rescheduleAppointmentPatient = async (req, res) => {
 
       selectedAppointment.Status = 'Rescheduled';
       await selectedAppointment.save();
-      if(selectedAppointment.ForPatient === true){
-        await SendEmailNotificationReschedule(selectedAppointment, doctor, patient);
-      }else{
-        await SendEmailNotificationRescheduleFam(selectedAppointment, doctor, patient);
-      }
+      await SendEmailNotificationReschedule(newAppointment, doctor, patient);
 
       return res.status(200).json({ success: true, message: 'Appointment is rescheduled', newAppointment });
     } catch (error) {
@@ -1471,57 +1493,62 @@ const rescheduleAppointmentPatient = async (req, res) => {
 const cancelAppointmentPatient = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Credentials', true);
+  const { username, appointmentId } = req.params;
+
+  if (req.user.Username !== username) {
+    return res.status(403).json({ success: false, message: 'You are not logged in!' });
+  }
 
   try {
-    const { username, appointmentId } = req.params;
-
-    if (req.user.Username !== username) {
-      return res.status(403).json({ success: false, message: 'You are not logged in!' });
-    }
 
     const doctor = await doctorSchema.findOne({ Username: username });
 
     if (!doctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+      return res.status(404).json({ success: false, message: 'doctor not found.' });
     }
 
-    const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"]}});
+
+    const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, DoctorUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
     }
 
-    if (selectedAppointment.DoctorUsername !== doctor.Username) {
-      return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
-    }
+    // if (selectedAppointment.PatientUsername !== patient.Username) {
+    //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
+    // }
 
-    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
+    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername});
 
     if (!patient) {
       return res.status(404).json({ success: false, message: 'Doctor not found.' });
     }
 
-    // const appointmentDateTime = new Date(selectedAppointment.Date);
-    // appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
+    const appointmentDateTime = new Date(selectedAppointment.Date);
+    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
 
-    // const currentTime = new Date();
+    const currentTime = new Date();
 
-    // // Calculate the time difference in milliseconds between the current time and appointment time
-    // const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
+    // Calculate the time difference in milliseconds between the current time and appointment time
+    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
 
-    // // Convert milliseconds to hours
-    // const hoursDifference = timeDifference / (1000 * 60 * 60);
+    // Convert milliseconds to hours
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    //console.log(hoursDifference);
 
-   
-
-
-    // Calculate the refund amount based on your business logic
-    const refundAmount = selectedAppointment.Price;
-
-    // Update the WalletAmount directly in the database using $inc
-    await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-    await doctorSchema.updateOne({ Username: doctor.Username }, { $inc: { WalletAmount: -refundAmount } });
-
+    if (hoursDifference >= 24) {
+      // Calculate the refund amount based on your business logic
+      const refundAmount = selectedAppointment.Price;
+      console.log(hoursDifference);
+      // Update the WalletAmount directly in the database using $inc
+      await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+      await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
+      await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "yes");
+    }
+    else {
+      console.log("no refund");
+      await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "no");
+    }
 
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
       slot.Date.getTime() === selectedAppointment.Date.getTime() &&
@@ -1533,15 +1560,14 @@ const cancelAppointmentPatient = async (req, res) => {
       matchingTimeSlot.Status = 'available';
     }
 
-    // Update existing appointment status to 'cancelled'
+    // Update existing appointment status to 'canceled'
     selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
-    await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "yes");
 
-    return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
+    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ success: false, message: error.message });
@@ -1550,61 +1576,64 @@ const cancelAppointmentPatient = async (req, res) => {
 
 
 const cancelAppointmentPatientFamMem = async (req, res) => {
-  try {
-    const { username, appointmentId } = req.params;
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  const { username, appointmentId } = req.params;
 
-    if (req.user.Username !== username) {
-      return res.status(403).json({ success: false, message: 'You are not logged in!' });
-    }
+  if (req.user.Username !== username) {
+    return res.status(403).json({ success: false, message: 'You are not logged in!' });
+  }
+
+  try {
 
     const doctor = await doctorSchema.findOne({ Username: username });
 
     if (!doctor) {
-      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+      return res.status(404).json({ success: false, message: 'doctor not found.' });
     }
 
-    const selectedAppointment = await appointmentSchema.find({_id: appointmentId, Status: {$in : ["Upcoming", "upcoming", "Follow-up", "follow-up", "Rescheduled", "rescheduled"]}});
+
+    const selectedAppointment = await appointmentSchema.findOne({ _id: appointmentId, DoctorUsername: username ,Status: { $in: ["Upcoming", "upcoming", "Follow-up", "follow-up"] } });
 
     if (!selectedAppointment) {
       return res.status(404).json({ success: false, message: 'Appointment not found.' });
     }
 
-    if (selectedAppointment.DoctorUsername !== doctor.Username) {
-      return res.status(403).json({ success: false, message: 'Doctor is not associated with this appointment.' });
-    }
-
-    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername });
-
-    if (!patient) {
-      return res.status(404).json({ success: false, message: 'patient not found.' });
-    }
-
-    // const appointmentDateTime = new Date(selectedAppointment.Date);
-    // appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
-
-    // const currentTime = new Date();
-
-    // // Calculate the time difference in milliseconds between the current time and appointment time
-    // const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
-
-    // // Convert milliseconds to hours
-    // const hoursDifference = timeDifference / (1000 * 60 * 60);
-
-    
-
-    // const familyMem = await FamilyMember.findOne({ NationalID: familyId, PatientUsername: patient.Username });
-
-    // if (!familyMem) {
-    //   return res.status(404).send({ error: 'Family member not found' });
+    // if (selectedAppointment.PatientUsername !== patient.Username) {
+    //   return res.status(403).json({ success: false, message: 'Patient is not associated with this appointment.' });
     // }
 
+    const patient = await patientSchema.findOne({ Username: selectedAppointment.PatientUsername});
 
-    // Calculate the refund amount based on your business logic
-    const refundAmount = selectedAppointment.Price;
+    if (!patient) {
+      return res.status(404).json({ success: false, message: 'Doctor not found.' });
+    }
 
-    // Update the WalletAmount directly in the database using $inc
-    await patientSchema.updateOne({ Username: patient.Username }, { $inc: { WalletAmount: refundAmount } });
-    await doctorSchema.updateOne({ Username: doctor.Username }, { $inc: { WalletAmount: -refundAmount } });
+    const appointmentDateTime = new Date(selectedAppointment.Date);
+    appointmentDateTime.setHours(selectedAppointment.Time, 0, 0, 0);
+
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds between the current time and appointment time
+    const timeDifference = appointmentDateTime.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to hours
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+    //console.log(hoursDifference);
+
+    if (hoursDifference >= 24) {
+      // Calculate the refund amount based on your business logic
+      const refundAmount = selectedAppointment.Price;
+      console.log(hoursDifference);
+      // Update the WalletAmount directly in the database using $inc
+      await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
+      await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
+      await SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "yes");
+    }
+    else {
+      console.log("no refund");
+      await SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "no");
+    }
 
     const matchingTimeSlot = doctor.AvailableTimeSlots.find(slot =>
       slot.Date.getTime() === selectedAppointment.Date.getTime() &&
@@ -1616,19 +1645,17 @@ const cancelAppointmentPatientFamMem = async (req, res) => {
       matchingTimeSlot.Status = 'available';
     }
 
-    // Update existing appointment status to 'cancelled'
+    // Update existing appointment status to 'canceled'
     selectedAppointment.Status = 'Cancelled';
 
     // Save changes to appointment and doctor
     await selectedAppointment.save();
     await doctor.save();
 
-    await SendEmailNotificationCancelFam(selectedAppointment, doctor, patient, "yes");
-
-    return res.status(200).json({ success: true, message: 'Appointment has been cancelled.' });
+    return res.status(200).json({ success: true, message: 'Appointment is canceled' });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ success: false, message: error.message});
+    return res.status(500).json({ success: false, message: error.message });
   }
 };
 

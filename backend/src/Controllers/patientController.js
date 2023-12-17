@@ -2993,17 +2993,19 @@ const cancelAppointment = async (req, res) => {
 
     // Convert milliseconds to hours
     const hoursDifference = timeDifference / (1000 * 60 * 60);
+    //console.log(hoursDifference);
 
     if (hoursDifference >= 24) {
       // Calculate the refund amount based on your business logic
       const refundAmount = selectedAppointment.Price;
-
+      console.log(hoursDifference);
       // Update the WalletAmount directly in the database using $inc
       await patientSchema.updateOne({ Username: username }, { $inc: { WalletAmount: refundAmount } });
       await doctorSchema.updateOne({ Username: selectedAppointment.DoctorUsername }, { $inc: { WalletAmount: -refundAmount } });
       await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "yes");
     }
     else {
+      console.log("no refund");
       await SendEmailNotificationCancel(selectedAppointment, doctor, patient, "no");
     }
 
@@ -3033,6 +3035,9 @@ const cancelAppointment = async (req, res) => {
 
 
 const cancelAppointmentFamMem = async (req, res) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+
   try {
     const { username, appointmentId } = req.params;
 
