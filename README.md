@@ -82,9 +82,32 @@ The frontend code, written in React, also follows a structured and readable styl
 
 **Consistent Styling:** Consistent styling practices are followed, and class names are indicative of their purpose.
 ## Screenshots
-
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
+![Screenshot (3079)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/619fbe95-1796-4e72-888a-932dc9ef8ca6)
+![Screenshot (3080)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/fccddc7c-4398-4e2b-a40c-8aff1a285e19)
+![Screenshot (3081)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/5be961ef-a8c9-48da-94ec-263c9c55d5dd)
+![Screenshot (3082)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/c59c5156-47a8-457f-953d-5be1943564ee)
+![Screenshot (3083)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/5b67bf65-db41-46e2-84ea-f56aab824825)
+![Screenshot (3084)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/3d02109d-3a08-45b9-a49b-e4e765cc7f8c)
+![Screenshot (3085)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/da925836-9a40-43fc-a81c-c33e9407fc07)
+![Screenshot (3086)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/585ee083-2338-478f-aaf4-4646b62dfa35)
+![Screenshot (3087)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/bfb8a3fc-5942-4e37-8951-9aa88f83f3ca)
+![Screenshot (3088)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/30278b8c-f415-47e9-9e70-c84cafade3a7)
+![Screenshot (3089)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/24dadfeb-ef56-4002-9e86-d90c1f511efb)
+![Screenshot (3090)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/39355475-b158-41b8-bbe7-7313c81092a6)
+![Screenshot (3091)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/8ba24576-06d0-40f7-9d46-15d48a80c61f)
+![Screenshot (3092)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/83e82354-8bcc-406e-802c-00cd778a1ce3)
+![Screenshot (3093)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/166ebed4-15ef-4689-86fb-47213013d982)
+![Screenshot (3094)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/27af94b9-a046-4c71-97eb-ce165dce303f)
+![Screenshot (3095)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/998a342a-df7b-43f7-9985-1f6290bf423f)
+![Screenshot (3096)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/2b2dff06-629f-49bf-8340-6286dcbbd98e)
+![Screenshot (3097)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/33985ff6-49f9-42fe-a1f2-aef8e2157830)
+![Screenshot (3098)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/e7b611b0-835d-4663-bae7-6ccf1b4fe99e)
+![Screenshot (3099)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/18eb81cf-2134-4780-98c6-c3c9cdec5dc8)
+![Screenshot (3100)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/81444a26-da06-4b4c-8570-6b2d8d39e990)
+![Screenshot (3101)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/90a114ec-8059-4dea-97c8-9d147f2a15e8)
+![Screenshot (3102)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/755bc15d-de70-40b5-9f94-c9cafe30550f)
+![Screenshot (3103)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/9bff16f9-c3c8-47ab-95f6-cc9529c335de)
+![Screenshot (3104)](https://github.com/advanced-computer-lab-2023/Suicide-squad-Clinic/assets/121583270/6a0db388-8f78-446c-bffd-ed0ca5eab4cb)
 
 ## Tech Stack
 El7a2ny utilizes the MERN stack, comprising MongoDB, Express.js, React, and Node.js, to create a robust and full-stack web application. This technology stack seamlessly integrates a NoSQL database, a server-side framework, a front-end framework, and a runtime environment, providing a comprehensive solution for building scalable and dynamic web applications.
