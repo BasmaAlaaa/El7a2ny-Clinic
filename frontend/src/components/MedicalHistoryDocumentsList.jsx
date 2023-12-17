@@ -86,10 +86,10 @@ function MedicalHistoryDocumentsList() {
       }, [username]);
 
     
-    console.log(filterText)
+    console.log('medicalhistorydoc',result);
     let navigate = useNavigate()
 
-    let tHead = ['Document'];
+    let tHead = ['Document', 'Delete'];
 
     return (
     <div>

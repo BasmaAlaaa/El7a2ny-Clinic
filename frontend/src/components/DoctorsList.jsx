@@ -82,6 +82,7 @@ let navigate = useNavigate()
           Filter
         </button> */}
         <select className="input-group-text bg-white border-end-0 search" name='time' onChange={(e) => setSearchTime(e.target.value)}>
+        <option value='11'>11 a.m.</option>
         <option value='12'>12 p.m.</option>
         <option value='1'>1 p.m.</option>
         <option value='2'>2 p.m.</option>

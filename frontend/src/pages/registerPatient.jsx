@@ -34,7 +34,8 @@ function RegisterPatient() {
       Gender: gender, 
       MobileNumber: mobileNumber, 
       EmergencyContactName: emergencyName,
-      EmergencyContactMobile: emergencyMobile }
+      EmergencyContactMobile: emergencyMobile,
+      EmergencyContactRelation:emergencyRelation}
     console.log(data)
     const response = await axios.post('http://localhost:4000/Patient/registerPatient', data)
     
@@ -173,6 +174,13 @@ function RegisterPatient() {
             placeholder='Enter emergency contact mobile number'
             type='text'
             onChange={(e) => setEmergencyMobile(e.target.value)}
+          />
+          <Input
+            title='Emergency Contact Relation to Patient'
+            required={true}
+            placeholder='Enter emergency contact relation'
+            type='text'
+            onChange={(e) => setEmergencyRelation(e.target.value)}
           />
          
           <div className="mt-3">

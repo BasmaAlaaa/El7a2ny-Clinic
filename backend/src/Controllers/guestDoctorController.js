@@ -16,20 +16,22 @@ const registerGuestDoctor = async (req, res) => {
         Affiliation,
         EDB,
         Speciality,
-        IDDocument,
-        MedicalDegreeDocument,
-        WorkingLicenseDocument
     } = req.body;
 
     try {
-        console.log(req);
-        // if (!req.files || !req.files['IDDocument'] || !req.files['MedicalDegreeDocument'] || !req.files['WorkingLicenseDocument']) {
-        //     return res.status(400).json('Missing file(s)');
-        // }
+        console.log(req.body);
+        console.log(req.files);
 
-        if (!WorkingLicenseDocument || !MedicalDegreeDocument || !IDDocument) {
+        if (!req.files || !req.files.IDDocument || !req.files.MedicalDegreeDocument || !req.files.WorkingLicenseDocument) {
             return res.status(400).json('Missing file(s)');
         }
+
+        const {
+            IDDocument,
+            MedicalDegreeDocument,
+            WorkingLicenseDocument,
+        } = req.files;
+
 
         if (!(await isUsernameUnique(Username))) {
             return res.status(400).json('Username is already taken.');
@@ -39,9 +41,9 @@ const registerGuestDoctor = async (req, res) => {
             return res.status(400).json('Email is already in use.');
         }
 
-        if(!(await validatePassword(Password))){
+        if (!(await validatePassword(Password))) {
             return res.status(400).json("Password must contain at least one uppercase letter, one lowercase letter, one number, and be at least 8 characters long");
-          }
+        }
 
         if (!Username ||
             !Name ||
@@ -54,7 +56,7 @@ const registerGuestDoctor = async (req, res) => {
             !Speciality) {
             return res.status(400).json('All fields must be filled.');
         }
-        
+
         const guestDoctor = new GuestDoctor({
             Username,
             Name,
@@ -65,21 +67,21 @@ const registerGuestDoctor = async (req, res) => {
             Affiliation,
             EDB,
             Speciality,
-            IDDocument,
-            MedicalDegreeDocument,
-            WorkingLicenseDocument
-            // IDDocument: {
-            //     data: Buffer.from(req.files['IDDocument'][0].buffer),
-            //     contentType: req.files['IDDocument'][0].mimetype,
-            // },
-            // MedicalDegreeDocument: {
-            //     data: Buffer.from(req.files['MedicalDegreeDocument'][0].buffer),
-            //     contentType: req.files['MedicalDegreeDocument'][0].mimetype,
-            // },
-            // WorkingLicenseDocument: {
-            //     data: Buffer.from(req.files['WorkingLicenseDocument'][0].buffer),
-            //     contentType: req.files['WorkingLicenseDocument'][0].mimetype,
-            // },
+            // IDDocument,
+            // MedicalDegreeDocument,
+            // WorkingLicenseDocument
+            IDDocument: {
+                data: IDDocument[0].buffer,
+                contentType: IDDocument[0].mimetype,
+            },
+            MedicalDegreeDocument: {
+                data: MedicalDegreeDocument[0].buffer,
+                contentType: MedicalDegreeDocument[0].mimetype,
+            },
+            WorkingLicenseDocument: {
+                data: WorkingLicenseDocument[0].buffer,
+                contentType: WorkingLicenseDocument[0].mimetype,
+            },
         });
 
         await guestDoctor.save();

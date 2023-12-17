@@ -5,12 +5,34 @@ function CaseTableBody({ data, username }) {
   let navigate = useNavigate()
   console.log("pres id", data.prescriptionID)
 
-  const downloadPrescription = () =>{
-    axios.get(`http://localhost:4000/Patient/downloadPrescriptionPDF/${username}/${data.prescriptionID}`
-    ,{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
-    .then(res =>alert('Prescription downloaded')).catch(err => alert('error downloading prescription'));
+  // const downloadPrescription = () =>{
+  //   axios.get(`http://localhost:4000/Patient/downloadPrescriptionPDF/${username}/${data.prescriptionID}`
+  //   ,{headers: { authorization: "Bearer " + sessionStorage.getItem("token")},})
+  //   .then(res =>alert('Prescription downloaded')).catch(err => alert('error downloading prescription'));
+  // }
+  const downloadPrescription = () => {
+    axios({
+      url: `http://localhost:4000/Patient/downloadPrescriptionPDF/${username}/${data.prescriptionID}`,
+      method: 'GET',
+      responseType: 'blob', // Important
+      headers: {
+        authorization: "Bearer " + sessionStorage.getItem("token"),
+      },
+    }).then((response) => {
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'prescription.pdf'); // or any other extension
+      document.body.appendChild(link);
+      link.click();
+      window.URL.revokeObjectURL(url);
+      alert('Prescription downloaded');
+    }).catch((error) => {
+      console.error('Error downloading prescription', error);
+      alert('error downloading prescription');
+    });
   }
-
+  
   return (
     <>
 

@@ -482,6 +482,36 @@ const acceptContract = async (req, res) => {
     }
   }
 };
+const rejectContract = async (req, res) => {
+  const { DoctorUsername } = req.params;
+
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  if (!(req.user.Username === DoctorUsername)) {
+    res.status(403).json("You are not logged in!");
+  } else {
+    try {
+      const doctorExists = await doctorSchema.findOne({ Username: DoctorUsername });
+      if (!doctorExists) {
+        return res.status(404).json({ error: 'Doctor not found.' });
+      }
+      const contractDetails = await contractSchema.findOne({ DoctorUsername });
+      if (contractDetails.Status === 'accepted') {
+        return res.status(404).json({ error: "Contract already accepted." });
+      }
+      const updatedContract = await contractSchema.findOneAndUpdate({ DoctorUsername: DoctorUsername }, { Status: 'Rejected' }, { new: true });
+
+      if (!updatedContract) {
+        return res.status(404).json({ error: "Contract not found for this doctor." });
+      }
+      await doctorSchema.deleteOne({ Username: DoctorUsername });
+
+      res.status(200).json({ message: 'Contract rejected and doctor removed from the database', contract: updatedContract });
+    } catch (error) {
+      res.status(500).json({ error: "Server error", details: error.message });
+    }
+  }
+};
 
 //Req 67: view Wallet amount
 const viewWalletAmountByDoc = async (req, res) => {
@@ -1943,5 +1973,6 @@ module.exports = {
   displayDoctorNotifications,
   sendAppointmentDoctorRescheduleNotificationEmail,
   sendAppointmentDoctorCancelledNotificationEmail,
-  sendAppointmentDoctorNotificationEmail
+  sendAppointmentDoctorNotificationEmail,
+  rejectContract,
 };

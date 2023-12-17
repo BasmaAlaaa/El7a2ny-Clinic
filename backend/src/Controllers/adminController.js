@@ -223,6 +223,9 @@ const viewDoctorInfo = async (req, res) => {
     }
   }
 };
+const currentDate = new Date();
+const oneYearLater = new Date(currentDate.setFullYear(currentDate.getFullYear() + 1));
+
 //Task 10:accept or reject the request of a doctor to join the platform
 const acceptOrRejectDoctorRequest = async (req, res) => {
   const { username } = req.params;
@@ -248,10 +251,28 @@ const acceptOrRejectDoctorRequest = async (req, res) => {
         await newDoctor.save();
         // Delete from the GuestDoctor.
         await guestDoctor.remove();
-
+          // Create a new contract for the approved doctor
+        const newContract = new Contract({
+        DoctorUsername: newDoctor.Username,
+        MarkUp: 200,// Set default or calculated value,
+        StartDate:  new Date("2023-12-17") , // Set default or calculated start date,
+        EndDate: new Date("2024-12-17") ,// Set default or calculated end date,
+        DoctorSpecialty: newDoctor.Speciality,
+        Salary:15000, // Set default or calculated salary,
+        compensation: 100, // Set default or calculated compensation,
+        workingHours: 8,// Set default or calculated working hours,
+        workingDays:5, // Set default or calculated working days,
+        Type:'Full Time', // or based on some logic
+        Status: 'Pending' // initial status
+      });
+      await newContract.save();
         return res
           .status(200)
           .json({ message: "Doctor approved and added to the platform" });
+
+
+
+
       } else if (action === 'reject') {
         await guestDoctor.remove();
         return res.status(200).json({ message: "Doctor request rejected , Doctor is removed" });

@@ -31,7 +31,7 @@ function PayAppointment(){
          .then(res =>{
           alert('Appointment Booked');
           navigate(`/appointmentsList/${usernamePatient}`);
-        }).catch(err => alert('error booking appointment'))
+        }).catch(err =>{console.log(err); alert('error booking appointment')})
       }
         }
 

@@ -101,8 +101,8 @@ function App() {
           <Route exact path="/notificationsPatient/:username" element={<NotificationsPatient />} />
           <Route exact path="/manageProfile/:username" element={<ManageProfile />} />
           <Route exact path="/healthRecordsInfo/:usernameDoctor/:usernamePatient" element={<HealthRecordsInfo />} />
-          <Route exact path="/chatWithPatient/:username" element={<ChatWithPatient/>} />
-          <Route exact path="/chatWithDoctor/:username" element={<ChatWithDoctor />} />
+          <Route exact path="/chatWithPatient/:usernamePatient/:usernameDoctor" element={<ChatWithPatient/>} />
+          <Route exact path="/chatWithDoctor/:usernamePatient/:usernameDoctor" element={<ChatWithDoctor />} />
 
 
         </Routes>
