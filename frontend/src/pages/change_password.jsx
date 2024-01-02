@@ -25,13 +25,17 @@ function ChangePassword() {
 
     try {
       const data = { oldPassword: oldPassword, newPassword: password, confirmPassword: confirmPassword };
-      const response = await axios.put(`http://localhost:4000/ChangePassword/${username}`, data, {
-        withCredentials: true,
-        auth: {
-          username: username, 
-          password: oldPassword, 
-        },
-      });
+      const response = await axios.put(
+        `http://localhost:4000/ChangePassword/${username}`,
+        data,
+        {
+          withCredentials: true,
+          auth: {
+            username: username,
+            password: oldPassword,
+          },
+        }
+      );      
   
       if (response.status === 200) {
         alert(`Password updated successfully`);
